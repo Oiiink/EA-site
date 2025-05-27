@@ -209,4 +209,87 @@
     <section id="home" class="py-28 text-center bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-lg max-w-5xl mx-auto">
       <h2 class="text-5xl font-bold text-orange-400 mb-6 tracking-wide">Welcome to Event Alerts</h2>
       <p class="text-gray-300 max-w-3xl mx-auto text-lg leading-relaxed">
-        Get notified about upcoming Minecraft events, claim rewards, and more! Join our community to stay ahead with
+        Get notified about upcoming Minecraft events, claim rewards, and more! Join our community to stay ahead with real-time updates.
+      </p>
+    </section>
+
+    <!-- Store Section -->
+    <section id="store" class="my-28 max-w-5xl mx-auto">
+      <h2 class="text-4xl font-bold text-orange-400 mb-10 text-center tracking-wide">Store</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div class="store-card cursor-pointer">
+          <h3 class="text-2xl font-semibold text-orange-400 mb-4">Event Alerts Premium</h3>
+          <p class="text-gray-400 mb-6 leading-relaxed">
+            Get access to exclusive notifications, early event news, and special in-game rewards.
+          </p>
+          <button class="glow-gradient px-6 py-3 rounded-lg font-semibold text-white transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-400">
+            Buy Now
+          </button>
+        </div>
+        <div class="store-card cursor-pointer">
+          <h3 class="text-2xl font-semibold text-orange-400 mb-4">Custom Event Skins</h3>
+          <p class="text-gray-400 mb-6 leading-relaxed">
+            Unlock exclusive skins to show off your status during events and special occasions.
+          </p>
+          <button class="glow-gradient px-6 py-3 rounded-lg font-semibold text-white transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-400">
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appeal Section -->
+    <section id="appeal" class="max-w-4xl mx-auto bg-gray-800 rounded-2xl p-10 shadow-lg mb-28">
+      <h2 class="text-4xl font-bold text-orange-400 mb-8 text-center tracking-wide">Appeal</h2>
+      <form action="https://example.com/submit-appeal" method="POST" class="space-y-6">
+        <label for="username" class="block text-gray-300 font-semibold">Minecraft Username</label>
+        <input type="text" id="username" name="username" required placeholder="Your Minecraft username" autocomplete="off" />
+
+        <label for="reason" class="block text-gray-300 font-semibold">Reason for Appeal</label>
+        <textarea id="reason" name="reason" rows="6" required placeholder="Explain your appeal in detail"></textarea>
+
+        <button type="submit" class="glow-gradient w-full py-3 rounded-lg font-semibold text-white transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-400">
+          Submit Appeal
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Toggle mobile menu
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobile-menu");
+    hamburger.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+
+    // Server status ping
+    const statusDot = document.getElementById("status-dot");
+    const statusText = document.getElementById("status-text");
+
+    async function checkServerStatus() {
+      try {
+        // Fake API ping URL (replace with real API)
+        const response = await fetch("https://api.mcsrvstat.us/2/mc.hypixel.net");
+        const data = await response.json();
+        if (data.online) {
+          statusDot.style.backgroundColor = "#22c55e"; // green
+          statusDot.style.boxShadow = "0 0 10px #22c55e";
+          statusText.textContent = `Online — ${data.players.online} players`;
+        } else {
+          statusDot.style.backgroundColor = "#ef4444"; // red
+          statusDot.style.boxShadow = "0 0 10px #ef4444";
+          statusText.textContent = "Offline";
+        }
+      } catch (e) {
+        statusDot.style.backgroundColor = "#ef4444";
+        statusDot.style.boxShadow = "0 0 10px #ef4444";
+        statusText.textContent = "Offline";
+      }
+    }
+    checkServerStatus();
+    setInterval(checkServerStatus, 30000); // every 30s
+  </script>
+</body>
+</html>
