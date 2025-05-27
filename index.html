@@ -1,115 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts - Minecraft Server</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google font for Minecraft vibe -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
-    body {
-      background: linear-gradient(135deg, #1a202c, #111827);
+    /* Floating logo animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
-    .fade-in {
-      animation: fadeIn 1s ease forwards;
-      opacity: 0;
+    .logo {
+      animation: float 3s ease-in-out infinite;
     }
-    #home { animation-delay: 0.3s; }
-    #store { animation-delay: 0.6s; }
-    #appeal { animation-delay: 0.9s; }
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    /* Glow effect for buttons and nav links */
+    .glow-orange {
+      background: linear-gradient(90deg, #fb923c, #f97316);
+      box-shadow: 0 0 10px 2px rgba(251, 146, 60, 0.8);
+      transition: box-shadow 0.3s ease;
     }
-    nav a {
-      padding: 0.5rem 1rem;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.3s ease;
+    .glow-orange:hover {
+      box-shadow: 0 0 20px 6px rgba(251, 146, 60, 1);
     }
-    nav a:hover {
-      border-bottom-color: #fb923c;
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
     }
-    .hover-scale:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s ease;
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: #fb923c;
+      transition: width 0.3s ease;
     }
-    /* Navbar background for text areas */
-    nav {
-      background: rgba(31, 41, 55, 0.85); /* Tailwind's gray-800 with opacity */
-      backdrop-filter: saturate(180%) blur(8px);
-      -webkit-backdrop-filter: saturate(180%) blur(8px);
+    .nav-link:hover {
+      color: #fb923c;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
-<body class="text-white font-sans">
+<body class="bg-gray-900 text-white font-sans relative">
+
   <!-- Navbar -->
-  <nav class="shadow-md fade-in">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <!-- Left: Links -->
-      <div class="flex space-x-4 text-lg font-medium">
-        <a href="#home" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Home</a>
-        <a href="#store" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Store</a>
-        <a href="#appeal" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Appeal</a>
-        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Discord</a>
+  <nav class="fixed w-full bg-gray-800 bg-opacity-90 backdrop-blur-md shadow-md z-50">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16 relative">
+      
+      <!-- Mobile hamburger -->
+      <button id="hamburger" aria-label="Toggle menu" class="md:hidden text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <!-- Left nav links -->
+      <div id="nav-links" class="hidden md:flex space-x-8 font-medium text-lg">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#store" class="nav-link">Store</a>
+        <a href="#appeal" class="nav-link">Appeal</a>
+        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="nav-link">Discord</a>
       </div>
 
-      <!-- Center: Logo -->
-      <div class="flex justify-center flex-1">
-        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp?ex=68379d72&is=68364bf2&hm=1865cfb9e3a006e9d6b67b842e62ce525dadc1a96f63adbf10d0e7ce760f3f16&" alt="Event Alerts Logo" class="h-10 w-auto select-none" />
+      <!-- Center logo -->
+      <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
+        <img
+          src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp?ex=68379d72&is=68364bf2&hm=1865cfb9e3a006e9d6b67b842e62ce525dadc1a96f63adbf10d0e7ce760f3f16&"
+          alt="Event Alerts Logo"
+          class="logo h-20 w-auto"
+        />
       </div>
 
-      <!-- Right: Log In -->
-      <div>
-        <a href="#login" class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-2 px-6 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 hover-scale transition-transform duration-300 select-none">
+      <!-- Right Log In + Server Status -->
+      <div class="flex items-center space-x-6">
+        <a href="#login" class="glow-orange text-white font-semibold py-2 px-6 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition-transform duration-300 hover:scale-105">
           Log In
         </a>
+        <div id="server-status" class="flex items-center space-x-2 text-sm font-semibold">
+          <span id="status-dot" class="w-3 h-3 rounded-full bg-gray-500"></span>
+          <span id="status-text">Checking server...</span>
+        </div>
       </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden bg-gray-800 px-6 pb-4 hidden">
+      <a href="#home" class="block py-2 border-b border-gray-700 nav-link">Home</a>
+      <a href="#store" class="block py-2 border-b border-gray-700 nav-link">Store</a>
+      <a href="#appeal" class="block py-2 border-b border-gray-700 nav-link">Appeal</a>
+      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="block py-2 border-b border-gray-700 nav-link">Discord</a>
     </div>
   </nav>
 
-  <!-- Home Section -->
-  <section id="home" class="py-20 fade-in">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-4xl font-extrabold text-orange-400 mb-4">Welcome to Event Alerts</h2>
-      <p class="text-gray-300 text-lg leading-relaxed max-w-3xl mx-auto">Get notified about upcoming Minecraft events, claim rewards, and more!</p>
-    </div>
-  </section>
+  <main class="pt-20">
 
-  <!-- Store Section -->
-  <section id="store" class="py-20 bg-gray-800 fade-in">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-orange-400 mb-2">Server Store</h2>
-      <p class="text-gray-400 mb-10">Support the server and unlock exclusive perks.</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-orange-400/50 transition-shadow duration-300 hover-scale">
-          <h3 class="text-xl font-bold text-orange-300 mb-3">VIP Rank</h3>
-          <p class="text-gray-300 leading-relaxed">Includes in-game rewards and priority queue access.</p>
+    <!-- Home Section -->
+    <section id="home" class="py-24 text-center bg-gray-900 max-w-5xl mx-auto px-6">
+      <h2 class="text-5xl font-extrabold text-orange-400 font-['Press_Start_2P']">Welcome to Event Alerts</h2>
+      <p class="mt-6 text-lg text-gray-300 max-w-3xl mx-auto">Get notified about upcoming Minecraft events, claim rewards, and more!</p>
+    </section>
+
+    <!-- Store Section -->
+    <section id="store" class="py-20 bg-gray-800 max-w-6xl mx-auto px-6 rounded-lg shadow-lg">
+      <h2 class="text-4xl font-bold text-orange-400 text-center font-['Press_Start_2P']">Server Store</h2>
+      <p class="text-center text-gray-400 mt-2 mb-10 max-w-xl mx-auto">Support the server and unlock exclusive perks.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="bg-gray-700 p-8 rounded-xl shadow-lg transform hover:-translate-y-1 hover:shadow-orange-500 transition duration-300">
+          <h3 class="text-2xl font-bold text-orange-300 mb-3">VIP Rank</h3>
+          <p class="text-gray-300 text-sm">Includes in-game rewards and priority queue access.</p>
         </div>
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-orange-400/50 transition-shadow duration-300 hover-scale">
-          <h3 class="text-xl font-bold text-orange-300 mb-3">Event Crates</h3>
-          <p class="text-gray-300 leading-relaxed">Open crates for special gear and rare blocks.</p>
+        <div class="bg-gray-700 p-8 rounded-xl shadow-lg transform hover:-translate-y-1 hover:shadow-orange-500 transition duration-300">
+          <h3 class="text-2xl font-bold text-orange-300 mb-3">Event Crates</h3>
+          <p class="text-gray-300 text-sm">Open crates for special gear and rare blocks.</p>
         </div>
-        <div class="bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-orange-400/50 transition-shadow duration-300 hover-scale">
-          <h3 class="text-xl font-bold text-orange-300 mb-3">Cosmetics Pack</h3>
-          <p class="text-gray-300 leading-relaxed">Access to exclusive skins, trails, and pets.</p>
+        <div class="bg-gray-700 p-8 rounded-xl shadow-lg transform hover:-translate-y-1 hover:shadow-orange-500 transition duration-300">
+          <h3 class="text-2xl font-bold text-orange-300 mb-3">Cosmetics Pack</h3>
+          <p class="text-gray-300 text-sm">Access to exclusive skins, trails, and pets.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Appeal Section -->
-  <section id="appeal" class="py-20 fade-in">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-orange-400 mb-2">Ban Appeals</h2>
-      <p class="text-gray-400 mb-8">Think you were banned unfairly? Submit an appeal using the button below.</p>
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener noreferrer" class="inline-block bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-3 px-8 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 hover-scale transition-transform duration-300">
-        Go to Google Form
-      </a>
-    </div>
-  </section>
+    <!-- Appeal Section -->
+    <section id="appeal" class="py-20 bg-gray-900 max-w-4xl mx-auto px-6 rounded-lg shadow-inner">
+      <h2 class="text-4xl font-bold text-orange-400 text-center font-['Press_Start_2P']">Ban Appeals</h2>
+      <p class="text-center text-gray-400 mt-2 mb-10">Think you were banned unfairly? Submit an appeal below.</p>
+      <form action="https://forms.gle/8NqGuoFEAwsAgrwp6" method="get" target="_blank" class="max-w-xl mx-auto space-y-6">
+        <input type="text" name="entry.123456" placeholder="Minecraft Username" required class="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-orange-400 outline-none" />
+        <textarea name="entry.654321" placeholder="Explain your situation..." rows="5" required class="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-orange-400 outline-none"></textarea>
+        <button type="submit" class="w-full glow-orange text-white font-bold py-3 rounded focus:outline-none focus:ring-4 transition-transform duration-300 hover:scale-105">Submit Appeal</button>
+      </form>
+    </section>
+  </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 py-6 text-center text-sm text-gray-500 select-none">
+  <footer class="bg-gray-800 py-6 text-center text-sm text-gray-500 mt-20">
     &copy; 2025 Event Alerts. All rights reserved.
   </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Server status checker
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    // Minecraft server status API (using mcsrvstat.us)
+    fetch('https://api.mcsrvstat.us/2/play.eventalerts.gg')
+      .then(res => res.json())
+      .then(data => {
+        if (data.online) {
+          statusDot.classList.remove('bg-gray-500');
+          statusDot.classList.add('bg-green-500');
+          statusText.textContent = `Online — ${data.players.online} / ${data.players.max} players`;
+        } else {
+          statusDot.classList.remove('bg-green-500');
+          statusDot.classList.add('bg-red-500');
+          statusText.textContent = 'Offline';
+        }
+      })
+      .catch(() => {
+        statusDot.classList.remove('bg-green-500');
+        statusDot.classList.add('bg-gray-500');
+        statusText.textContent = 'Status unknown';
+      });
+  </script>
 </body>
 </html>
