@@ -6,40 +6,58 @@
   <title>Event Alerts - Minecraft Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="favicon.ico" />
+  <style>
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+  </style>
 </head>
 <body class="bg-gray-900 text-white font-sans">
   <!-- Navbar -->
-  <nav class="bg-gray-800 shadow-md">
+  <nav class="bg-gray-800 shadow-md fade-in">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-orange-400">Event Alerts</h1>
+      <div class="flex items-center space-x-3">
+        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp?ex=68379d72&is=68364bf2&hm=1865cfb9e3a006e9d6b67b842e62ce525dadc1a96f63adbf10d0e7ce760f3f16&" alt="Event Alerts Logo" class="h-10 w-auto" />
+        <h1 class="text-2xl font-bold text-orange-400">Event Alerts</h1>
+      </div>
       <div class="space-x-6">
         <a href="#home" class="hover:text-orange-300">Home</a>
         <a href="#store" class="hover:text-orange-300">Store</a>
         <a href="#appeal" class="hover:text-orange-300">Appeal</a>
+        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="hover:text-orange-300">Discord</a>
       </div>
     </div>
   </nav>
 
   <!-- Home Section -->
-  <section id="home" class="py-24 text-center bg-gray-900">
+  <section id="home" class="py-24 text-center bg-gray-900 fade-in">
     <h2 class="text-4xl font-extrabold text-orange-400">Welcome to Event Alerts</h2>
     <p class="mt-4 text-lg text-gray-300">Get notified about upcoming Minecraft events, claim rewards, and more!</p>
   </section>
 
   <!-- Store Section -->
-  <section id="store" class="py-20 px-6 bg-gray-800">
+  <section id="store" class="py-20 px-6 bg-gray-800 fade-in">
     <h2 class="text-3xl font-bold text-orange-400 text-center">Server Store</h2>
     <p class="text-center text-gray-400 mt-2">Support the server and unlock exclusive perks.</p>
     <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-      <div class="bg-gray-700 p-6 rounded-xl shadow-md">
+      <div class="bg-gray-700 p-6 rounded-xl shadow-md hover-scale">
         <h3 class="text-xl font-bold text-orange-300">VIP Rank</h3>
         <p class="text-sm text-gray-300 mt-2">Includes in-game rewards and priority queue access.</p>
       </div>
-      <div class="bg-gray-700 p-6 rounded-xl shadow-md">
+      <div class="bg-gray-700 p-6 rounded-xl shadow-md hover-scale">
         <h3 class="text-xl font-bold text-orange-300">Event Crates</h3>
         <p class="text-sm text-gray-300 mt-2">Open crates for special gear and rare blocks.</p>
       </div>
-      <div class="bg-gray-700 p-6 rounded-xl shadow-md">
+      <div class="bg-gray-700 p-6 rounded-xl shadow-md hover-scale">
         <h3 class="text-xl font-bold text-orange-300">Cosmetics Pack</h3>
         <p class="text-sm text-gray-300 mt-2">Access to exclusive skins, trails, and pets.</p>
       </div>
@@ -47,14 +65,14 @@
   </section>
 
   <!-- Appeal Section -->
-  <section id="appeal" class="py-20 px-6 bg-gray-900">
+  <section id="appeal" class="py-20 px-6 bg-gray-900 fade-in">
     <h2 class="text-3xl font-bold text-orange-400 text-center">Ban Appeals</h2>
-    <p class="text-center text-gray-400 mt-2">Think you were banned unfairly? Submit an appeal below.</p>
-    <form class="max-w-xl mx-auto mt-10 space-y-6">
-      <input type="text" placeholder="Minecraft Username" class="w-full p-3 rounded bg-gray-800 text-white border border-gray-700" />
-      <textarea placeholder="Explain your situation..." rows="5" class="w-full p-3 rounded bg-gray-800 text-white border border-gray-700"></textarea>
-      <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded">Submit Appeal</button>
-    </form>
+    <p class="text-center text-gray-400 mt-2">Think you were banned unfairly? Submit an appeal using the button below.</p>
+    <div class="max-w-xl mx-auto mt-10 text-center">
+      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded hover-scale">
+        Go to Google Form
+      </a>
+    </div>
   </section>
 
   <!-- Footer -->
