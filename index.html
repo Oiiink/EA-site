@@ -7,12 +7,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="favicon.ico" />
   <style>
-    /* Body background gradient */
     body {
       background: linear-gradient(135deg, #1a202c, #111827);
     }
-
-    /* Animations */
     .fade-in {
       animation: fadeIn 1s ease forwards;
       opacity: 0;
@@ -23,37 +20,48 @@
     @keyframes fadeIn {
       to { opacity: 1; }
     }
-
-    /* Navbar link hover underline */
     nav a {
       padding: 0.5rem 1rem;
       border-bottom: 2px solid transparent;
       transition: border-color 0.3s ease;
     }
     nav a:hover {
-      border-bottom-color: #fb923c; /* orange-400 */
+      border-bottom-color: #fb923c;
     }
-
-    /* Button hover scale */
     .hover-scale:hover {
       transform: scale(1.05);
       transition: transform 0.3s ease;
+    }
+    /* Navbar background for text areas */
+    nav {
+      background: rgba(31, 41, 55, 0.85); /* Tailwind's gray-800 with opacity */
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
     }
   </style>
 </head>
 <body class="text-white font-sans">
   <!-- Navbar -->
-  <nav class="bg-gray-800 shadow-md fade-in">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp?ex=68379d72&is=68364bf2&hm=1865cfb9e3a006e9d6b67b842e62ce525dadc1a96f63adbf10d0e7ce760f3f16&" alt="Event Alerts Logo" class="h-10 w-auto" />
-        <h1 class="text-2xl font-bold text-orange-400 select-none">Event Alerts</h1>
-      </div>
+  <nav class="shadow-md fade-in">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <!-- Left: Links -->
       <div class="flex space-x-4 text-lg font-medium">
         <a href="#home" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Home</a>
         <a href="#store" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Store</a>
         <a href="#appeal" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Appeal</a>
         <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="hover:text-orange-400 hover:border-b-2 border-orange-400 pb-1">Discord</a>
+      </div>
+
+      <!-- Center: Logo -->
+      <div class="flex justify-center flex-1">
+        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp?ex=68379d72&is=68364bf2&hm=1865cfb9e3a006e9d6b67b842e62ce525dadc1a96f63adbf10d0e7ce760f3f16&" alt="Event Alerts Logo" class="h-10 w-auto select-none" />
+      </div>
+
+      <!-- Right: Log In -->
+      <div>
+        <a href="#login" class="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-2 px-6 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 hover-scale transition-transform duration-300 select-none">
+          Log In
+        </a>
       </div>
     </div>
   </nav>
