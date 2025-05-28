@@ -1,75 +1,346 @@
-<!DOCTYPE html>
-<html lang="en">
+/* Variables */
+:root {
+  --orange-primary: #f97316;
+  --orange-dark: #ea580c;
+  --text-primary: #222222;
+  --text-secondary: #555555;
+  --bg-color: #1e1e1e;
+  --bg-light: #2a2a2a;
+  --border-radius: 0.5rem;
+  --box-shadow-light: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --box-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.45);
+  --transition-speed: 0.25s;
+  --font-family: 'Inter', sans-serif;
+}
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Event Alerts</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
+/* Reset & base */
+* {
+  box-sizing: border-box;
+}
 
-<body>
-  <header>
-    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="logo" />
-  </header>
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  <main class="section">
-    <div class="eventutils">
-      <h1>EventUtils</h1>
-      <p>Your essential mod for receiving Minecraft event alerts.</p>
-      <a href="https://modrinth.com/mod/alerts" class="button-accent">Download EventUtils</a>
-      <a href="#changelog" class="button-secondary">View Changelog</a>
+a {
+  text-decoration: none;
+}
 
-      <div class="features-cards">
-        <div class="feature-card">
-          <h3>Real-Time Alerts</h3>
-          <p>Get instant notifications for Minecraft events as they happen.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Discord Integration</h3>
-          <p>Connect EventUtils with your Discord server via webhook for automatic announcements.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Customizable Alerts</h3>
-          <p>Set your preferences to receive only the alerts that matter most to you.</p>
-        </div>
-      </div>
-    </div>
+/* Header */
+header {
+  padding: 1rem 0;
+  text-align: center;
+  width: 100%;
+  background: var(--bg-light);
+  box-shadow: var(--box-shadow-light);
+  margin-bottom: 1.5rem;
+}
 
-    <div class="flex-container">
-      <div class="main-content">
-        <!-- Future content or blog posts can go here -->
-      </div>
+.logo {
+  height: 60px;
+  animation: pulse 3s ease-in-out infinite;
+  cursor: pointer;
+}
 
-      <aside class="sidebar" id="changelog">
-        <h2>Changelog</h2>
-        <ul>
-          <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
-          <li><strong>v1.1.0</strong> – Improved performance</li>
-          <li><strong>v1.0.0</strong> – Initial release</li>
-        </ul>
-      </aside>
-    </div>
-  </main>
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
 
-  <!-- Chatbot popup -->
-  <div id="chatbot-container">
-    <button id="chatbot-toggle" aria-label="Open chat">💬</button>
-    <div id="chatbot" hidden>
-      <div id="chatbot-header">
-        <h3>Event Alerts Bot</h3>
-        <button id="chatbot-close" aria-label="Close chat">✕</button>
-      </div>
-      <div id="chatbot-messages"></div>
-      <form id="chatbot-form">
-        <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  </div>
+/* Main section */
+.section {
+  width: 90%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-  <script src="js/chatbot.js"></script>
-</body>
+/* EventUtils container */
+.eventutils {
+  background: var(--bg-light);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  text-align: center;
+}
 
-</html>
+.eventutils h1 {
+  color: var(--orange-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.eventutils p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+}
+
+/* Buttons */
+.button-accent,
+.button-primary {
+  background-color: var(--orange-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(249, 115, 22, 0.5);
+  transition: background-color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed);
+  display: inline-block;
+  margin: 0.25rem 0.5rem;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+}
+
+.button-accent:hover,
+.button-primary:hover {
+  background-color: var(--orange-dark);
+  box-shadow: 0 6px 8px rgba(234, 88, 12, 0.6);
+  transform: translateY(-2px);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--orange-primary);
+  border: 2px solid var(--orange-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+  margin: 0.25rem 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+}
+
+.button-secondary:hover {
+  background-color: var(--orange-primary);
+  color: white;
+}
+
+/* Features cards */
+.features-cards {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.feature-card {
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  padding: 1.5rem 1.75rem;
+  transition: box-shadow var(--transition-speed), transform var(--transition-speed);
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: white;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.feature-card h3 {
+  color: var(--orange-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  color: #d6d6d6;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.feature-card:hover {
+  box-shadow: var(--box-shadow-hover);
+  transform: translateY(-4px);
+}
+
+/* Flex container for main content and sidebar */
+.flex-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+/* Main content placeholder */
+.main-content {
+  flex: 1;
+  min-height: 300px;
+  /* For future blog or features */
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  background: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow-light);
+  color: white;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.sidebar h2 {
+  color: var(--orange-primary);
+  margin-top: 0;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--orange-primary);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+  font-size: 0.95rem;
+  color: #ddd;
+}
+
+.sidebar ul li strong {
+  color: var(--orange-primary);
+}
+
+/* Chatbot styling (keep your existing styles or adapt) */
+#chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-family: var(--font-family);
+  z-index: 999;
+}
+
+#chatbot-toggle {
+  background-color: var(--orange-primary);
+  border: none;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: var(--box-shadow-light);
+  transition: background-color var(--transition-speed);
+}
+
+#chatbot-toggle:hover {
+  background-color: var(--orange-dark);
+}
+
+#chatbot {
+  background: var(--bg-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-hover);
+  width: 320px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  color: white;
+}
+
+#chatbot-header {
+  background-color: var(--orange-primary);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#chatbot-header h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+#chatbot-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#chatbot-messages {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  background: var(--bg-color);
+}
+
+#chatbot-form {
+  display: flex;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid rgba(249, 115, 22, 0.3);
+  background: var(--bg-light);
+}
+
+#chatbot-input {
+  flex-grow: 1;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--orange-primary);
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  color: white;
+  background-color: #121212;
+}
+
+#chatbot-input::placeholder {
+  color: #aaa;
+}
+
+#chatbot-form button {
+  background-color: var(--orange-primary);
+  border: none;
+  color: white;
+  padding: 0 1rem;
+  margin-left: 0.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+#chatbot-form button:hover {
+  background-color: var(--orange-dark);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .flex-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: none;
+  }
+}
