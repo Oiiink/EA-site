@@ -1,376 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    /* Reset */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0; padding: 0;
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background: #0d0f14;
-      color: #e6e6e6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow: hidden;
-    }
-    a {
-      color: #ff7a00;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    a:hover {
-      color: #ff9b3d;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Alerts</title>
 
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #14171f;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #ff7a00cc;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #ff7a00;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
 
-    /* Header */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 64px;
-      background: linear-gradient(90deg, #1f2127 0%, #12141a 100%);
-      border-bottom: 1px solid #2c2f37;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 36px;
-      z-index: 1000;
-      user-select: none;
-      box-shadow: 0 3px 10px #0008;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-weight: 700;
-      font-size: 1.7rem;
-      color: #ff7a00;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      user-select: none;
-    }
-    .logo img {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      box-shadow: 0 0 20px #ff7a00bb;
-    }
-    .download-btn {
-      background: linear-gradient(135deg, #ff7a00, #ff9b3d);
-      color: white;
-      padding: 12px 28px;
-      font-weight: 600;
-      border-radius: 30px;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      box-shadow: 0 6px 15px #ff7a0033;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-    }
-    .download-btn:hover {
-      background: linear-gradient(135deg, #ff9b3d, #ff7a00);
-      box-shadow: 0 8px 20px #ff7a0055;
-    }
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #101217 0%, #181c24 100%);
+    color: #d8d8d8;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+  a {
+    color: #ff6a00;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  a:hover {
+    color: #ffa243;
+  }
 
-    /* Main layout */
-    #app {
-      display: flex;
-      height: 100vh;
-      padding-top: 64px;
-      overflow: hidden;
-    }
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1a1c22;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ff6a00cc;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ff6a00;
+  }
 
-    /* Main content */
+  /* Header */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: #1a1c22;
+    border-bottom: 1px solid #2a2c33;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 1000;
+    user-select: none;
+    box-shadow: 0 3px 12px #0008;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #ff6a00;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .logo img {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    box-shadow: 0 0 14px #ff6a00cc;
+  }
+  .download-btn {
+    background: linear-gradient(135deg, #ff6a00, #ff9533);
+    color: white;
+    padding: 10px 28px;
+    font-weight: 600;
+    border-radius: 28px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 6px 16px #ff6a0055;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+  .download-btn:hover {
+    background: linear-gradient(135deg, #ff9533, #ff6a00);
+    box-shadow: 0 8px 22px #ff6a0077;
+  }
+
+  /* Layout */
+  #app {
+    display: flex;
+    height: 100vh;
+    padding-top: 56px;
+    overflow: hidden;
+  }
+
+  /* Main content */
+  main.content {
+    flex-grow: 1;
+    padding: 56px 64px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    max-width: 1000px;
+    margin-left: 64px;
+    margin-right: 64px;
+    user-select: text;
+  }
+  main.content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #ff6a00;
+    letter-spacing: 0.12em;
+    margin: 0 0 12px 0;
+    text-shadow: 0 0 20px #ff6a0040;
+  }
+  main.content p.subtitle {
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: #bfbfbf;
+    max-width: 720px;
+    line-height: 1.6;
+  }
+
+  /* Features list */
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px 40px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .features-list li {
+    background: rgba(30, 33, 40, 0.85);
+    padding: 18px 24px;
+    border-radius: 18px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 0 22px #ff6a0024;
+    transition: background-color 0.3s ease;
+  }
+  .features-list li::before {
+    content: '✔';
+    color: #ff6a00;
+    font-weight: 900;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    text-shadow: 0 0 14px #ff6a0040;
+  }
+  .features-list li:hover {
+    background: rgba(44, 47, 57, 0.95);
+    box-shadow: 0 0 30px #ff6a0044;
+  }
+
+  /* Client logos */
+  .clients-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 42px;
+    max-width: 720px;
+    align-items: center;
+    user-select: none;
+  }
+  .clients-row img {
+    height: 70px;
+    width: auto;
+    border-radius: 14px;
+    filter: drop-shadow(0 0 12px #ff6a0044);
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  .clients-row img:hover {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 26px #ff6a0099);
+  }
+
+  /* Sidebar */
+  aside.sidebar {
+    width: 360px;
+    background: rgba(26, 28, 34, 0.9);
+    border-left: 3px solid #ff6a00;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: inset 3px 0 18px #ff6a0044;
+    padding: 36px 28px;
+    scroll-behavior: smooth;
+    user-select: none;
+  }
+  aside.sidebar h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #ff6a00;
+    border-bottom: 3px solid #ff6a00;
+    padding-bottom: 12px;
+    margin: 0 0 30px 0;
+    letter-spacing: 0.07em;
+  }
+
+  /* Changelog list */
+  .changelog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .changelog-entry {
+    background: rgba(40, 43, 54, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 0 30px #ff6a0055;
+    padding: 24px 32px;
+    transition: background-color 0.3s ease;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .changelog-entry:hover {
+    background: rgba(60, 63, 80, 0.95);
+    box-shadow: 0 0 38px #ff6a0080;
+  }
+  .changelog-entry img {
+    border-radius: 16px;
+    max-height: 140px;
+    object-fit: cover;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 0 0 22px #ff6a0044;
+  }
+  .changelog-entry p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #e0e0e0;
+    line-height: 1.5;
+  }
+  .changelog-entry .date {
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #ff6a00cc;
+    letter-spacing: 0.04em;
+    font-style: italic;
+    user-select: text;
+  }
+  .changelog-entry button {
+    background: linear-gradient(135deg, #ff6a00cc, #ff953300);
+    border: none;
+    padding: 10px 26px;
+    font-weight: 600;
+    color: #ff6a00;
+    border-radius: 24px;
+    align-self: flex-start;
+    cursor: pointer;
+    box-shadow: 0 3px 14px #ff6a0055;
+    transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    user-select: none;
+  }
+  .changelog-entry button:hover {
+    background: linear-gradient(135deg, #ff9533, #ff6a00cc);
+    box-shadow: 0 6px 22px #ff6a00cc;
+    color: #fff;
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
     main.content {
-      flex-grow: 1;
-      background: linear-gradient(135deg, #12141a 0%, #1e212a 100%);
-      padding: 64px 72px 64px 72px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      gap: 32px;
-      user-select: none;
-    }
-    main.content h1 {
-      font-size: 3.8rem;
-      font-weight: 800;
-      color: #ff7a00;
-      letter-spacing: 0.15em;
-      margin: 0 0 8px 0;
-      text-shadow: 0 0 20px #ff7a0080;
-      user-select: text;
-    }
-    main.content p.subtitle {
-      font-weight: 500;
-      font-size: 1.25rem;
-      color: #c0c0c0;
+      margin-left: 48px;
+      margin-right: 48px;
+      padding: 48px 48px 48px 48px;
       max-width: 720px;
-      line-height: 1.5;
-      user-select: text;
     }
-
-    /* Features list */
-    .features-list {
-      list-style: none;
-      padding-left: 0;
-      max-width: 720px;
-      margin: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px 36px;
-    }
-    .features-list li {
-      background: #1a1c21;
-      padding: 16px 20px;
-      border-radius: 16px;
-      font-weight: 600;
-      font-size: 1.15rem;
-      color: #eee;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 14px #ff7a0017;
-      transition: background-color 0.3s ease;
-      user-select: text;
-    }
-    .features-list li::before {
-      content: '✔';
-      color: #ff7a00;
-      font-weight: 900;
-      font-size: 1.35rem;
-      flex-shrink: 0;
-      text-shadow: 0 0 10px #ff7a0040;
-      user-select: none;
-    }
-    .features-list li:hover {
-      background: #292c33;
-      box-shadow: 0 4px 20px #ff7a0050;
-    }
-
-    /* Client logos */
-    .clients-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      max-width: 720px;
-      align-items: center;
-      user-select: none;
-    }
-    .clients-row img {
-      height: 70px;
-      width: auto;
-      border-radius: 14px;
-      filter: drop-shadow(0 0 12px #ff7a0044);
-      transition: transform 0.3s ease, filter 0.3s ease;
-      cursor: default;
-    }
-    .clients-row img:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 24px #ff7a00cc);
-    }
-
-    /* Sidebar */
     aside.sidebar {
-      width: 360px;
-      background: linear-gradient(135deg, #191c23 0%, #12141a 100%);
-      border-left: 3px solid #ff7a00;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      box-shadow: inset 2px 0 15px #ff7a0040;
-      user-select: none;
-      padding: 32px 24px;
-      scroll-behavior: smooth;
+      width: 280px;
+      padding: 28px 20px;
     }
-    aside.sidebar h2 {
-      font-weight: 700;
-      font-size: 2rem;
-      color: #ff7a00;
-      border-bottom: 3px solid #ff7a00;
-      padding-bottom: 10px;
-      margin: 0 0 24px 0;
-      letter-spacing: 0.07em;
-      user-select: text;
-    }
+  }
 
-    /* Changelog list */
+  @media (max-width: 900px) {
+    #app {
+      flex-direction: column-reverse;
+      padding-bottom: 48px;
+      overflow: visible;
+    }
+    main.content {
+      margin: 0 auto;
+      max-width: 100%;
+      padding: 48px 32px 32px 32px;
+      overflow: visible;
+    }
+    aside.sidebar {
+      width: 100%;
+      height: 320px;
+      border-left: none;
+      border-top: 3px solid #ff6a00;
+      box-shadow: none;
+      padding: 20px 24px;
+      overflow-x: auto;
+      flex-direction: row;
+      gap: 12px;
+      scroll-snap-type: x mandatory;
+      overflow-y: hidden;
+      border-radius: 0;
+    }
     .changelog-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      flex-direction: row;
+      gap: 18px;
+      overflow-x: auto;
     }
     .changelog-entry {
-      background: #222531;
-      border-radius: 18px;
-      box-shadow: 0 0 20px #ff7a0055;
-      padding: 20px 28px;
-      transition: background-color 0.3s ease;
-      cursor: default;
-      user-select: text;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      min-width: 320px;
+      max-width: 320px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      padding: 18px 20px;
+      gap: 12px;
     }
-    .changelog-entry:hover {
-      background: #2c303b;
-      box-shadow: 0 0 28px #ff7a0080;
-    }
-    .changelog-entry img {
-      border-radius: 12px;
-      max-height: 140px;
-      object-fit: cover;
-      user-select: none;
-      pointer-events: none;
-      box-shadow: 0 0 18px #ff7a0044;
-    }
-    .changelog-entry p {
-      margin: 0;
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: #ddd;
-      line-height: 1.4;
-    }
-    .changelog-entry .date {
-      font-size: 0.9rem;
-      font-style: italic;
-      color: #aaa;
-      text-align: right;
-      user-select: none;
-    }
-    .changelog-entry button {
-      align-self: center;
-      background: linear-gradient(135deg, #ff7a00, #ff9b3d);
-      border: none;
-      border-radius: 30px;
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 10px 30px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      user-select: none;
-      box-shadow: 0 5px 14px #ff7a0044;
-      margin-top: 12px;
-    }
-    .changelog-entry button:hover {
-      background: linear-gradient(135deg, #ff9b3d, #ff7a00);
-      box-shadow: 0 8px 20px #ff7a0077;
-    }
-
-    /* Responsive */
-    @media (max-width: 1080px) {
-      aside.sidebar {
-        width: 280px;
-        padding: 24px 18px;
-      }
-      main.content {
-        padding: 48px 36px 48px 36px;
-      }
-      .clients-row {
-        gap: 28px;
-      }
-      .features-list {
-        grid-template-columns: 1fr;
-      }
-    }
-    @media (max-width: 768px) {
-      #app {
-        flex-direction: column;
-      }
-      aside.sidebar {
-        width: 100%;
-        border-left: none;
-        border-top: 3px solid #ff7a00;
-        max-height: 320px;
-        padding: 24px 18px;
-        order: 2;
-      }
-      main.content {
-        padding: 48px 24px 32px 24px;
-        order: 1;
-        max-height: calc(100vh - 64px - 320px);
-        overflow-y: auto;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
+
 <body>
-  <header>
-    <div class="logo" aria-label="Event Alerts Logo">
-      <img src="https://cdn.discordapp.com/attachments/1058030920240950956/8517afc664df6deccac46de611a2dcbf.png" alt="Event Alerts Logo" />
-      Event Alerts
-    </div>
-    <a href="https://impactclient.net/" target="_blank" rel="noopener" class="download-btn" aria-label="Download Impact Client">Download Impact</a>
-  </header>
-
-  <div id="app" role="main">
-    <main class="content" tabindex="0" aria-label="Event Utilities">
-      <h1>EventUtils</h1>
-      <p class="subtitle">Powerful Minecraft event alert utilities for mod clients and vanilla.</p>
-
-      <ul class="features-list" aria-label="Key Features">
-        <li>Robust event detection for popular clients</li>
-        <li>Accurate client identification & support</li>
-        <li>Lightweight and efficient codebase</li>
-        <li>Easy integration with existing mods and clients</li>
-      </ul>
-
-      <div class="clients-row" aria-label="Supported Minecraft Clients">
-        <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client logo" title="Lunar Client" />
-        <img src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client logo" title="Feather Client" />
-        <img src="https://multimc.org/images/infinity32.png" alt="MultiMC logo" title="MultiMC" />
-        <img src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft logo" title="Vanilla Minecraft" />
-      </div>
-    </main>
-
-    <aside class="sidebar" aria-label="Changelog">
-      <h2>Changelog</h2>
-      <section class="changelog-list" role="list">
-        <article class="changelog-entry" role="listitem" tabindex="0">
-          <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629319676228872/Screen_Shot_2023-09-08_at_6.43.49_PM.png" alt="Updated UI screenshot" loading="lazy" />
-          <p>Revamped user interface for improved clarity and responsiveness.</p>
-          <div class="date">Implemented: 2023-09-08</div>
-          <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about UI revamp">More Info</button>
-        </article>
-
-        <article class="changelog-entry" role="listitem" tabindex="0">
-          <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629361876729671/Screen_Shot_2023-09-08_at_6.45.22_PM.png" alt="Client detection feature" loading="lazy" />
-          <p>Added Minecraft client detection for Lunar, Feather, Vanilla, and MultiMC.</p>
-          <div class="date">Implemented: 2023-09-08</div>
-          <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about client detection feature">More Info</button>
-        </article>
-
-        <article class="changelog-entry" role="listitem" tabindex="0">
-          <p>Minor bug fixes and performance optimizations.</p>
-          <div class="date">Implemented: 2023-09-07</div>
-          <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about bug fixes">More Info</button>
-        </article>
-      </section>
-    </aside>
+<header>
+  <div class="logo" aria-label="Event Alerts Logo">
+    <img src="https://cdn.discordapp.com/attachments/1058030920240950956/8517afc664df6deccac46de611a2dcbf.png" alt="Event Alerts Logo" />
+    EVENT ALERTS
   </div>
+  <a href="https://impactclient.net/" target="_blank" rel="noopener" class="download-btn" aria-label="Download Impact Client">Download Impact</a>
+</header>
+
+<div id="app" role="main">
+  <main class="content" tabindex="0" aria-label="Event Utilities">
+    <h1>EventUtils</h1>
+    <p class="subtitle">Powerful Minecraft event alert utilities for mod clients and vanilla.</p>
+
+    <ul class="features-list" aria-label="Key Features">
+      <li>Robust event detection for popular clients</li>
+      <li>Accurate client identification & support</li>
+      <li>Lightweight and efficient codebase</li>
+      <li>Easy integration with existing mods and clients</li>
+    </ul>
+
+    <div class="clients-row" aria-label="Supported Minecraft Clients">
+      <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client logo" title="Lunar Client" />
+      <img src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client logo" title="Feather Client" />
+      <img src="https://multimc.org/images/infinity32.png" alt="MultiMC logo" title="MultiMC" />
+      <img src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft logo" title="Vanilla Minecraft" />
+    </div>
+  </main>
+
+  <aside class="sidebar" aria-label="Changelog">
+    <h2>Changelog</h2>
+    <section class="changelog-list" role="list">
+      <article class="changelog-entry" role="listitem" tabindex="0">
+        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629319676228872/Screen_Shot_2023-09-08_at_6.43.49_PM.png" alt="Updated UI screenshot" loading="lazy" />
+        <p>Revamped user interface for improved clarity and responsiveness.</p>
+        <div class="date">Implemented: 2023-09-08</div>
+        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about UI revamp">More Info</button>
+      </article>
+
+      <article class="changelog-entry" role="listitem" tabindex="0">
+        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629361876729671/Screen_Shot_2023-09-08_at_6.45.22_PM.png" alt="Client detection feature" loading="lazy" />
+        <p>Added Minecraft client detection for Lunar, Feather, Vanilla, and MultiMC.</p>
+        <div class="date">Implemented: 2023-09-08</div>
+        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about client detection feature">More Info</button>
+      </article>
+
+      <article class="changelog-entry" role="listitem" tabindex="0">
+        <p>Minor bug fixes and performance optimizations.</p>
+        <div class="date">Implemented: 2023-09-07</div>
+        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about bug fixes">More Info</button>
+      </article>
+    </section>
+  </aside>
+</div>
 </body>
 </html>
