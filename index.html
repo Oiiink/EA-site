@@ -38,30 +38,37 @@
       padding: 0 1.5rem;
     }
 
-    /* Header */
+    /* Header with centered logo */
     header {
-      padding: 1.5rem 0;
+      padding: 2rem 0 1.5rem;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       border-bottom: 1px solid #222;
       user-select: none;
+      position: relative;
     }
-    .logo {
-      font-weight: 700;
-      font-size: 1.6rem;
-      color: #ff6f3c;
-      letter-spacing: 1px;
+
+    /* Logo Image and animation */
+    .logo-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      animation: float 3s ease-in-out infinite;
+      box-shadow: 0 0 12px rgba(255, 111, 60, 0.7);
+      border: 2px solid #ff6f3c;
     }
-    nav a {
-      margin-left: 2rem;
-      font-weight: 500;
-      font-size: 1rem;
-      color: #bbb;
-      transition: color 0.3s ease;
-    }
-    nav a:hover {
-      color: #ff6f3c;
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+        filter: drop-shadow(0 0 6px rgba(255, 111, 60, 0.5));
+      }
+      50% {
+        transform: translateY(-8px);
+        filter: drop-shadow(0 0 12px rgba(255, 111, 60, 0.8));
+      }
     }
 
     /* Hero Section */
@@ -152,6 +159,46 @@
       user-select: none;
     }
 
+    /* EventUtils Section */
+    section.eventutils {
+      background-color: #1a1a1a;
+      padding: 4rem 1.5rem 6rem;
+      text-align: center;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
+      user-select: none;
+    }
+    .eventutils h2 {
+      font-weight: 700;
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      color: #ff6f3c;
+    }
+    .eventutils p {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      font-size: 1.15rem;
+      color: #ccc;
+    }
+    .btn-download {
+      background-color: #ff6f3c;
+      color: #121212;
+      font-weight: 700;
+      padding: 1rem 3rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+      box-shadow: none;
+      user-select: none;
+    }
+    .btn-download:hover {
+      background-color: #e05e2c;
+    }
+
     /* Footer */
     footer {
       border-top: 1px solid #222;
@@ -179,70 +226,94 @@
       .hero p {
         font-size: 1rem;
       }
-      nav a {
-        margin-left: 1rem;
-        font-size: 0.95rem;
+      section.eventutils h2 {
+        font-size: 2rem;
+      }
+      section.eventutils p {
+        font-size: 1rem;
+      }
+      .btn-download {
+        padding: 0.9rem 2.5rem;
+        font-size: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <header class="container">
-    <div class="logo" aria-label="Event Alerts Logo">Event Alerts</div>
-    <nav role="navigation" aria-label="Primary Navigation">
-      <a href="#">Home</a>
-      <a href="#">Features</a>
-      <a href="#">Download</a>
-      <a href="#">Support</a>
-    </nav>
+  <header>
+    <img
+      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+      alt="Event Alerts Logo"
+      class="logo-img"
+      width="80"
+      height="80"
+      loading="lazy"
+    />
   </header>
 
-  <section class="hero container" role="banner">
-    <h1>Stay Ahead with Instant Event Alerts</h1>
-    <p>Never miss a beat! Get real-time notifications for Minecraft events and updates, right when they happen.</p>
-    <button class="btn-primary" type="button">Get Started</button>
-  </section>
+  <main class="container" role="main">
+    <section class="hero" role="banner">
+      <h1>Stay Ahead with Instant Event Alerts</h1>
+      <p>Never miss a beat! Get real-time notifications for Minecraft events and updates, right when they happen.</p>
+      <button class="btn-primary" type="button">Get Started</button>
+    </section>
 
-  <section class="features container" aria-labelledby="features-title">
-    <h2 id="features-title">Why Choose Event Alerts?</h2>
-    <div class="features-grid">
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🔔</div>
-        <h3 class="feature-title">Instant Notifications</h3>
-        <p class="feature-desc">Receive alerts the moment important Minecraft events occur, so you're always in the loop.</p>
-      </article>
+    <section class="features" aria-labelledby="features-title">
+      <h2 id="features-title">Why Choose Event Alerts?</h2>
+      <div class="features-grid">
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">🔔</div>
+          <h3 class="feature-title">Instant Notifications</h3>
+          <p class="feature-desc">Receive alerts the moment important Minecraft events occur, so you're always in the loop.</p>
+        </article>
 
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">⚙️</div>
-        <h3 class="feature-title">Customizable Settings</h3>
-        <p class="feature-desc">Tailor your notifications to your favorite servers, event types, and frequency.</p>
-      </article>
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">⚙️</div>
+          <h3 class="feature-title">Customizable Settings</h3>
+          <p class="feature-desc">Tailor your notifications to your favorite servers, event types, and frequency.</p>
+        </article>
 
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">📊</div>
-        <h3 class="feature-title">Detailed Analytics</h3>
-        <p class="feature-desc">Access in-depth stats and histories to track event trends and your alert activity.</p>
-      </article>
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">📊</div>
+          <h3 class="feature-title">Detailed Analytics</h3>
+          <p class="feature-desc">Access in-depth stats and histories to track event trends and your alert activity.</p>
+        </article>
 
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🌐</div>
-        <h3 class="feature-title">Cross-Platform Support</h3>
-        <p class="feature-desc">Get alerts on desktop, mobile, or directly in-game, seamlessly synced.</p>
-      </article>
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">🌐</div>
+          <h3 class="feature-title">Cross-Platform Support</h3>
+          <p class="feature-desc">Get alerts on desktop, mobile, or directly in-game, seamlessly synced.</p>
+        </article>
 
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">🔒</div>
-        <h3 class="feature-title">Privacy First</h3>
-        <p class="feature-desc">Your data stays safe with end-to-end encryption and strict privacy policies.</p>
-      </article>
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">🔒</div>
+          <h3 class="feature-title">Privacy First</h3>
+          <p class="feature-desc">Your data stays safe with end-to-end encryption and strict privacy policies.</p>
+        </article>
 
-      <article class="feature-card" tabindex="0">
-        <div class="feature-icon" aria-hidden="true">⚡</div>
-        <h3 class="feature-title">Lightweight & Fast</h3>
-        <p class="feature-desc">Minimal impact on system resources for smooth gameplay alongside alerts.</p>
-      </article>
-    </div>
-  </section>
+        <article class="feature-card" tabindex="0">
+          <div class="feature-icon" aria-hidden="true">⚡</div>
+          <h3 class="feature-title">Lightweight & Fast</h3>
+          <p class="feature-desc">Minimal impact on system resources for smooth gameplay alongside alerts.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="eventutils" aria-labelledby="eventutils-title">
+      <h2 id="eventutils-title">EventUtils</h2>
+      <p>The official Minecraft mod for Event Alerts, providing seamless integration and enhanced notifications.</p>
+      <a
+        href="https://modrinth.com/mod/alerts"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-download"
+        role="button"
+        aria-label="Download EventUtils mod from Modrinth"
+      >
+        Download EventUtils
+      </a>
+    </section>
+  </main>
 
   <footer>
     <p>© 2025 Event Alerts. All rights reserved.</p>
