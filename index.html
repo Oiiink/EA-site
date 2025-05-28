@@ -1,109 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <!-- Google Fonts already imported in CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
 </head>
-
 <body>
-  <!-- Navigation -->
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="#" class="nav-logo">EventAlerts</a>
+      <a href="#" class="nav-logo">Event Alerts</a>
       <ul class="nav-menu">
         <li><a href="#features">Features</a></li>
-        <li><a href="#download">Download</a></li>
         <li><a href="#changelog">Changelog</a></li>
+        <li><a href="#download">Download</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <header class="hero">
-    <div class="hero-content container">
-      <h1>Stay Ahead with Event Alerts</h1>
-      <p>Enhance your Minecraft experience with real-time event notifications and seamless mod integration.</p>
-      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">Download Now</a>
-    </div>
-  </header>
-
-  <!-- Main Container -->
-  <div class="container main-content">
-    <!-- Features Grid -->
-    <section id="features" class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Fast & Reliable</h3>
-        <p>Receive instant event alerts without lag, optimized for performance.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛠️</div>
-        <h3>Easy Integration</h3>
-        <p>Simple setup with Modrinth and Minecraft clients, zero hassle.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Secure & Private</h3>
-        <p>Your data stays private. We do not collect unnecessary info.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌐</div>
-        <h3>Cross-Platform</h3>
-        <p>Works on Windows, Mac, and Linux with seamless updates.</p>
-      </div>
-    </section>
-
-    <!-- Sidebar with changelog -->
-    <aside id="changelog" class="sidebar">
-      <h2>Changelog</h2>
-      <div class="changelog-card">
-        <h3>v1.0.0</h3>
-        <p>Initial release of EventUtils</p>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-      <div class="changelog-card">
-        <h3>v1.1.0</h3>
-        <p>Added multi-language support and bug fixes</p>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-    </aside>
-  </div>
-
-  <!-- Download Section -->
-  <section id="download" class="download-section">
-    <div class="container feature-card">
-      <h2>Get EventUtils Now</h2>
-      <p>Download the latest version from Modrinth and stay updated with new features.</p>
-      <a class="download-button" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Stay Notified. Stay Ahead.</h1>
+      <p>Get real-time alerts for your favorite Minecraft servers and events.</p>
+      <a href="#download" class="btn-primary">Download Now</a>
     </div>
   </section>
 
+  <!-- Main Content -->
+  <main class="container main-content">
+    <!-- Features Grid -->
+    <section id="features" class="features-grid">
+      <div class="feature-card">
+        <i class="feature-icon fa-solid fa-bell"></i>
+        <h3>Real-Time Notifications</h3>
+        <p>Instant alerts about in-game events, updates, and more.</p>
+      </div>
+      <div class="feature-card">
+        <i class="feature-icon fa-solid fa-cogs"></i>
+        <h3>Customizable Alerts</h3>
+        <p>Choose what events you want to be notified about with granular controls.</p>
+      </div>
+      <div class="feature-card">
+        <i class="feature-icon fa-solid fa-users"></i>
+        <h3>Community Support</h3>
+        <p>Join the community, get help, and share your experiences.</p>
+      </div>
+      <div class="feature-card">
+        <i class="feature-icon fa-solid fa-download"></i>
+        <h3>Easy to Install</h3>
+        <p>Quick setup to get you started in minutes.</p>
+      </div>
+    </section>
+
+    <!-- Sidebar Changelog -->
+    <aside id="changelog" class="sidebar">
+      <h2>Latest Changelog</h2>
+
+      <article class="changelog-card">
+        <h3>v1.2.0 - May 2025</h3>
+        <p>Added support for multiple servers and fixed notification delays.</p>
+      </article>
+
+      <article class="changelog-card">
+        <h3>v1.1.0 - Apr 2025</h3>
+        <p>Introduced customizable alert settings and user profiles.</p>
+      </article>
+
+      <article class="changelog-card">
+        <h3>v1.0.0 - Mar 2025</h3>
+        <p>Initial release with core notification features.</p>
+      </article>
+
+      <button class="view-full">View Full Changelog</button>
+    </aside>
+  </main>
+
+  <!-- Download Section -->
+  <section id="download" class="download-section">
+    <h2>Download Event Alerts</h2>
+    <p>Available for Windows, Mac, and Linux. Get the latest version below.</p>
+    <a href="#" class="download-button">Download Now</a>
+  </section>
+
   <!-- Modrinth Banner -->
-  <div class="modrinth-banner">
+  <section class="modrinth-banner">
     <div class="modrinth-content container">
-      <span>Download <strong>EventUtils</strong> for Minecraft</span>
-      <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">
-        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968672.png" alt="Modrinth Logo" />
-        <span>Get it on Modrinth</span>
+      <span>Also available on Modrinth!</span>
+      <a href="https://modrinth.com/" target="_blank" class="modrinth-button">
+        <img src="https://cdn.jsdelivr.net/gh/modrinth/modrinth-www@master/static/modrinth-mark.svg" alt="Modrinth Logo" />
+        Visit Modrinth
       </a>
     </div>
-  </div>
+  </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container footer-content">
-      <p>© 2025 Event Alerts. All rights reserved.</p>
+    <div class="footer-content container">
+      <span>© 2025 Event Alerts. All rights reserved.</span>
       <div class="social-links">
-        <a href="#" aria-label="Twitter">🐦</a>
-        <a href="#" aria-label="Discord">💬</a>
-        <a href="#" aria-label="GitHub">🐙</a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
       </div>
     </div>
   </footer>
 </body>
-
 </html>
