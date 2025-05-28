@@ -1,93 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event Alerts</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <header>
-    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="logo" />
+    <div class="header-bar">
+      <span>Download <strong>EventUtils</strong> for Minecraft</span>
+      <a href="#" class="modrinth-btn">Get it on Modrinth</a>
+    </div>
   </header>
 
-  <main class="section">
-    <div class="eventutils">
-      <h1>EventUtils</h1>
-      <p>Your essential mod for receiving Minecraft event alerts.</p>
-      <a href="https://modrinth.com/mod/alerts" class="button-accent">Download EventUtils</a>
-      <a href="#changelog" class="button-secondary">View Changelog</a>
+  <aside class="sidebar">
+    <h1>Event Alerts</h1>
+    <nav>
+      <a href="#changelog">Changelog</a>
+      <a href="#eventutils">EventUtils</a>
+    </nav>
+  </aside>
 
-      <!-- Feature Cards -->
-      <div class="feature-cards">
-        <div class="feature-card">
-          <h3>Real-Time Alerts</h3>
-          <p>Stay updated instantly with alerts from all major Minecraft events.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Discord Integration</h3>
-          <p>Connect your Discord to receive seamless notifications and webhook alerts.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Customizable Filters</h3>
-          <p>Choose which events matter most with fine-grained alert settings.</p>
-        </div>
-        <div class="feature-card">
-          <h3>Lightweight & Efficient</h3>
-          <p>Minimal performance impact to keep your gameplay smooth and uninterrupted.</p>
-        </div>
+  <main>
+    <section class="card" id="eventutils">
+      <h2>EventUtils</h2>
+      <p>Cross-platform utility mod for Minecraft events.</p>
+      <div class="compatibility">
+        <span class="tag success">Fabric</span>
+        <span class="tag success">Forge</span>
+        <span class="tag success">Quilt</span>
+        <span class="tag success">Sodium</span>
+        <span class="tag success">Optifine</span>
       </div>
-    </div>
+      <a class="download-btn" href="#">Download EventUtils</a>
+    </section>
 
-    <div class="flex-container">
-      <div class="main-content">
-        <!-- Future content or blog posts can go here -->
+    <section class="card" id="changelog">
+      <h2>Changelog</h2>
+      <div class="changelog-entry">
+        <h3>v1.2.0 - May 28, 2025</h3>
+        <ul>
+          <li>✅ Added cross-platform mod loader support</li>
+          <li>🧪 New test integration with event systems</li>
+          <li>🐛 Minor UI and performance bugfixes</li>
+        </ul>
+        <button class="view-btn">View Full Changelog</button>
       </div>
-
-      <!-- Sidebar Changelog -->
-      <aside class="sidebar" id="changelog">
-        <h2>Changelog</h2>
-        <div class="changelog-cards">
-          <div class="changelog-card">
-            <h4>v1.2.0</h4>
-            <p>Added new Discord webhook integration</p>
-            <span class="date">2025-05-25</span>
-          </div>
-          <div class="changelog-card">
-            <h4>v1.1.0</h4>
-            <p>Improved performance and reduced memory usage</p>
-            <span class="date">2025-04-15</span>
-          </div>
-          <div class="changelog-card">
-            <h4>v1.0.0</h4>
-            <p>Initial release with core event alerts functionality</p>
-            <span class="date">2025-03-10</span>
-          </div>
-        </div>
-      </aside>
-    </div>
+    </section>
   </main>
-
-  <!-- Chatbot popup -->
-  <div id="chatbot-container">
-    <button id="chatbot-toggle" aria-label="Open chat">💬</button>
-    <div id="chatbot" hidden>
-      <div id="chatbot-header">
-        <h3>Event Alerts Bot</h3>
-        <button id="chatbot-close" aria-label="Close chat">✕</button>
-      </div>
-      <div id="chatbot-messages"></div>
-      <form id="chatbot-form">
-        <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  </div>
-
-  <script src="js/chatbot.js"></script>
 </body>
-
 </html>
