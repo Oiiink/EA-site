@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-
 <body>
   <header>
     <img
@@ -17,15 +15,13 @@
     />
   </header>
 
-  <div class="container">
-    <main>
-      <section class="eventutils">
-        <h1>EventUtils</h1>
-        <p>Your essential mod for receiving Minecraft event alerts.</p>
-        <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
-        <a href="#changelog" class="button-secondary">View Changelog</a>
-      </section>
-    </main>
+  <main>
+    <section class="eventutils">
+      <h1>EventUtils</h1>
+      <p>Your essential mod for receiving Minecraft event alerts.</p>
+      <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
+      <a href="#changelog" class="button-secondary">View Changelog</a>
+    </section>
 
     <aside class="changelog" id="changelog">
       <h2>Changelog</h2>
@@ -35,19 +31,19 @@
         <li><strong>v1.0.0</strong> – Initial release</li>
       </ul>
     </aside>
-  </div>
+  </main>
 
   <!-- Chatbot popup -->
-  <div id="chatbot">
-    <button id="chatbot-toggle" title="Chat with AI">💬</button>
-    <div id="chatbot-window" class="hidden">
+  <div id="chatbot-container">
+    <button id="chatbot-toggle" aria-label="Open chat">💬</button>
+    <div id="chatbot" hidden>
       <div id="chatbot-header">
-        <span>Chatbot</span>
-        <button id="chatbot-close" aria-label="Close Chatbot">✖</button>
+        <h3>Event Alerts Bot</h3>
+        <button id="chatbot-close" aria-label="Close chat">✕</button>
       </div>
       <div id="chatbot-messages"></div>
       <form id="chatbot-form">
-        <input type="text" id="chatbot-input" placeholder="Type a message..." autocomplete="off" />
+        <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off" />
         <button type="submit">Send</button>
       </form>
     </div>
@@ -55,5 +51,4 @@
 
   <script src="js/chatbot.js"></script>
 </body>
-
 </html>
