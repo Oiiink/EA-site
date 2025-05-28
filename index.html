@@ -25,48 +25,50 @@
     }
   </style>
 </head>
-<body class="bg-gray-950 text-white font-sans">
+<body class="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800 text-white font-sans">
   <!-- Header -->
-  <header class="bg-gray-900 shadow-md fixed top-0 w-full z-50">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="w-12 h-12 animate-bounce" />
-        <h1 class="text-2xl font-bold text-orange-400 glow-text bg-gray-800 px-2 py-1 rounded">Event Alerts</h1>
+  <header class="bg-gray-900/90 shadow-md backdrop-blur-md fixed top-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <img src="https://media.discordapp.net/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp?format=webp&width=819&height=819" alt="Logo" class="w-14 h-14 hover-glow transition duration-300" />
+        <h1 class="text-2xl font-extrabold text-orange-400 glow-text">Event Alerts</h1>
       </div>
-      <nav class="hidden md:flex space-x-6 text-sm bg-gray-800 px-4 py-2 rounded">
+      <nav class="hidden md:flex items-center gap-6 text-sm">
         <a href="#home" class="hover:text-orange-400">Home</a>
         <a href="#store" class="hover:text-orange-400">Store</a>
         <a href="#appeal" class="hover:text-orange-400">Appeal</a>
         <a href="https://discord.gg/skeppy" target="_blank" class="hover:text-orange-400">Discord</a>
-        <a href="#" class="ml-4 px-3 py-1 rounded bg-orange-500 hover:bg-orange-600">Log In</a>
+        <a href="#" class="ml-4 px-4 py-2 rounded bg-orange-500 hover:bg-orange-600 text-white font-semibold">Log In</a>
       </nav>
     </div>
   </header>
 
-  <!-- Home -->
-  <section id="home" class="pt-32 pb-24 px-4 text-center bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800">
-    <div class="max-w-4xl mx-auto">
-      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo" class="w-36 h-36 mx-auto hover-glow transition duration-300" />
-      <h2 class="text-5xl font-bold text-orange-400 mt-4 glow-text">Welcome to Event Alerts</h2>
-      <p class="mt-4 text-gray-300 text-lg">Track server events, unlock exclusive content, and join the fun!</p>
+  <!-- Hero -->
+  <section id="home" class="pt-40 pb-24 px-6 text-center">
+    <div class="max-w-4xl mx-auto fade-in">
+      <img src="https://media.discordapp.net/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp?format=webp&width=819&height=819" alt="Bee Logo" class="w-44 h-44 mx-auto mb-4 hover:scale-105 transition duration-300 hover-glow" />
+      <h2 class="text-5xl font-extrabold text-orange-400 glow-text">Welcome to Event Alerts</h2>
+      <p class="mt-4 text-gray-300 text-lg">Minecraft server updates, rewards, and events all in one place.</p>
     </div>
   </section>
 
   <!-- Store -->
-  <section id="store" class="py-20 px-6 bg-gray-900">
-    <h2 class="text-3xl font-bold text-center text-orange-400 glow-text">Server Store</h2>
-    <p class="text-center text-gray-400">Support us and receive epic perks!</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
-        <h3 class="text-xl font-bold text-orange-300">VIP Rank</h3>
+  <section id="store" class="py-20 px-6">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold text-orange-400 glow-text">Server Store</h2>
+      <p class="text-gray-400">Support the server and earn exclusive perks!</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+        <h3 class="text-xl font-semibold text-orange-300">VIP Rank</h3>
         <p class="text-gray-400 mt-2">Priority access + monthly gifts.</p>
       </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
-        <h3 class="text-xl font-bold text-orange-300">Event Crates</h3>
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+        <h3 class="text-xl font-semibold text-orange-300">Event Crates</h3>
         <p class="text-gray-400 mt-2">Get rare items from limited crates.</p>
       </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
-        <h3 class="text-xl font-bold text-orange-300">Cosmetics Pack</h3>
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+        <h3 class="text-xl font-semibold text-orange-300">Cosmetics Pack</h3>
         <p class="text-gray-400 mt-2">Trails, pets, and exclusive gear.</p>
       </div>
     </div>
@@ -74,34 +76,36 @@
 
   <!-- Appeal -->
   <section id="appeal" class="py-20 px-6 bg-gray-950">
-    <h2 class="text-3xl font-bold text-orange-400 text-center glow-text">Submit a Ban Appeal</h2>
-    <p class="text-center text-gray-400">Think your ban was unfair? Appeal it here.</p>
-    <div class="text-center mt-10">
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105">Submit Appeal</a>
+    <div class="text-center">
+      <h2 class="text-4xl font-bold text-orange-400 glow-text">Submit a Ban Appeal</h2>
+      <p class="text-gray-400">Think your ban was unfair? Appeal it here.</p>
+      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" class="inline-block mt-8 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105">Submit Appeal</a>
     </div>
   </section>
 
   <!-- Event Feed -->
-  <section id="events" class="py-20 px-6 bg-gray-900">
-    <h2 class="text-3xl font-bold text-center text-orange-400 glow-text">Live Event Feed</h2>
-    <p class="text-center text-gray-400">Stay updated on the latest server happenings</p>
+  <section id="events" class="py-20 px-6">
+    <div class="text-center">
+      <h2 class="text-4xl font-bold text-orange-400 glow-text">Live Event Feed</h2>
+      <p class="text-gray-400">See the latest happenings on the server!</p>
+    </div>
     <div class="max-w-4xl mx-auto mt-10 space-y-6">
-      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
         <h4 class="text-orange-300 font-semibold">🎉 Double XP Weekend</h4>
         <p class="text-gray-300 text-sm">Earn double experience points this weekend only! Starts Friday 6PM EST.</p>
       </div>
-      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
         <h4 class="text-orange-300 font-semibold">🧨 Firework Building Contest</h4>
         <p class="text-gray-300 text-sm">Join the community build contest and win rare crates! Submissions due Sunday.</p>
       </div>
-      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
         <h4 class="text-orange-300 font-semibold">🐝 Bee Hunt Mini-Game</h4>
         <p class="text-gray-300 text-sm">Find the hidden bees across the map and earn sweet rewards!</p>
       </div>
     </div>
   </section>
 
-  <!-- Server Status Placeholder -->
+  <!-- Server Status -->
   <section class="py-10 text-center bg-gray-950 text-gray-300">
     <h3 class="text-xl mb-2">Server IP: <span class="text-white font-bold">play.eventalerts.gg</span></h3>
     <p class="italic text-sm">Real-time server status coming soon...</p>
