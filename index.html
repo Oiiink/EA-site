@@ -3,413 +3,240 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EventUtils - Minecraft Event Alerts</title>
+  <title>Event Alerts</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
     rel="stylesheet"
   />
   <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #0a0a0a;
-      color: #eee;
-      line-height: 1.6;
-      letter-spacing: 0.02em;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      font-family: "Inter", sans-serif;
+      background-color: #0e0e0e;
+      color: white;
     }
 
-    /* Background radial gradients */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at top left, #ff7a00, transparent 50%),
-        radial-gradient(circle at bottom right, #ff4a00, transparent 50%);
-      opacity: 0.07;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* Sticky header with blur & darken on scroll */
     header {
-      position: sticky;
-      top: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 40px;
-      background-color: rgba(26, 26, 26, 0.6);
-      backdrop-filter: saturate(180%) blur(12px);
-      transition: background-color 0.3s ease;
-      z-index: 1000;
-      border-bottom: 1px solid #222;
-    }
-    header.scrolled {
-      background-color: rgba(15, 15, 15, 0.9);
+      padding: 20px 40px;
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #333;
     }
 
-    /* Logo styling */
     .logo {
       display: flex;
       align-items: center;
-      gap: 15px;
-      font-weight: 700;
-      font-size: 1.6rem;
+      gap: 10px;
+      font-size: 1.5em;
+      font-weight: bold;
       color: #ff7a00;
     }
+
     .logo img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      object-fit: cover;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
     }
 
-    /* Navigation links */
-    nav a {
-      color: #eee;
-      margin-left: 30px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: color 0.25s ease;
-      cursor: pointer;
-    }
-    nav a:hover {
-      color: #ff7a00;
-    }
-
-    /* Download button in header */
     .download-btn {
-      background: linear-gradient(135deg, #ff7a00, #ff4a00);
-      padding: 12px 36px;
-      border-radius: 40px;
-      font-weight: 700;
-      text-transform: uppercase;
+      background-color: #ff7a00;
       color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 12px;
       text-decoration: none;
-      box-shadow: 0 8px 15px rgba(255, 122, 0, 0.3);
-      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease,
+        transform 0.3s ease;
+      display: inline-block;
     }
+
     .download-btn:hover {
-      background: linear-gradient(135deg, #ff4a00, #ff7a00);
-      box-shadow: 0 15px 30px rgba(255, 74, 0, 0.5);
+      background-color: #e66e00;
+      box-shadow: 0 8px 20px rgba(230, 110, 0, 0.8);
       transform: translateY(-3px);
     }
 
-    /* Hero Section */
-    .hero {
-      max-width: 720px;
-      margin: 80px auto 60px;
-      text-align: center;
-      padding: 0 20px;
-    }
-    .hero h1 {
-      font-size: 3.8rem;
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      margin-bottom: 20px;
-      line-height: 1.1;
-      color: #ff7a00;
-    }
-    .hero p {
-      font-size: 1.3rem;
-      font-weight: 500;
-      color: #ddd;
-      margin-bottom: 40px;
-    }
-    .hero .download-btn {
-      font-size: 1rem;
-      padding: 16px 48px;
-    }
-
-    /* Main content layout */
     main {
+      padding: 40px;
       max-width: 1200px;
-      margin: 0 auto 100px;
-      padding: 0 20px;
+      margin: auto;
       display: flex;
-      gap: 50px;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      gap: 40px;
     }
 
-    /* Left main content (EventUtils + specs) */
     .main-content {
       flex: 3;
-      min-width: 320px;
     }
 
-    /* EventUtils Section */
-    .eventutils-section {
-      background: #111;
-      padding: 30px 40px;
-      border-radius: 24px;
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.15);
-      margin-bottom: 60px;
+    .sidebar {
+      flex: 1;
+      position: sticky;
+      top: 40px;
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+      height: fit-content;
     }
-    .eventutils-header {
+
+    .eventutils-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 30px;
-    }
-    .eventutils-header h2 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      color: #ff7a00;
-      margin: 0;
-      flex-grow: 1;
-    }
-    .eventutils-header img {
-      width: 100px;
-      height: 100px;
-      border-radius: 20px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .eventutils-description {
-      margin-top: 20px;
-      font-weight: 500;
-      font-size: 1.1rem;
-      color: #ddd;
-    }
-    .features-list {
-      margin-top: 20px;
-      list-style: none;
-      padding: 0;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #eee;
-      line-height: 1.5;
-    }
-    .features-list li {
-      margin-bottom: 10px;
-      position: relative;
-      padding-left: 30px;
-    }
-    .features-list li::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: #27ae60;
-      font-weight: 900;
-    }
-    .eventutils-download {
-      margin-top: 30px;
-      text-align: center;
-    }
-    .eventutils-download a {
-      display: inline-block;
-      background: linear-gradient(135deg, #ff7a00, #ff4a00);
-      color: white;
-      padding: 16px 48px;
-      border-radius: 40px;
-      font-weight: 700;
-      text-transform: uppercase;
-      text-decoration: none;
-      box-shadow: 0 8px 15px rgba(255, 122, 0, 0.3);
-      transition: background 0.3s ease, box-shadow 0.3s ease,
-        transform 0.3s ease;
-    }
-    .eventutils-download a:hover {
-      background: linear-gradient(135deg, #ff4a00, #ff7a00);
-      box-shadow: 0 15px 30px rgba(255, 74, 0, 0.5);
-      transform: translateY(-3px);
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
-    /* Event Host Specs */
-    .event-host-specs {
-      background: #111;
-      padding: 30px 40px;
-      border-radius: 24px;
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.15);
-    }
-    .event-host-specs h2 {
-      font-weight: 700;
-      font-size: 2rem;
-      color: #ff7a00;
-      margin-top: 0;
-      margin-bottom: 30px;
-    }
-    .spec-packages {
+    .eventutils-title-left {
       display: flex;
-      gap: 30px;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .eventutils-title-left h1 {
+      margin: 0;
+      font-size: 3em;
+      color: #ff7a00;
+    }
+
+    .eventutils-logo-right {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+    }
+
+    .features {
+      margin-top: 20px;
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .features li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+      font-weight: 600;
+    }
+
+    .features li::before {
+      content: "✅";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .partner-section {
+      margin-top: 60px;
+      padding: 20px;
+      background-color: #1f1f1f;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
       flex-wrap: wrap;
       justify-content: center;
     }
-    .spec-package {
-      background: #222;
-      padding: 25px 30px;
-      border-radius: 18px;
-      width: 220px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
-    .spec-package:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 30px rgba(255, 122, 0, 0.25);
-    }
-    .spec-package h3 {
-      color: #ff7a00;
-      margin-bottom: 15px;
-      font-weight: 700;
-      font-size: 1.3rem;
-    }
-    .spec-package ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-weight: 500;
-      color: #ddd;
-      line-height: 1.4;
-      font-size: 1rem;
-    }
-    .spec-package ul li {
-      margin-bottom: 8px;
-      position: relative;
-      padding-left: 20px;
-    }
-    .spec-package ul li::before {
-      content: '•';
-      color: #ff7a00;
-      position: absolute;
-      left: 0;
-      font-size: 1.3rem;
-      top: 1px;
+
+    .partner-section img {
+      height: 40px;
+      border-radius: 6px;
     }
 
-    /* Sidebar Changelog */
-    aside.changelog-sidebar {
-      flex: 1.3;
-      min-width: 300px;
-      max-height: 750px;
-      overflow-y: auto;
-      background: #111;
-      border-radius: 24px;
-      padding: 20px 30px;
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.15);
-      scrollbar-width: thin;
-      scrollbar-color: #ff7a00 #222;
-    }
-    /* Custom scrollbar for Webkit */
-    aside.changelog-sidebar::-webkit-scrollbar {
-      width: 6px;
-    }
-    aside.changelog-sidebar::-webkit-scrollbar-track {
-      background: #222;
-      border-radius: 10px;
-    }
-    aside.changelog-sidebar::-webkit-scrollbar-thumb {
+    .partner-section a {
       background-color: #ff7a00;
-      border-radius: 10px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
     }
 
-    .changelog-header {
-      font-weight: 700;
-      font-size: 2.2rem;
+    .changelog h2 {
       color: #ff7a00;
-      margin-bottom: 30px;
-      text-align: center;
+      margin-bottom: 20px;
     }
 
     .changelog-entry {
-      background: #222;
-      border-radius: 18px;
-      padding: 18px 22px;
-      margin-bottom: 22px;
-      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.12);
-      transition: box-shadow 0.3s ease;
-      display: flex;
-      gap: 18px;
-    }
-    .changelog-entry:hover {
-      box-shadow: 0 10px 30px rgba(255, 122, 0, 0.3);
-    }
-    .changelog-entry img {
-      width: 64px;
-      height: 64px;
-      border-radius: 12px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .changelog-content {
-      flex-grow: 1;
-      color: #ddd;
-    }
-    .changelog-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-      color: #ff7a00;
-    }
-    .changelog-date {
-      font-size: 0.8rem;
-      color: #bbb;
-      margin-bottom: 10px;
-    }
-    .changelog-description {
-      font-weight: 500;
-      font-size: 0.95rem;
-      line-height: 1.3;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 12px #ff7a0044;
+      background-color: #2a2a2a;
     }
 
-    /* Responsive */
-    @media (max-width: 980px) {
-      main {
-        flex-direction: column;
-        max-width: 90%;
-      }
-      aside.changelog-sidebar {
-        max-height: 400px;
-        margin-top: 50px;
-      }
-      nav a {
-        margin-left: 18px;
-        font-size: 0.9rem;
-      }
-      .logo span {
-        font-size: 1.3rem;
-      }
-      .hero h1 {
-        font-size: 2.8rem;
-      }
+    .changelog-entry img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      height: 140px;
     }
-    @media (max-width: 480px) {
-      header {
-        padding: 10px 20px;
-      }
-      .logo img {
-        width: 40px;
-        height: 40px;
-      }
-      .logo span {
-        font-size: 1.1rem;
-      }
-      nav a {
-        display: none;
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-      main {
-        max-width: 100%;
-      }
-      .main-content,
-      aside.changelog-sidebar {
-        min-width: 100%;
-        max-height: none;
-      }
+
+    .changelog-entry p {
+      padding: 10px 15px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .event-host-specs {
+      margin-top: 60px;
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+    }
+
+    .event-host-specs h2 {
+      color: #ff7a00;
+      margin-bottom: 15px;
+    }
+
+    .spec-packages {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .spec-package {
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      text-align: center;
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+
+    .spec-package:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px #ff7a0055;
+    }
+
+    .spec-package h3 {
+      color: #ff7a00;
+      margin-bottom: 8px;
+      font-size: 1.6em;
+    }
+
+    .price-bar {
+      background-color: #27ae60;
+      padding: 8px 15px;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: inline-block;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .spec-package p.description {
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 12px;
+      line-height: 1.3;
     }
   </style>
 </head>
@@ -418,132 +245,80 @@
     <div class="logo">
       <img
         src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-        alt="EventUtils Logo"
+        alt="Event Alerts Logo"
       />
-      <span>EventUtils</span>
+      Event Alerts
     </div>
-    <nav>
-      <a href="#download">Download</a>
-      <a href="#features">Features</a>
-      <a href="#specs">Specs</a>
-      <a href="#changelog">Changelog</a>
-    </nav>
+    <a
+      class="download-btn"
+      href="https://modrinth.com/mod/alerts"
+      target="_blank"
+      >Download EventUtils</a
+    >
   </header>
-
-  <section class="hero" id="hero">
-    <h1>Your ultimate Minecraft event toolkit</h1>
-    <p>Easy to configure, supports all servers & versions, and completely free.</p>
-    <a href="#download" class="download-btn">Download Now</a>
-  </section>
 
   <main>
     <div class="main-content">
-      <section class="eventutils-section" id="features">
-        <div class="eventutils-header">
-          <h2>EventUtils</h2>
-          <img
-            src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-            alt="EventUtils Logo"
-          />
+      <div class="eventutils-title">
+        <div class="eventutils-title-left">
+          <h1>EventUtils</h1>
         </div>
-        <p class="eventutils-description">
-          EventUtils makes Minecraft events easier by providing powerful alerts,
-          commands, and cooldowns that are simple to configure.
-        </p>
-        <ul class="features-list">
-          <li>Fast and reliable event alerts</li>
-          <li>Customizable messages and commands</li>
-          <li>Supports all Minecraft servers & versions</li>
-          <li>Free and open source</li>
-          <li>Active community and updates</li>
-        </ul>
-        <div class="eventutils-download">
-          <a href="#download" class="download-btn">Download EventUtils</a>
-        </div>
-      </section>
+        <img
+          class="eventutils-logo-right"
+          src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+          alt="Bee Logo"
+        />
+      </div>
+      <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
+      <ul class="features">
+        <li>Easy server alerts and notifications</li>
+        <li>Seamless mod integration</li>
+        <li>Lightweight & optimized</li>
+        <li>Customizable settings</li>
+      </ul>
 
-      <section class="event-host-specs" id="specs">
+      <div class="event-host-specs">
         <h2>Event Host Specs</h2>
         <div class="spec-packages">
           <div class="spec-package">
-            <h3>Lite</h3>
-            <ul>
-              <li>1 CPU Core</li>
-              <li>1 GB RAM</li>
-              <li>10 GB Storage</li>
-              <li>1 TB Bandwidth</li>
-              <li>Basic Support</li>
-            </ul>
+            <h3>FREE</h3>
+            <p class="description">Basic hosting for solo or small matches.</p>
+            <span class="price-bar">$0/month</span>
           </div>
           <div class="spec-package">
-            <h3>Standard</h3>
-            <ul>
-              <li>2 CPU Cores</li>
-              <li>3 GB RAM</li>
-              <li>50 GB Storage</li>
-              <li>2 TB Bandwidth</li>
-              <li>Priority Support</li>
-            </ul>
+            <h3>PREMIUM</h3>
+            <p class="description">Optimized for community-scale events with added support.</p>
+            <span class="price-bar">$9.99/month</span>
           </div>
           <div class="spec-package">
-            <h3>Premium</h3>
-            <ul>
-              <li>4 CPU Cores</li>
-              <li>8 GB RAM</li>
-              <li>150 GB Storage</li>
-              <li>5 TB Bandwidth</li>
-              <li>24/7 Support</li>
-            </ul>
+            <h3>ENTERPRISE</h3>
+            <p class="description">Maximum resources and customization for major events.</p>
+            <span class="price-bar">$24.99/month</span>
           </div>
         </div>
-      </section>
+      </div>
     </div>
 
-    <aside class="changelog-sidebar" id="changelog">
-      <h2 class="changelog-header">Changelog</h2>
+    <aside class="sidebar">
+      <section class="changelog">
+        <h2>Changelog</h2>
 
-      <article class="changelog-entry">
-        <img src="https://via.placeholder.com/64x64.png?text=v1.1" alt="v1.1" />
-        <div class="changelog-content">
-          <div class="changelog-title">Version 1.1 - Minor Update</div>
-          <div class="changelog-date">2025-05-20</div>
-          <p class="changelog-description">
-            Added new customizable alert options and fixed minor bugs with command
-            execution.
-          </p>
+        <div class="changelog-entry">
+          <img src="https://picsum.photos/400/140?random=1" alt="Changelog 1" />
+          <p>Version 1.4.0 - Added new alert sounds and UI improvements.</p>
         </div>
-      </article>
 
-      <article class="changelog-entry">
-        <img src="https://via.placeholder.com/64x64.png?text=v1.0" alt="v1.0" />
-        <div class="changelog-content">
-          <div class="changelog-title">Version 1.0 - Initial Release</div>
-          <div class="changelog-date">2025-04-10</div>
-          <p class="changelog-description">
-            First stable release with event alerts, cooldown commands, and support
-            for Minecraft 1.8+ servers.
-          </p>
+        <div class="changelog-entry">
+          <img src="https://picsum.photos/400/140?random=2" alt="Changelog 2" />
+          <p>Version 1.3.5 - Fixed compatibility issues with Minecraft 1.19.</p>
         </div>
-      </article>
 
-      <article class="changelog-entry">
-        <img src="https://via.placeholder.com/64x64.png?text=hotfix" alt="hotfix" />
-        <div class="changelog-content">
-          <div class="changelog-title">Hotfix - Critical Bug Fix</div>
-          <div class="changelog-date">2025-05-25</div>
-          <p class="changelog-description">
-            Fixed crash caused by invalid event trigger. Improved server stability.
-          </p>
+        <div class="changelog-entry">
+          <img src="https://picsum.photos/400/140?random=3" alt="Changelog 3" />
+          <p>Version 1.3.0 - Added customizable alerts and new event types.</p>
         </div>
-      </article>
+      </section>
     </aside>
   </main>
-
-  <script>
-    // Scroll header background toggle
-    window.addEventListener('scroll', () => {
-      document.querySelector('header').classList.toggle('scrolled', window.scrollY > 20);
-    });
-  </script>
 </body>
 </html>
