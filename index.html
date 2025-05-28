@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event Alerts</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #0e0e0e;
+      background: linear-gradient(to bottom, #0e0e0e, #1a1a1a);
       color: white;
     }
 
@@ -20,6 +25,7 @@
       padding: 20px 40px;
       background-color: #1a1a1a;
       border-bottom: 1px solid #333;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -36,6 +42,17 @@
       height: 40px;
     }
 
+    .nav-links a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover {
+      color: #ff7a00;
+    }
+
     .download-btn {
       background-color: #ff7a00;
       color: white;
@@ -44,6 +61,13 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
+      margin-left: 20px;
+      transition: 0.2s;
+    }
+
+    .download-btn:hover {
+      background-color: #ffa64d;
+      transform: scale(1.03);
     }
 
     main {
@@ -52,14 +76,17 @@
       margin: auto;
       display: flex;
       gap: 40px;
+      flex-wrap: wrap;
     }
 
     .main-content {
       flex: 3;
+      min-width: 300px;
     }
 
     .sidebar {
       flex: 1;
+      min-width: 250px;
       position: sticky;
       top: 40px;
       background-color: #1c1c1c;
@@ -74,16 +101,7 @@
       justify-content: space-between;
       gap: 15px;
       margin-bottom: 20px;
-    }
-
-    .eventutils-title-left {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .eventutils-title-left h1 {
-      margin: 0;
+      flex-wrap: wrap;
     }
 
     .eventutils-logo-right {
@@ -115,58 +133,6 @@
       width: 32px;
       height: 32px;
       border-radius: 4px;
-    }
-
-    .partner-section {
-      margin-top: 60px;
-      padding: 20px;
-      background-color: #1f1f1f;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .partner-section img {
-      height: 40px;
-    }
-
-    .partner-section a {
-      background-color: #ff7a00;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .changelog h2 {
-      color: #ff7a00;
-      margin-bottom: 20px;
-    }
-
-    .changelog-entry {
-      margin-top: 20px;
-    }
-
-    .changelog-entry img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .changelog-entry button {
-      margin-top: 10px;
-      background-color: #ff7a00;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
     }
 
     .event-host-specs {
@@ -213,6 +179,106 @@
       font-size: 0.9em;
       color: #ccc;
     }
+
+    .partner-section {
+      margin-top: 60px;
+      padding: 20px;
+      background-color: #1f1f1f;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .partner-section img {
+      height: 40px;
+    }
+
+    .partner-section a {
+      background-color: #ff7a00;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .partner-section a:hover {
+      background-color: #ffa64d;
+      transform: scale(1.03);
+    }
+
+    .changelog h2 {
+      color: #ff7a00;
+      margin-bottom: 20px;
+    }
+
+    .changelog-entry {
+      margin-top: 20px;
+    }
+
+    .changelog-entry img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .changelog-entry button {
+      margin-top: 10px;
+      background-color: #ff7a00;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .changelog-entry button:hover {
+      background-color: #ffa64d;
+      transform: scale(1.03);
+    }
+
+    footer {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9em;
+      margin-top: 60px;
+    }
+
+    footer a {
+      color: #ff7a00;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .sidebar {
+        position: static;
+        margin-top: 40px;
+      }
+
+      .eventutils-title {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .eventutils-logo-right {
+        width: 48px;
+        height: 48px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -221,19 +287,24 @@
       <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo">
       Event Alerts
     </div>
-    <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#specs">Hosting</a>
+      <a href="#changelog">Changelog</a>
+      <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank" id="download">Download</a>
+    </div>
   </header>
 
   <main>
     <div class="main-content">
-      <div class="eventutils-title">
-        <div class="eventutils-title-left">
+      <div class="eventutils-title" data-aos="fade-right">
+        <div>
           <h1>EventUtils</h1>
         </div>
         <img class="eventutils-logo-right" src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
       </div>
       <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
-      <ul class="features">
+      <ul class="features" id="features">
         <li>✅ Easy server alerts and notifications</li>
         <li>✅ Seamless mod integration</li>
         <li>✅ Lightweight & optimized</li>
@@ -247,7 +318,7 @@
         <img src="https://img.icons8.com/color/48/000000/puzzle.png" alt="Forge">
       </div>
 
-      <div class="event-host-specs">
+      <div class="event-host-specs" id="specs" data-aos="fade-up">
         <h2>Event Host Specs</h2>
         <div class="spec-packages">
           <div class="spec-package">
@@ -268,14 +339,14 @@
         </div>
       </div>
 
-      <div class="partner-section">
+      <div class="partner-section" data-aos="fade-up">
         <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo">
         <p>LilyPad is the Official Hosting Partner of Event Alerts</p>
         <a href="https://lilypad.gg" target="_blank">Visit Lilypad</a>
       </div>
     </div>
 
-    <aside class="sidebar changelog">
+    <aside class="sidebar changelog" id="changelog">
       <h2>Latest Updates</h2>
       <div class="changelog-entry">
         <img src="https://via.placeholder.com/300x150.png?text=Update+Image" alt="Changelog Image">
@@ -289,5 +360,14 @@
       </div>
     </aside>
   </main>
+
+  <footer>
+    © 2025 Event Alerts. Not affiliated with Mojang or Minecraft. | <a href="https://github.com/yourrepo" target="_blank">GitHub</a>
+  </footer>
+
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
 </body>
 </html>
