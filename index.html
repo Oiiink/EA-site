@@ -4,102 +4,99 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Event Alerts</title>
+
+<!-- Favicon -->
+<link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" type="image/webp" />
+
 <style>
   /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  *, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
   }
+
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #eee;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    color: #e5e7eb;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
-  /* Variables for light/dark mode */
-  :root {
-    --accent-color: #f1c40f;
-    --text-color: #eee;
-    --bg-color: #203a43;
-    --nav-bg: rgba(20, 30, 40, 0.8);
-    --hover-bg: rgba(255, 255, 255, 0.1);
-    --shadow-color: rgba(241, 196, 15, 0.6);
-  }
+  /* Light theme */
   body.light {
-    --accent-color: #ffb400;
-    --text-color: #222;
-    --bg-color: #f9f9f9;
-    --nav-bg: rgba(255, 255, 255, 0.9);
-    --hover-bg: rgba(0,0,0,0.05);
-    --shadow-color: rgba(255, 180, 0, 0.7);
-    background: #f9f9f9;
-    color: var(--text-color);
+    background: #f9fafb;
+    color: #111827;
   }
 
-  /* Navbar */
-  nav {
+  a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  /* Header/Nav */
+  header {
+    background: rgba(31, 41, 55, 0.85);
+    backdrop-filter: saturate(180%) blur(10px);
     position: sticky;
     top: 0;
-    width: 100%;
-    background: var(--nav-bg);
-    backdrop-filter: saturate(180%) blur(10px);
-    box-shadow: 0 2px 10px var(--shadow-color);
-    z-index: 100;
+    z-index: 1000;
   }
-  .nav-container {
+
+  .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0.8rem 1rem;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  /* Left Links */
-  .nav-left,
-  .nav-right {
+  nav {
     display: flex;
     align-items: center;
-    gap: 1.8rem;
-  }
-  .nav-left a,
-  .nav-right a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: background 0.3s ease;
-  }
-  .nav-left a:hover,
-  .nav-right a:hover {
-    background: var(--hover-bg);
+    gap: 2rem;
   }
 
-  /* Bee Logo */
-  .logo-container {
-    position: relative;
-    flex-shrink: 0;
+  nav a {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #e5e7eb;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+
+  nav a:hover,
+  nav a:focus-visible {
+    background-color: #fbbf24; /* amber-400 */
+    color: #111827;
+    outline: none;
+  }
+
+  /* Logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     cursor: pointer;
-    width: 60px;
-    height: 60px;
-    margin: 0 2rem;
     user-select: none;
   }
-  .logo-container img {
-    width: 100%;
-    height: 100%;
+
+  .logo img {
+    width: 56px;
+    height: 56px;
     object-fit: contain;
-    transition: transform 0.4s ease;
-    will-change: transform;
   }
-  .logo-container:hover img {
-    transform: translateX(-8px) rotate(15deg) scale(1.05);
+
+  .logo-text {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: #fbbf24;
+    user-select: none;
   }
 
   /* Server status */
@@ -108,283 +105,156 @@
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--accent-color);
-    user-select: none;
+    font-size: 0.9rem;
+    color: #fbbf24;
   }
+
   .status-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #ef4444;
-    box-shadow: 0 0 8px #ef4444;
+    background-color: #dc2626; /* red-600 offline */
+    box-shadow: 0 0 8px #dc2626;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
   .status-online {
-    background: #22c55e;
+    background-color: #22c55e; /* green-500 online */
     box-shadow: 0 0 12px #22c55e;
   }
 
-  /* Dark/light toggle */
-  .toggle-theme {
+  /* Toggle theme button */
+  #theme-toggle {
     background: transparent;
-    border: 2px solid var(--accent-color);
-    color: var(--accent-color);
-    border-radius: 8px;
+    border: 2px solid #fbbf24;
+    color: #fbbf24;
     padding: 0.3rem 0.9rem;
+    border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
-    user-select: none;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-  .toggle-theme:hover {
-    background: var(--accent-color);
-    color: var(--bg-color);
+  #theme-toggle:hover,
+  #theme-toggle:focus-visible {
+    background-color: #fbbf24;
+    color: #111827;
+    outline: none;
   }
 
-  /* Main content */
+  /* Hero Section */
   main {
-    max-width: 1100px;
-    margin: 3rem auto 5rem;
-    padding: 0 1rem;
-  }
-  h1.title {
-    font-size: 2.4rem;
-    text-align: center;
-    color: var(--accent-color);
-    margin-bottom: 3rem;
-    text-shadow: 0 0 10px var(--accent-color);
-    letter-spacing: 0.12em;
-    user-select: none;
-  }
-
-  /* Cards */
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2.4rem;
-  }
-  .card {
-    background: var(--nav-bg);
-    border-radius: 1rem;
-    box-shadow: 0 0 18px var(--shadow-color);
-    width: 280px;
-    padding: 1.6rem 1.4rem;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-    user-select: none;
-  }
-  .card:hover {
-    box-shadow: 0 0 40px var(--accent-color);
-    transform: translateY(-10px);
-  }
-  .card img {
-    max-width: 120px;
-    border-radius: 12px;
-    pointer-events: none;
-    user-select: none;
-  }
-  .card h3 {
-    color: var(--accent-color);
-    font-weight: 700;
-    font-size: 1.3rem;
+    justify-content: center;
+    padding: 6rem 1rem 4rem;
     text-align: center;
-  }
-  .card p {
-    text-align: center;
-    font-weight: 400;
-    font-size: 0.95rem;
-    line-height: 1.3;
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  /* Appeal Form */
-  form {
-    background: var(--nav-bg);
-    box-shadow: 0 0 18px var(--shadow-color);
-    max-width: 600px;
-    margin: 3rem auto 0;
-    padding: 2rem 2.4rem;
-    border-radius: 1rem;
-    color: var(--text-color);
+  main h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #fbbf24;
+    margin-bottom: 1rem;
+    user-select: none;
+    text-shadow: 0 0 10px #fbbf24;
   }
-  form h2 {
-    color: var(--accent-color);
-    margin-bottom: 1.6rem;
-    text-align: center;
+
+  main p {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: #d1d5db;
+    max-width: 600px;
     user-select: none;
   }
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
+
+  /* Footer */
+  footer {
+    background: rgba(31, 41, 55, 0.85);
+    backdrop-filter: saturate(180%) blur(10px);
+    padding: 1rem 1.5rem;
+    text-align: center;
+    color: #fbbf24;
     font-weight: 600;
-  }
-  input[type="text"],
-  textarea {
-    width: 100%;
-    background: #162c3d;
-    border: 2px solid #2e5e87;
-    border-radius: 0.6rem;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: border-color 0.3s ease;
-  }
-  input[type="text"]:focus,
-  textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 12px var(--accent-color);
-  }
-  textarea {
-    min-height: 140px;
-    resize: vertical;
-  }
-  button[type="submit"] {
-    margin-top: 1.5rem;
-    width: 100%;
-    background: var(--accent-color);
-    border: none;
-    padding: 0.75rem;
-    border-radius: 0.7rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-    cursor: pointer;
-    color: var(--bg-color);
-    transition: background 0.3s ease;
-  }
-  button[type="submit"]:hover {
-    background: #d4a70a;
+    font-size: 0.9rem;
+    user-select: none;
   }
 
   /* Responsive */
-  @media (max-width: 900px) {
-    .nav-left,
-    .nav-right {
-      display: none;
-    }
-    .logo-container {
-      margin: 0 0;
-    }
+  @media (max-width: 640px) {
     nav {
-      padding: 0.6rem 1rem;
+      gap: 1rem;
     }
-    main {
-      margin: 2rem 1rem 4rem;
+    main h1 {
+      font-size: 2.25rem;
+    }
+    main p {
+      font-size: 1rem;
     }
   }
-
 </style>
 </head>
 <body>
 
-<nav aria-label="Main navigation">
-  <div class="nav-container">
-    <div class="nav-left" role="menubar" aria-label="Primary Navigation">
-      <a href="#home" role="menuitem" tabindex="0">Home</a>
-      <a href="#store" role="menuitem" tabindex="0">Store</a>
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" role="menuitem" tabindex="0">Appeal</a>
-      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" role="menuitem" tabindex="0">Discord</a>
-    </div>
-
-    <div class="logo-container" aria-label="Event Alerts Logo" role="img" tabindex="0">
+<header>
+  <div class="container" role="banner">
+    <a href="#home" class="logo" aria-label="Event Alerts Home">
       <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" alt="Event Alerts Bee Logo" />
+      <span class="logo-text">Event Alerts</span>
+    </a>
+
+    <nav role="navigation" aria-label="Primary navigation">
+      <a href="#home" tabindex="0">Home</a>
+      <a href="#store" tabindex="0">Store</a>
+      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" tabindex="0">Appeal</a>
+      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" tabindex="0">Discord</a>
+      <a href="#login" tabindex="0">Log In</a>
+    </nav>
+
+    <div class="server-status" aria-live="polite" aria-atomic="true" aria-relevant="additions" title="Server Status">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Offline</span>
     </div>
 
-    <div class="nav-right" aria-label="Secondary actions">
-      <div class="server-status" aria-live="polite" aria-atomic="true" aria-relevant="additions" title="Server Status: Offline">
-        <span class="status-dot" id="status-dot"></span>
-        <span id="status-text">Offline</span>
-      </div>
-      <button class="toggle-theme" aria-label="Toggle Dark/Light Mode" id="toggle-theme">Dark Mode</button>
-    </div>
+    <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">Light Mode</button>
   </div>
-</nav>
+</header>
 
-<main>
-  <h1 class="title" id="home">Welcome to Event Alerts</h1>
-
-  <section class="cards" id="store" aria-label="Store Items">
-    <article class="card" tabindex="0" role="button" aria-pressed="false">
-      <img src="https://via.placeholder.com/120" alt="Item 1" />
-      <h3>Item 1</h3>
-      <p>Description of item 1.</p>
-    </article>
-    <article class="card" tabindex="0" role="button" aria-pressed="false">
-      <img src="https://via.placeholder.com/120" alt="Item 2" />
-      <h3>Item 2</h3>
-      <p>Description of item 2.</p>
-    </article>
-    <article class="card" tabindex="0" role="button" aria-pressed="false">
-      <img src="https://via.placeholder.com/120" alt="Item 3" />
-      <h3>Item 3</h3>
-      <p>Description of item 3.</p>
-    </article>
-  </section>
-
-  <section aria-label="Appeal Form">
-    <form aria-describedby="form-desc" action="https://forms.gle/8NqGuoFEAwsAgrwp6" method="GET" target="_blank" novalidate>
-      <h2 id="form-desc" class="title">Submit an Appeal</h2>
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" placeholder="Your Minecraft Username" required aria-required="true" />
-      <label for="appeal-text">Appeal Message</label>
-      <textarea id="appeal-text" name="appeal-text" placeholder="Your message" required aria-required="true"></textarea>
-      <button type="submit">Submit</button>
-    </form>
-  </section>
+<main id="home" role="main">
+  <h1>Welcome to Event Alerts</h1>
+  <p>Your go-to platform for Minecraft event updates, server alerts, and community engagement.</p>
 </main>
 
+<footer role="contentinfo">
+  &copy; 2025 Event Alerts. All rights reserved.
+</footer>
+
 <script>
-  // Animate bee on scroll and hover
-  const bee = document.querySelector('.logo-container img');
-  const baseTranslateX = -8;
-
-  function animateBee() {
-    bee.animate([
-      { transform: `translateX(${baseTranslateX}px) rotate(0deg)` },
-      { transform: `translateX(${baseTranslateX - 7}px) rotate(12deg)` },
-      { transform: `translateX(${baseTranslateX}px) rotate(0deg)` }
-    ], {
-      duration: 1200,
-      easing: 'ease-in-out',
-      iterations: 1,
-    });
-  }
-
-  window.addEventListener('scroll', animateBee);
-  bee.addEventListener('mouseenter', animateBee);
-
-  bee.addEventListener('mouseleave', () => {
-    bee.style.transform = `translateX(${baseTranslateX}px) rotate(0deg)`;
-  });
-
-  bee.style.transform = `translateX(${baseTranslateX}px)`;
-
-  // Dark/Light mode toggle
-  const toggleBtn = document.getElementById('toggle-theme');
-  toggleBtn.addEventListener('click', () => {
+  // Theme toggle logic
+  const btn = document.getElementById('theme-toggle');
+  btn.addEventListener('click', () => {
     document.body.classList.toggle('light');
-    if(document.body.classList.contains('light')) {
-      toggleBtn.textContent = 'Dark Mode';
+    if (document.body.classList.contains('light')) {
+      btn.textContent = 'Dark Mode';
     } else {
-      toggleBtn.textContent = 'Light Mode';
+      btn.textContent = 'Light Mode';
     }
   });
 
-  // Server status checker (simulated for now)
+  // Server status check (dummy logic)
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
-  // You can replace this with real API call for your server
-  function checkServerStatus() {
-    // For demo, random online/offline every 10 seconds
-    const online = Math.random() > 0.5;
-    if(online) {
+
+  async function checkServer() {
+    // Simple API ping example to your Minecraft server
+    // This is just simulated here. Replace with real API fetch if available.
+
+    // Simulate server online/offline toggle every 7 seconds
+    const online = Math.random() > 0.4;
+
+    if (online) {
       statusDot.classList.add('status-online');
       statusText.textContent = 'Online';
       statusDot.style.backgroundColor = '#22c55e';
@@ -392,12 +262,13 @@
     } else {
       statusDot.classList.remove('status-online');
       statusText.textContent = 'Offline';
-      statusDot.style.backgroundColor = '#ef4444';
-      statusDot.style.boxShadow = '0 0 8px #ef4444';
+      statusDot.style.backgroundColor = '#dc2626';
+      statusDot.style.boxShadow = '0 0 8px #dc2626';
     }
   }
-  checkServerStatus();
-  setInterval(checkServerStatus, 10000);
+
+  checkServer();
+  setInterval(checkServer, 7000);
 </script>
 
 </body>
