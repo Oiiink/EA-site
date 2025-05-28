@@ -6,11 +6,30 @@
   <title>Event Alerts</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #0e0e0e;
-      color: white;
+      background-color: #0f1114;
+      color: #e0e0e0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    a {
+      color: #ff7a00;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #ffa040;
     }
 
     header {
@@ -18,277 +37,253 @@
       align-items: center;
       justify-content: space-between;
       padding: 20px 40px;
-      background-color: #1a1a1a;
-      border-bottom: 1px solid #333;
+      background-color: #1a1c1f;
+      border-bottom: 1px solid #2e3033;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 1.5em;
-      font-weight: bold;
+      gap: 12px;
+      font-size: 1.75rem;
+      font-weight: 700;
       color: #ff7a00;
+      user-select: none;
     }
 
     .logo img {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ff7a0040;
     }
 
     .download-btn {
       background-color: #ff7a00;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
+      color: #fff;
+      padding: 12px 24px;
       font-weight: 600;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px #ff7a0040;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .download-btn:hover {
+      background-color: #e06c00;
+      box-shadow: 0 6px 15px #e06c0044;
     }
 
     main {
-      padding: 40px;
-      max-width: 1200px;
-      margin: auto;
-      display: flex;
-      gap: 40px;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
     }
 
-    .main-content {
-      flex: 3;
-    }
-
-    .sidebar {
-      flex: 1;
-      position: sticky;
-      top: 40px;
-      background-color: #1c1c1c;
-      padding: 20px;
-      border-radius: 12px;
-      height: fit-content;
-    }
-
+    /* EventUtils Section */
     .eventutils-section {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
+      background: linear-gradient(135deg, #1f2226 0%, #14171b 100%);
+      border-radius: 18px;
+      box-shadow: 0 0 25px #ff7a0077;
       padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px #ff7a0077;
+      margin-bottom: 60px;
       gap: 40px;
-      align-items: center;
-      margin-bottom: 50px;
     }
 
     .eventutils-left {
-      flex: 1;
+      flex: 1 1 450px;
+      max-width: 550px;
     }
 
     .eventutils-left h1 {
-      font-size: 3.5rem;
+      font-size: 3.6rem;
       font-weight: 900;
       color: #ff7a00;
       letter-spacing: 0.08em;
-      text-shadow: 0 0 12px #ff7a00bb;
-      margin-bottom: 12px;
+      text-shadow: 0 0 15px #ff7a00bb;
+      margin-bottom: 20px;
+      line-height: 1.1;
+      user-select: none;
     }
 
     .eventutils-left p {
-      font-size: 1.2rem;
-      color: #ddd;
-      margin-bottom: 25px;
-      max-width: 600px;
-      line-height: 1.6;
+      font-size: 1.25rem;
+      color: #ccc;
+      margin-bottom: 28px;
+      max-width: 100%;
+      user-select: none;
     }
 
     .features-list {
       list-style: none;
-      padding: 0;
-      max-width: 600px;
+      padding-left: 0;
+      max-width: 480px;
+      margin: 0;
     }
 
     .features-list li {
-      margin-bottom: 16px;
-      padding-left: 36px;
-      font-size: 1.1rem;
       position: relative;
-      color: #eee;
+      padding-left: 36px;
+      margin-bottom: 18px;
+      font-size: 1.15rem;
       font-weight: 600;
+      color: #eee;
       cursor: default;
-      transition: color 0.3s ease;
+      transition: color 0.25s ease;
+      user-select: none;
+    }
+
+    .features-list li::before {
+      content: "✔";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ff7a00;
+      font-weight: 900;
+      font-size: 1.3rem;
+      text-shadow: 0 0 8px #ff7a00cc;
     }
 
     .features-list li:hover {
       color: #ff7a00;
     }
 
-    .features-list li::before {
-      content: "✔";
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #ff7a00;
-      font-weight: 900;
-      font-size: 1.3rem;
-      text-shadow: 0 0 5px #ff7a00bb;
-    }
-
     .eventutils-right {
-      flex: 1;
+      flex: 1 1 240px;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
       align-items: center;
-      gap: 25px;
+      gap: 28px;
       flex-wrap: wrap;
-      max-width: 300px;
-      padding-left: 20px;
-      border-left: 2px solid #ff7a00;
+      border-left: 2.5px solid #ff7a00;
+      padding-left: 28px;
+      min-width: 230px;
     }
 
     .eventutils-right img {
       height: 60px;
       width: auto;
-      border-radius: 8px;
+      border-radius: 10px;
       filter: drop-shadow(0 0 8px #ff7a0044);
       transition: transform 0.3s ease, filter 0.3s ease;
       cursor: default;
+      user-select: none;
     }
 
     .eventutils-right img:hover {
       transform: scale(1.1);
-      filter: drop-shadow(0 0 15px #ff7a00cc);
+      filter: drop-shadow(0 0 16px #ff7a00cc);
     }
 
-    .partner-section {
-      margin-top: 60px;
-      padding: 20px;
-      background-color: #1f1f1f;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .partner-section img {
-      height: 40px;
-    }
-
-    .partner-section a {
-      background-color: #ff7a00;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
+    /* Changelog Section */
+    .changelog {
+      margin-bottom: 60px;
     }
 
     .changelog h2 {
-      color: #ff7a00;
-      margin-bottom: 20px;
+      font-size: 2.2rem;
       font-weight: 700;
-      font-size: 1.8rem;
-      border-bottom: 2px solid #ff7a00;
-      padding-bottom: 6px;
+      color: #ff7a00;
+      border-bottom: 3px solid #ff7a00;
+      padding-bottom: 8px;
+      max-width: fit-content;
+      user-select: none;
+      margin-bottom: 28px;
+      letter-spacing: 0.05em;
     }
 
     .changelog-entry {
-      margin-top: 20px;
-      background-color: #2a2a2a;
-      border-radius: 10px;
-      padding: 15px 20px;
-      box-shadow: 0 0 12px #ff7a0055;
+      background-color: #1d2024;
+      border-radius: 16px;
+      box-shadow: 0 0 16px #ff7a0040;
+      padding: 20px 28px;
+      margin-bottom: 24px;
       transition: background-color 0.3s ease;
+      cursor: default;
+      user-select: none;
     }
 
     .changelog-entry:hover {
-      background-color: #3b3b3b;
+      background-color: #2b2f35;
     }
 
     .changelog-entry img {
       width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      max-height: 180px;
       object-fit: cover;
-      max-height: 160px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      user-select: none;
+      pointer-events: none;
     }
 
     .changelog-entry p {
-      margin: 0;
       font-weight: 600;
-      color: #eee;
+      color: #e5e5e5;
+      margin: 0 0 12px 0;
+      font-size: 1.1rem;
       line-height: 1.4;
     }
 
     .changelog-entry .date {
-      margin-top: 8px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #aaa;
       font-style: italic;
+      text-align: right;
+      margin-top: 8px;
+      user-select: none;
     }
 
     .changelog-entry button {
-      margin-top: 10px;
       background-color: #ff7a00;
       border: none;
       color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 1rem;
       transition: background-color 0.3s ease;
+      display: block;
+      margin: 12px auto 0;
+      width: max-content;
+      user-select: none;
     }
 
     .changelog-entry button:hover {
       background-color: #e06c00;
     }
 
-    .event-host-specs {
-      margin-top: 60px;
-      background-color: #1a1a1a;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
-    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .eventutils-section {
+        flex-direction: column;
+        padding: 30px 20px;
+      }
 
-    .event-host-specs h2 {
-      color: #ff7a00;
-      margin-bottom: 15px;
-    }
+      .eventutils-left,
+      .eventutils-right {
+        max-width: 100%;
+        flex: unset;
+        border-left: none;
+        padding-left: 0;
+        justify-content: center;
+      }
 
-    .spec-packages {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-
-    .spec-package {
-      background-color: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      text-align: center;
-    }
-
-    .spec-package h3 {
-      color: #ff7a00;
-    }
-
-    .price-bar {
-      background-color: #27ae60;
-      padding: 5px 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      display: inline-block;
-      font-weight: bold;
-    }
-
-    .spec-package p.description {
-      font-size: 0.9em;
-      color: #ccc;
+      .eventutils-right {
+        gap: 24px;
+        margin-top: 30px;
+      }
     }
   </style>
 </head>
@@ -298,53 +293,75 @@
       <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
       Event Alerts
     </div>
-    <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
+    <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">Download EventUtils</a>
   </header>
 
   <main>
-    <div class="main-content">
-      <section class="eventutils-section" aria-label="EventUtils Minecraft Client Compatibility and Features">
-        <div class="eventutils-left">
-          <h1>EventUtils</h1>
-          <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
-          <ul class="features-list">
-            <li>Easy server alerts and notifications</li>
-            <li>Seamless mod integration</li>
-            <li>Lightweight & optimized</li>
-            <li>Customizable settings</li>
-          </ul>
-        </div>
-        <div class="eventutils-right" aria-label="Supported Minecraft Clients">
-          <img
-            src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp"
-            alt="Lunar Client logo"
-            title="Lunar Client"
-          />
-          <img
-            src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw"
-            alt="Feather Client logo"
-            title="Feather Client"
-          />
-          <img
-            src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8"
-            alt="Vanilla Minecraft logo"
-            title="Vanilla Minecraft"
-          />
-          <img
-            src="https://multimc.org/images/infinity32.png"
-            alt="MultiMC logo"
-            title="MultiMC"
-          />
-        </div>
-      </section>
+    <!-- EventUtils Section -->
+    <section class="eventutils-section" aria-label="EventUtils Minecraft Client Compatibility and Features">
+      <div class="eventutils-left">
+        <h1>EventUtils</h1>
+        <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
+        <ul class="features-list">
+          <li>Easy server alerts and notifications</li>
+          <li>Seamless mod integration</li>
+          <li>Lightweight & optimized</li>
+          <li>Customizable settings</li>
+        </ul>
+      </div>
+      <div class="eventutils-right" aria-label="Supported Minecraft Clients">
+        <img
+          src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp"
+          alt="Lunar Client logo"
+          title="Lunar Client"
+          loading="lazy"
+        />
+        <img
+          src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw"
+          alt="Feather Client logo"
+          title="Feather Client"
+          loading="lazy"
+        />
+        <img
+          src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8"
+          alt="Vanilla Minecraft logo"
+          title="Vanilla Minecraft"
+          loading="lazy"
+        />
+        <img
+          src="https://multimc.org/images/infinity32.png"
+          alt="MultiMC logo"
+          title="MultiMC"
+          loading="lazy"
+        />
+      </div>
+    </section>
 
-      <!-- Other content like changelog, partner section, event host specs here... -->
+    <!-- Changelog Section -->
+    <section class="changelog" aria-label="EventAlerts Changelog">
+      <h2>Changelog</h2>
 
-    </div>
+      <article class="changelog-entry">
+        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629319676228872/Screen_Shot_2023-09-08_at_6.43.49_PM.png" alt="Updated interface screenshot" loading="lazy" />
+        <p>Revamped user interface for improved clarity and responsiveness.</p>
+        <div class="date">Implemented: 2023-09-08</div>
+        <button type="button" onclick="alert('More details coming soon!')">More Info</button>
+      </article>
 
-    <aside class="sidebar">
-      <!-- Sidebar content, if any -->
-    </aside>
+      <article class="changelog-entry">
+        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629361876729671/Screen_Shot_2023-09-08_at_6.45.22_PM.png" alt="New feature screenshot" loading="lazy" />
+        <p>Added mod client detection for Lunar, Feather, Vanilla, and MultiMC clients.</p>
+        <div class="date">Implemented: 2023-09-08</div>
+        <button type="button" onclick="alert('More details coming soon!')">More Info</button>
+      </article>
+
+      <article class="changelog-entry">
+        <p>Minor bug fixes and performance optimizations.</p>
+        <div class="date">Implemented: 2023-09-07</div>
+        <button type="button" onclick="alert('More details coming soon!')">More Info</button>
+      </article>
+
+    </section>
   </main>
 </body>
 </html>
