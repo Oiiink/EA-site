@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Event Alerts</title>
 <style>
-  /* Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
   /* Reset */
   * {
@@ -14,22 +13,21 @@
   }
 
   body {
-    background-color: #0a0a0a; /* nearly black */
-    font-family: 'Poppins', sans-serif;
-    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    background: #f5f5f7;
+    color: #333;
     display: flex;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
   /* Sidebar */
   aside.sidebar {
-    width: 240px;
-    background-color: #121212;
-    border-right: 1px solid #222;
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 32px 24px;
     display: flex;
     flex-direction: column;
-    padding-top: 40px;
   }
 
   aside.sidebar ul {
@@ -37,48 +35,35 @@
   }
 
   aside.sidebar li {
-    position: relative;
-    padding: 18px 24px;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #777;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 15px;
+    border-left: 4px solid transparent;
+    color: #666;
     cursor: pointer;
-    transition: color 0.25s ease;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    user-select: none;
   }
 
-  aside.sidebar li:hover,
-  aside.sidebar li.active {
-    color: #f97316;
-  }
-
-  aside.sidebar li.active::before,
-  aside.sidebar li:hover::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 4px;
-    background-color: #f97316;
-    border-radius: 0 4px 4px 0;
+  aside.sidebar li.active,
+  aside.sidebar li:hover {
+    color: #ff7a45;
+    border-left-color: #ff7a45;
+    background: #fff4eb;
   }
 
   /* Main Content */
   main.content {
     flex-grow: 1;
     padding: 48px 64px;
-    background-color: #0f0f0f;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
   }
 
   main.content header {
     display: flex;
     align-items: center;
     gap: 24px;
+    margin-bottom: 24px;
   }
 
   main.content header img.logo {
@@ -87,86 +72,83 @@
   }
 
   main.content header h1 {
-    font-weight: 700;
-    font-size: 2.5rem;
-    letter-spacing: 0.12em;
-    color: #f97316;
-    text-transform: uppercase;
-    user-select: none;
+    font-weight: 600;
+    font-size: 2.75rem;
+    color: #ff7a45;
   }
 
   main.content p.subtitle {
+    font-weight: 400;
+    font-size: 1.125rem;
     color: #555;
-    font-size: 1.1rem;
     max-width: 600px;
+    margin-bottom: 32px;
   }
 
   /* Buttons */
   .btn {
+    background: linear-gradient(135deg, #ff7a45, #ff9166);
+    color: white;
+    border: none;
     padding: 14px 36px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border: 2px solid #f97316;
-    background: transparent;
-    color: #f97316;
+    border-radius: 8px;
     cursor: pointer;
     user-select: none;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 0;
-    box-shadow: inset 0 0 0 0 #f97316;
+    transition: filter 0.3s ease;
+    box-shadow: 0 8px 15px rgba(255, 122, 69, 0.3);
   }
 
   .btn:hover {
-    background: #f97316;
-    color: #0a0a0a;
-    box-shadow: inset 400px 0 0 0 #f97316;
+    filter: brightness(1.1);
   }
 
-  /* Chatbot toggle */
+  .btn + .btn {
+    margin-left: 16px;
+  }
+
+  /* Chatbot toggle button */
   #chatbot-toggle {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
+    bottom: 32px;
+    right: 32px;
     width: 56px;
     height: 56px;
-    border-radius: 0;
-    background: #f97316;
-    color: #0a0a0a;
-    font-weight: 700;
-    font-size: 28px;
+    background: #ff7a45;
+    border-radius: 50%;
     border: none;
+    box-shadow: 0 8px 20px rgba(255, 122, 69, 0.3);
+    color: white;
+    font-size: 28px;
     cursor: pointer;
-    box-shadow: 0 0 16px #f97316aa;
     user-select: none;
-    z-index: 9999;
-    transition: background 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: filter 0.3s ease;
+    z-index: 9999;
   }
 
   #chatbot-toggle:hover {
-    background: #ff8c3b;
-    box-shadow: 0 0 30px #ff8c3bcc;
+    filter: brightness(1.15);
   }
 
   /* Chatbot popup */
   #chatbot-popup {
     position: fixed;
-    bottom: 100px;
-    right: 28px;
+    bottom: 96px;
+    right: 32px;
     width: 360px;
     max-height: 480px;
-    background: #121212;
-    border: 2px solid #f97316;
-    box-shadow: 0 0 16px #f97316aa;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     display: none;
     flex-direction: column;
     overflow: hidden;
-    user-select: none;
     font-size: 14px;
+    color: #444;
     z-index: 10000;
   }
 
@@ -188,85 +170,84 @@
   }
 
   #chatbot-popup header {
-    background: #171717;
+    background: #ff7a45;
     padding: 16px 20px;
-    color: #f97316;
-    font-weight: 700;
+    color: white;
+    font-weight: 600;
     font-size: 1.2rem;
-    text-transform: uppercase;
     user-select: none;
-    border-bottom: 1px solid #2a2a2a;
   }
 
   #chatbot-popup .chat-messages {
     flex-grow: 1;
     padding: 16px 20px;
     overflow-y: auto;
-    color: #ddd;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    background: #fff9f5;
   }
 
   .chat-message {
     max-width: 75%;
-    padding: 12px 20px;
-    font-weight: 700;
+    padding: 14px 20px;
+    border-radius: 16px;
     line-height: 1.3;
     user-select: text;
     word-wrap: break-word;
-    border-radius: 0;
+    font-weight: 500;
   }
 
   .chat-message.user {
     align-self: flex-end;
-    background: #f97316;
-    color: #0a0a0a;
-    box-shadow: 0 0 16px #f97316cc;
+    background: #ff7a45;
+    color: white;
   }
 
   .chat-message.bot {
     align-self: flex-start;
-    background: #222;
-    color: #ddd;
+    background: #ffd6ba;
+    color: #5a3e1b;
   }
 
   #chatbot-popup footer {
     display: flex;
     padding: 12px 20px;
-    background: #171717;
-    border-top: 1px solid #2a2a2a;
+    border-top: 1px solid #f1e4d4;
+    background: #fff;
     gap: 12px;
   }
 
   #chatbot-popup footer input {
     flex-grow: 1;
-    border-radius: 0;
-    border: none;
+    border-radius: 12px;
+    border: 1.5px solid #ffb089;
     padding: 12px 16px;
     font-size: 1rem;
-    background: #0a0a0a;
-    color: #ddd;
+    font-family: 'Inter', sans-serif;
     outline: none;
-    font-family: 'Poppins', sans-serif;
-    user-select: text;
+    color: #444;
+  }
+
+  #chatbot-popup footer input::placeholder {
+    color: #c99a75;
   }
 
   #chatbot-popup footer button {
-    border-radius: 0;
+    border-radius: 12px;
     border: none;
-    padding: 0 24px;
-    font-weight: 700;
+    padding: 0 28px;
+    font-weight: 600;
     font-size: 1rem;
-    background: #f97316;
-    color: #0a0a0a;
+    background: #ff7a45;
+    color: white;
     cursor: pointer;
-    transition: background 0.3s ease;
     user-select: none;
+    transition: filter 0.3s ease;
   }
 
   #chatbot-popup footer button:hover {
-    background: #ff8c3b;
+    filter: brightness(1.1);
   }
 
   /* Scrollbar */
@@ -275,7 +256,7 @@
   }
 
   #chatbot-popup .chat-messages::-webkit-scrollbar-thumb {
-    background: #f97316;
+    background: #ff7a45;
     border-radius: 3px;
   }
 
@@ -288,7 +269,7 @@
     aside.sidebar {
       width: 100%;
       border-right: none;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid #e0e0e0;
       padding: 16px 12px;
       flex-direction: row;
       overflow-x: auto;
@@ -297,7 +278,7 @@
 
     aside.sidebar li {
       padding: 12px 16px;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     main.content {
@@ -308,6 +289,8 @@
       width: 90vw;
       right: 5vw;
       bottom: 80px;
+      border-radius: 12px;
+      max-height: 400px;
     }
   }
 </style>
@@ -329,9 +312,9 @@
       <h1>Event Alerts</h1>
     </header>
     <p class="subtitle">Instant updates on your favorite Minecraft servers and events.</p>
-    <div style="margin-top: 24px;">
+    <div>
       <button class="btn" onclick="window.open('https://discord.gg/bWQXMwJszU', '_blank')">Join Discord</button>
-      <button class="btn" style="margin-left:16px" onclick="window.open('https://github.com/TinyTownTeller/Event-Alerts', '_blank')">GitHub</button>
+      <button class="btn" onclick="window.open('https://github.com/TinyTownTeller/Event-Alerts', '_blank')">GitHub</button>
     </div>
   </main>
 
@@ -360,6 +343,7 @@
     toggleBtn.addEventListener('click', () => {
       const isHidden = chatbotPopup.getAttribute('aria-hidden') === 'true';
       chatbotPopup.setAttribute('aria-hidden', String(!isHidden));
+      if (!isHidden) chatInput.focus();
     });
 
     function addMessage(text, sender) {
