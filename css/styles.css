@@ -19,6 +19,10 @@
   font-family: 'Inter', sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--text);
@@ -79,7 +83,8 @@ body {
   transition: color 0.3s ease;
 }
 
-.nav-menu a:hover {
+.nav-menu a:hover,
+.nav-menu a.active {
   color: var(--accent);
 }
 
@@ -150,12 +155,13 @@ body {
   border: 1px solid var(--border);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   text-align: center;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
 }
 
 .feature-card:hover {
   box-shadow: 0 12px 24px rgba(0, 255, 159, 0.5);
   border-color: var(--accent);
+  transform: scale(1.03);
   cursor: default;
 }
 
@@ -219,11 +225,15 @@ body {
   color: #000;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .view-full:hover {
   background-color: #00e68c;
+}
+
+.view-full:active {
+  transform: scale(0.96);
 }
 
 /* Download Section */
@@ -315,6 +325,10 @@ body {
   margin-right: 12px;
 }
 
+.modrinth-button img[src*="Modrinth_Dark_Logo.png"] {
+  content: url("https://imgs.search.brave.com/cWmOZXFbjqQyn81kxzSrux4vRcA7iP32jMHnA2DG6iU/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5iZWVoaWl2LmNv/bS9jZG4tY2dpL2lt/YWdlL2ZpdD1zY2Fs/ZS1kb3duLGZvcm1h/dD1hdXRvLG9uZXJy/b3I9cmVkaXJlY3Qs/cXVhbGl0eT04MC91/cGxvYWRzL3B1Ymxp/Y2F0aW9uL2xvZ28v/YTQ5ZjhlMWItMzgz/NS00ZWExLWE4NWIt/MTE4YzY0MjVlYmMz/L01vZHJpbnRoX0Rh/cmtfTG9nby5wbmc");
+}
+
 .modrinth-button:hover {
   background-color: var(--card);
 }
@@ -351,7 +365,6 @@ body {
 }
 
 /* Responsive */
-
 @media (max-width: 900px) {
   .main-content {
     flex-direction: column;
@@ -379,7 +392,7 @@ body {
   }
 
   .nav-menu {
-    display: none; /* Hide for simplicity, could add hamburger menu */
+    display: none;
   }
 
   .hero h1 {
