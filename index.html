@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event Alerts</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
   <style>
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #0e0e11;
-      color: #f0f0f0;
+      background-color: #0e0e0e;
+      color: #ffffff;
     }
 
     header {
@@ -20,146 +19,115 @@
       padding: 2rem 1rem 1rem;
     }
 
-    header img {
-      width: 100px;
-      height: 100px;
+    .logo {
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
-      animation: float 3s ease-in-out infinite;
+      animation: pulse 2s infinite;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-top: 1rem;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: row;
-      padding: 2rem;
-      gap: 2rem;
-      justify-content: center;
-    }
-
-    .main-content {
-      flex: 2;
-      max-width: 700px;
-    }
-
-    .sidebar {
-      flex: 1;
-      max-width: 350px;
-      background-color: #1c1c1f;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     .section {
-      background-color: #1a1a1d;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    .section h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
-      border-bottom: 2px solid #2e2e32;
-      padding-bottom: 0.5rem;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      margin-top: 1rem;
-      background-color: #5865f2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
+    .button-primary,
+    .button-secondary,
+    .button-accent {
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
       font-weight: 600;
-      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.25s ease;
+      margin: 0.5rem 1rem 0 0;
     }
 
-    .button:hover {
-      background-color: #4752c4;
+    .button-primary {
+      background-color: #1f1f1f;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .changelog-entry {
-      background-color: #2a2a2e;
-      padding: 1rem;
+    .button-primary:hover {
+      background-color: #2a2a2a;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .button-secondary {
+      background-color: transparent;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+    }
+
+    .button-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .button-accent {
+      background-color: #4f46e5;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+
+    .button-accent:hover {
+      background-color: #635bfa;
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .changelog {
+      background-color: #1a1a1a;
+      padding: 1.5rem;
       border-radius: 8px;
-      margin-bottom: 1rem;
+      margin-top: 2rem;
     }
 
-    .changelog-entry h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    .changelog-entry p {
-      margin: 0.25rem 0 0;
-      font-size: 0.95rem;
-      color: #ccc;
-    }
-
-    @media (max-width: 900px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .sidebar {
-        max-width: 100%;
-      }
+    .changelog h2 {
+      margin-top: 0;
     }
   </style>
 </head>
-<body>
 
+<body>
   <header>
-    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
-    <h1>Event Alerts</h1>
+    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="logo" />
   </header>
 
-  <div class="container">
-    <div class="main-content">
-      <div class="section">
-        <h2>EventUtils</h2>
-        <p>Download EventUtils to enhance your Minecraft server experience with powerful event features.</p>
-        <a class="button" href="https://modrinth.com/mod/alerts" target="_blank">Download on Modrinth</a>
-      </div>
+  <main class="section">
+    <h1>EventUtils</h1>
+    <p>Your essential mod for receiving Minecraft event alerts.</p>
+    <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
+    <a href="#changelog" class="button-secondary">View Changelog</a>
+  </main>
 
-      <div class="section">
-        <h2>About</h2>
-        <p>Event Alerts helps server owners manage and display events in real-time. Stay updated with announcements and alerts built right into your game.</p>
-      </div>
-    </div>
-
-    <aside class="sidebar">
-      <h2>Changelog</h2>
-
-      <div class="changelog-entry">
-        <h3>v1.2.0 - May 25, 2025</h3>
-        <p>Added Discord integration and fixed bug with event scheduler.</p>
-      </div>
-
-      <div class="changelog-entry">
-        <h3>v1.1.0 - May 18, 2025</h3>
-        <p>Introduced customizable UI and improved performance.</p>
-      </div>
-
-      <div class="changelog-entry">
-        <h3>v1.0.0 - Initial Release</h3>
-        <p>EventUtils released with core alert system and plugin support.</p>
-      </div>
-    </aside>
-  </div>
-
+  <aside class="section changelog" id="changelog">
+    <h2>Changelog</h2>
+    <ul>
+      <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
+      <li><strong>v1.1.0</strong> – Improved performance</li>
+      <li><strong>v1.0.0</strong> – Initial release</li>
+    </ul>
+  </aside>
 </body>
+
 </html>
