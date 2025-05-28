@@ -2,13 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-  --background: #0d0d0d;
-  --foreground: #1a1a1a;
-  --card: #1f1f1f;
-  --accent: #00ff9f;
-  --text: #f0f0f0;
-  --subtle-text: #aaa;
-  --border: #2a2a2a;
+  --background: #1a1a1a;
+  --foreground: #222;
+  --card: #292929;
+  --accent: #ff7a1a;
+  --accent-hover: #ffa347;
+  --text: #fefefe;
+  --subtle-text: #bbb;
+  --border: #333;
   --max-width: 1200px;
 }
 
@@ -17,10 +18,6 @@
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
@@ -36,14 +33,12 @@ body {
   flex-direction: column;
 }
 
-/* Container */
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 20px;
 }
 
-/* Navbar */
 .navbar {
   position: sticky;
   top: 0;
@@ -83,14 +78,12 @@ body {
   transition: color 0.3s ease;
 }
 
-.nav-menu a:hover,
-.nav-menu a.active {
+.nav-menu a:hover {
   color: var(--accent);
 }
 
-/* Hero */
 .hero {
-  background: linear-gradient(135deg, #00ff9f 0%, #00b87c 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: #000;
   padding: 80px 20px;
   text-align: center;
@@ -124,23 +117,21 @@ body {
   border-radius: 40px;
   text-decoration: none;
   font-size: 1.1rem;
-  box-shadow: 0 4px 15px rgba(0, 255, 159, 0.5);
+  box-shadow: 0 4px 15px rgba(255, 122, 26, 0.5);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-primary:hover {
-  background-color: #00e68c;
+  background-color: var(--accent-hover);
   color: #000;
 }
 
-/* Main Content Layout */
 .main-content {
   display: flex;
   gap: 40px;
   padding-bottom: 60px;
 }
 
-/* Features Grid */
 .features-grid {
   flex: 1;
   display: grid;
@@ -155,13 +146,12 @@ body {
   border: 1px solid var(--border);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   text-align: center;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .feature-card:hover {
-  box-shadow: 0 12px 24px rgba(0, 255, 159, 0.5);
+  box-shadow: 0 12px 24px rgba(255, 122, 26, 0.5);
   border-color: var(--accent);
-  transform: scale(1.03);
   cursor: default;
 }
 
@@ -177,7 +167,6 @@ body {
   font-weight: 700;
 }
 
-/* Sidebar */
 .sidebar {
   width: 320px;
   background-color: var(--foreground);
@@ -206,7 +195,7 @@ body {
 }
 
 .changelog-card:hover {
-  box-shadow: 0 12px 24px rgba(0, 255, 159, 0.4);
+  box-shadow: 0 12px 24px rgba(255, 122, 26, 0.4);
   border-color: var(--accent);
   cursor: pointer;
 }
@@ -225,18 +214,13 @@ body {
   color: #000;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .view-full:hover {
-  background-color: #00e68c;
+  background-color: var(--accent-hover);
 }
 
-.view-full:active {
-  transform: scale(0.96);
-}
-
-/* Download Section */
 .download-section {
   background-color: var(--foreground);
   padding: 40px 20px;
@@ -268,16 +252,15 @@ body {
   border-radius: 40px;
   text-decoration: none;
   font-size: 1.2rem;
-  box-shadow: 0 6px 18px rgba(0, 255, 159, 0.7);
+  box-shadow: 0 6px 18px rgba(255, 122, 26, 0.7);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .download-button:hover {
-  background-color: #00e68c;
+  background-color: var(--accent-hover);
   color: #000;
 }
 
-/* Modrinth Banner */
 .modrinth-banner {
   background-color: var(--foreground);
   padding: 20px 0;
@@ -325,15 +308,10 @@ body {
   margin-right: 12px;
 }
 
-.modrinth-button img[src*="Modrinth_Dark_Logo.png"] {
-  content: url("https://imgs.search.brave.com/cWmOZXFbjqQyn81kxzSrux4vRcA7iP32jMHnA2DG6iU/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5iZWVoaWl2LmNv/bS9jZG4tY2dpL2lt/YWdlL2ZpdD1zY2Fs/ZS1kb3duLGZvcm1h/dD1hdXRvLG9uZXJy/b3I9cmVkaXJlY3Qs/cXVhbGl0eT04MC91/cGxvYWRzL3B1Ymxp/Y2F0aW9uL2xvZ28v/YTQ5ZjhlMWItMzgz/NS00ZWExLWE4NWIt/MTE4YzY0MjVlYmMz/L01vZHJpbnRoX0Rh/cmtfTG9nby5wbmc");
-}
-
 .modrinth-button:hover {
   background-color: var(--card);
 }
 
-/* Footer */
 .footer {
   background-color: var(--foreground);
   border-top: 1px solid var(--border);
@@ -364,7 +342,6 @@ body {
   color: var(--accent);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .main-content {
     flex-direction: column;
