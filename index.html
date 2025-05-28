@@ -1,558 +1,404 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts - Minecraft Server</title>
-  <link rel="icon" href="favicon.ico" />
-  
-  <!-- Google fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
-  
-  <style>
-    /* CSS Variables for theming */
-    :root {
-      --bg-color: #121212;
-      --text-color: #eee;
-      --accent-color: #fb923c;
-      --nav-bg: rgba(18, 18, 18, 0.9);
-      --nav-shadow: 0 2px 15px rgba(251, 146, 60, 0.4);
-      --card-bg: #1f1f1f;
-      --card-glow: rgba(251, 146, 60, 0.3);
-      --input-bg: #2c2c2c;
-      --input-border: transparent;
-      --input-focus-border: #fb923c;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Alerts</title>
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Variables for light/dark mode */
+  :root {
+    --accent-color: #f1c40f;
+    --text-color: #eee;
+    --bg-color: #203a43;
+    --nav-bg: rgba(20, 30, 40, 0.8);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+    --shadow-color: rgba(241, 196, 15, 0.6);
+  }
+  body.light {
+    --accent-color: #ffb400;
+    --text-color: #222;
+    --bg-color: #f9f9f9;
+    --nav-bg: rgba(255, 255, 255, 0.9);
+    --hover-bg: rgba(0,0,0,0.05);
+    --shadow-color: rgba(255, 180, 0, 0.7);
+    background: #f9f9f9;
+    color: var(--text-color);
+  }
+
+  /* Navbar */
+  nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: var(--nav-bg);
+    backdrop-filter: saturate(180%) blur(10px);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    z-index: 100;
+  }
+  .nav-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Left Links */
+  .nav-left,
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+  }
+  .nav-left a,
+  .nav-right a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+  .nav-left a:hover,
+  .nav-right a:hover {
+    background: var(--hover-bg);
+  }
+
+  /* Bee Logo */
+  .logo-container {
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    margin: 0 2rem;
+    user-select: none;
+  }
+  .logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+    will-change: transform;
+  }
+  .logo-container:hover img {
+    transform: translateX(-8px) rotate(15deg) scale(1.05);
+  }
+
+  /* Server status */
+  .server-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent-color);
+    user-select: none;
+  }
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .status-online {
+    background: #22c55e;
+    box-shadow: 0 0 12px #22c55e;
+  }
+
+  /* Dark/light toggle */
+  .toggle-theme {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    border-radius: 8px;
+    padding: 0.3rem 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .toggle-theme:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+  }
+
+  /* Main content */
+  main {
+    max-width: 1100px;
+    margin: 3rem auto 5rem;
+    padding: 0 1rem;
+  }
+  h1.title {
+    font-size: 2.4rem;
+    text-align: center;
+    color: var(--accent-color);
+    margin-bottom: 3rem;
+    text-shadow: 0 0 10px var(--accent-color);
+    letter-spacing: 0.12em;
+    user-select: none;
+  }
+
+  /* Cards */
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.4rem;
+  }
+  .card {
+    background: var(--nav-bg);
+    border-radius: 1rem;
+    box-shadow: 0 0 18px var(--shadow-color);
+    width: 280px;
+    padding: 1.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    user-select: none;
+  }
+  .card:hover {
+    box-shadow: 0 0 40px var(--accent-color);
+    transform: translateY(-10px);
+  }
+  .card img {
+    max-width: 120px;
+    border-radius: 12px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .card h3 {
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-align: center;
+  }
+  .card p {
+    text-align: center;
+    font-weight: 400;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+
+  /* Appeal Form */
+  form {
+    background: var(--nav-bg);
+    box-shadow: 0 0 18px var(--shadow-color);
+    max-width: 600px;
+    margin: 3rem auto 0;
+    padding: 2rem 2.4rem;
+    border-radius: 1rem;
+    color: var(--text-color);
+  }
+  form h2 {
+    color: var(--accent-color);
+    margin-bottom: 1.6rem;
+    text-align: center;
+    user-select: none;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  input[type="text"],
+  textarea {
+    width: 100%;
+    background: #162c3d;
+    border: 2px solid #2e5e87;
+    border-radius: 0.6rem;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-color);
+  }
+  textarea {
+    min-height: 140px;
+    resize: vertical;
+  }
+  button[type="submit"] {
+    margin-top: 1.5rem;
+    width: 100%;
+    background: var(--accent-color);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.7rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--bg-color);
+    transition: background 0.3s ease;
+  }
+  button[type="submit"]:hover {
+    background: #d4a70a;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .nav-left,
+    .nav-right {
+      display: none;
     }
-    [data-theme="light"] {
-      --bg-color: #f9f9f9;
-      --text-color: #2b2b2b;
-      --accent-color: #f97316;
-      --nav-bg: rgba(255 255 255 / 0.95);
-      --nav-shadow: 0 2px 15px rgba(249, 115, 22, 0.3);
-      --card-bg: #ffffff;
-      --card-glow: rgba(249, 115, 22, 0.3);
-      --input-bg: #f1f1f1;
-      --input-border: transparent;
-      --input-focus-border: #f97316;
+    .logo-container {
+      margin: 0 0;
     }
-    
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    a {
-      color: var(--accent-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    a:hover, a:focus {
-      text-decoration: underline;
-      outline-offset: 2px;
-      outline-color: var(--accent-color);
-    }
-    button {
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      border: none;
-      color: var(--text-color);
-      background: var(--accent-color);
-      font-weight: 700;
-      padding: 0.7em 1.8em;
-      border-radius: 0.6em;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 10px var(--accent-color);
-      user-select: none;
-    }
-    button:hover, button:focus {
-      background-color: #ffb86c;
-      box-shadow: 0 0 15px #ffb86c;
-      outline: none;
-    }
-    
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-    
-    /* Navbar */
     nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background: var(--nav-bg);
-      box-shadow: var(--nav-shadow);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      z-index: 200;
-      backdrop-filter: saturate(180%) blur(10px);
-      user-select: none;
+      padding: 0.6rem 1rem;
     }
-    nav .left-links,
-    nav .right-links {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-    nav .left-links a,
-    nav .right-links a {
-      font-weight: 600;
-      font-size: 1rem;
-      position: relative;
-    }
-    nav .left-links a::after,
-    nav .right-links a::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -5px;
-      height: 3px;
-      width: 0;
-      background: var(--accent-color);
-      border-radius: 10px;
-      transition: width 0.3s ease;
-    }
-    nav .left-links a:hover::after,
-    nav .right-links a:hover::after {
-      width: 100%;
-    }
-    
-    /* Logo container */
-    .logo-wrapper {
-      position: relative;
-      flex-shrink: 0;
-      margin-left: -30px; /* shift left so visually centered */
-      cursor: pointer;
-      width: 96px;
-      height: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      will-change: transform;
-      transition: transform 0.3s ease;
-    }
-    .logo-wrapper:hover {
-      transform: scale(1.07) rotate(6deg);
-      filter: drop-shadow(0 0 5px var(--accent-color));
-    }
-    .logo-wrapper svg {
-      width: 72px;
-      height: 72px;
-      fill: var(--accent-color);
-      filter: drop-shadow(0 0 8px var(--accent-color));
-      transition: filter 0.3s ease;
-    }
-
-    /* Animate on scroll (bob) */
-    .logo-bob {
-      animation: bob 4s ease-in-out infinite;
-    }
-    @keyframes bob {
-      0%, 100% {
-        transform: translateY(0);
-        filter: drop-shadow(0 0 8px var(--accent-color));
-      }
-      50% {
-        transform: translateY(-8px);
-        filter: drop-shadow(0 0 14px var(--accent-color));
-      }
-    }
-    
-    /* Hamburger */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .hamburger div {
-      width: 28px;
-      height: 3px;
-      background: var(--accent-color);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
-    .hamburger.active div:nth-child(1) {
-      transform: translateY(9px) rotate(45deg);
-    }
-    .hamburger.active div:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger.active div:nth-child(3) {
-      transform: translateY(-9px) rotate(-45deg);
-    }
-
-    /* Mobile Menu */
-    .mobile-menu {
-      position: fixed;
-      top: 80px;
-      left: 0;
-      right: 0;
-      background: var(--nav-bg);
-      backdrop-filter: saturate(180%) blur(10px);
-      box-shadow: var(--nav-shadow);
-      display: none;
-      flex-direction: column;
-      padding: 1.5rem 0;
-      gap: 1.5rem;
-      z-index: 150;
-    }
-    .mobile-menu.show {
-      display: flex;
-    }
-    .mobile-menu a {
-      color: var(--accent-color);
-      font-weight: 700;
-      font-size: 1.25rem;
-      padding: 0.5rem 1.5rem;
-      user-select: none;
-    }
-    .mobile-menu a:hover {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
-      border-radius: 10px;
-      text-decoration: none;
-    }
-
-    /* Main content */
     main {
-      padding-top: 100px;
-      min-height: 100vh;
+      margin: 2rem 1rem 4rem;
     }
-    
-    /* Hero Section */
-    .hero {
-      position: relative;
-      background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-      border-radius: 2rem;
-      box-shadow: 0 15px 30px rgb(251 146 60 / 0.45);
-      padding: 4rem 2rem;
-      color: #fff;
-      overflow: hidden;
-      user-select: none;
-      margin-bottom: 4rem;
-    }
-    .hero h1 {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 2.8rem;
-      margin-bottom: 1rem;
-      letter-spacing: 0.12em;
-      text-shadow: 0 0 15px #fb923c;
-    }
-    .hero p {
-      font-weight: 600;
-      font-size: 1.2rem;
-      max-width: 600px;
-      line-height: 1.4;
-      text-shadow: 0 0 10px #cc6a13;
-    }
-    
-    /* Custom Illustration - Abstract block */
-    .illustration {
-      position: absolute;
-      top: 0;
-      right: -80px;
-      width: 320px;
-      height: 320px;
-      opacity: 0.15;
-      pointer-events: none;
-      user-select: none;
-      filter: drop-shadow(0 0 10px #fff4e6);
-      animation: float 6s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-    
-    /* Sections */
-    section {
-      margin-bottom: 5rem;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 1rem;
-    }
-    
-    /* Section Titles */
-    h2.section-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      color: var(--accent-color);
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 10px var(--accent-color);
-      user-select: none;
-    }
-    
-    /* Cards */
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: 1rem;
-      padding: 2rem;
-      width: 280px;
-      box-shadow: 0 0 25px var(--card-glow);
-      color: var(--text-color);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 0 40px var(--accent-color);
-    }
-    .card img {
-      max-width: 120px;
-      user-select: none;
-      pointer-events: none;
-    }
-    .card h3 {
-      font-weight: 700;
-      font-size: 1.4rem;
-      text-align: center;
-      color: var(--accent-color);
-      margin: 0;
-    }
-    .card p {
-      font-weight: 400;
-      font-size: 0.95rem;
-      color: var(--text-color);
-      text-align: center;
-    }
-    
-    /* Appeal Form */
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 25px var(--card-glow);
-      user-select: none;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: var(--accent-color);
-    }
-    input[type="text"],
-    textarea {
-      width: 100%;
-      background: var(--input-bg);
-      border: 2px solid var(--input-border);
-      border-radius: 0.6rem;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      color: var(--text-color);
-      resize: vertical;
-      transition: border-color 0.3s ease;
-      font-family: 'Inter', sans-serif;
-    }
-    input[type="text"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--input-focus-border);
-      box-shadow: 0 0 12px var(--accent-color);
-      background: var(--input-bg);
-    }
-    textarea {
-      min-height: 150px;
-    }
+  }
 
-    /* Server status */
-    .server-status {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--text-color);
-      user-select: none;
-      cursor: default;
-      margin-left: 1rem;
-    }
-    .status-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background-color: #ef4444; /* default red */
-      box-shadow: 0 0 8px #ef4444;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    /* Dark/Light toggle button */
-    .toggle-theme {
-      margin-left: 1.5rem;
-      background: transparent;
-      color: var(--accent-color);
-      font-weight: 700;
-      font-size: 1.2rem;
-      user-select: none;
-      border: 2px solid var(--accent-color);
-      border-radius: 0.6rem;
-      padding: 0.3rem 0.8rem;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .toggle-theme:hover,
-    .toggle-theme:focus {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
-      outline: none;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .cards {
-        flex-direction: column;
-        align-items: center;
-      }
-      nav .left-links,
-      nav .right-links {
-        display: none;
-      }
-      .hamburger {
-        display: flex;
-      }
-      .logo-wrapper {
-        margin-left: 0;
-      }
-    }
-  </style>
+</style>
 </head>
 <body>
-  <nav role="navigation" aria-label="Main navigation">
-    <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
-      <div class="left-links" aria-label="Primary">
-        <a href="#home" tabindex="0">Home</a>
-        <a href="#store" tabindex="0">Store</a>
-        <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener noreferrer" tabindex="0">Appeal</a>
-        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" tabindex="0">Discord</a>
-      </div>
-      
-      <div class="logo-wrapper" aria-label="Event Alerts Logo" role="img" tabindex="0" aria-describedby="logo-desc">
-        <!-- SVG Bee Logo, colored by CSS accent color -->
-        <svg
-          id="bee-logo"
-          class="logo-bob"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 64 64"
-          aria-hidden="true"
-          focusable="false"
-          >
-          <path d="M42.8 24.6c.4-.5.6-1.1.6-1.8 0-1.4-1.2-2.6-2.6-2.6-1 0-1.8.6-2.3 1.5-2.5-.3-5.2-2-6.3-3.5-1.1-1.4-.3-3.6 2-4.3 1.5-.5 2.8 0 3.5.5.1 0 .1-.1.1-.2 0-1.6-1.3-2.9-2.9-2.9-.9 0-1.7.4-2.3 1-.7-.3-1.7-.6-3.1-.6-5.6 0-8.7 5.7-8.7 11.1 0 5 3.3 10.4 8.9 10.4 4.3 0 7.2-3.4 7.7-7.4zm-9.6-2.7c.8 0 1.4.7 1.4 1.5s-.7 1.4-1.5 1.4-1.4-.7-1.4-1.5c0-.8.6-1.4 1.5-1.4z"/>
-          <path d="M49 37.3c-2 1.1-4.8 3.4-4.8 7.1 0 2.6 1.8 4.5 4.1 5.2 1.3.4 2.5 0 3.2-.4.2-.1.3-.2.3-.3.1-1.3-2.6-5.6-2.6-11.6zm-3 9.4c-.5-1.6 0-3.1 1-3.9 1.2-.9 2.5-.3 3.1.6.5.8.8 2.1.5 3.6l-4.6-.3z"/>
-          <path d="M53.3 23.2c-.7-.6-1.5-1-2.3-1.2-2-.5-3.7 1.2-4.5 2.7-.6 1.1-.7 2.5-.7 3.9 0 .2 0 .5.1.7l5.6-5.9c-.1-.1-.2-.2-.2-.2z"/>
-          <path d="M35.7 40.7c-1.5 0-2.7 1.2-2.7 2.7v10.4c0 1.5 1.2 2.7 2.7 2.7s2.7-1.2 2.7-2.7v-10.4c0-1.5-1.2-2.7-2.7-2.7zm0 13.1c-.8 0-1.4-.6-1.4-1.4V43.4c0-.8.6-1.4 1.4-1.4s1.4.6 1.4 1.4v8.9c0 .8-.6 1.4-1.4 1.4z"/>
-          <path d="M25 41.5c-1.1-2.8-2.4-3.4-4.4-3.4-1.4 0-3.1.8-3.1 3.6 0 3.3 4.7 8.6 8.8 8.6 1.6 0 3.5-.7 3.9-1 .2-.2.3-.4.3-.7 0-.6-.7-2-1.1-3.2l-4.4-6.9zm-5.7 2.4c.2-.9.7-1.1 1.2-1.1.4 0 1.1.3 1.7 1.5l2.3 3.6c-1.7.4-5.3-2.3-5.3-3.9z"/>
-          <path d="M24.2 33.6c-3.7-.5-7.4 1.8-9.3 4.6-2 3-2.3 7.6-.2 11 2 3.6 7.3 5.7 12 5.7 6.4 0 12.2-5.7 12.2-11.8 0-7-7.4-10.1-14.7-9.5zm6 16.1c-3.3 0-5.6-1.9-5.6-4.2 0-1.7 1.4-3.4 3.5-3.9 2.6-.7 5.4.4 6.6 3.3 1.2 3.2-1.5 4.8-4.5 4.8z"/>
-        </svg>
-        <span id="logo-desc" class="sr-only">Bee logo representing Event Alerts</span>
-      </div>
 
-      <div class="right-links" aria-label="Secondary">
-        <div class="server-status" aria-live="polite" aria-atomic="true" aria-relevant="additions">
-          <span class="status-dot" id="status-dot"></span> Offline
-        </div>
-        <button class="toggle-theme" aria-label="Toggle Dark/Light Mode" id="toggle-theme">Dark Mode</button>
-      </div>
+<nav aria-label="Main navigation">
+  <div class="nav-container">
+    <div class="nav-left" role="menubar" aria-label="Primary Navigation">
+      <a href="#home" role="menuitem" tabindex="0">Home</a>
+      <a href="#store" role="menuitem" tabindex="0">Store</a>
+      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" role="menuitem" tabindex="0">Appeal</a>
+      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" role="menuitem" tabindex="0">Discord</a>
     </div>
-  </nav>
 
-  <main>
-    <h1 class="title" id="home">Welcome to Event Alerts</h1>
+    <div class="logo-container" aria-label="Event Alerts Logo" role="img" tabindex="0">
+      <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" alt="Event Alerts Bee Logo" />
+    </div>
 
-    <section class="cards" id="store" aria-label="Store Items">
-      <article class="card" tabindex="0" role="button" aria-pressed="false">
-        <img src="https://via.placeholder.com/120" alt="Item 1">
-        <h3>Item 1</h3>
-        <p>Description of item 1.</p>
-      </article>
-      <article class="card" tabindex="0" role="button" aria-pressed="false">
-        <img src="https://via.placeholder.com/120" alt="Item 2">
-        <h3>Item 2</h3>
-        <p>Description of item 2.</p>
-      </article>
-      <article class="card" tabindex="0" role="button" aria-pressed="false">
-        <img src="https://via.placeholder.com/120" alt="Item 3">
-        <h3>Item 3</h3>
-        <p>Description of item 3.</p>
-      </article>
-    </section>
+    <div class="nav-right" aria-label="Secondary actions">
+      <div class="server-status" aria-live="polite" aria-atomic="true" aria-relevant="additions" title="Server Status: Offline">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Offline</span>
+      </div>
+      <button class="toggle-theme" aria-label="Toggle Dark/Light Mode" id="toggle-theme">Dark Mode</button>
+    </div>
+  </div>
+</nav>
 
-    <section aria-label="Appeal Form">
-      <form aria-describedby="form-desc">
-        <h2 id="form-desc" class="title">Submit an Appeal</h2>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required aria-required="true" aria-describedby="username-desc">
-        <label for="appeal-text">Appeal Message</label>
-        <textarea id="appeal-text" name="appeal-text" required aria-required="true"></textarea>
-        <button type="submit" class="toggle-theme" style="margin-top:1rem;">Submit</button>
-      </form>
-    </section>
-  </main>
+<main>
+  <h1 class="title" id="home">Welcome to Event Alerts</h1>
 
-  <script>
-    // Move bee left for better centering
-    const beeLogo = document.getElementById('bee-logo');
-    beeLogo.style.transform = 'translateX(-10px)';
+  <section class="cards" id="store" aria-label="Store Items">
+    <article class="card" tabindex="0" role="button" aria-pressed="false">
+      <img src="https://via.placeholder.com/120" alt="Item 1" />
+      <h3>Item 1</h3>
+      <p>Description of item 1.</p>
+    </article>
+    <article class="card" tabindex="0" role="button" aria-pressed="false">
+      <img src="https://via.placeholder.com/120" alt="Item 2" />
+      <h3>Item 2</h3>
+      <p>Description of item 2.</p>
+    </article>
+    <article class="card" tabindex="0" role="button" aria-pressed="false">
+      <img src="https://via.placeholder.com/120" alt="Item 3" />
+      <h3>Item 3</h3>
+      <p>Description of item 3.</p>
+    </article>
+  </section>
 
-    // Animate bee on scroll and hover
-    const animateBee = () => {
-      beeLogo.animate([
-        { transform: 'translateX(-10px) rotate(0deg)' },
-        { transform: 'translateX(-15px) rotate(10deg)' },
-        { transform: 'translateX(-10px) rotate(0deg)' }
-      ], {
-        duration: 1000,
-        iterations: 1,
-        easing: 'ease-in-out'
-      });
-    };
+  <section aria-label="Appeal Form">
+    <form aria-describedby="form-desc" action="https://forms.gle/8NqGuoFEAwsAgrwp6" method="GET" target="_blank" novalidate>
+      <h2 id="form-desc" class="title">Submit an Appeal</h2>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Your Minecraft Username" required aria-required="true" />
+      <label for="appeal-text">Appeal Message</label>
+      <textarea id="appeal-text" name="appeal-text" placeholder="Your message" required aria-required="true"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+</main>
 
-    window.addEventListener('scroll', animateBee);
-    beeLogo.addEventListener('mouseenter', animateBee);
-    beeLogo.addEventListener('mouseleave', () => {
-      beeLogo.style.transform = 'translateX(-10px)';
+<script>
+  // Animate bee on scroll and hover
+  const bee = document.querySelector('.logo-container img');
+  const baseTranslateX = -8;
+
+  function animateBee() {
+    bee.animate([
+      { transform: `translateX(${baseTranslateX}px) rotate(0deg)` },
+      { transform: `translateX(${baseTranslateX - 7}px) rotate(12deg)` },
+      { transform: `translateX(${baseTranslateX}px) rotate(0deg)` }
+    ], {
+      duration: 1200,
+      easing: 'ease-in-out',
+      iterations: 1,
     });
+  }
 
-    // Dark/Light mode toggle
-    const toggleButton = document.getElementById('toggle-theme');
-    toggleButton.addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      if(document.body.classList.contains('dark')) {
-        toggleButton.textContent = 'Light Mode';
-      } else {
-        toggleButton.textContent = 'Dark Mode';
-      }
-    });
-  </script>
+  window.addEventListener('scroll', animateBee);
+  bee.addEventListener('mouseenter', animateBee);
+
+  bee.addEventListener('mouseleave', () => {
+    bee.style.transform = `translateX(${baseTranslateX}px) rotate(0deg)`;
+  });
+
+  bee.style.transform = `translateX(${baseTranslateX}px)`;
+
+  // Dark/Light mode toggle
+  const toggleBtn = document.getElementById('toggle-theme');
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    if(document.body.classList.contains('light')) {
+      toggleBtn.textContent = 'Dark Mode';
+    } else {
+      toggleBtn.textContent = 'Light Mode';
+    }
+  });
+
+  // Server status checker (simulated for now)
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+  // You can replace this with real API call for your server
+  function checkServerStatus() {
+    // For demo, random online/offline every 10 seconds
+    const online = Math.random() > 0.5;
+    if(online) {
+      statusDot.classList.add('status-online');
+      statusText.textContent = 'Online';
+      statusDot.style.backgroundColor = '#22c55e';
+      statusDot.style.boxShadow = '0 0 12px #22c55e';
+    } else {
+      statusDot.classList.remove('status-online');
+      statusText.textContent = 'Offline';
+      statusDot.style.backgroundColor = '#ef4444';
+      statusDot.style.boxShadow = '0 0 8px #ef4444';
+    }
+  }
+  checkServerStatus();
+  setInterval(checkServerStatus, 10000);
+</script>
+
 </body>
 </html>
