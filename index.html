@@ -1,374 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-  /* Reset */
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #f5f5f7;
-    color: #333;
-    display: flex;
-    min-height: 100vh;
-  }
-
-  /* Sidebar */
-  aside.sidebar {
-    width: 260px;
-    background: #fff;
-    border-right: 1px solid #e0e0e0;
-    padding: 32px 24px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  aside.sidebar ul {
-    list-style: none;
-  }
-
-  aside.sidebar li {
-    padding: 14px 16px;
-    font-weight: 600;
-    font-size: 15px;
-    border-left: 4px solid transparent;
-    color: #666;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.25s ease;
-    user-select: none;
-  }
-
-  aside.sidebar li.active,
-  aside.sidebar li:hover {
-    color: #ff7a45;
-    border-left-color: #ff7a45;
-    background: #fff4eb;
-  }
-
-  /* Main Content */
-  main.content {
-    flex-grow: 1;
-    padding: 48px 64px;
-  }
-
-  main.content header {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 24px;
-  }
-
-  main.content header img.logo {
-    width: 72px;
-    height: 72px;
-  }
-
-  main.content header h1 {
-    font-weight: 600;
-    font-size: 2.75rem;
-    color: #ff7a45;
-  }
-
-  main.content p.subtitle {
-    font-weight: 400;
-    font-size: 1.125rem;
-    color: #555;
-    max-width: 600px;
-    margin-bottom: 32px;
-  }
-
-  /* Buttons */
-  .btn {
-    background: linear-gradient(135deg, #ff7a45, #ff9166);
-    color: white;
-    border: none;
-    padding: 14px 36px;
-    font-weight: 600;
-    font-size: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    transition: filter 0.3s ease;
-    box-shadow: 0 8px 15px rgba(255, 122, 69, 0.3);
-  }
-
-  .btn:hover {
-    filter: brightness(1.1);
-  }
-
-  .btn + .btn {
-    margin-left: 16px;
-  }
-
-  /* Chatbot toggle button */
-  #chatbot-toggle {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    width: 56px;
-    height: 56px;
-    background: #ff7a45;
-    border-radius: 50%;
-    border: none;
-    box-shadow: 0 8px 20px rgba(255, 122, 69, 0.3);
-    color: white;
-    font-size: 28px;
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: filter 0.3s ease;
-    z-index: 9999;
-  }
-
-  #chatbot-toggle:hover {
-    filter: brightness(1.15);
-  }
-
-  /* Chatbot popup */
-  #chatbot-popup {
-    position: fixed;
-    bottom: 96px;
-    right: 32px;
-    width: 360px;
-    max-height: 480px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    font-size: 14px;
-    color: #444;
-    z-index: 10000;
-  }
-
-  #chatbot-popup[aria-hidden="false"] {
-    display: flex;
-    animation: fadeInUp 0.3s ease forwards;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Alerts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Logo pulse animation */
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
     }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  #chatbot-popup header {
-    background: #ff7a45;
-    padding: 16px 20px;
-    color: white;
-    font-weight: 600;
-    font-size: 1.2rem;
-    user-select: none;
-  }
-
-  #chatbot-popup .chat-messages {
-    flex-grow: 1;
-    padding: 16px 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: #fff9f5;
-  }
-
-  .chat-message {
-    max-width: 75%;
-    padding: 14px 20px;
-    border-radius: 16px;
-    line-height: 1.3;
-    user-select: text;
-    word-wrap: break-word;
-    font-weight: 500;
-  }
-
-  .chat-message.user {
-    align-self: flex-end;
-    background: #ff7a45;
-    color: white;
-  }
-
-  .chat-message.bot {
-    align-self: flex-start;
-    background: #ffd6ba;
-    color: #5a3e1b;
-  }
-
-  #chatbot-popup footer {
-    display: flex;
-    padding: 12px 20px;
-    border-top: 1px solid #f1e4d4;
-    background: #fff;
-    gap: 12px;
-  }
-
-  #chatbot-popup footer input {
-    flex-grow: 1;
-    border-radius: 12px;
-    border: 1.5px solid #ffb089;
-    padding: 12px 16px;
-    font-size: 1rem;
-    font-family: 'Inter', sans-serif;
-    outline: none;
-    color: #444;
-  }
-
-  #chatbot-popup footer input::placeholder {
-    color: #c99a75;
-  }
-
-  #chatbot-popup footer button {
-    border-radius: 12px;
-    border: none;
-    padding: 0 28px;
-    font-weight: 600;
-    font-size: 1rem;
-    background: #ff7a45;
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    transition: filter 0.3s ease;
-  }
-
-  #chatbot-popup footer button:hover {
-    filter: brightness(1.1);
-  }
-
-  /* Scrollbar */
-  #chatbot-popup .chat-messages::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  #chatbot-popup .chat-messages::-webkit-scrollbar-thumb {
-    background: #ff7a45;
-    border-radius: 3px;
-  }
-
-  /* Responsive */
-  @media (max-width: 720px) {
-    body {
-      flex-direction: column;
+    .logo-pulse {
+      animation: pulse 2.5s infinite ease-in-out;
     }
 
-    aside.sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 16px 12px;
-      flex-direction: row;
-      overflow-x: auto;
-      gap: 12px;
+    /* Scrollbar for changelog */
+    .changelog-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #f97316 transparent;
     }
-
-    aside.sidebar li {
-      padding: 12px 16px;
-      font-size: 14px;
+    .changelog-scroll::-webkit-scrollbar {
+      width: 6px;
     }
-
-    main.content {
-      padding: 24px 16px;
+    .changelog-scroll::-webkit-scrollbar-thumb {
+      background-color: #f97316;
+      border-radius: 3px;
     }
-
-    #chatbot-popup {
-      width: 90vw;
-      right: 5vw;
-      bottom: 80px;
-      border-radius: 12px;
-      max-height: 400px;
-    }
-  }
-</style>
+  </style>
 </head>
-<body>
-  <aside class="sidebar" aria-label="Changelog">
-    <ul>
-      <li class="active">🚀 Initial Release</li>
-      <li>⚙️ Discord Integration</li>
-      <li>🐞 Bug Fixes</li>
-      <li>✨ UI Improvements</li>
-      <li>🛠️ Mobile Support Planned</li>
-    </ul>
-  </aside>
 
-  <main class="content" role="main">
-    <header>
-      <img src="https://cdn.discordapp.com/attachments/1100137747387479859/1149829164630248590/ea.png" alt="Event Alerts Logo" class="logo" />
-      <h1>Event Alerts</h1>
-    </header>
-    <p class="subtitle">Instant updates on your favorite Minecraft servers and events.</p>
-    <div>
-      <button class="btn" onclick="window.open('https://discord.gg/bWQXMwJszU', '_blank')">Join Discord</button>
-      <button class="btn" onclick="window.open('https://github.com/TinyTownTeller/Event-Alerts', '_blank')">GitHub</button>
-    </div>
-  </main>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-  <!-- Chatbot toggle -->
-  <button id="chatbot-toggle" aria-label="Toggle Chatbot" title="Chat with Event Alerts Bot">💬</button>
+  <!-- HEADER -->
+  <header class="py-8 flex justify-center border-b border-gray-800">
+    <img
+      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+      alt="Event Alerts Logo"
+      class="w-24 h-24 rounded-full logo-pulse"
+      loading="lazy"
+    />
+  </header>
 
-  <!-- Chatbot popup -->
-  <div id="chatbot-popup" role="dialog" aria-modal="true" aria-hidden="true">
-    <header>Chat with Event Alerts Bot</header>
-    <div class="chat-messages" id="chat-messages" aria-live="polite" aria-atomic="true">
-      <div class="chat-message bot">Hello! How can I assist you with Event Alerts?</div>
-    </div>
-    <footer>
-      <input id="chat-input" type="text" placeholder="Type your message..." aria-label="Chat input" autocomplete="off" />
-      <button id="chat-send" aria-label="Send message">Send</button>
-    </footer>
+  <!-- MAIN CONTENT WRAPPER -->
+  <div class="flex flex-1 max-w-7xl mx-auto w-full px-4 md:px-8 py-10 gap-10">
+
+    <!-- EVENTUTILS SECTION -->
+    <main class="flex-1 max-w-4xl space-y-6">
+      <h1 class="text-4xl font-extrabold tracking-tight text-orange-500">EventUtils</h1>
+      <p class="text-gray-300 text-lg max-w-xl">
+        Your essential mod for receiving Minecraft event alerts.
+      </p>
+      <div class="flex flex-wrap gap-4 mt-6">
+        <a
+          href="https://modrinth.com/mod/alerts"
+          class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-7 rounded-lg shadow-lg transition"
+          >Download EventUtils</a
+        >
+        <a
+          href="#changelog"
+          class="inline-block border border-orange-600 hover:bg-orange-600 hover:text-white text-orange-400 font-semibold py-3 px-7 rounded-lg transition"
+          >View Changelog</a
+        >
+      </div>
+    </main>
+
+    <!-- CHANGELOG SIDEBAR -->
+    <aside
+      id="changelog"
+      class="w-80 bg-gray-800 rounded-lg p-6 overflow-y-auto changelog-scroll max-h-[calc(100vh-80px)] sticky top-20"
+    >
+      <h2 class="text-xl font-bold mb-4 border-b border-orange-500 pb-2 text-orange-400">Changelog</h2>
+      <ul class="space-y-3 text-gray-300">
+        <li>
+          <span class="font-semibold text-orange-500">v1.2.0</span> – Added new Discord webhook integration
+        </li>
+        <li>
+          <span class="font-semibold text-orange-500">v1.1.0</span> – Improved performance
+        </li>
+        <li>
+          <span class="font-semibold text-orange-500">v1.0.0</span> – Initial release
+        </li>
+      </ul>
+    </aside>
+
   </div>
 
-  <script>
-    const toggleBtn = document.getElementById('chatbot-toggle');
-    const chatbotPopup = document.getElementById('chatbot-popup');
-    const chatInput = document.getElementById('chat-input');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatSend = document.getElementById('chat-send');
+  <!-- Optional: Chatbot floating button -->
+  <!--
+  <button
+    id="chatbot-toggle"
+    class="fixed bottom-6 right-6 bg-orange-600 hover:bg-orange-700 p-4 rounded-full shadow-lg text-white"
+    aria-label="Open chat"
+  >
+    💬
+  </button>
+  -->
 
-    toggleBtn.addEventListener('click', () => {
-      const isHidden = chatbotPopup.getAttribute('aria-hidden') === 'true';
-      chatbotPopup.setAttribute('aria-hidden', String(!isHidden));
-      if (!isHidden) chatInput.focus();
-    });
-
-    function addMessage(text, sender) {
-      const msg = document.createElement('div');
-      msg.classList.add('chat-message', sender);
-      msg.textContent = text;
-      chatMessages.appendChild(msg);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    chatSend.addEventListener('click', () => {
-      const userText = chatInput.value.trim();
-      if (!userText) return;
-      addMessage(userText, 'user');
-      chatInput.value = '';
-
-      // Simulate bot response (replace with your real bot API logic)
-      setTimeout(() => {
-        addMessage("Thanks for your message! I'm here to help with Event Alerts.", 'bot');
-      }, 1000);
-    });
-
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') chatSend.click();
-    });
-  </script>
 </body>
+
 </html>
