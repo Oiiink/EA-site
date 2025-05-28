@@ -6,43 +6,42 @@
   <title>Event Alerts</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* Reset & basics */
-    * {
+    /* Reset & base */
+    *, *::before, *::after {
       box-sizing: border-box;
     }
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: #0e0e0e;
-      color: #f0f0f0;
-      overflow-x: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      color: #eee;
+      overflow-y: scroll;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
     a {
       color: inherit;
       text-decoration: none;
     }
-    a:hover {
-      text-decoration: underline;
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
     }
 
-    /* Sticky header */
+    /* Header */
     header {
       position: sticky;
       top: 0;
-      background: #1a1a1a;
+      z-index: 999;
+      background-color: #121212;
       border-bottom: 1px solid #333;
-      padding: 15px 40px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      align-items: center;
+      padding: 16px 40px;
+      user-select: none;
     }
-
     .logo {
       display: flex;
       align-items: center;
@@ -50,558 +49,481 @@
       font-weight: 700;
       font-size: 1.6rem;
       color: #ff7a00;
-      user-select: none;
       cursor: default;
+      letter-spacing: 0.02em;
     }
-
     .logo img {
-      width: 45px;
-      height: 45px;
-      border-radius: 6px;
-      object-fit: cover;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
     }
-
+    .logo img:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 6px #ff7a00aa);
+    }
     .download-btn {
-      background-color: #ff7a00;
-      color: #0e0e0e;
-      padding: 12px 24px;
+      background: linear-gradient(90deg, #ff7a00 0%, #ff9b3d 100%);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 10px;
       font-weight: 700;
-      border-radius: 8px;
+      font-size: 1rem;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 2px 12px #ff7a0055;
+      box-shadow: 0 0 8px #ff7a00cc;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
     }
     .download-btn:hover {
-      background-color: #e16900;
-      box-shadow: 0 4px 16px #e1690055;
+      background: linear-gradient(90deg, #ff9b3d 0%, #ff7a00 100%);
+      box-shadow: 0 0 14px #ff7a00ff;
+      transform: scale(1.05);
+    }
+    .download-btn:active {
+      transform: scale(0.98);
     }
 
-    /* Layout wrapper */
+    /* Layout */
     main {
-      max-width: 1200px;
-      margin: 40px auto;
       display: grid;
       grid-template-columns: 1fr 320px;
-      gap: 40px;
-      padding: 0 20px;
-      flex-grow: 1;
-      min-height: 80vh;
+      gap: 48px;
+      max-width: 1280px;
+      margin: 48px auto 80px;
+      padding: 0 24px;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* Main content area */
+    /* Left content */
     .main-content {
-      background-color: #171717;
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: 48px;
     }
 
-    /* Title area */
+    /* EventUtils title section */
     .eventutils-title {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
     }
     .eventutils-title-left h1 {
-      font-size: 3rem;
+      font-size: 3.6rem;
       margin: 0;
       color: #ff7a00;
       font-weight: 800;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.02em;
     }
     .eventutils-logo-right {
       width: 80px;
       height: 80px;
-      border-radius: 12px;
-      object-fit: cover;
-      filter: drop-shadow(0 0 5px #ff7a00);
+      border-radius: 16px;
+      box-shadow: 0 0 20px #ff7a0077;
       transition: transform 0.3s ease;
     }
     .eventutils-logo-right:hover {
-      transform: rotate(12deg) scale(1.05);
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #ff7a00cc;
     }
 
-    /* Tab controls */
+    /* Intro paragraph */
+    .intro-text {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: #d0d0d0;
+      max-width: 720px;
+    }
+
+    /* Tabs container */
     .tabs {
       display: flex;
-      gap: 24px;
-      border-bottom: 2px solid #333;
+      gap: 12px;
+      margin-top: 24px;
+      border-bottom: 2px solid #444;
       user-select: none;
     }
     .tab {
       padding: 12px 24px;
       font-weight: 700;
-      color: #ccc;
+      font-size: 1.1rem;
       cursor: pointer;
+      color: #bbb;
       border-radius: 8px 8px 0 0;
-      background-color: #171717;
-      transition: background-color 0.3s, color 0.3s;
+      background-color: #1a1a1a;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      border-bottom: 4px solid transparent;
+      box-shadow: 0 0 6px transparent;
+    }
+    .tab:hover {
+      color: #ff7a00;
     }
     .tab.active {
-      background-color: #ff7a00;
-      color: #0e0e0e;
-      box-shadow: 0 4px 10px #ff7a0055;
-    }
-    .tab:hover:not(.active) {
       color: #ff7a00;
+      background-color: #121212;
+      border-bottom-color: #ff7a00;
+      box-shadow: 0 0 12px #ff7a00aa;
+      pointer-events: none;
     }
 
     /* Tab content */
     .tab-content {
-      margin-top: 24px;
-    }
-    .tab-content > * {
-      display: none;
-    }
-    .tab-content > .active {
-      display: block;
-    }
-
-    /* Feature list */
-    ul.features {
-      list-style: none;
-      padding-left: 0;
-      font-size: 1.15rem;
-      line-height: 1.6;
-      color: #ddd;
-    }
-    ul.features li {
-      margin-bottom: 14px;
       position: relative;
-      padding-left: 32px;
-      color: #eee;
-      font-weight: 600;
+      min-height: 240px;
+      margin-top: 20px;
     }
-    ul.features li::before {
-      content: '✔';
+    .tab-panel {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
       position: absolute;
-      left: 0;
-      color: #27ae60;
-      font-weight: 900;
+      top: 0; left: 0;
+      width: 100%;
+    }
+    .tab-panel.active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
     }
 
-    /* Clients grid */
+    /* Features list */
+    .features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      color: #d8d8d8;
+      font-size: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .features-list li::before {
+      content: "✅";
+      margin-right: 10px;
+    }
+
+    /* Clients logos grid */
     .clients-grid {
       display: flex;
       gap: 24px;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 10px;
+      margin-top: 8px;
     }
-    .client-logo {
-      width: 60px;
-      height: 60px;
-      background-color: #222;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #ff7a0055;
+    .client-card {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      transition: box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-    .client-logo img {
-      max-width: 40px;
-      max-height: 40px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 2px #000);
+      background-color: #1a1a1a;
+      padding: 14px 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 8px #ff7a0044;
+      transition: box-shadow 0.3s ease, transform 0.25s ease;
+      cursor: default;
+      width: 100px;
       user-select: none;
     }
-    .client-logo:hover {
-      box-shadow: 0 0 18px #ff7a00cc;
-      transform: scale(1.1);
+    .client-card:hover {
+      box-shadow: 0 0 20px #ff7a00cc;
+      transform: translateY(-6px);
     }
-    .clients-caption {
-      margin-top: 12px;
+    .client-logo {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 1px #000);
+      object-fit: contain;
+    }
+    .client-name {
       font-weight: 600;
-      color: #bbb;
+      font-size: 1rem;
+      color: #ff7a00;
+      text-align: center;
+      user-select: text;
     }
 
-    /* Event Host Specs */
+    /* Event host specs */
     .event-host-specs {
-      background-color: #1a1a1a;
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
-    }
-    .event-host-specs h2 {
-      color: #ff7a00;
-      margin-bottom: 24px;
-      font-weight: 700;
-      font-size: 1.8rem;
-      letter-spacing: 0.05em;
-    }
-    .spec-packages {
+      background-color: #121212;
+      padding: 32px 28px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px #ff7a0033;
       display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
     }
     .spec-package {
-      background-color: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
+      background-color: #1f1f1f;
+      border-radius: 16px;
       border: 1px solid #333;
+      padding: 22px 18px;
       text-align: center;
-      transition: background-color 0.3s, box-shadow 0.3s;
+      color: #ccc;
+      box-shadow: 0 0 12px #ff7a0022;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
       cursor: default;
     }
     .spec-package:hover {
-      background-color: #3b3b3b;
-      box-shadow: 0 0 15px #ff7a0033;
+      box-shadow: 0 0 28px #ff7a00aa;
+      transform: translateY(-8px);
     }
     .spec-package h3 {
+      margin: 0 0 10px;
+      font-weight: 800;
+      font-size: 1.5rem;
       color: #ff7a00;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
+    }
+    .spec-package p.description {
+      font-size: 1rem;
+      color: #bbb;
+      margin-bottom: 12px;
+      line-height: 1.3;
     }
     .price-bar {
       background-color: #27ae60;
-      padding: 6px 14px;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-weight: 700;
-      font-size: 1rem;
-      display: inline-block;
-      user-select: none;
-      box-shadow: 0 0 6px #27ae6077;
-    }
-    .spec-package p.description {
-      font-size: 0.95rem;
-      color: #ccc;
-      margin-top: 8px;
-      line-height: 1.4;
-    }
-
-    /* Partner section */
-    .partner-section {
-      margin-top: 48px;
-      background-color: #1f1f1f;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 0 25px #ff7a0044;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      color: #ddd;
-      font-weight: 600;
-      user-select: none;
-    }
-    .partner-section img {
-      height: 48px;
-      filter: drop-shadow(0 0 3px #ff7a00);
-      object-fit: contain;
-    }
-    .partner-section a {
-      background-color: #ff7a00;
-      padding: 12px 24px;
-      border-radius: 8px;
-      color: #0e0e0e;
-      font-weight: 700;
-      box-shadow: 0 0 12px #ff7a00aa;
-      transition: background-color 0.3s;
-    }
-    .partner-section a:hover {
-      background-color: #e16900;
-      box-shadow: 0 0 18px #e1690099;
-    }
-
-    /* Sidebar changelog */
-    aside.sidebar {
-      background-color: #171717;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #ff7a0033;
-      padding: 24px;
-      position: sticky;
-      top: 90px;
-      height: calc(100vh - 110px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    aside.sidebar h2 {
-      color: #ff7a00;
-      margin-bottom: 20px;
-      font-weight: 700;
-      font-size: 1.8rem;
-      letter-spacing: 0.04em;
-      user-select: none;
-      border-bottom: 2px solid #ff7a00;
-      padding-bottom: 8px;
-    }
-
-    .changelog-entry {
-      background-color: #222;
+      padding: 8px 12px;
       border-radius: 10px;
-      box-shadow: 0 0 10px #ff7a0044;
-      overflow: hidden;
-      transition: box-shadow 0.3s ease;
-      cursor: default;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      display: inline-block;
+      user-select: text;
+      box-shadow: 0 0 8px #27ae60cc;
+    }
+
+    /* Changelog sidebar */
+    aside.changelog {
+      background-color: #121212;
+      border-radius: 20px;
+      padding: 24px 28px;
+      box-shadow: 0 0 32px #ff7a0033;
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      font-size: 0.9rem;
+      color: #ccc;
       display: flex;
       flex-direction: column;
+      gap: 20px;
+      user-select: text;
+      min-width: 280px;
+      width: 100%;
+    }
+    aside.changelog h2 {
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin: 0 0 12px;
+      color: #ff7a00;
       user-select: none;
+    }
+    .changelog-entry {
+      background-color: #1f1f1f;
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 0 12px #ff7a0022;
+      transition: box-shadow 0.3s ease;
     }
     .changelog-entry:hover {
-      box-shadow: 0 0 20px #ff7a0077;
-      background-color: #2e2e2e;
+      box-shadow: 0 0 24px #ff7a00cc;
     }
-
-    .changelog-entry img {
-      width: 100%;
-      height: auto;
-      border-bottom: 1px solid #333;
-      object-fit: cover;
-      aspect-ratio: 16 / 9;
-    }
-
-    .changelog-text {
-      padding: 14px 16px;
-      color: #ddd;
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.3;
-    }
-
-    .changelog-text strong {
+    .changelog-entry h3 {
+      margin: 0 0 8px;
       color: #ff7a00;
-      font-weight: 800;
-      font-size: 1rem;
-    }
-
-    .changelog-footer {
-      padding: 8px 16px 16px;
-      font-size: 0.8rem;
-      font-style: italic;
-      color: #999;
-      user-select: none;
-    }
-
-    .changelog-entry button {
-      background-color: #ff7a00;
-      border: none;
-      color: #0e0e0e;
-      padding: 8px 14px;
-      margin: 12px 16px 16px;
-      border-radius: 6px;
-      cursor: pointer;
       font-weight: 700;
-      align-self: flex-start;
-      transition: background-color 0.3s;
+      font-size: 1.1rem;
     }
-    .changelog-entry button:hover {
-      background-color: #e16900;
+    .changelog-entry ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #ddd;
+      font-weight: 500;
     }
-
-    /* Footer */
-    footer {
+    .changelog-footer {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: #666;
       text-align: center;
-      padding: 20px 10px;
-      font-size: 0.9rem;
-      color: #555;
-      background-color: #121212;
       user-select: none;
-      box-shadow: inset 0 1px 4px #222;
+      font-style: italic;
     }
 
-    /* Responsive */
-    @media (max-width: 980px) {
-      main {
-        grid-template-columns: 1fr;
-        margin: 20px 16px 40px;
-      }
-      aside.sidebar {
-        position: relative;
-        height: auto;
-        top: 0;
-        max-height: none;
-        margin-top: 40px;
-      }
+    /* Scroll fade animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-
-    @media (max-width: 480px) {
-      header {
-        padding: 15px 20px;
-      }
-      .eventutils-title-left h1 {
-        font-size: 2rem;
-      }
-      .download-btn {
-        padding: 10px 18px;
-        font-size: 0.9rem;
-      }
-      .clients-grid {
-        justify-content: center;
-      }
-      .client-logo {
-        width: 50px;
-        height: 50px;
-      }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">
-      <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Event Alerts Logo" />
+    <div class="logo" aria-label="Event Alerts Logo">
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
       Event Alerts
     </div>
     <button class="download-btn" aria-label="Download Event Alerts">Download</button>
   </header>
-
   <main>
-    <section class="main-content" aria-label="Main Content Area">
-      <div class="eventutils-title">
+    <section class="main-content">
+      <div class="eventutils-title fade-in">
         <div class="eventutils-title-left">
           <h1>EventUtils</h1>
-          <p style="color:#aaa; font-weight: 500; margin-top: 6px;">
-            The best Minecraft event utility tool.
+          <p class="intro-text">
+            EventUtils is a powerful Minecraft plugin designed for Minecraft servers to display event alerts, modloader/client detection, and more.
           </p>
         </div>
         <img
           class="eventutils-logo-right"
-          src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp"
-          alt="EventUtils Logo"
+          src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+          alt="Event Alerts Logo"
+          aria-hidden="true"
           loading="lazy"
           width="80"
           height="80"
         />
       </div>
 
-      <!-- Tabs -->
-      <nav class="tabs" role="tablist" aria-label="Main sections">
-        <button class="tab active" role="tab" aria-selected="true" aria-controls="features-panel" id="features-tab">Features</button>
-        <button class="tab" role="tab" aria-selected="false" aria-controls="clients-panel" id="clients-tab">Minecraft Clients</button>
+      <nav class="tabs" role="tablist" aria-label="EventUtils sections tabs">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="features" id="tab-features">Features</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="clients" id="tab-clients">Minecraft Clients</button>
       </nav>
 
       <div class="tab-content">
-        <!-- Features Tab -->
-        <div id="features-panel" role="tabpanel" aria-labelledby="features-tab" class="active">
-          <ul class="features" aria-live="polite">
-            <li>Instant event alerts with configurable sounds and visuals</li>
-            <li>Customizable overlays with transparency options</li>
-            <li>Support for multiple Minecraft clients</li>
-            <li>Lightweight and performance-friendly</li>
-            <li>Detailed statistics and logging</li>
+        <section
+          id="features"
+          class="tab-panel active fade-in"
+          role="tabpanel"
+          aria-labelledby="tab-features"
+        >
+          <ul class="features-list" aria-live="polite">
+            <li>Display custom event alerts in chat and action bar</li>
+            <li>Real-time Minecraft client detection (Lunar, Feather, Vanilla, MultiMC)</li>
+            <li>Highly customizable alert messages</li>
+            <li>Easy integration with other server plugins</li>
+            <li>Optimized for performance with low resource usage</li>
           </ul>
-        </div>
+        </section>
 
-        <!-- Minecraft Clients Tab -->
-        <div id="clients-panel" role="tabpanel" aria-labelledby="clients-tab" hidden>
-          <div class="clients-grid" role="list">
-            <div class="client-logo" role="listitem" tabindex="0" aria-label="Lunar Client">
-              <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client Logo" />
+        <section
+          id="clients"
+          class="tab-panel fade-in"
+          role="tabpanel"
+          aria-labelledby="tab-clients"
+          hidden
+        >
+          <div class="clients-grid" aria-live="polite" aria-label="Supported Minecraft clients">
+            <div class="client-card" tabindex="0">
+              <img class="client-logo" src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client Logo" />
+              <span class="client-name">Lunar Client</span>
             </div>
-            <div class="client-logo" role="listitem" tabindex="0" aria-label="Feather Client">
-              <img src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client Logo" />
+            <div class="client-card" tabindex="0">
+              <img class="client-logo" src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client Logo" />
+              <span class="client-name">Feather Client</span>
             </div>
-            <div class="client-logo" role="listitem" tabindex="0" aria-label="MultiMC">
-              <img src="https://multimc.org/images/infinity32.png" alt="MultiMC Logo" />
+            <div class="client-card" tabindex="0">
+              <img class="client-logo" src="https://multimc.org/images/infinity32.png" alt="MultiMC Logo" />
+              <span class="client-name">MultiMC</span>
             </div>
-            <div class="client-logo" role="listitem" tabindex="0" aria-label="Vanilla Minecraft">
-              <img src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft Logo" />
+            <div class="client-card" tabindex="0">
+              <img class="client-logo" src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft Logo" />
+              <span class="client-name">Vanilla</span>
             </div>
           </div>
-          <p class="clients-caption" style="margin-top: 16px; font-weight: 500; color: #bbb;">
-            Supported Minecraft clients with EventUtils.
-          </p>
-        </div>
+        </section>
       </div>
 
-      <!-- Event Host Specs -->
-      <section class="event-host-specs" aria-label="Event Host Specifications">
-        <h2>Event Host Specs</h2>
-        <div class="spec-packages">
-          <div class="spec-package" tabindex="0" aria-label="Basic Package">
-            <h3>Basic</h3>
-            <div class="price-bar">$5 / month</div>
-            <p class="description">Access to core alert features and basic support.</p>
-          </div>
-          <div class="spec-package" tabindex="0" aria-label="Pro Package">
-            <h3>Pro</h3>
-            <div class="price-bar">$15 / month</div>
-            <p class="description">Includes premium overlays, custom sounds, and priority support.</p>
-          </div>
-          <div class="spec-package" tabindex="0" aria-label="Enterprise Package">
-            <h3>Enterprise</h3>
-            <div class="price-bar">$50 / month</div>
-            <p class="description">All features unlocked, dedicated account manager, and white-label options.</p>
-          </div>
+      <section class="event-host-specs fade-in" aria-label="Event Host Packages">
+        <div class="spec-package">
+          <h3>Basic</h3>
+          <p class="description">For small events & test servers</p>
+          <div class="price-bar">$10 / mo</div>
         </div>
-      </section>
-
-      <!-- Partner Section -->
-      <section class="partner-section" aria-label="Partner Invitation">
-        <span>Want to partner with us?</span>
-        <a href="#" role="button" aria-label="Apply to Partner">Apply Here</a>
+        <div class="spec-package">
+          <h3>Standard</h3>
+          <p class="description">Ideal for medium-sized servers</p>
+          <div class="price-bar">$25 / mo</div>
+        </div>
+        <div class="spec-package">
+          <h3>Premium</h3>
+          <p class="description">For large servers & enterprise</p>
+          <div class="price-bar">$50 / mo</div>
+        </div>
       </section>
     </section>
 
-    <!-- Sidebar for Changelog -->
-    <aside class="sidebar" aria-label="Changelog Sidebar">
+    <aside class="changelog" aria-label="Changelog">
       <h2>Changelog</h2>
 
-      <article class="changelog-entry" aria-live="polite">
-        <img src="https://i.imgur.com/u3aPZpr.png" alt="Feature Update" />
-        <div class="changelog-text">
-          <strong>Added new client detection for Lunar, Feather, MultiMC, and Vanilla.</strong><br />
-          Improved UI responsiveness and added tabbed interface.
-        </div>
-        <div class="changelog-footer">Implemented on 2025-05-27</div>
+      <article class="changelog-entry" tabindex="0">
+        <h3>v1.2.0 - Added client detection</h3>
+        <ul>
+          <li>Supports Lunar Client, Feather Client, MultiMC, and Vanilla</li>
+          <li>Improved performance and reduced memory usage</li>
+        </ul>
       </article>
 
-      <article class="changelog-entry" aria-live="polite">
-        <img src="https://i.imgur.com/6EgLVxk.png" alt="Bug Fixes" />
-        <div class="changelog-text">
-          <strong>Fixed Feather Client logo and updated changelog sidebar styling.</strong><br />
-          Enhanced accessibility and keyboard navigation support.
-        </div>
-        <div class="changelog-footer">Implemented on 2025-05-26</div>
+      <article class="changelog-entry" tabindex="0">
+        <h3>v1.1.0 - Custom alerts & messages</h3>
+        <ul>
+          <li>Fully customizable alert messages with placeholders</li>
+          <li>Action bar support added</li>
+        </ul>
       </article>
 
-      <article class="changelog-entry" aria-live="polite">
-        <img src="https://i.imgur.com/e7C3rVF.png" alt="Initial Release" />
-        <div class="changelog-text">
-          <strong>Initial release with EventUtils overview and Event Host Specs.</strong><br />
-          Included partner invitation and download button.
-        </div>
-        <div class="changelog-footer">Implemented on 2025-05-25</div>
+      <article class="changelog-entry" tabindex="0">
+        <h3>v1.0.0 - Initial release</h3>
+        <ul>
+          <li>Basic event alert functionality</li>
+          <li>Chat and action bar alerts</li>
+        </ul>
       </article>
+
+      <footer class="changelog-footer">Implemented on 2025-05-27</footer>
     </aside>
   </main>
 
-  <footer>
-    © 2025 Event Alerts. All rights reserved.
-  </footer>
-
   <script>
-    // Tabs functionality
+    // Tab switching with fade animation
     const tabs = document.querySelectorAll('.tab');
-    const panels = document.querySelectorAll('.tab-content > div');
+    const panels = document.querySelectorAll('.tab-panel');
 
-    tabs.forEach((tab) => {
+    tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        // Deselect all tabs
+        if (tab.classList.contains('active')) return;
+
+        // Remove active states
         tabs.forEach(t => {
           t.classList.remove('active');
           t.setAttribute('aria-selected', 'false');
         });
+        panels.forEach(panel => {
+          panel.classList.remove('active');
+          panel.hidden = true;
+        });
 
-        // Hide all panels
-        panels.forEach(panel => panel.hidden = true);
-
-        // Activate clicked tab
+        // Activate clicked tab and corresponding panel
         tab.classList.add('active');
         tab.setAttribute('aria-selected', 'true');
         const panelId = tab.getAttribute('aria-controls');
-        document.getElementById(panelId).hidden = false;
+        const panel = document.getElementById(panelId);
+        panel.hidden = false;
+        // small delay to allow rendering
+        setTimeout(() => panel.classList.add('active'), 20);
       });
     });
   </script>
