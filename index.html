@@ -1,55 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  <header>
-    <div class="header-bar">
+  <!-- Modrinth Banner -->
+  <div class="modrinth-banner">
+    <div class="modrinth-content">
       <span>Download <strong>EventUtils</strong> for Minecraft</span>
-      <a href="#" class="modrinth-btn">Get it on Modrinth</a>
+      <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank">
+        <img src="https://imgs.search.brave.com/cWmOZXFbjqQyn81kxzSrux4vRcA7iP32jMHnA2DG6iU/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5iZWVoaWl2LmNv/bS9jZG4tY2dpL2lt/YWdlL2ZpdD1zY2Fs/ZS1kb3duLGZvcm1h/dD1hdXRvLG9uZXJy/b3I9cmVkaXJlY3Qs/cXVhbGl0eT04MC91/cGxvYWRzL3B1Ymxp/Y2F0aW9uL2xvZ28v/YTQ5ZjhlMWItMzgz/NS00ZWExLWE4NWIt/MTE4YzY0MjVlYmMz/L01vZHJpbnRoX0Rh/cmtfTG9nby5wbmc" alt="Modrinth Logo">
+        <span>Get it on Modrinth</span>
+      </a>
     </div>
-  </header>
+  </div>
 
-  <aside class="sidebar">
-    <h1>Event Alerts</h1>
-    <nav>
-      <a href="#changelog">Changelog</a>
-      <a href="#eventutils">EventUtils</a>
-    </nav>
-  </aside>
-
-  <main>
-    <section class="card" id="eventutils">
-      <h2>EventUtils</h2>
-      <p>Cross-platform utility mod for Minecraft events.</p>
-      <div class="compatibility">
-        <span class="tag success">Fabric</span>
-        <span class="tag success">Forge</span>
-        <span class="tag success">Quilt</span>
-        <span class="tag success">Sodium</span>
-        <span class="tag success">Optifine</span>
-      </div>
-      <a class="download-btn" href="#">Download EventUtils</a>
-    </section>
-
-    <section class="card" id="changelog">
+  <!-- Main content -->
+  <div class="container">
+    <aside class="sidebar">
       <h2>Changelog</h2>
-      <div class="changelog-entry">
-        <h3>v1.2.0 - May 28, 2025</h3>
-        <ul>
-          <li>✅ Added cross-platform mod loader support</li>
-          <li>🧪 New test integration with event systems</li>
-          <li>🐛 Minor UI and performance bugfixes</li>
-        </ul>
-        <button class="view-btn">View Full Changelog</button>
+      <div class="changelog-card">
+        <h3>v1.0.0</h3>
+        <p>Initial release of EventUtils</p>
+        <button class="view-full">View Full Changelog</button>
       </div>
-    </section>
-  </main>
+    </aside>
+    <main class="content">
+      <h1>Event Alerts</h1>
+
+      <section class="feature-card">
+        <h2>EventUtils</h2>
+        <p>EventUtils is a utility mod that improves event handling across clients.</p>
+        <div class="status-box">
+          <span class="status success">✔ Compatible</span>
+          <span class="status warning">⚠ Modrinth Only</span>
+        </div>
+        <a class="download-button" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
+      </section>
+    </main>
+  </div>
 </body>
+
 </html>
