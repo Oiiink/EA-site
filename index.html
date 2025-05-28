@@ -11,7 +11,7 @@
 
 <body>
   <header>
-    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="logo" />
+    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="logo" />
   </header>
 
   <main class="section">
@@ -24,7 +24,7 @@
 
     <div class="flex-container">
       <div class="main-content">
-        <!-- Additional content could go here -->
+        <!-- Future feature cards or blog content here -->
       </div>
       <aside class="sidebar" id="changelog">
         <h2>Changelog</h2>
@@ -36,6 +36,22 @@
       </aside>
     </div>
   </main>
+
+  <!-- Chatbot popup -->
+  <div id="chatbot-container">
+    <button id="chatbot-toggle" aria-label="Open chat">💬</button>
+    <div id="chatbot" hidden>
+      <div id="chatbot-header">
+        <h3>Event Alerts Bot</h3>
+        <button id="chatbot-close" aria-label="Close chat">✕</button>
+      </div>
+      <div id="chatbot-messages"></div>
+      <form id="chatbot-form">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
 
   <script src="js/chatbot.js"></script>
 </body>
