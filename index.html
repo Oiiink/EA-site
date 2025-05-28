@@ -4,15 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
-      font-family: "Inter", sans-serif;
-      background-color: #0e0e0e;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0b0b0b 0%, #1a1a1a 100%);
       color: white;
     }
 
@@ -32,6 +29,7 @@
       font-size: 1.5em;
       font-weight: bold;
       color: #ff7a00;
+      letter-spacing: 0.05em;
     }
 
     .logo img {
@@ -47,11 +45,12 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.3s ease;
     }
-
-    .download-btn:hover {
-      background-color: #e36e00;
+    .download-btn:hover,
+    .download-btn:focus {
+      background-color: #e06a00;
+      transform: scale(1.05);
     }
 
     main {
@@ -74,6 +73,19 @@
       padding: 20px;
       border-radius: 12px;
       height: fit-content;
+
+      scrollbar-width: thin;
+      scrollbar-color: #ff7a00 #1c1c1c;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #ff7a00;
+      border-radius: 10px;
     }
 
     .eventutils-title {
@@ -82,6 +94,7 @@
       justify-content: space-between;
       gap: 15px;
       margin-bottom: 20px;
+      letter-spacing: 0.05em;
     }
 
     .eventutils-title-left {
@@ -92,19 +105,19 @@
 
     .eventutils-title-left h1 {
       margin: 0;
-      font-size: 3rem;
+      font-size: 3em;
       color: #ff7a00;
+      letter-spacing: 0.05em;
     }
 
     .eventutils-logo-right {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
     }
 
     p {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      margin-top: 0;
+      line-height: 1.6;
     }
 
     .features {
@@ -115,12 +128,7 @@
 
     .features li {
       margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    .features li::before {
-      content: "✅";
-      margin-right: 8px;
+      font-weight: 500;
     }
 
     .partner-section {
@@ -131,17 +139,17 @@
       align-items: center;
       gap: 20px;
       border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
       flex-wrap: wrap;
       justify-content: center;
+      color: white;
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }
 
     .partner-section img {
       height: 40px;
-    }
-
-    .partner-section p {
-      margin: 0;
-      font-weight: 600;
+      object-fit: contain;
     }
 
     .partner-section a {
@@ -153,161 +161,121 @@
       text-decoration: none;
       transition: background-color 0.3s ease;
     }
-
-    .partner-section a:hover {
-      background-color: #e36e00;
+    .partner-section a:hover,
+    .partner-section a:focus {
+      background-color: #e06a00;
     }
 
-    /* Changelog sidebar styles */
-    .changelog h2 {
+    .changelog h2,
+    .event-host-specs h2 {
       color: #ff7a00;
       margin-bottom: 20px;
-      font-size: 2rem;
-      font-weight: 700;
+      letter-spacing: 0.05em;
     }
 
     .changelog-entry {
       margin-top: 20px;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #222;
-      box-shadow: 0 0 8px #000000cc;
-      transition: background-color 0.3s ease;
-    }
-
-    .changelog-entry:hover {
-      background: #2c2c2c;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.6s forwards;
+      animation-delay: var(--delay);
     }
 
     .changelog-entry img {
       width: 100%;
-      display: block;
-      border-bottom: 1px solid #333;
-      height: 150px;
+      border-radius: 8px;
+      margin-bottom: 10px;
       object-fit: cover;
+      max-height: 150px;
     }
 
-    .changelog-entry p {
-      padding: 10px 15px;
-      font-size: 1rem;
-      margin: 0;
-      color: #ddd;
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    /* Event Host Specs */
+    /* Stagger animation delays for changelog entries */
+    .changelog-entry:nth-child(1) {
+      --delay: 0.1s;
+    }
+    .changelog-entry:nth-child(2) {
+      --delay: 0.25s;
+    }
+    .changelog-entry:nth-child(3) {
+      --delay: 0.4s;
+    }
 
     .event-host-specs {
       margin-top: 60px;
-      background-color: #121212;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px #ff7a0055;
-    }
-
-    .event-host-specs h2 {
-      color: #ff7a00;
-      font-weight: 800;
-      font-size: 2.8rem;
-      margin-bottom: 30px;
-      text-align: center;
-      text-shadow: 0 0 8px #ff7a00cc;
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+      letter-spacing: 0.04em;
     }
 
     .spec-packages {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 25px;
-      max-width: 900px;
-      margin: auto;
+      gap: 20px;
     }
 
     .spec-package {
-      background: linear-gradient(145deg, #1e1e1e, #121212);
+      background: linear-gradient(145deg, #222222, #121212);
       border-radius: 20px;
       padding: 30px 20px;
-      box-shadow: 0 4px 15px #000000aa;
+      box-shadow: 0 4px 10px #000000aa;
       border: 2px solid transparent;
-      transition: transform 0.3s ease, border-color 0.3s ease;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
+      will-change: transform;
     }
 
     .spec-package:hover {
-      transform: translateY(-6px);
+      transform: translateY(-8px) scale(1.03);
       border-color: #ff7a00;
-      box-shadow: 0 8px 24px #ff7a0044;
+      box-shadow: 0 12px 28px #ff7a0055;
     }
 
     .spec-package h3 {
       color: #ff7a00;
-      font-size: 1.8rem;
-      margin-bottom: 12px;
-      font-weight: 900;
-    }
-
-    .spec-package p.description {
-      font-size: 1rem;
-      color: #bbb;
-      margin-bottom: 20px;
-      text-align: center;
-      line-height: 1.4;
-      min-height: 60px;
+      margin-bottom: 10px;
+      letter-spacing: 0.06em;
     }
 
     .price-bar {
       background-color: #27ae60;
-      border-radius: 9999px;
-      padding: 10px 30px;
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: white;
-      box-shadow: 0 2px 8px #27ae6099;
-      min-width: 140px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    .features-list {
+      padding: 8px 15px;
+      border-radius: 8px;
       margin-top: 15px;
-      width: 100%;
-      list-style: none;
-      padding-left: 0;
+      font-weight: bold;
+      min-width: 90px;
+      text-align: center;
+      font-size: 1.1em;
+      letter-spacing: 0.04em;
+      user-select: none;
     }
 
-    .features-list li {
-      margin: 8px 0;
-      color: #ddd;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-    }
-
-    .features-list li::before {
-      content: "✓";
-      color: #ff7a00;
-      font-weight: 900;
+    .spec-package p.description {
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 0;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <header>
     <div class="logo">
-      <img
-        src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-        alt="Event Alerts Logo"
-      />
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
       Event Alerts
     </div>
-    <a
-      class="download-btn"
-      href="https://modrinth.com/mod/alerts"
-      target="_blank"
-      >Download EventUtils</a
-    >
+    <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">Download EventUtils</a>
   </header>
 
   <main>
@@ -319,112 +287,67 @@
         <img
           class="eventutils-logo-right"
           src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-          alt="Bee logo"
+          alt="Bee Logo"
         />
       </div>
-
-      <p>
-        EventUtils is a mod for Minecraft designed to enhance your multiplayer
-        events with clear alerts, fast rollbacks, and automatic player stats.
-        Available on Fabric and Forge, it's your perfect event companion.
-      </p>
-
+      <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
       <ul class="features">
-        <li>📢 Clear player join/leave alerts</li>
-        <li>⏪ Instant rollback on event end</li>
-        <li>📊 Real-time player stats and counts</li>
-        <li>🎲 Easy-to-use event commands</li>
+        <li>✅ Easy server alerts and notifications</li>
+        <li>✅ Seamless integration with most Minecraft mods</li>
+        <li>✅ Configurable UI for best player experience</li>
+        <li>✅ Optimized performance for low overhead</li>
       </ul>
 
-      <div class="partner-section">
-        <p>Partnered with:</p>
-        <img
-          src="https://minehut.com/assets/images/minehut_logo.svg"
-          alt="Minehut Logo"
-        />
-        <img
-          src="https://lunarclient.com/images/lunar-logo.svg"
-          alt="Lunar Client Logo"
-        />
-        <a href="https://lilypad.gg" target="_blank" rel="noopener"
-          >Lilypad.gg</a
-        >
-      </div>
-
-      <!-- Event Host Specs below main content -->
-      <section class="event-host-specs" aria-label="Event Host Specifications">
+      <section class="event-host-specs">
         <h2>Event Host Specs</h2>
         <div class="spec-packages">
           <div class="spec-package">
-            <h3>FREE</h3>
-            <p class="description">Basic hosting for solo or small matches.</p>
-            <span class="price-bar">$0/month</span>
-            <ul class="features-list">
-              <li>Up to 10 players</li>
-              <li>Basic support</li>
-              <li>1GB RAM</li>
-            </ul>
+            <h3>Entry Tier</h3>
+            <p class="description">Basic hosting with 2 GB RAM, suitable for up to 10 players.</p>
+            <div class="price-bar">2 GB RAM</div>
           </div>
-
           <div class="spec-package">
-            <h3>PREMIUM</h3>
-            <p class="description">
-              Optimized for community-scale events with added support.
-            </p>
-            <span class="price-bar">$9.99/month</span>
-            <ul class="features-list">
-              <li>Up to 100 players</li>
-              <li>Priority support</li>
-              <li>8GB RAM</li>
-            </ul>
+            <h3>Advanced Tier</h3>
+            <p class="description">Enhanced hosting with 4 GB RAM, supports up to 25 players.</p>
+            <div class="price-bar">4 GB RAM</div>
           </div>
-
           <div class="spec-package">
-            <h3>ENTERPRISE</h3>
-            <p class="description">
-              Maximum resources and customization for major events.
-            </p>
-            <span class="price-bar">$24.99/month</span>
-            <ul class="features-list">
-              <li>Unlimited players</li>
-              <li>Dedicated support team</li>
-              <li>32GB RAM</li>
-            </ul>
+            <h3>Pro Tier</h3>
+            <p class="description">Premium hosting with 8 GB RAM, ideal for up to 50 players.</p>
+            <div class="price-bar">8 GB RAM</div>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- Sidebar with changelog -->
     <aside class="sidebar">
-      <section class="changelog" aria-label="Changelog">
+      <section class="changelog">
         <h2>Changelog</h2>
-
         <article class="changelog-entry">
-          <img
-            src="https://via.placeholder.com/400x150.png?text=Changelog+Update+1"
-            alt="Changelog Update 1"
-          />
-          <p>Version 1.2.0 - Added new player stats dashboard and fixed bugs.</p>
+          <img src="https://via.placeholder.com/350x150?text=Update+1" alt="Changelog update 1" />
+          <h3>Version 1.2.0 - New Features</h3>
+          <p>Added event countdown timers and improved alert customization options.</p>
         </article>
-
         <article class="changelog-entry">
-          <img
-            src="https://via.placeholder.com/400x150.png?text=Changelog+Update+2"
-            alt="Changelog Update 2"
-          />
-          <p>Version 1.1.5 - Improved rollback speed and UI enhancements.</p>
+          <img src="https://via.placeholder.com/350x150?text=Update+2" alt="Changelog update 2" />
+          <h3>Version 1.1.0 - Performance</h3>
+          <p>Optimized mod loading times and fixed minor bugs reported by users.</p>
         </article>
-
         <article class="changelog-entry">
-          <img
-            src="https://via.placeholder.com/400x150.png?text=Changelog+Update+3"
-            alt="Changelog Update 3"
-          />
-          <p>Version 1.1.0 - Initial public release with core features.</p>
+          <img src="https://via.placeholder.com/350x150?text=Update+3" alt="Changelog update 3" />
+          <h3>Version 1.0.0 - Initial Release</h3>
+          <p>Launched EventUtils mod with core alert features and basic UI.</p>
         </article>
       </section>
     </aside>
   </main>
+
+  <section class="partner-section">
+    <img
+      src="https://cdn.discordapp.com/icons/651050427758886421/0e4958c6d754a43a8954d9e4a4b8f57d.png"
+      alt="Modrinth Logo"
+    />
+    <a href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">Download on Modrinth</a>
+  </section>
 </body>
 </html>
