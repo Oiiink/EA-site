@@ -1,313 +1,117 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts</title>
-  <link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Alerts - Minecraft Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+  <link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     html {
       scroll-behavior: smooth;
     }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #121212;
-      color: #f5f5f5;
-      overflow-x: hidden;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .glow {
-      text-shadow:
-        0 0 6px #f97316,
-        0 0 10px #f97316aa,
-        0 0 20px #fb923caa;
-    }
-    /* Animate bee gently */
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-    .bee-logo {
-      animation: float 4s ease-in-out infinite;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      will-change: transform;
-    }
-    .bee-logo:hover {
-      transform: scale(1.15) rotate(12deg);
-      filter: drop-shadow(0 0 8px #f97316);
-    }
-    /* Scroll fade in */
     .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      will-change: opacity, transform;
+      animation: fadeIn 1.2s ease-in-out;
     }
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    /* Toggle Switch */
-    .toggle-bg {
-      background: #444;
-      border-radius: 9999px;
-      width: 40px;
-      height: 20px;
-      position: relative;
-      cursor: pointer;
-      flex-shrink: 0;
+    .glow-text {
+      text-shadow: 0 0 10px #f97316, 0 0 20px #f97316;
     }
-    .toggle-circle {
-      background: #f97316;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      position: absolute;
-      top: 1px;
-      left: 1px;
-      transition: left 0.3s ease;
-      will-change: left;
-    }
-    .toggle-bg.dark .toggle-circle {
-      left: 21px;
-    }
-    /* Button hover effect */
-    .btn-gradient {
-      background: linear-gradient(90deg, #f97316, #fbbf24);
-      color: black;
-      font-weight: 600;
-      padding: 0.75rem 2rem;
-      border-radius: 9999px;
-      box-shadow: 0 4px 14px rgb(251 191 36 / 0.6);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-    }
-    .btn-gradient:hover {
-      transform: scale(1.07);
-      box-shadow: 0 6px 22px rgb(251 191 36 / 0.9);
-    }
-    /* Card style with hover */
-    .card {
-      background: #1f1f1f;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 0 12px #f97316aa;
-      transition: box-shadow 0.4s ease, transform 0.3s ease;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    .card:hover {
-      box-shadow: 0 0 24px #f97316ff;
-      transform: translateY(-6px);
-    }
-    /* Icon style */
-    .icon-img {
-      width: 72px;
-      height: 72px;
-      filter: drop-shadow(0 0 4px #f97316aa);
-      transition: filter 0.3s ease;
-    }
-    .card:hover .icon-img {
-      filter: drop-shadow(0 0 12px #f97316ff);
-    }
-    /* Parallax effect */
-    .parallax {
-      will-change: transform;
-      transition: transform 0.1s ease-out;
-    }
-    /* Section titles */
-    h2.section-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #fb923c;
-      text-align: center;
-      text-shadow:
-        0 0 5px #fb923c,
-        0 0 10px #fb923caa;
-      margin-bottom: 2rem;
-    }
-    /* Footer style */
-    footer {
-      background: #1f1f1f;
-      padding: 1.5rem 0;
-      text-align: center;
-      font-size: 0.875rem;
-      color: #777;
-      user-select: none;
+    .hover-glow:hover {
+      filter: drop-shadow(0 0 8px #f97316);
     }
   </style>
 </head>
-<body>
-
-  <!-- Navbar -->
-  <nav id="navbar" class="fixed top-0 w-full z-50 bg-[#1f1f1f]/95 backdrop-blur-md shadow-md flex items-center justify-between px-6 py-3 md:py-4">
-    <div class="flex items-center space-x-6">
-      <!-- Hamburger menu (mobile) -->
-      <button id="menu-btn" aria-label="Toggle Menu" class="md:hidden focus:outline-none">
-        <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" 
-          xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
-
-      <!-- Nav Links Desktop & Mobile -->
-      <ul id="nav-links" class="hidden md:flex space-x-8 font-semibold text-gray-300">
-        <li><a href="#home" class="hover:text-orange-400 transition">Home</a></li>
-        <li><a href="#store" class="hover:text-orange-400 transition">Store</a></li>
-        <li><a href="#appeal" class="hover:text-orange-400 transition">Appeal</a></li>
-        <li><a href="https://discord.gg/skeppy" target="_blank" rel="noopener" class="hover:text-orange-400 transition flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current text-indigo-400" viewBox="0 0 24 24"><path d="M20.317 4.3698A19.7913 19.7913 0 0016.418 3c-.253.42-.502.863-.72 1.313a18.1756 18.1756 0 00-5.395 0 12.4046 12.4046 0 00-.74-1.313c-1.608.29-3.18.797-4.68 1.3698-3.997 6-3.997 12.008 0 17.999A19.9162 19.9162 0 0012 21a20.1351 20.1351 0 004.68-1.3698 12.42 12.42 0 00.722-1.315 18.5233 18.5233 0 005.395 0c-.215.463-.47.918-.723 1.37a20.1124 20.1124 0 004.682-1.37c3.998-5.993 3.998-11.999 0-17.999zM9.545 15.568c-1.178 0-2.14-1.086-2.14-2.42 0-1.335.95-2.42 2.14-2.42 1.192 0 2.157 1.092 2.14 2.42 0 1.334-.948 2.42-2.14 2.42zm6.913 0c-1.178 0-2.14-1.086-2.14-2.42 0-1.335.95-2.42 2.14-2.42 1.192 0 2.157 1.092 2.14 2.42 0 1.334-.95 2.42-2.14 2.42z"/></svg>
-          Discord
-        </a></li>
-      </ul>
-    </div>
-
-    <!-- Logo -->
-    <a href="#home" class="absolute left-1/2 -translate-x-1/2">
-      <picture>
-        <source srcset="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" type="image/webp" />
-        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.png" alt="Event Alerts Bee" class="w-14 h-14 bee-logo" />
-      </picture>
-    </a>
-
-    <div class="flex items-center space-x-6">
-      <!-- Login -->
-      <a href="#login" class="text-orange-400 font-semibold hover:text-orange-300 transition hidden md:inline-block">Log In</a>
-
-      <!-- Theme toggle -->
-      <div id="theme-toggle" class="toggle-bg" aria-label="Toggle dark mode" role="switch" tabindex="0">
-        <div class="toggle-circle"></div>
+<body class="bg-gray-950 text-white font-sans">
+  <!-- Header -->
+  <header class="bg-gray-900 shadow-md fixed top-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" alt="Logo" class="w-10 h-10 animate-bounce" />
+        <h1 class="text-2xl font-bold text-orange-400 glow-text">Event Alerts</h1>
       </div>
+      <nav class="hidden md:flex space-x-6 text-sm">
+        <a href="#home" class="hover:text-orange-400">Home</a>
+        <a href="#store" class="hover:text-orange-400">Store</a>
+        <a href="#appeal" class="hover:text-orange-400">Appeal</a>
+        <a href="https://discord.gg/skeppy" target="_blank" class="hover:text-orange-400">Discord</a>
+        <a href="#" class="ml-4 px-3 py-1 rounded bg-orange-500 hover:bg-orange-600">Log In</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <!-- Mobile nav links -->
-  <div id="mobile-menu" class="fixed inset-0 bg-[#121212]/90 backdrop-blur-md z-40 transform -translate-x-full transition-transform duration-300 md:hidden">
-    <ul class="flex flex-col items-center justify-center h-full space-y-12 text-2xl font-semibold text-orange-400">
-      <li><a href="#home" class="hover:underline" onclick="toggleMobileMenu()">Home</a></li>
-      <li><a href="#store" class="hover:underline" onclick="toggleMobileMenu()">Store</a></li>
-      <li><a href="#appeal" class="hover:underline" onclick="toggleMobileMenu()">Appeal</a></li>
-      <li><a href="https://discord.gg/skeppy" target="_blank" rel="noopener" class="hover:underline flex items-center gap-2" onclick="toggleMobileMenu()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 fill-current text-indigo-400" viewBox="0 0 24 24"><path d="M20.317 4.3698A19.7913 19.7913 0 0016.418 3c-.253.42-.502.863-.72 1.313a18.1756 18.1756 0 00-5.395 0 12.4046 12.4046 0 00-.74-1.313c-1.608.29-3.18.797-4.68 1.3698-3.997 6-3.997 12.008 0 17.999A19.9162 19.9162 0 0012 21a20.1351 20.1351 0 004.68-1.3698 12.42 12.42 0 00.722-1.315 18.5233 18.5233 0 005.395 0c-.215.463-.47.918-.723 1.37a20.1124 20.1124 0 004.682-1.37c3.998-5.993 3.998-11.999 0-17.999zM9.545 15.568c-1.178 0-2.14-1.086-2.14-2.42 0-1.335.95-2.42 2.14-2.42 1.192 0 2.157 1.092 2.14 2.42 0 1.334-.948 2.42-2.14 2.42zm6.913 0c-1.178 0-2.14-1.086-2.14-2.42 0-1.335.95-2.42 2.14-2.42 1.192 0 2.157 1.092 2.14 2.42 0 1.334-.95 2.42-2.14 2.42z"/></svg>
-        Discord
-      </a></li>
-      <li><a href="#login" class="hover:underline" onclick="toggleMobileMenu()">Log In</a></li>
-    </ul>
-  </div>
-
-  <!-- Hero Section -->
-  <section id="home" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-orange-900 via-orange-700 to-orange-900 px-6 text-center relative overflow-hidden">
-    <h1 class="text-5xl md:text-7xl font-extrabold text-white glow max-w-4xl leading-tight mb-8">
-      Real-Time Minecraft Event Alerts
-    </h1>
-    <p class="text-lg md:text-xl text-orange-100 max-w-3xl mb-12">
-      Stay updated instantly with live event notifications, player stats, and exclusive offers.
-    </p>
-    <div class="flex space-x-6 justify-center">
-      <a href="#store" class="btn-gradient">Visit Store</a>
-      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" class="btn-gradient bg-indigo-500 hover:bg-indigo-600 text-white">Join Discord</a>
+  <!-- Home -->
+  <section id="home" class="pt-32 pb-24 px-4 text-center bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800">
+    <div class="max-w-4xl mx-auto">
+      <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" alt="Bee Logo" class="w-32 h-32 mx-auto hover-glow transition duration-300" />
+      <h2 class="text-5xl font-bold text-orange-400 mt-4 glow-text">Welcome to Event Alerts</h2>
+      <p class="mt-4 text-gray-300 text-lg">Track server events, unlock exclusive content, and join the fun!</p>
     </div>
   </section>
 
-  <!-- Server Status -->
-  <section id="server-status" class="py-16 bg-[#1a1a1a] text-center px-6">
-    <h2 class="section-title">Server Status</h2>
-    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div class="card fade-in" tabindex="0" aria-live="polite" aria-atomic="true">
-        <img src="https://img.icons8.com/ios-filled/100/ff7e00/server.png" alt="Server Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Status</h3>
-        <p id="server-online" class="text-2xl mt-1">Loading...</p>
+  <!-- Store -->
+  <section id="store" class="py-20 px-6 bg-gray-900">
+    <h2 class="text-3xl font-bold text-center text-orange-400 glow-text">Server Store</h2>
+    <p class="text-center text-gray-400">Support us and receive epic perks!</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
+        <h3 class="text-xl font-bold text-orange-300">VIP Rank</h3>
+        <p class="text-gray-400 mt-2">Priority access + monthly gifts.</p>
       </div>
-      <div class="card fade-in" tabindex="0" aria-live="polite" aria-atomic="true">
-        <img src="https://img.icons8.com/ios-filled/100/ff7e00/players.png" alt="Players Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Players Online</h3>
-        <p id="player-count" class="text-2xl mt-1">-- / --</p>
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
+        <h3 class="text-xl font-bold text-orange-300">Event Crates</h3>
+        <p class="text-gray-400 mt-2">Get rare items from limited crates.</p>
       </div>
-      <div class="card fade-in" tabindex="0" aria-live="polite" aria-atomic="true">
-        <img src="https://img.icons8.com/ios-filled/100/ff7e00/version.png" alt="Version Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Server Version</h3>
-        <p id="server-version" class="text-2xl mt-1">--</p>
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg">
+        <h3 class="text-xl font-bold text-orange-300">Cosmetics Pack</h3>
+        <p class="text-gray-400 mt-2">Trails, pets, and exclusive gear.</p>
       </div>
     </div>
   </section>
 
-  <!-- Store Section -->
-  <section id="store" class="py-16 bg-gradient-to-t from-[#1f1f1f] to-[#121212] px-6">
-    <h2 class="section-title">Store</h2>
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
-      <div class="card fade-in" tabindex="0" role="button" aria-pressed="false" aria-label="Buy Event Packs">
-        <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/100/ff7e00/external-pack-supermarket-flaticons-lineal-color-flat-icons.png" alt="Packs Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Event Packs</h3>
-        <p>Exclusive in-game packs & rewards to enhance your experience.</p>
-        <a href="#store" class="btn-gradient mt-4 inline-block">Shop Now</a>
+  <!-- Appeal -->
+  <section id="appeal" class="py-20 px-6 bg-gray-950">
+    <h2 class="text-3xl font-bold text-orange-400 text-center glow-text">Submit a Ban Appeal</h2>
+    <p class="text-center text-gray-400">Think your ban was unfair? Appeal it here.</p>
+    <div class="text-center mt-10">
+      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105">Submit Appeal</a>
+    </div>
+  </section>
+
+  <!-- Event Feed -->
+  <section id="events" class="py-20 px-6 bg-gray-900">
+    <h2 class="text-3xl font-bold text-center text-orange-400 glow-text">Live Event Feed</h2>
+    <p class="text-center text-gray-400">Stay updated on the latest server happenings</p>
+    <div class="max-w-4xl mx-auto mt-10 space-y-6">
+      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+        <h4 class="text-orange-300 font-semibold">🎉 Double XP Weekend</h4>
+        <p class="text-gray-300 text-sm">Earn double experience points this weekend only! Starts Friday 6PM EST.</p>
       </div>
-      <div class="card fade-in" tabindex="0" role="button" aria-pressed="false" aria-label="Buy Cosmetics">
-        <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/100/ff7e00/external-cosmetics-beauty-flaticons-lineal-color-flat-icons.png" alt="Cosmetics Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Cosmetics</h3>
-        <p>Customize your avatar with unique skins and effects.</p>
-        <a href="#store" class="btn-gradient mt-4 inline-block">Shop Now</a>
+      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+        <h4 class="text-orange-300 font-semibold">🧨 Firework Building Contest</h4>
+        <p class="text-gray-300 text-sm">Join the community build contest and win rare crates! Submissions due Sunday.</p>
       </div>
-      <div class="card fade-in" tabindex="0" role="button" aria-pressed="false" aria-label="Buy Subscriptions">
-        <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/100/ff7e00/external-subscription-advertising-flaticons-lineal-color-flat-icons.png" alt="Subscription Icon" class="icon-img" />
-        <h3 class="text-xl font-semibold text-orange-400">Subscriptions</h3>
-        <p>Get premium perks and priority access with our plans.</p>
-        <a href="#store" class="btn-gradient mt-4 inline-block">Shop Now</a>
+      <div class="bg-gray-800 p-4 rounded-lg shadow hover:scale-[1.02] transition">
+        <h4 class="text-orange-300 font-semibold">🐝 Bee Hunt Mini-Game</h4>
+        <p class="text-gray-300 text-sm">Find the hidden bees across the map and earn sweet rewards!</p>
       </div>
     </div>
   </section>
 
-  <!-- Appeal Section -->
-  <section id="appeal" class="py-16 bg-[#1a1a1a] px-6 text-center">
-    <h2 class="section-title">Appeal</h2>
-    <p class="max-w-3xl mx-auto mb-8 text-lg md:text-xl text-orange-200 leading-relaxed">
-      If you feel you have been wrongly banned or have questions, please send an appeal via our Google Form.
-    </p>
-    <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" class="btn-gradient inline-block max-w-xs mx-auto">Submit an Appeal</a>
+  <!-- Server Status Placeholder -->
+  <section class="py-10 text-center bg-gray-950 text-gray-300">
+    <h3 class="text-xl mb-2">Server IP: <span class="text-white font-bold">play.eventalerts.gg</span></h3>
+    <p class="italic text-sm">Real-time server status coming soon...</p>
   </section>
 
   <!-- Footer -->
-  <footer>
+  <footer class="bg-gray-800 py-6 text-center text-sm text-gray-500">
     &copy; 2025 Event Alerts. All rights reserved.
   </footer>
 
-  <script>
-    // Toggle mobile menu
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navLinks = document.getElementById('nav-links');
-
-    function toggleMobileMenu() {
-      if (mobileMenu.classList.contains('-translate-x-full')) {
-        mobileMenu.classList.remove('-translate-x-full');
-        mobileMenu.classList.add('translate-x-0');
-      } else {
-        mobileMenu.classList.add('-translate-x-full');
-        mobileMenu.classList.remove('translate-x-0');
-      }
-    }
-
-    menuBtn.addEventListener('click', toggleMobileMenu);
-
-    // Close mobile menu when clicking nav links (handled inline)
-
-    // Scroll fade-in observer
-    const faders = document.querySelectorAll('.fade-in');
-    const appearOptions = { threshold: 0.15 };
-    const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('visible');
-        appearOnScroll.unobserve(entry.target);
-      });
-    }, appearOptions);
-
-    faders
+  <!-- Mobile Menu (coming soon) -->
+</body>
+</html>
