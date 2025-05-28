@@ -3,443 +3,225 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts - LunarClient Style</title>
+<title>Event Alerts</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
 <style>
-  /* Base & Reset */
-  * {
+  /* Reset & base */
+  *, *::before, *::after {
     box-sizing: border-box;
   }
   body {
     margin: 0;
-    background: linear-gradient(135deg, #121214, #1e1e22);
     font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #121214, #1e1e22);
     color: #eee;
-    user-select: none;
     -webkit-font-smoothing: antialiased;
+    user-select: none;
   }
   a {
-    text-decoration: none;
     color: inherit;
-  }
-  img {
-    max-width: 100%;
-    display: block;
+    text-decoration: none;
   }
   button {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
     user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #121214;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #ff660080;
-    border-radius: 8px;
-  }
-
-  /* Header */
+  /* Navbar */
   header {
+    position: sticky;
+    top: 0;
+    background: #18181c;
+    border-bottom: 2px solid #ff6600;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 48px;
-    background-color: #18181c;
-    border-bottom: 2px solid #ff6600;
-    position: sticky;
-    top: 0;
-    z-index: 999;
+    padding: 18px 48px;
+    z-index: 100;
   }
   .logo {
+    font-size: 1.75rem;
     font-weight: 700;
-    font-size: 1.8rem;
-    letter-spacing: 0.15em;
     color: #ff6600;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 14px;
     user-select: text;
   }
-  .logo img {
-    width: 48px;
-    height: 48px;
-    filter: drop-shadow(0 0 6px #ff6600aa);
-    transition: transform 0.3s ease;
-    border-radius: 8px;
-  }
-  .logo img:hover,
-  .logo img:focus-visible {
-    transform: scale(1.1);
-    outline: none;
-  }
   .download-btn {
-    padding: 14px 38px;
     background: linear-gradient(90deg, #ff6600, #ff851b);
-    border-radius: 12px;
-    font-size: 1rem;
+    padding: 14px 40px;
+    border-radius: 14px;
     color: #121214;
-    box-shadow: 0 4px 12px #ff6600bb;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    user-select: none;
+    font-size: 1rem;
+    box-shadow: 0 6px 15px #ff6600bb;
   }
   .download-btn:hover,
   .download-btn:focus-visible {
     background: linear-gradient(90deg, #ff851b, #ff6600);
-    box-shadow: 0 6px 20px #ff6600ee;
-    transform: translateY(-3px);
+    box-shadow: 0 10px 30px #ff6600ee;
     outline: none;
   }
   .download-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 12px #ff660080;
+    box-shadow: 0 4px 12px #ff660080;
   }
 
-  /* Layout */
-  main {
-    max-width: 1100px;
-    margin: 56px auto 88px;
-    padding: 0 36px;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 48px;
-  }
-  @media (max-width: 900px) {
-    main {
-      grid-template-columns: 1fr;
-      margin: 48px auto 72px;
-      padding: 0 24px;
-    }
-  }
-
-  /* Left content */
-  .main-content {
+  /* Hero Section */
+  .hero {
+    height: 75vh;
     display: flex;
     flex-direction: column;
-    gap: 40px;
-  }
-
-  /* Title block */
-  .title-block {
-    display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 32px;
+    text-align: center;
+    padding: 0 24px;
+    background: linear-gradient(180deg, #121214 0%, #1a1a1e 80%);
   }
-  .title-block h1 {
-    font-size: 4.5rem;
-    color: #ff6600;
+  .hero h1 {
+    font-size: 5rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
+    color: #ff6600;
     margin: 0;
-    user-select: text;
     text-transform: uppercase;
+    user-select: text;
   }
-  .intro-text {
-    margin-top: 8px;
-    max-width: 700px;
-    font-weight: 500;
+  .hero p {
+    margin-top: 18px;
+    font-size: 1.5rem;
+    max-width: 600px;
     color: #ccc;
-    font-size: 1.2rem;
-    line-height: 1.5;
+    font-weight: 500;
     user-select: text;
   }
-  .title-logo {
-    width: 96px;
-    height: 96px;
-    border-radius: 14px;
-    filter: drop-shadow(0 0 16px #ff660099);
-    transition: transform 0.3s ease;
-    cursor: default;
-  }
-  .title-logo:hover,
-  .title-logo:focus-visible {
-    transform: scale(1.12);
-    outline: none;
+  .hero .download-btn {
+    margin-top: 42px;
+    font-size: 1.2rem;
+    padding: 18px 48px;
   }
 
-  /* Tabs */
-  .tabs {
+  /* Features Section */
+  .features {
     display: flex;
-    gap: 24px;
-    border-bottom: 3px solid #2e2e33;
+    justify-content: center;
+    gap: 40px;
+    padding: 64px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
-  .tab {
-    font-weight: 700;
-    font-size: 1.25rem;
-    padding: 16px 30px;
-    border-bottom: 4px solid transparent;
-    color: #aaa;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.3s ease, border-color 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .tab:hover,
-  .tab:focus-visible {
-    color: #ff6600;
-    outline: none;
-  }
-  .tab.active {
-    color: #ff6600;
-    border-bottom-color: #ff6600;
-    cursor: default;
-    pointer-events: none;
-  }
-
-  /* Tab content */
-  .tab-content {
-    position: relative;
+  .feature-card {
     background: #1f1f23;
     border-radius: 20px;
-    padding: 30px 40px;
+    padding: 36px 32px;
     box-shadow:
       inset 0 0 30px #ff660033,
-      0 0 20px #ff660066;
-    min-height: 300px;
-    user-select: text;
-    color: #ddd;
-    overflow-y: auto;
-  }
-  .tab-panel {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-    position: absolute;
-    inset: 0;
-    padding: 0;
-    overflow-y: auto;
-    max-height: 100%;
-  }
-  .tab-panel.active {
-    opacity: 1;
-    pointer-events: auto;
-    position: relative;
-    padding: 0;
-  }
-  .tab-panel h2 {
-    font-size: 2.8rem;
-    margin: 0 0 18px 0;
-    color: #ff6600;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    user-select: text;
-  }
-  .tab-panel p,
-  .tab-panel ul {
-    font-size: 1.15rem;
-    line-height: 1.55;
-  }
-  .features-list {
-    list-style: none;
-    padding-left: 0;
-  }
-  .features-list li {
-    position: relative;
-    padding-left: 30px;
-    margin-bottom: 16px;
-  }
-  .features-list li::before {
-    content: "✔";
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: #ff6600;
-    font-weight: 900;
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-
-  /* Right panel */
-  .specs-panel {
-    background: #1f1f23;
-    border-radius: 20px;
-    padding: 36px 28px;
-    box-shadow:
-      inset 0 0 36px #ff660022,
-      0 0 22px #ff6600aa;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 28px;
-    user-select: none;
-  }
-  .spec-card {
-    background: #27272c;
-    border-radius: 14px;
-    padding: 28px 24px;
+      0 0 25px #ff6600aa;
+    width: 280px;
     text-align: center;
-    box-shadow: 0 0 14px #ff660022;
-    border: 1px solid #3a3a40;
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
-    cursor: default;
-    color: #ddd;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: text;
   }
-  .spec-card:hover,
-  .spec-card:focus-visible {
-    box-shadow: 0 0 28px #ff6600cc;
+  .feature-card:hover,
+  .feature-card:focus-within {
     transform: translateY(-8px);
+    box-shadow:
+      inset 0 0 40px #ff660055,
+      0 0 36px #ff6600cc;
     outline: none;
   }
-  .spec-card h3 {
-    margin: 0 0 14px 0;
+  .feature-card h3 {
     color: #ff6600;
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    margin: 0 0 14px 0;
   }
-  .spec-card p {
-    font-weight: 800;
-    font-size: 2rem;
-    color: #ff6600cc;
-    letter-spacing: 0.08em;
+  .feature-card p {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: #ddd;
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 28px 24px;
+    color: #777;
+    font-size: 0.9rem;
+    user-select: none;
   }
 
   /* Responsive */
-  @media (max-width: 600px) {
-    .tabs {
+  @media (max-width: 940px) {
+    .features {
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 32px;
     }
-    .tab {
-      flex: 1 1 45%;
-      text-align: center;
-      padding: 12px 0;
+    .feature-card {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+  }
+  @media (max-width: 480px) {
+    .hero h1 {
+      font-size: 3.5rem;
+      letter-spacing: 0.12em;
+    }
+    .hero p {
       font-size: 1.1rem;
     }
-    main {
-      grid-template-columns: 1fr;
-      padding: 0 20px;
-      margin-bottom: 64px;
+    header {
+      padding: 14px 24px;
     }
-    .specs-panel {
-      grid-template-columns: 1fr;
-    }
-    .title-block {
-      flex-direction: column;
-      align-items: flex-start;
+    .download-btn {
+      padding: 12px 30px;
+      font-size: 0.9rem;
     }
   }
 </style>
 </head>
 <body>
+
 <header>
-  <a href="/" class="logo" tabindex="-1" aria-label="Event Alerts Logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/3159/3159066.png" alt="Event Alerts Logo" class="title-logo" />
-    EVENT ALERTS
-  </a>
+  <div class="logo" tabindex="0" aria-label="Event Alerts logo">EVENT ALERTS</div>
   <button class="download-btn" aria-label="Download Event Alerts">Download</button>
 </header>
 
-<main>
-  <section class="main-content" role="main" aria-label="Main content area with tabs">
-    <div class="title-block">
-      <h1>EVENT ALERTS</h1>
-      <p class="intro-text">Stay updated with pixel-perfect, lightning-fast event notifications that keep you in the loop without the noise.</p>
-    </div>
+<section class="hero" role="banner" aria-label="Event Alerts hero section">
+  <h1>EVENT ALERTS</h1>
+  <p>Stay notified with lightning-fast, pixel-perfect alerts designed for gamers and streamers alike.</p>
+  <button class="download-btn" aria-label="Download Event Alerts">Download Now</button>
+</section>
 
-    <nav class="tabs" role="tablist" aria-label="Event Alerts Navigation">
-      <button role="tab" aria-selected="true" aria-controls="tab-events" id="tab-btn-events" tabindex="0" class="tab active">Events</button>
-      <button role="tab" aria-selected="false" aria-controls="tab-about" id="tab-btn-about" tabindex="-1" class="tab">About</button>
-      <button role="tab" aria-selected="false" aria-controls="tab-features" id="tab-btn-features" tabindex="-1" class="tab">Features</button>
-    </nav>
+<section class="features" role="region" aria-label="Event Alerts Features">
+  <article class="feature-card" tabindex="0">
+    <h3>Fast & Reliable</h3>
+    <p>Get instant notifications with ultra-low latency and no delays.</p>
+  </article>
+  <article class="feature-card" tabindex="0">
+    <h3>Customizable Themes</h3>
+    <p>Choose from multiple vibrant themes or create your own style.</p>
+  </article>
+  <article class="feature-card" tabindex="0">
+    <h3>Cross Platform</h3>
+    <p>Works seamlessly on PC, Mac, and mobile devices.</p>
+  </article>
+  <article class="feature-card" tabindex="0">
+    <h3>Easy Integration</h3>
+    <p>Connect with your favorite games and streaming tools effortlessly.</p>
+  </article>
+</section>
 
-    <section class="tab-content">
-      <article id="tab-events" role="tabpanel" tabindex="0" aria-labelledby="tab-btn-events" class="tab-panel active">
-        <h2>Upcoming Events</h2>
-        <p>Check out the latest event alerts and schedules here.</p>
-        <!-- Add event list or schedule here -->
-      </article>
+<footer>
+  &copy; 2025 Event Alerts. All rights reserved.
+</footer>
 
-      <article id="tab-about" role="tabpanel" tabindex="0" aria-labelledby="tab-btn-about" class="tab-panel" hidden>
-        <h2>About Event Alerts</h2>
-        <p>We craft pixel-perfect alerts designed to keep you informed without distractions.</p>
-      </article>
-
-      <article id="tab-features" role="tabpanel" tabindex="0" aria-labelledby="tab-btn-features" class="tab-panel" hidden>
-        <h2>Features</h2>
-        <ul class="features-list">
-          <li>Fast, lightweight alerts</li>
-          <li>Highly customizable themes</li>
-          <li>Accessible & keyboard navigable</li>
-          <li>Seamless integration with events</li>
-        </ul>
-      </article>
-    </section>
-  </section>
-
-  <aside class="specs-panel" aria-label="Pricing plans and specifications">
-    <div tabindex="0" class="spec-card" role="region" aria-labelledby="basic-plan-title">
-      <h3 id="basic-plan-title">Basic</h3>
-      <p>$9.99 / month</p>
-    </div>
-    <div tabindex="0" class="spec-card" role="region" aria-labelledby="pro-plan-title">
-      <h3 id="pro-plan-title">Pro</h3>
-      <p>$19.99 / month</p>
-    </div>
-    <div tabindex="0" class="spec-card" role="region" aria-labelledby="enterprise-plan-title">
-      <h3 id="enterprise-plan-title">Enterprise</h3>
-      <p>Contact Us</p>
-    </div>
-  </aside>
-</main>
-
-<script>
-  // Tab switching with fade and ARIA
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.tab-panel');
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => {
-      // Remove active states
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-        t.setAttribute('tabindex', '-1');
-      });
-      panels.forEach(p => {
-        p.classList.remove('active');
-        p.setAttribute('hidden', 'true');
-      });
-
-      // Activate clicked tab & panel
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-      tab.setAttribute('tabindex', '0');
-      tab.focus();
-
-      const panel = document.getElementById(tab.getAttribute('aria-controls'));
-      panel.classList.add('active');
-      panel.removeAttribute('hidden');
-    });
-
-    tab.addEventListener('keydown', e => {
-      let newIndex = null;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        newIndex = (i + 1) % tabs.length;
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        newIndex = (i - 1 + tabs.length) % tabs.length;
-      }
-      if (newIndex !== null) {
-        tabs[newIndex].click();
-        tabs[newIndex].focus();
-        e.preventDefault();
-      }
-    });
-  });
-</script>
 </body>
 </html>
