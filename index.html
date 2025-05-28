@@ -1,274 +1,611 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Alerts</title>
 
-<!-- Favicon -->
-<link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" type="image/webp" />
+  <link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" type="image/webp" />
+  
+  <style>
+    /* Reset */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
 
-<style>
-  /* Reset */
-  *, *::before, *::after {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #121212, #1c1c1c);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
 
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background: linear-gradient(135deg, #1f2937, #111827);
-    color: #e5e7eb;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+    body.light {
+      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
+      color: #111;
+    }
 
-  /* Light theme */
-  body.light {
-    background: #f9fafb;
-    color: #111827;
-  }
+    a {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-  a {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-  }
+    a:hover, a:focus-visible {
+      color: #f59e0b; /* amber-500 */
+      outline: none;
+    }
 
-  /* Header/Nav */
-  header {
-    background: rgba(31, 41, 55, 0.85);
-    backdrop-filter: saturate(180%) blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
 
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: saturate(180%) blur(12px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.8);
+      z-index: 999;
+      transition: background 0.3s ease;
+    }
 
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-  }
+    header.light {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
 
-  nav a {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #e5e7eb;
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-
-  nav a:hover,
-  nav a:focus-visible {
-    background-color: #fbbf24; /* amber-400 */
-    color: #111827;
-    outline: none;
-  }
-
-  /* Logo */
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .logo img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-  }
-
-  .logo-text {
-    font-weight: 700;
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
-    color: #fbbf24;
-    user-select: none;
-  }
-
-  /* Server status */
-  .server-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #fbbf24;
-  }
-
-  .status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #dc2626; /* red-600 offline */
-    box-shadow: 0 0 8px #dc2626;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  .status-online {
-    background-color: #22c55e; /* green-500 online */
-    box-shadow: 0 0 12px #22c55e;
-  }
-
-  /* Toggle theme button */
-  #theme-toggle {
-    background: transparent;
-    border: 2px solid #fbbf24;
-    color: #fbbf24;
-    padding: 0.3rem 0.9rem;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  #theme-toggle:hover,
-  #theme-toggle:focus-visible {
-    background-color: #fbbf24;
-    color: #111827;
-    outline: none;
-  }
-
-  /* Hero Section */
-  main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 6rem 1rem 4rem;
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  main h1 {
-    font-size: 3rem;
-    font-weight: 900;
-    color: #fbbf24;
-    margin-bottom: 1rem;
-    user-select: none;
-    text-shadow: 0 0 10px #fbbf24;
-  }
-
-  main p {
-    font-size: 1.25rem;
-    line-height: 1.5;
-    color: #d1d5db;
-    max-width: 600px;
-    user-select: none;
-  }
-
-  /* Footer */
-  footer {
-    background: rgba(31, 41, 55, 0.85);
-    backdrop-filter: saturate(180%) blur(10px);
-    padding: 1rem 1.5rem;
-    text-align: center;
-    color: #fbbf24;
-    font-weight: 600;
-    font-size: 0.9rem;
-    user-select: none;
-  }
-
-  /* Responsive */
-  @media (max-width: 640px) {
     nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    /* Logo and nav left */
+    .nav-left {
+      display: flex;
+      align-items: center;
       gap: 1rem;
     }
-    main h1 {
-      font-size: 2.25rem;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.3s ease;
+      will-change: transform;
     }
-    main p {
+
+    .logo img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 3px #f59e0b);
+      transition: filter 0.3s ease;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 1.8rem;
+      letter-spacing: 0.15em;
+      color: #f59e0b;
+      text-shadow: 0 0 8px #f59e0b;
+      user-select: none;
+    }
+
+    .logo:hover img,
+    .logo:focus-visible img {
+      filter: drop-shadow(0 0 8px #f59e0b);
+    }
+
+    /* Nav menu */
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-weight: 600;
       font-size: 1rem;
     }
-  }
-</style>
+
+    .nav-links a {
+      position: relative;
+      padding: 0.25rem 0;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: #f59e0b;
+      transition: width 0.3s ease, left 0.3s ease;
+      border-radius: 1px;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a:focus-visible::after {
+      width: 100%;
+      left: 0;
+    }
+
+    /* Right nav */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .server-status {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #fbbf24;
+      background: rgba(255 255 255 / 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      box-shadow: 0 0 10px #fbbf24aa;
+      user-select: none;
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #dc2626;
+      box-shadow: 0 0 10px #dc2626aa;
+      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .status-online {
+      background-color: #22c55e;
+      box-shadow: 0 0 15px #22c55eaa;
+    }
+
+    /* Button */
+    .btn {
+      background: #f59e0b;
+      color: #111;
+      font-weight: 700;
+      padding: 0.5rem 1.4rem;
+      border-radius: 28px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 15px #f59e0baa;
+      border: none;
+      user-select: none;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: #d97706;
+      box-shadow: 0 0 22px #d97706bb;
+      outline: none;
+    }
+
+    /* Theme toggle */
+    #theme-toggle {
+      background: transparent;
+      border: 2px solid #f59e0b;
+      color: #f59e0b;
+      padding: 0.3rem 0.9rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 15px #f59e0baa;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+    }
+
+    #theme-toggle:hover,
+    #theme-toggle:focus-visible {
+      background-color: #f59e0b;
+      color: #111827;
+      outline: none;
+      box-shadow: 0 0 22px #f59e0bcc;
+    }
+
+    /* Hamburger menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 28px;
+      height: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      z-index: 1100;
+    }
+
+    .hamburger span {
+      width: 100%;
+      height: 3px;
+      background: #fbbf24;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Mobile nav */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 72px;
+        right: 0;
+        background: #1a1a1a;
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - 72px);
+        padding: 2rem 1rem;
+        gap: 1.8rem;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        border-left: 2px solid #f59e0b;
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .nav-right {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    /* Main content */
+    main {
+      padding-top: 90px;
+      flex-grow: 1;
+    }
+
+    section {
+      padding: 6rem 1rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgb(245 158 11 / 0.15);
+      background: linear-gradient(135deg, #191919, #252525);
+      margin-bottom: 4rem;
+      transition: background 0.3s ease;
+    }
+
+    body.light section {
+      background: linear-gradient(135deg, #ffffff, #f3f4f6);
+      box-shadow: 0 0 15px rgb(245 158 11 / 0.3);
+      color: #222;
+    }
+
+    h1, h2, h3 {
+      font-weight: 800;
+      color: #f59e0b;
+      text-shadow: 0 0 8px #f59e0b44;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #ddd;
+      font-weight: 400;
+      line-height: 1.5;
+      max-width: 720px;
+      margin: 0 auto 2rem;
+      user-select: text;
+    }
+
+    body.light p {
+      color: #444;
+    }
+
+    /* Store cards */
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .store-card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 0 15px rgb(245 158 11 / 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+
+    body.light .store-card {
+      background: #fafafa;
+      box-shadow: 0 0 15px rgb(245 158 11 / 0.6);
+    }
+
+    .store-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgb(245 158 11 / 0.7);
+    }
+
+    .store-card h3 {
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      color: #fbbf24;
+      text-shadow: 0 0 6px #fbbf24aa;
+    }
+
+    .store-card p {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin: 0;
+      user-select: text;
+    }
+
+    body.light .store-card p {
+      color: #666;
+    }
+
+    /* Appeal form */
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      text-align: left;
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid #fbbf24;
+      background: #222;
+      color: #eee;
+      resize: vertical;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: inherit;
+    }
+
+    body.light input[type="text"],
+    body.light textarea {
+      background: #fff;
+      color: #111;
+      border-color: #f59e0b;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #fbbf24;
+      box-shadow: 0 0 12px #fbbf24aa;
+    }
+
+    button[type="submit"] {
+      background: #f59e0b;
+      color: #222;
+      font-weight: 700;
+      padding: 0.8rem 1.5rem;
+      border-radius: 28px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 18px #fbbf24bb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      font-size: 1.1rem;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus-visible {
+      background: #d97706;
+      box-shadow: 0 0 22px #d97706cc;
+      outline: none;
+    }
+
+    /* Footer */
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #888;
+      user-select: none;
+      border-top: 1px solid #444;
+      margin-top: auto;
+      background: linear-gradient(135deg, #1a1a1a, #111);
+      box-shadow: inset 0 1px 5px #0008;
+    }
+
+    body.light footer {
+      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
+      border-top-color: #ddd;
+      color: #666;
+      box-shadow: inset 0 1px 5px #fff8;
+    }
+
+    /* Logo animation */
+    @keyframes bee-wiggle {
+      0%, 100% { transform: rotate(0deg) translateX(0); }
+      25% { transform: rotate(5deg) translateX(2px); }
+      50% { transform: rotate(0deg) translateX(0); }
+      75% { transform: rotate(-5deg) translateX(-2px); }
+    }
+
+    .logo:hover img,
+    .logo:focus-visible img,
+    .logo.animate img {
+      animation: bee-wiggle 1.5s ease-in-out infinite;
+    }
+  </style>
+
 </head>
 <body>
 
-<header>
-  <div class="container" role="banner">
-    <a href="#home" class="logo" aria-label="Event Alerts Home">
-      <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" alt="Event Alerts Bee Logo" />
-      <span class="logo-text">Event Alerts</span>
-    </a>
+<header id="header">
+  <div class="container">
+    <nav>
+      <div class="nav-left">
+        <a href="#home" class="logo" aria-label="Event Alerts Home" tabindex="0">
+          <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" alt="Event Alerts Bee Logo" />
+          <span class="logo-text">EVENT ALERTS</span>
+        </a>
+        <div class="nav-links" id="nav-links">
+          <a href="#home">Home</a>
+          <a href="#store">Store</a>
+          <a href="#appeal">Appeal</a>
+          <a href="https://discord.gg/skeppy" target="_blank" rel="noopener">Discord</a>
+        </div>
+      </div>
 
-    <nav role="navigation" aria-label="Primary navigation">
-      <a href="#home" tabindex="0">Home</a>
-      <a href="#store" tabindex="0">Store</a>
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" tabindex="0">Appeal</a>
-      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" tabindex="0">Discord</a>
-      <a href="#login" tabindex="0">Log In</a>
+      <div class="nav-right">
+        <div class="server-status" aria-live="polite" aria-label="Server Status">
+          <div class="status-dot status-offline" id="status-dot"></div>
+          <span id="status-text">Checking...</span>
+        </div>
+        <button id="theme-toggle" aria-pressed="false" aria-label="Toggle light/dark mode">Light Mode</button>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
-
-    <div class="server-status" aria-live="polite" aria-atomic="true" aria-relevant="additions" title="Server Status">
-      <span class="status-dot" id="status-dot"></span>
-      <span id="status-text">Offline</span>
-    </div>
-
-    <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">Light Mode</button>
   </div>
 </header>
 
-<main id="home" role="main">
-  <h1>Welcome to Event Alerts</h1>
-  <p>Your go-to platform for Minecraft event updates, server alerts, and community engagement.</p>
+<main>
+  <section id="home" tabindex="0" aria-label="Welcome Section">
+    <h1>Welcome to Event Alerts</h1>
+    <p>Your premier Minecraft server alert system — stay notified about upcoming events, claim exclusive rewards, and join a community that’s buzzing with activity.</p>
+    <button class="btn" onclick="window.location.href='#store'">Visit Store</button>
+  </section>
+
+  <section id="store" tabindex="0" aria-label="Store Section">
+    <h2>Server Store</h2>
+    <p>Support the server and unlock exclusive perks with our carefully curated packages.</p>
+    <div class="store-grid" aria-live="polite">
+      <article class="store-card" tabindex="0">
+        <h3>VIP Rank</h3>
+        <p>Enjoy in-game rewards, priority queue, and more to enhance your gameplay experience.</p>
+      </article>
+      <article class="store-card" tabindex="0">
+        <h3>Event Crates</h3>
+        <p>Open special crates for rare gear and blocks to elevate your adventures.</p>
+      </article>
+      <article class="store-card" tabindex="0">
+        <h3>Cosmetics Pack</h3>
+        <p>Access exclusive skins, trails, pets, and stand out in the crowd.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="appeal" tabindex="0" aria-label="Ban Appeal Section">
+    <h2>Ban Appeals</h2>
+    <p>Think you were banned unfairly? Submit your appeal via our Google Form.</p>
+    <form
+      action="https://docs.google.com/forms/d/e/8NqGuoFEAwsAgrwp6/formResponse" method="GET" target="_blank" aria-label="Ban Appeal Form">
+      <button type="submit" class="btn">Submit Appeal</button>
+    </form>
+  </section>
 </main>
 
-<footer role="contentinfo">
-  &copy; 2025 Event Alerts. All rights reserved.
+<footer>
+  <p>&copy; 2025 Event Alerts. All rights reserved.</p>
 </footer>
 
 <script>
-  // Theme toggle logic
-  const btn = document.getElementById('theme-toggle');
-  btn.addEventListener('click', () => {
-    document.body.classList.toggle('light');
-    if (document.body.classList.contains('light')) {
-      btn.textContent = 'Dark Mode';
-    } else {
-      btn.textContent = 'Light Mode';
-    }
+  // Mobile menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+    hamburger.setAttribute('aria-expanded', !expanded);
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
   });
 
-  // Server status check (dummy logic)
-  const statusDot = document.getElementById('status-dot');
-  const statusText = document.getElementById('status-text');
+  // Theme toggle
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const body = document.body;
 
-  async function checkServer() {
-    // Simple API ping example to your Minecraft server
-    // This is just simulated here. Replace with real API fetch if available.
-
-    // Simulate server online/offline toggle every 7 seconds
-    const online = Math.random() > 0.4;
-
-    if (online) {
-      statusDot.classList.add('status-online');
-      statusText.textContent = 'Online';
-      statusDot.style.backgroundColor = '#22c55e';
-      statusDot.style.boxShadow = '0 0 12px #22c55e';
+  function updateThemeButton() {
+    if(body.classList.contains('light')) {
+      themeToggleBtn.textContent = 'Dark Mode';
+      themeToggleBtn.setAttribute('aria-pressed', 'true');
     } else {
-      statusDot.classList.remove('status-online');
-      statusText.textContent = 'Offline';
-      statusDot.style.backgroundColor = '#dc2626';
-      statusDot.style.boxShadow = '0 0 8px #dc2626';
+      themeToggleBtn.textContent = 'Light Mode';
+      themeToggleBtn.setAttribute('aria-pressed', 'false');
     }
   }
 
-  checkServer();
-  setInterval(checkServer, 7000);
+  themeToggleBtn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    updateThemeButton();
+  });
+
+  updateThemeButton();
+
+  // Server status simulation (replace with real API calls as needed)
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+
+  // Simulated async status check
+  setTimeout(() => {
+    // Randomize for demo
+    const online = Math.random() > 0.3;
+    if(online) {
+      statusDot.classList.remove('status-offline');
+      statusDot.classList.add('status-online');
+      statusText.textContent = 'Online';
+    } else {
+      statusDot.classList.remove('status-online');
+      statusDot.classList.add('status-offline');
+      statusText.textContent = 'Offline';
+    }
+  }, 2000);
+
+  // Animate bee logo on hover/focus for accessibility
+  const logo = document.querySelector('.logo');
+  logo.addEventListener('mouseenter', () => logo.classList.add('animate'));
+  logo.addEventListener('mouseleave', () => logo.classList.remove('animate'));
+  logo.addEventListener('focus', () => logo.classList.add('animate'));
+  logo.addEventListener('blur', () => logo.classList.remove('animate'));
 </script>
 
 </body>
