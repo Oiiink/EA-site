@@ -42,6 +42,7 @@
     .logo img {
       width: 40px;
       height: 40px;
+      border-radius: 50%;
     }
 
     nav a {
@@ -66,13 +67,11 @@
       text-decoration: none;
       font-weight: 700;
       font-size: 1em;
-      box-shadow: 0 0 15px #ff7a00aa;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
     }
 
     .download-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 25px #ff7a00dd;
     }
 
     main {
@@ -100,7 +99,6 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 25px;
       border-radius: 16px;
-      box-shadow: 0 0 30px #ff7a0040;
     }
 
     /* EventUtils section */
@@ -154,9 +152,11 @@
       height: 180px;
       flex-shrink: 0;
       user-select: none;
-      filter: drop-shadow(0 0 10px #ff7a00aa);
       transition: transform 0.3s ease;
       animation: float 4s ease-in-out infinite;
+      border-radius: 20px;
+      object-fit: cover;
+      background: #222;
     }
 
     @keyframes float {
@@ -177,15 +177,13 @@
       font-weight: 700;
       font-size: 1.1em;
       text-decoration: none;
-      box-shadow: 0 0 15px #ff7a00aa;
       display: inline-block;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
       user-select: none;
     }
 
     .download-eventutils a:hover {
       transform: scale(1.07);
-      box-shadow: 0 0 25px #ff7a00dd;
     }
 
     /* Partner section */
@@ -198,7 +196,6 @@
       align-items: center;
       gap: 20px;
       border-radius: 16px;
-      box-shadow: 0 0 25px #ff7a0040;
       flex-wrap: wrap;
       justify-content: center;
       user-select: none;
@@ -206,7 +203,9 @@
 
     .partner-section img {
       height: 45px;
-      filter: drop-shadow(0 0 5px #ff7a0055);
+      border-radius: 12px;
+      object-fit: contain;
+      background: #222;
     }
 
     .partner-section p {
@@ -225,14 +224,12 @@
       font-weight: 700;
       text-decoration: none;
       font-size: 1em;
-      box-shadow: 0 0 20px #ff7a00bb;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
       user-select: none;
     }
 
     .partner-section a:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 30px #ff7a00ee;
     }
 
     /* Changelog sidebar */
@@ -254,7 +251,9 @@
       border-radius: 12px;
       margin-bottom: 10px;
       user-select: none;
-      filter: drop-shadow(0 0 5px #ff7a0066);
+      background: #222;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
     }
 
     .changelog-entry p {
@@ -276,7 +275,6 @@
       backdrop-filter: blur(10px);
       padding: 35px 30px;
       border-radius: 16px;
-      box-shadow: 0 0 25px #ff7a0040;
       user-select: none;
     }
 
@@ -298,14 +296,12 @@
       padding: 25px 20px;
       border-radius: 16px;
       border: 1px solid #333;
-      box-shadow: 0 0 15px #ff7a0040;
       user-select: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
     }
 
     .spec-package:hover {
       transform: scale(1.04);
-      box-shadow: 0 0 35px #ff7a00bb;
     }
 
     .spec-package h3 {
@@ -346,7 +342,7 @@
 <body>
   <header>
     <div class="logo">
-      <img src="https://cdn.discordapp.com/attachments/1087591191218424932/1122555039600069929/image_2023-06-07_101639188-removebg-preview.png" alt="EventUtils Logo" />
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="EventUtils Logo" />
       EventUtils
     </div>
     <nav>
@@ -375,7 +371,7 @@
         </div>
         <img
           class="eventutils-logo-right"
-          src="https://cdn.discordapp.com/attachments/1087591191218424932/1122555409407217695/image_2023-06-07_101813887.png"
+          src="https://via.placeholder.com/180x180?text=EventUtils+Logo"
           alt="EventUtils logo"
           draggable="false"
         />
@@ -414,7 +410,7 @@
         <h2>Changelog</h2>
         <div class="changelog-entry">
           <img
-            src="https://cdn.discordapp.com/attachments/1087591191218424932/1122592141823785064/image_2023-06-07_121320677.png"
+            src="https://via.placeholder.com/320x180?text=Changelog+Image"
             alt="EventUtils Changelog"
           />
           <p><strong>v1.4.8</strong> - Hotfix</p>
@@ -426,7 +422,7 @@
         <p>Partners</p>
         <a href="https://minehut.com/" target="_blank" rel="noopener noreferrer">
           <img
-            src="https://cdn.discordapp.com/attachments/1087591191218424932/1122591847955764244/minehut-logo.png"
+            src="https://via.placeholder.com/150x45?text=Minehut+Logo"
             alt="Minehut logo"
             draggable="false"
           />
