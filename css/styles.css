@@ -2,14 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-  --background: #1a1a1a;
-  --foreground: #222;
-  --card: #292929;
-  --accent: #ff6a00; /* Orange theme */
-  --accent-hover: #ff8533;
-  --text: #fefefe;
-  --subtle-text: #bbb;
-  --border: #333;
+  --background: #0d0d0d;
+  --foreground: #1a1a1a;
+  --card: #1f1f1f;
+  --accent: #00ff9f;
+  --text: #f0f0f0;
+  --subtle-text: #aaa;
+  --border: #2a2a2a;
   --max-width: 1200px;
 }
 
