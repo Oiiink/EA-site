@@ -52,9 +52,21 @@
       margin: auto;
     }
 
+    .eventutils-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .eventutils-title img {
+      width: 60px;
+      height: 60px;
+    }
+
     h1 {
       font-size: 3em;
       color: #ff7a00;
+      margin: 0;
     }
 
     .features {
@@ -90,6 +102,27 @@
       font-weight: 600;
       text-decoration: none;
     }
+
+    .changelog {
+      margin-top: 60px;
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .changelog h2 {
+      color: #ff7a00;
+    }
+
+    .changelog-entry {
+      margin-top: 20px;
+    }
+
+    .changelog-entry img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -102,7 +135,10 @@
   </header>
 
   <main>
-    <h1>EventUtils</h1>
+    <div class="eventutils-title">
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
+      <h1>EventUtils</h1>
+    </div>
     <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
     <ul class="features">
       <li>✅ Easy server alerts and notifications</li>
@@ -110,6 +146,18 @@
       <li>✅ Lightweight & optimized</li>
       <li>✅ Customizable settings</li>
     </ul>
+
+    <div class="changelog">
+      <h2>Latest Updates</h2>
+      <div class="changelog-entry">
+        <img src="https://via.placeholder.com/800x300.png?text=Update+Image" alt="Changelog Image">
+        <p><strong>v1.2.0</strong> - Added server ping alerts and improved UI responsiveness.</p>
+      </div>
+      <div class="changelog-entry">
+        <img src="https://via.placeholder.com/800x300.png?text=New+Feature" alt="Changelog Image">
+        <p><strong>v1.1.0</strong> - Introduced customizable themes and bug fixes.</p>
+      </div>
+    </div>
 
     <div class="partner-section">
       <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo">
