@@ -2,326 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts — Professional Dark Theme</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Alerts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background-color: #121212;
-      color: #ddd;
-      font-family: 'Poppins', sans-serif;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0e0e11;
+      color: #f0f0f0;
     }
 
-    a {
-      color: #ff6f3c;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    a:hover {
-      color: #ffa573;
-    }
-
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    /* Header with centered logo */
     header {
-      padding: 2rem 0 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-bottom: 1px solid #222;
-      user-select: none;
-      position: relative;
+      text-align: center;
+      padding: 2rem 1rem 1rem;
     }
 
-    /* Logo Image and animation */
-    .logo-img {
-      width: 80px;
-      height: 80px;
+    header img {
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      object-fit: cover;
       animation: float 3s ease-in-out infinite;
-      box-shadow: 0 0 12px rgba(255, 111, 60, 0.7);
-      border: 2px solid #ff6f3c;
     }
 
     @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-        filter: drop-shadow(0 0 6px rgba(255, 111, 60, 0.5));
-      }
-      50% {
-        transform: translateY(-8px);
-        filter: drop-shadow(0 0 12px rgba(255, 111, 60, 0.8));
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 5rem 1rem 6rem;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #ff6f3c;
-      margin-bottom: 1rem;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      color: #aaa;
-      margin-bottom: 2.5rem;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .btn-primary {
-      background-color: #ff6f3c;
-      color: #121212;
-      font-weight: 600;
-      padding: 0.9rem 2.5rem;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      box-shadow: none;
-    }
-    .btn-primary:hover {
-      background-color: #e05e2c;
-    }
-
-    /* Features Section */
-    section.features {
-      padding-bottom: 6rem;
-    }
-    .features h2 {
-      text-align: center;
-      font-weight: 700;
+    h1 {
       font-size: 2rem;
-      margin-bottom: 3rem;
-      color: #ff6f3c;
-      user-select: none;
+      font-weight: 700;
+      margin-top: 1rem;
     }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.5rem;
-    }
-
-    .feature-card {
-      background-color: #1e1e1e;
-      border-radius: 12px;
+    .container {
+      display: flex;
+      flex-direction: row;
       padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      cursor: default;
-      user-select: none;
-    }
-    .feature-card:hover {
-      transform: scale(1.04);
-      box-shadow: 0 8px 20px rgba(255, 111, 60, 0.3);
-    }
-    .feature-icon {
-      font-size: 3rem;
-      color: #ff6f3c;
-      margin-bottom: 1.25rem;
-      user-select: none;
-    }
-    .feature-title {
-      font-weight: 600;
-      font-size: 1.3rem;
-      margin-bottom: 0.75rem;
-      color: #fff;
-      user-select: none;
-    }
-    .feature-desc {
-      color: #bbb;
-      font-size: 1rem;
-      line-height: 1.4;
-      user-select: none;
+      gap: 2rem;
+      justify-content: center;
     }
 
-    /* EventUtils Section */
-    section.eventutils {
-      background-color: #1a1a1a;
-      padding: 4rem 1.5rem 6rem;
-      text-align: center;
-      border-top: 1px solid #222;
-      border-bottom: 1px solid #222;
-      user-select: none;
+    .main-content {
+      flex: 2;
+      max-width: 700px;
     }
-    .eventutils h2 {
-      font-weight: 700;
-      font-size: 2.4rem;
-      margin-bottom: 1rem;
-      color: #ff6f3c;
+
+    .sidebar {
+      flex: 1;
+      max-width: 350px;
+      background-color: #1c1c1f;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
     }
-    .eventutils p {
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      font-size: 1.15rem;
-      color: #ccc;
+
+    .section {
+      background-color: #1a1a1d;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
     }
-    .btn-download {
-      background-color: #ff6f3c;
-      color: #121212;
-      font-weight: 700;
-      padding: 1rem 3rem;
-      font-size: 1.2rem;
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      border-bottom: 2px solid #2e2e32;
+      padding-bottom: 0.5rem;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      margin-top: 1rem;
+      background-color: #5865f2;
+      color: white;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
       text-decoration: none;
-      display: inline-block;
-      transition: background-color 0.3s ease;
-      box-shadow: none;
-      user-select: none;
-    }
-    .btn-download:hover {
-      background-color: #e05e2c;
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid #222;
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      color: #555;
-      font-size: 0.9rem;
-      user-select: none;
-    }
-    footer a {
-      margin: 0 0.5rem;
-      color: #ff6f3c;
       font-weight: 600;
-      transition: color 0.3s ease;
-    }
-    footer a:hover {
-      color: #ffa573;
+      transition: background-color 0.3s ease;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 2.3rem;
+    .button:hover {
+      background-color: #4752c4;
+    }
+
+    .changelog-entry {
+      background-color: #2a2a2e;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .changelog-entry h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .changelog-entry p {
+      margin: 0.25rem 0 0;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
       }
-      .hero p {
-        font-size: 1rem;
-      }
-      section.eventutils h2 {
-        font-size: 2rem;
-      }
-      section.eventutils p {
-        font-size: 1rem;
-      }
-      .btn-download {
-        padding: 0.9rem 2.5rem;
-        font-size: 1rem;
+
+      .sidebar {
+        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
+
   <header>
-    <img
-      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-      alt="Event Alerts Logo"
-      class="logo-img"
-      width="80"
-      height="80"
-      loading="lazy"
-    />
+    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
+    <h1>Event Alerts</h1>
   </header>
 
-  <main class="container" role="main">
-    <section class="hero" role="banner">
-      <h1>Stay Ahead with Instant Event Alerts</h1>
-      <p>Never miss a beat! Get real-time notifications for Minecraft events and updates, right when they happen.</p>
-      <button class="btn-primary" type="button">Get Started</button>
-    </section>
-
-    <section class="features" aria-labelledby="features-title">
-      <h2 id="features-title">Why Choose Event Alerts?</h2>
-      <div class="features-grid">
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">🔔</div>
-          <h3 class="feature-title">Instant Notifications</h3>
-          <p class="feature-desc">Receive alerts the moment important Minecraft events occur, so you're always in the loop.</p>
-        </article>
-
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">⚙️</div>
-          <h3 class="feature-title">Customizable Settings</h3>
-          <p class="feature-desc">Tailor your notifications to your favorite servers, event types, and frequency.</p>
-        </article>
-
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">📊</div>
-          <h3 class="feature-title">Detailed Analytics</h3>
-          <p class="feature-desc">Access in-depth stats and histories to track event trends and your alert activity.</p>
-        </article>
-
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">🌐</div>
-          <h3 class="feature-title">Cross-Platform Support</h3>
-          <p class="feature-desc">Get alerts on desktop, mobile, or directly in-game, seamlessly synced.</p>
-        </article>
-
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">🔒</div>
-          <h3 class="feature-title">Privacy First</h3>
-          <p class="feature-desc">Your data stays safe with end-to-end encryption and strict privacy policies.</p>
-        </article>
-
-        <article class="feature-card" tabindex="0">
-          <div class="feature-icon" aria-hidden="true">⚡</div>
-          <h3 class="feature-title">Lightweight & Fast</h3>
-          <p class="feature-desc">Minimal impact on system resources for smooth gameplay alongside alerts.</p>
-        </article>
+  <div class="container">
+    <div class="main-content">
+      <div class="section">
+        <h2>EventUtils</h2>
+        <p>Download EventUtils to enhance your Minecraft server experience with powerful event features.</p>
+        <a class="button" href="https://modrinth.com/mod/alerts" target="_blank">Download on Modrinth</a>
       </div>
-    </section>
 
-    <section class="eventutils" aria-labelledby="eventutils-title">
-      <h2 id="eventutils-title">EventUtils</h2>
-      <p>The official Minecraft mod for Event Alerts, providing seamless integration and enhanced notifications.</p>
-      <a
-        href="https://modrinth.com/mod/alerts"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-download"
-        role="button"
-        aria-label="Download EventUtils mod from Modrinth"
-      >
-        Download EventUtils
-      </a>
-    </section>
-  </main>
+      <div class="section">
+        <h2>About</h2>
+        <p>Event Alerts helps server owners manage and display events in real-time. Stay updated with announcements and alerts built right into your game.</p>
+      </div>
+    </div>
 
-  <footer>
-    <p>© 2025 Event Alerts. All rights reserved.</p>
-    <p>
-      <a href="#" aria-label="Facebook">Facebook</a> | 
-      <a href="#" aria-label="Twitter">Twitter</a> | 
-      <a href="#" aria-label="Discord">Discord</a>
-    </p>
-  </footer>
+    <aside class="sidebar">
+      <h2>Changelog</h2>
+
+      <div class="changelog-entry">
+        <h3>v1.2.0 - May 25, 2025</h3>
+        <p>Added Discord integration and fixed bug with event scheduler.</p>
+      </div>
+
+      <div class="changelog-entry">
+        <h3>v1.1.0 - May 18, 2025</h3>
+        <p>Introduced customizable UI and improved performance.</p>
+      </div>
+
+      <div class="changelog-entry">
+        <h3>v1.0.0 - Initial Release</h3>
+        <p>EventUtils released with core alert system and plugin support.</p>
+      </div>
+    </aside>
+  </div>
+
 </body>
 </html>
