@@ -11,16 +11,19 @@
       margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: #0e0e0e;
-      color: #ffffff;
+      color: #ddd; /* light gray text */
       display: flex;
-      flex-direction: column;
       min-height: 100vh;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+      gap: 2rem;
     }
 
     header {
       text-align: center;
       padding: 2rem 1rem 1rem;
-      flex-shrink: 0;
     }
 
     .logo {
@@ -34,32 +37,57 @@
       0% {
         transform: scale(1);
       }
-
       50% {
         transform: scale(1.05);
       }
-
       100% {
         transform: scale(1);
       }
     }
 
-    main {
+    main.section {
+      max-width: 600px;
       flex-grow: 1;
-      max-width: 720px;
-      padding: 2rem;
-      color: #ff7a00; /* Orange text accent */
     }
 
     main h1 {
       color: #ff7a00;
-      font-weight: 700;
+      margin-bottom: 0.25rem;
     }
 
     main p {
-      color: #ffa040;
-      font-weight: 400;
-      margin-bottom: 1rem;
+      color: #eee;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    aside.changelog {
+      background-color: #1a1a1a;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 320px;
+      height: fit-content;
+      color: #ff9a33; /* softer orange */
+      position: sticky;
+      top: 2rem;
+      align-self: flex-start;
+    }
+
+    aside.changelog h2 {
+      margin-top: 0;
+      color: #ff7a00;
+    }
+
+    aside.changelog ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0.75rem;
+    }
+
+    aside.changelog ul li {
+      margin-bottom: 0.75rem;
+      color: #cc7a00; /* muted orange */
+      font-weight: 500;
     }
 
     .button-primary,
@@ -73,6 +101,7 @@
       transition: all 0.25s ease;
       margin: 0.5rem 1rem 0 0;
       cursor: pointer;
+      user-select: none;
     }
 
     .button-primary {
@@ -98,163 +127,126 @@
 
     .button-secondary:hover {
       background-color: rgba(255, 122, 0, 0.1);
-      border-color: rgba(255, 122, 0, 0.8);
+      border-color: rgba(255, 122, 0, 0.75);
       transform: translateY(-1px);
     }
 
-    /* Layout wrapper to hold main content + sidebar */
-    .content-wrapper {
-      display: flex;
-      max-width: 1200px;
-      margin: 0 auto 4rem;
-      gap: 2rem;
-      padding: 0 2rem;
-      box-sizing: border-box;
-      flex-wrap: wrap;
-    }
-
-    /* Sidebar */
-    aside.changelog {
-      background-color: #1a1a1a;
-      padding: 1.5rem;
-      border-radius: 8px;
-      width: 300px;
-      flex-shrink: 0;
-      color: #ff7a00;
-      box-shadow: 0 0 10px rgba(255, 122, 0, 0.3);
-      height: fit-content;
-    }
-
-    aside.changelog h2 {
-      margin-top: 0;
-      color: #ff7a00;
-    }
-
-    aside.changelog ul {
-      list-style-type: none;
-      padding-left: 0;
-      margin: 0;
-      color: #ffa040;
-    }
-
-    aside.changelog li {
-      margin-bottom: 0.75rem;
-      font-weight: 500;
-    }
-
-    /* Chatbot styles */
-    #chatbot-section {
-      background-color: #1a1a1a;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-top: 3rem;
-      max-width: 720px;
-      color: #ff7a00;
-    }
-
-    #chatbot-section h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: #ff7a00;
-    }
-
-    #chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 400px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background-color: #0f0f0f;
-      overflow: hidden;
-    }
-
-    #chat-log {
-      flex-grow: 1;
-      padding: 1rem;
-      overflow-y: auto;
-      color: #ddd;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .chat-message {
-      margin-bottom: 0.75rem;
-      max-width: 75%;
-      padding: 0.5rem 1rem;
-      border-radius: 16px;
-      word-wrap: break-word;
-    }
-
-    .chat-message.user {
-      background-color: #ff7a00;
-      color: #1a1a1a;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    .chat-message.bot {
-      background-color: #333;
-      color: #eee;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-
-    #chat-input-container {
-      display: flex;
-      border-top: 1px solid #333;
-      padding: 0.5rem;
-      background-color: #121212;
-    }
-
-    #chat-input {
-      flex-grow: 1;
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      background-color: #222;
-      color: #eee;
-      outline: none;
-    }
-
-    #chat-input::placeholder {
-      color: #888;
-    }
-
-    #send-btn {
+    /* Chat popup styles */
+    #chatbot-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
       background-color: #ff7a00;
       border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.5);
       color: #1a1a1a;
-      font-weight: 600;
-      padding: 0 1.5rem;
-      margin-left: 0.5rem;
-      border-radius: 8px;
+      font-size: 28px;
       cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       transition: background-color 0.3s ease;
+      z-index: 1000;
     }
 
-    #send-btn:hover {
+    #chatbot-toggle:hover {
       background-color: #ffa040;
     }
 
-    @media (max-width: 960px) {
-      .content-wrapper {
-        flex-direction: column;
-        padding: 0 1rem;
-      }
+    #chatbot-popup {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 320px;
+      max-height: 420px;
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+    }
 
-      aside.changelog {
-        width: 100%;
-        margin-top: 2rem;
-      }
+    #chatbot-popup header {
+      background-color: #2a1300;
+      color: #ff7a00;
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+    }
 
-      main {
-        max-width: 100%;
-      }
+    #chatbot-popup .chat-messages {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background-color: #0f0f0f;
+    }
 
-      #chatbot-section {
-        max-width: 100%;
-      }
+    .chat-message {
+      padding: 0.6rem 1rem;
+      border-radius: 18px;
+      max-width: 75%;
+      word-wrap: break-word;
+      line-height: 1.3;
+      font-weight: 500;
+      user-select: text;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background-color: #ff7a00;
+      color: #1a1a1a;
+    }
+
+    .chat-message.bot {
+      align-self: flex-start;
+      background-color: #333;
+      color: #eee;
+    }
+
+    #chatbot-popup footer {
+      display: flex;
+      padding: 0.5rem;
+      border-top: 1px solid #333;
+      background-color: #1a1a1a;
+    }
+
+    #chatbot-popup footer input {
+      flex-grow: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 20px;
+      border: none;
+      background-color: #2a1300;
+      color: #ff7a00;
+      font-size: 1rem;
+      outline: none;
+      font-weight: 600;
+    }
+
+    #chatbot-popup footer button {
+      background-color: #ff7a00;
+      border: none;
+      padding: 0 1rem;
+      margin-left: 0.5rem;
+      border-radius: 20px;
+      color: #1a1a1a;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+    }
+
+    #chatbot-popup footer button:hover {
+      background-color: #ffa040;
     }
   </style>
 </head>
@@ -264,79 +256,81 @@
     <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="logo" />
   </header>
 
-  <div class="content-wrapper">
-    <main>
-      <h1>EventUtils</h1>
-      <p>Your essential mod for receiving Minecraft event alerts.</p>
-      <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
-      <a href="#changelog" class="button-secondary">View Changelog</a>
+  <main class="section">
+    <h1>EventUtils</h1>
+    <p>Your essential mod for receiving Minecraft event alerts.</p>
+    <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
+    <a href="#changelog" class="button-secondary">View Changelog</a>
+  </main>
 
-      <section id="chatbot-section">
-        <h2>Ask Event Alerts AI</h2>
-        <div id="chat-container">
-          <div id="chat-log"></div>
-          <div id="chat-input-container">
-            <input id="chat-input" type="text" placeholder="Ask me anything about Event Alerts..." autocomplete="off" />
-            <button id="send-btn">Send</button>
-          </div>
-        </div>
-      </section>
-    </main>
+  <aside class="section changelog" id="changelog">
+    <h2>Changelog</h2>
+    <ul>
+      <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
+      <li><strong>v1.1.0</strong> – Improved performance</li>
+      <li><strong>v1.0.0</strong> – Initial release</li>
+    </ul>
+  </aside>
 
-    <aside class="changelog" id="changelog">
-      <h2>Changelog</h2>
-      <ul>
-        <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
-        <li><strong>v1.1.0</strong> – Improved performance</li>
-        <li><strong>v1.0.0</strong> – Initial release</li>
-      </ul>
-    </aside>
+  <!-- Chatbot toggle button -->
+  <button id="chatbot-toggle" aria-label="Open chat">💬</button>
+
+  <!-- Chatbot popup -->
+  <div id="chatbot-popup" role="dialog" aria-modal="true" aria-labelledby="chatbot-header">
+    <header id="chatbot-header">Event Alerts AI</header>
+    <div class="chat-messages" id="chat-messages"></div>
+    <footer>
+      <input id="chat-input" type="text" placeholder="Ask me anything..." autocomplete="off" />
+      <button id="chat-send">Send</button>
+    </footer>
   </div>
 
   <script>
-    const chatLog = document.getElementById('chat-log');
+    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotPopup = document.getElementById('chatbot-popup');
+    const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-btn');
+    const chatSend = document.getElementById('chat-send');
+
+    chatbotToggle.addEventListener('click', () => {
+      if (chatbotPopup.style.display === 'flex') {
+        chatbotPopup.style.display = 'none';
+      } else {
+        chatbotPopup.style.display = 'flex';
+        chatInput.focus();
+      }
+    });
 
     function appendMessage(text, sender) {
-      const msgDiv = document.createElement('div');
-      msgDiv.classList.add('chat-message', sender);
-      msgDiv.textContent = text;
-      chatLog.appendChild(msgDiv);
-      chatLog.scrollTop = chatLog.scrollHeight;
+      const message = document.createElement('div');
+      message.classList.add('chat-message', sender);
+      message.textContent = text;
+      chatMessages.appendChild(message);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function botReply(userText) {
-      userText = userText.toLowerCase();
-      let reply = "Sorry, I didn't understand that. Try asking about EventUtils features or the changelog.";
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
 
-      if (userText.includes('download')) {
-        reply = "You can download EventUtils using the download button above.";
-      } else if (userText.includes('changelog') || userText.includes('update')) {
-        reply = "Check out the changelog section for the latest updates and versions.";
-      } else if (userText.includes('eventalerts') || userText.includes('eventutils')) {
-        reply = "EventUtils is a Minecraft mod that notifies you about in-game events!";
-      } else if (userText.includes('hello') || userText.includes('hi')) {
-        reply = "Hello! How can I help you today?";
-      }
-
-      return reply;
-    }
-
-    function sendMessage() {
-      const userText = chatInput.value.trim();
-      if (userText === '') return;
-
-      appendMessage(userText, 'user');
+      appendMessage(text, 'user');
       chatInput.value = '';
+      chatInput.disabled = true;
+      chatSend.disabled = true;
+
+      // Simulated AI response delay
       setTimeout(() => {
-        const reply = botReply(userText);
-        appendMessage(reply, 'bot');
-      }, 800);
+        // You can replace this with real API calls to AI backend
+        const botReply = `Sorry, I can't answer that yet. You asked: "${text}"`;
+        appendMessage(botReply, 'bot');
+        chatInput.disabled = false;
+        chatSend.disabled = false;
+        chatInput.focus();
+      }, 1200);
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', (e) => {
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         sendMessage();
       }
