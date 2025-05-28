@@ -55,18 +55,15 @@
     .eventutils-title {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 15px;
+      margin-bottom: 20px;
     }
 
-    .eventutils-title img {
-      width: 60px;
-      height: 60px;
-    }
-
-    h1 {
-      font-size: 3em;
-      color: #ff7a00;
-      margin: 0;
+    .eventutils-title-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
     .features {
@@ -123,6 +120,29 @@
       border-radius: 8px;
       margin-bottom: 10px;
     }
+
+    .event-host-specs {
+      margin-top: 60px;
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+    }
+
+    .event-host-specs h2 {
+      color: #ff7a00;
+      margin-bottom: 15px;
+    }
+
+    .event-host-specs ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .event-host-specs li {
+      padding: 10px 0;
+      border-bottom: 1px solid #333;
+    }
   </style>
 </head>
 <body>
@@ -136,8 +156,11 @@
 
   <main>
     <div class="eventutils-title">
-      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
-      <h1>EventUtils</h1>
+      <div class="eventutils-title-left">
+        <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
+        <h1>EventUtils</h1>
+      </div>
+      <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download</a>
     </div>
     <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
     <ul class="features">
@@ -159,6 +182,17 @@
       </div>
     </div>
 
+    <div class="event-host-specs">
+      <h2>Event Host Specs</h2>
+      <ul>
+        <li>🧰 Ryzen 9 7950X CPU</li>
+        <li>🚀 64GB DDR5 RAM</li>
+        <li>📀 NVMe SSD Storage</li>
+        <li>🌐 10Gbps Network Bandwidth</li>
+        <li>⏱ 99.99% Uptime SLA</li>
+      </ul>
+    </div>
+
     <div class="partner-section">
       <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo">
       <p>LilyPad is the Official Hosting Partner of Event Alerts</p>
@@ -167,3 +201,14 @@
   </main>
 </body>
 </html>
+    .eventutils-title img {
+      width: 60px;
+      height: 60px;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #ff7a00;
+      margin: 0;
+    }
+
