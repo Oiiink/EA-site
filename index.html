@@ -1,175 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts - Minecraft Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" />
+  <link
+    rel="icon"
+    href="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+  />
   <style>
     html {
       scroll-behavior: smooth;
     }
-    .fade-in {
-      animation: fadeIn 1.2s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    body {
+      background: linear-gradient(to bottom, #0f172a, #111827, #1f2937);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     /* Floating changelog sidebar */
     #changelog {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 320px;
-      max-height: 400px;
-      background: #1f2937; /* Tailwind slate-800 */
+      width: 360px;
+      max-height: 420px;
+      background: #1e293b; /* slate-800 */
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
       overflow-y: auto;
       padding: 1rem;
-      color: #f97316; /* orange */
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       z-index: 1000;
-      user-select: none;
     }
     #changelog h3 {
       font-weight: 700;
-      font-size: 1.25rem;
-      margin-bottom: 0.75rem;
-      color: #f97316;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #f97316; /* orange */
       text-align: center;
+      user-select: none;
     }
-    #changelog ul {
-      list-style: inside disc;
-      max-height: 320px;
-      overflow-y: auto;
+    #changelog article {
+      background: #334155; /* slate-700 */
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #changelog article:hover {
+      background: #475569; /* slightly lighter */
+    }
+    #changelog article time {
+      font-size: 0.75rem;
       color: #fbbf24; /* lighter orange */
-      font-size: 0.9rem;
-      line-height: 1.4;
-      padding-right: 0.5rem;
+      display: block;
+      margin-bottom: 6px;
     }
-    #changelog ul::-webkit-scrollbar {
-      width: 6px;
+    #changelog article h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f97316;
+      margin-bottom: 4px;
     }
-    #changelog ul::-webkit-scrollbar-thumb {
+    #changelog article p {
+      font-size: 0.875rem;
+      color: #e0e7ff; /* light slate */
+      line-height: 1.3;
+    }
+    /* Header and nav */
+    header {
+      background-color: rgba(31, 41, 55, 0.9); /* slate-800 with opacity */
+      backdrop-filter: saturate(180%) blur(12px);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgb(251 146 60 / 0.4);
+    }
+    nav a {
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #f97316;
+    }
+    /* LilyPad section */
+    #lilypad {
+      background-color: #111827;
+      border: 2px solid #f97316;
+      max-width: 960px;
+      margin: 5rem auto 3rem;
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 0 8px #f97316aa;
+    }
+    #lilypad a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f97316;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-decoration: none;
+      user-select: none;
+      white-space: nowrap;
+      border: 2px solid #f97316;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    #lilypad a:hover {
       background-color: #f97316;
-      border-radius: 3px;
+      color: #111827;
+    }
+    #lilypad img {
+      height: 36px;
+      object-fit: contain;
+      user-select: none;
+    }
+    /* Hero */
+    #hero {
+      padding-top: 140px; /* leave space for fixed header + lilypad */
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    #hero img {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 1rem;
+      object-fit: contain;
+      user-select: none;
+    }
+    #hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #f97316;
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
-<body class="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-800 text-white font-sans">
+<body>
   <!-- Header -->
-  <header class="bg-gray-900/90 shadow-md backdrop-blur-md fixed top-0 w-full z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="w-14 h-14 transition duration-300" />
-        <h1 class="text-2xl font-extrabold text-orange-400">Event Alerts</h1>
-      </div>
-      <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#home" class="hover:text-orange-400 transition">Home</a>
-        <a href="#store" class="hover:text-orange-400 transition">Store</a>
-        <a href="#appeal" class="hover:text-orange-400 transition">Appeal</a>
-        <a href="#events" class="hover:text-orange-400 transition">Events</a>
-        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener" class="hover:text-orange-400 transition">Discord</a>
-        <a href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener" class="ml-4 px-4 py-2 rounded bg-orange-500 hover:bg-orange-600 text-white font-semibold transition">Download EventUtils</a>
-      </nav>
+  <header class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+    <div class="flex items-center gap-4">
+      <img
+        src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+        alt="Event Alerts Logo"
+        class="w-14 h-14"
+      />
+      <h1 class="text-orange-400 text-3xl font-extrabold select-none">Event Alerts</h1>
     </div>
+    <nav class="hidden md:flex gap-8 text-lg font-semibold">
+      <a href="https://discord.gg/skeppy" target="_blank" rel="noopener">Discord</a>
+      <a
+        href="https://modrinth.com/mod/alerts"
+        target="_blank"
+        rel="noopener"
+        class="bg-orange-500 px-4 py-2 rounded-md hover:bg-orange-600 transition"
+        >Download EventUtils</a
+      >
+    </nav>
   </header>
 
-  <!-- Hosting Partner Section -->
-  <section class="bg-gray-900 border-b border-orange-600 py-3 px-6 flex items-center justify-center gap-4 max-w-7xl mx-auto mt-20 rounded-md shadow-md">
-    <a href="https://www.lilypad.gg" target="_blank" rel="noopener" class="flex items-center gap-3 hover:opacity-80 transition">
-      <img
-        src="https://cdn.lilypad.gg/images/logo-small.png"
-        alt="LilyPad Logo"
-        class="w-10 h-10 object-contain"
-        loading="lazy"
-      />
-      <span class="text-orange-400 font-semibold text-lg whitespace-nowrap">
-        LilyPad is the Official Hosting Partner of Event Alerts
-      </span>
-    </a>
+  <!-- LilyPad Hosting Partner -->
+  <section id="lilypad" role="region" aria-label="LilyPad Hosting Partner">
+    <img
+      src="https://lilypad.gg/logos/light_logo.svg"
+      alt="LilyPad Logo"
+      loading="lazy"
+      draggable="false"
+      width="130"
+      height="36"
+    />
+    <span
+      class="text-orange-400 font-semibold select-none"
+      >LilyPad is the Official Hosting Partner of Event Alerts</span
+    >
+    <a href="https://www.lilypad.gg" target="_blank" rel="noopener" aria-label="Visit LilyPad"
+      >Visit LilyPad</a
+    >
   </section>
 
   <!-- Hero -->
-  <section id="home" class="pt-24 pb-24 px-6 text-center max-w-4xl mx-auto fade-in">
-    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo" class="w-44 h-44 mx-auto mb-6 hover:scale-105 transition duration-300" />
-    <h2 class="text-5xl font-extrabold text-orange-400">Welcome to Event Alerts</h2>
-    <p class="mt-4 text-gray-300 text-lg">Minecraft server updates, rewards, and events all in one place.</p>
-  </section>
-
-  <!-- Store -->
-  <section id="store" class="py-20 px-6 max-w-6xl mx-auto">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400">Server Store</h2>
-      <p class="text-gray-400">Support the server and earn exclusive perks!</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
-        <h3 class="text-xl font-semibold text-orange-300">VIP Rank</h3>
-        <p class="text-gray-400 mt-2">Priority access + monthly gifts.</p>
-      </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
-        <h3 class="text-xl font-semibold text-orange-300">Event Crates</h3>
-        <p class="text-gray-400 mt-2">Get rare items from limited crates.</p>
-      </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
-        <h3 class="text-xl font-semibold text-orange-300">Cosmetics Pack</h3>
-        <p class="text-gray-400 mt-2">Trails, pets, and exclusive gear.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Appeal -->
-  <section id="appeal" class="py-20 px-6 bg-gray-950 max-w-4xl mx-auto rounded-lg shadow-md">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400">Submit a Ban Appeal</h2>
-      <p class="text-gray-400">Think your ban was unfair? Appeal it here.</p>
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" rel="noopener" class="inline-block mt-8 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105">Submit Appeal</a>
-    </div>
-  </section>
-
-  <!-- Event Feed -->
-  <section id="events" class="py-20 px-6 max-w-4xl mx-auto">
-    <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400">Live Event Feed</h2>
-      <p class="text-gray-400">See the latest happenings on the server!</p>
-    </div>
-    <div class="mt-10 space-y-6">
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
-        <h4 class="text-orange-300 font-semibold">🎉 Double XP Weekend</h4>
-        <p class="text-gray-300 text-sm">Earn double experience points this weekend only! Starts Friday 6PM EST.</p>
-      </div>
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
-        <h4 class="text-orange-300 font-semibold">🧨 Firework Building Contest</h4>
-        <p class="text-gray-300 text-sm">Join the community build contest and win rare crates! Submissions due Sunday.</p>
-      </div>
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
-        <h4 class="text-orange-300 font-semibold">🐝 Bee Hunt Mini-Game</h4>
-        <p class="text-gray-300 text-sm">Find the hidden bees across the map and earn sweet rewards!</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Server Status -->
-  <section class="py-10 text-center bg-gray-900/70 border-t border-orange-600 max-w-7xl mx-auto px-6 rounded-md shadow-md mb-24">
-    <h2 class="text-orange-400 text-2xl font-semibold">Server Status</h2>
-    <p class="text-gray-400 mt-2">Online - 256 players currently playing</p>
-  </section>
+  <main id="hero" role="main">
+    <img
+      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+      alt="Bee Logo"
+      draggable="false"
+      loading="lazy"
+    />
+    <h1>Welcome to Event Alerts</h1>
+  </main>
 
   <!-- Floating Changelog Sidebar -->
-  <aside id="changelog" aria-label="Changelog">
-    <h3>Changelog</h3>
-    <ul>
-      <li>v1.4.2 - Added new event feed updates and fixes</li>
-      <li>v1.4.0 - Introduced EventUtils mod integration</li>
-      <li>v1.3.7 - Store items revamped with new cosmetics</li>
-      <li>v1.3.5 - Improved ban appeal form and UI</li>
-      <li>v1.3.0 - New Bee Hunt mini-game event</li>
-    </ul>
+  <aside id="changelog" aria-label="Latest Changelog and Blog Posts" role="complementary" tabindex="0">
+    <h3>Latest Updates</h3>
+    <article tabindex="0" role="article" aria-label="Update v1.4.2 released on May 25, 2025">
+      <time datetime="2025-05-25">May 25, 2025</time>
+      <h4>v1.4.2 - Event Feed Enhancements</h4>
+      <p>Added new real-time event notifications and improved UI responsiveness.</p>
+    </article>
+    <article tabindex="0" role="article" aria-label="Update v1.4.0 released on April 15, 2025">
+      <time datetime="2025-04-15">April 15, 2025</time>
+      <h4>v1.4.0 - EventUtils Mod Integration</h4>
+      <p>Integrated support for EventUtils mod on Modrinth for enhanced server alerts.</p>
+    </article>
+    <article tabindex="0" role="article" aria-label="Update v1.3.7 released on March 5, 2025">
+      <time datetime="2025-03-05">March 5, 2025</time>
+      <h4>v1.3.7 - Store Revamp</h4>
+      <p>Revamped store items with new cosmetics and updated perks for VIP players.</p>
+    </article>
+    <article tabindex="0" role="article" aria-label="Update v1.3.5 released on February 10, 2025">
+      <time datetime="2025-02-10">February 10, 2025</time>
+      <h4>v1.3.5 - Ban Appeal Improvements</h4>
+      <p>Improved the ban appeal form workflow and enhanced UI clarity.</p>
+    </article>
+    <article tabindex="0" role="article" aria-label="Update v1.3.0 released on January 20, 2025">
+      <time datetime="2025-01-20">January 20, 2025</time>
+      <h4>v1.3.0 - New Bee Hunt Mini-Game</h4>
+      <p>Launched the Bee Hunt mini-game with unique rewards and leaderboard support.</p>
+    </article>
   </aside>
-
 </body>
 </html>
