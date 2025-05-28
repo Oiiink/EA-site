@@ -59,28 +59,96 @@
       font-size: 1.1rem;
       text-decoration: none;
       margin-left: 1.75rem;
-      padding: 0.4rem 1rem;
+      padding: 0.5rem 1.25rem;
       border-radius: 8px;
       transition: background-color 0.3s ease, color 0.3s ease;
       user-select: none;
     }
-    nav a:hover {
+    nav a.download-btn {
       background-color: #f97316;
       color: #111827;
+      font-weight: 700;
+      box-shadow: 0 4px 8px rgba(249, 115, 22, 0.6);
     }
-    /* LilyPad section */
+    nav a.download-btn:hover {
+      background-color: #ea580c;
+      box-shadow: 0 6px 14px rgba(234, 88, 12, 0.8);
+      color: white;
+    }
+    /* Hero */
+    #hero {
+      padding-top: 100px; /* header space */
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+      user-select: none;
+    }
+    #hero img {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 1rem;
+      object-fit: contain;
+    }
+    #hero h1 {
+      font-size: 3.25rem;
+      font-weight: 800;
+      color: #f97316;
+      margin-bottom: 0.5rem;
+    }
+    #hero ul.features {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 2rem;
+      font-size: 1.1rem;
+      color: #e0e7ff;
+      text-align: left;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #hero ul.features li {
+      margin-bottom: 0.6rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    #hero ul.features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #f97316;
+      font-weight: 700;
+    }
+    #hero a.download-btn {
+      display: inline-block;
+      padding: 0.8rem 2.5rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #111827;
+      background-color: #f97316;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 5px 14px rgba(249, 115, 22, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    #hero a.download-btn:hover {
+      background-color: #ea580c;
+      box-shadow: 0 7px 20px rgba(234, 88, 12, 0.9);
+      color: white;
+    }
+    /* LilyPad Hosting Partner */
     #lilypad {
       background-color: #111827;
       border: 2px solid #f97316;
       max-width: 960px;
-      margin: 5.5rem auto 3rem;
+      margin: 3rem auto 4rem;
       border-radius: 12px;
-      padding: 16px 24px;
+      padding: 18px 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      box-shadow: 0 0 8px #f97316aa;
+      gap: 16px;
+      box-shadow: 0 0 12px #f97316aa;
       user-select: none;
     }
     #lilypad a {
@@ -93,7 +161,7 @@
       text-decoration: none;
       white-space: nowrap;
       border: 2px solid #f97316;
-      padding: 8px 14px;
+      padding: 10px 20px;
       border-radius: 8px;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
@@ -106,81 +174,72 @@
       object-fit: contain;
       user-select: none;
     }
-    /* Hero */
-    #hero {
-      padding-top: 140px; /* header + lilypad spacing */
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-      user-select: none;
-    }
-    #hero img {
-      width: 160px;
-      height: 160px;
-      margin: 0 auto 1rem;
-      object-fit: contain;
-    }
-    #hero h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: #f97316;
-      margin-bottom: 0.5rem;
-    }
     /* Floating changelog sidebar */
     #changelog {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 360px;
+      width: 380px;
       background: #1e293b; /* slate-800 */
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(251, 146, 60, 0.4);
-      padding: 1rem 1.5rem 1.5rem 1.5rem;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(251, 146, 60, 0.5);
+      padding: 1.2rem 2rem 2rem 2rem;
       z-index: 1000;
       user-select: none;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     #changelog img {
       display: block;
-      margin: 0 auto 0.8rem;
+      margin: 0 auto 1rem;
       width: 80px;
       height: 80px;
       object-fit: contain;
       user-select: none;
+      filter: drop-shadow(0 0 3px #f97316aa);
     }
     #changelog h3 {
       font-weight: 700;
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
       color: #f97316; /* orange */
       text-align: center;
+      letter-spacing: 0.03em;
+      user-select: none;
     }
     #changelog article {
       background: #334155; /* slate-700 */
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
       cursor: default;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
     }
     #changelog article:hover {
       background: #475569; /* slightly lighter */
+      box-shadow: 0 5px 20px rgba(251, 146, 60, 0.6);
     }
     #changelog article time {
       font-size: 0.75rem;
       color: #fbbf24; /* lighter orange */
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      user-select: none;
     }
     #changelog article h4 {
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 1.1rem;
+      font-weight: 700;
       color: #f97316;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      user-select: none;
     }
     #changelog article p {
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: #e0e7ff; /* light slate */
-      line-height: 1.3;
+      line-height: 1.4;
+      user-select: none;
     }
   </style>
 </head>
@@ -201,10 +260,36 @@
         href="https://modrinth.com/mod/alerts"
         target="_blank"
         rel="noopener"
+        class="download-btn"
         >Download EventUtils</a
       >
     </nav>
   </header>
+
+  <!-- Hero -->
+  <main id="hero" role="main" aria-label="EventUtils overview">
+    <img
+      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
+      alt="Bee Logo"
+      draggable="false"
+      loading="lazy"
+    />
+    <h1>EventUtils</h1>
+    <ul class="features" aria-label="Features list">
+      <li>Real-time event notifications for Minecraft servers</li>
+      <li>Easy integration with Event Alerts system</li>
+      <li>Supports popular Minecraft mods and plugins</li>
+      <li>Customizable alerts and logging</li>
+      <li>Lightweight and performance optimized</li>
+    </ul>
+    <a
+      href="https://modrinth.com/mod/alerts"
+      class="download-btn"
+      target="_blank"
+      rel="noopener"
+      >Download Now</a
+    >
+  </main>
 
   <!-- LilyPad Hosting Partner -->
   <section id="lilypad" role="region" aria-label="LilyPad Hosting Partner">
@@ -224,17 +309,6 @@
       >Visit LilyPad</a
     >
   </section>
-
-  <!-- Hero -->
-  <main id="hero" role="main">
-    <img
-      src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096"
-      alt="Bee Logo"
-      draggable="false"
-      loading="lazy"
-    />
-    <h1>Welcome to Event Alerts</h1>
-  </main>
 
   <!-- Floating Changelog Sidebar -->
   <aside
