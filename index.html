@@ -82,9 +82,13 @@
       gap: 15px;
     }
 
-    .eventutils-title-left img {
-      width: 40px;
-      height: 40px;
+    .eventutils-title-left h1 {
+      margin: 0;
+    }
+
+    .eventutils-logo-right {
+      width: 30px;
+      height: 30px;
     }
 
     h1 {
@@ -173,8 +177,18 @@
       color: #ff7a00;
     }
 
-    .spec-package p {
-      margin: 10px 0;
+    .price-bar {
+      background-color: #27ae60;
+      padding: 5px 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .spec-package p.description {
+      font-size: 0.9em;
+      color: #ccc;
     }
   </style>
 </head>
@@ -191,10 +205,9 @@
     <div class="main-content">
       <div class="eventutils-title">
         <div class="eventutils-title-left">
-          <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
           <h1>EventUtils</h1>
         </div>
-        <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download</a>
+        <img class="eventutils-logo-right" src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
       </div>
       <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
       <ul class="features">
@@ -209,18 +222,18 @@
         <div class="spec-packages">
           <div class="spec-package">
             <h3>FREE</h3>
-            <p>1v1 Hosting</p>
-            <p>$0/month</p>
+            <p class="description">Basic hosting for solo or small matches.</p>
+            <span class="price-bar">$0/month</span>
           </div>
           <div class="spec-package">
             <h3>PREMIUM</h3>
-            <p>Small Events</p>
-            <p>$9.99/month</p>
+            <p class="description">Optimized for community-scale events with added support.</p>
+            <span class="price-bar">$9.99/month</span>
           </div>
           <div class="spec-package">
             <h3>ENTERPRISE</h3>
-            <p>Full Custom Events</p>
-            <p>$24.99/month</p>
+            <p class="description">Maximum resources and customization for major events.</p>
+            <span class="price-bar">$24.99/month</span>
           </div>
         </div>
       </div>
