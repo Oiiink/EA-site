@@ -1,18 +1,25 @@
+/* General body and background */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: #121212;  /* Dark background */
+  color: #f5f5f5;             /* Light text */
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
+/* Logo animation */
 .logo {
-  display: block;
-  margin: 2rem auto 1rem;
   width: 96px;
   height: 96px;
   border-radius: 50%;
   animation: pulse 2s infinite;
+  margin-bottom: 2rem;
 }
 
 @keyframes pulse {
@@ -29,6 +36,53 @@ body {
   }
 }
 
+/* Main content and sidebar container */
+main {
+  display: flex;
+  max-width: 900px;
+  width: 100%;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* EventUtils section styling */
+.eventutils {
+  flex: 3;
+  background: #1e1e1e;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+/* Changelog sidebar */
+.changelog {
+  flex: 1;
+  background-color: #1e1e1e;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  color: #f97316; /* Orange accent */
+}
+
+.changelog h2 {
+  margin-top: 0;
+  color: #f97316;
+}
+
+.changelog ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+  color: #ddd;
+}
+
+.changelog li {
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
 /* Buttons styled similar to lilypad.gg's orange theme */
 .btn-primary {
   background-color: #f97316; /* orange-500 */
@@ -37,11 +91,10 @@ body {
   border-radius: 0.5rem;
   font-weight: 600;
   box-shadow: 0 4px 6px rgba(249, 115, 22, 0.5);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  border: none;
-  cursor: pointer;
+  transition: background-color 0.2s ease;
   text-decoration: none;
   display: inline-block;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -58,9 +111,9 @@ body {
   border-radius: 0.5rem;
   font-weight: 600;
   transition: background-color 0.2s ease, color 0.2s ease;
-  cursor: pointer;
   text-decoration: none;
   display: inline-block;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {
@@ -68,78 +121,39 @@ body {
   color: white;
 }
 
-/* Main layout */
-main {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  display: flex;
-  gap: 2rem;
-  justify-content: space-between;
-}
-
-.eventutils {
-  flex: 3;
-}
-
-.changelog {
-  flex: 1;
-  background-color: #1e1e1e;
-  border-radius: 0.5rem;
-  padding: 1rem 1.5rem;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
-}
-
-.changelog h2 {
-  margin-top: 0;
-  color: #f97316;
-}
-
-.changelog ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin-top: 1rem;
-}
-
-.changelog li {
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-}
-
-/* Chatbot styles */
+/* Chatbot popup styling */
 #chatbot-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
+  bottom: 1.5rem;
+  right: 1.5rem;
   font-family: 'Inter', sans-serif;
+  z-index: 9999;
 }
 
 #chatbot-toggle {
   background-color: #f97316;
   border: none;
-  color: white;
-  font-size: 24px;
-  padding: 0.6rem 0.9rem;
   border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  color: white;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.5);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgba(249, 115, 22, 0.6);
+  transition: background-color 0.3s ease;
 }
 
 #chatbot-toggle:hover {
   background-color: #ea580c;
-  box-shadow: 0 6px 12px rgba(234, 88, 12, 0.6);
 }
 
 #chatbot {
   width: 320px;
-  max-height: 420px;
+  max-height: 400px;
   background-color: #1e1e1e;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+  color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -149,14 +163,14 @@ main {
 #chatbot-header {
   background-color: #f97316;
   padding: 0.75rem 1rem;
-  color: white;
-  font-weight: 700;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: white;
+  font-weight: 600;
 }
 
-#chatbot-header button {
+#chatbot-close {
   background: transparent;
   border: none;
   color: white;
@@ -168,26 +182,24 @@ main {
   flex-grow: 1;
   padding: 1rem;
   overflow-y: auto;
-  color: #ddd;
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 #chatbot-form {
   display: flex;
+  padding: 0.5rem 1rem;
+  background-color: #272727;
   border-top: 1px solid #333;
-  padding: 0.5rem;
-  background-color: #2c2c2c;
 }
 
 #chatbot-input {
   flex-grow: 1;
-  padding: 0.5rem 0.75rem;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-#chatbot-input:focus {
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 14px;
+  background-color: #3a3a3a;
+  color: white;
   outline: none;
 }
 
@@ -197,26 +209,12 @@ main {
   color: white;
   padding: 0 1rem;
   margin-left: 0.5rem;
-  border-radius: 6px;
-  font-weight: 600;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 #chatbot-form button:hover {
   background-color: #ea580c;
-}
-
-/* Scrollbar styles for changelog */
-.changelog::-webkit-scrollbar {
-  width: 8px;
-}
-
-.changelog::-webkit-scrollbar-track {
-  background: #121212;
-}
-
-.changelog::-webkit-scrollbar-thumb {
-  background-color: #f97316;
-  border-radius: 4px;
 }
