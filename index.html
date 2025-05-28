@@ -95,15 +95,47 @@
       transform: translateY(-2px);
     }
 
-    .changelog {
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .main-content {
+      flex: 1;
+      min-width: 60%;
+    }
+
+    .sidebar {
+      width: 32%;
       background-color: #1a1a1a;
       padding: 1.5rem;
       border-radius: 8px;
       margin-top: 2rem;
     }
 
-    .changelog h2 {
+    .sidebar h2 {
       margin-top: 0;
+    }
+
+    .eventutils {
+      background-color: #121212;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
+    }
+
+    .eventutils h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .eventutils p {
+      margin-bottom: 1.5rem;
+      color: #cccccc;
     }
   </style>
 </head>
@@ -114,20 +146,27 @@
   </header>
 
   <main class="section">
-    <h1>EventUtils</h1>
-    <p>Your essential mod for receiving Minecraft event alerts.</p>
-    <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
-    <a href="#changelog" class="button-secondary">View Changelog</a>
-  </main>
+    <div class="eventutils">
+      <h1>EventUtils</h1>
+      <p>Your essential mod for receiving Minecraft event alerts.</p>
+      <a href="https://modrinth.com/mod/alerts" class="button-accent">Download EventUtils</a>
+      <a href="#changelog" class="button-secondary">View Changelog</a>
+    </div>
 
-  <aside class="section changelog" id="changelog">
-    <h2>Changelog</h2>
-    <ul>
-      <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
-      <li><strong>v1.1.0</strong> – Improved performance</li>
-      <li><strong>v1.0.0</strong> – Initial release</li>
-    </ul>
-  </aside>
+    <div class="flex-container">
+      <div class="main-content">
+        <!-- Additional content could go here -->
+      </div>
+      <aside class="sidebar" id="changelog">
+        <h2>Changelog</h2>
+        <ul>
+          <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
+          <li><strong>v1.1.0</strong> – Improved performance</li>
+          <li><strong>v1.0.0</strong> – Initial release</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
 </body>
 
 </html>
