@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts - Minecraft Server</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" />
@@ -10,25 +10,44 @@
     html {
       scroll-behavior: smooth;
     }
+    /* Improved consistent glow text */
+    .glow-text {
+      color: #f97316; /* Tailwind orange-500 */
+      text-shadow:
+        0 0 6px #f97316,
+        0 0 12px #fb923c,
+        0 0 18px #f97316,
+        0 0 24px #fb923c,
+        0 0 30px #f97316;
+    }
+    /* Hover glow effect for clickable elements */
+    .hover-glow:hover {
+      filter: drop-shadow(0 0 10px #fb923c);
+    }
+    /* Floating bee animation */
+    @keyframes floatBee {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .floating-bee {
+      animation: floatBee 4s ease-in-out infinite;
+      transition: filter 0.3s ease;
+    }
+    /* Pulse effect on hover */
+    @keyframes pulse {
+      0%, 100% { filter: drop-shadow(0 0 6px #fb923c); }
+      50% { filter: drop-shadow(0 0 14px #fb923c); }
+    }
+    .floating-bee:hover {
+      animation: floatBee 4s ease-in-out infinite, pulse 1.5s ease-in-out infinite;
+    }
+    /* Fade in animation */
     .fade-in {
       animation: fadeIn 1.2s ease-in-out;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    .glow-text {
-      text-shadow: 0 0 10px #f97316, 0 0 20px #f97316;
-    }
-    .hover-glow:hover {
-      filter: drop-shadow(0 0 8px #f97316);
-    }
-    .float-bee {
-      animation: floatBee 4s ease-in-out infinite;
-    }
-    @keyframes floatBee {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
     }
   </style>
 </head>
@@ -37,15 +56,20 @@
   <header class="bg-gray-900/90 shadow-md backdrop-blur-md fixed top-0 w-full z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="w-14 h-14 hover-glow transition duration-300" />
-        <h1 class="text-2xl font-extrabold text-orange-400 glow-text">Event Alerts</h1>
+        <img
+          src="https://media.discordapp.net/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp"
+          alt="Bee Logo"
+          class="w-14 h-14 floating-bee hover-glow object-contain"
+          loading="lazy"
+        />
+        <h1 class="text-2xl font-extrabold glow-text select-none">Event Alerts</h1>
       </div>
       <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#home" class="hover:text-orange-400">Home</a>
-        <a href="#store" class="hover:text-orange-400">Store</a>
-        <a href="#appeal" class="hover:text-orange-400">Appeal</a>
-        <a href="https://discord.gg/skeppy" target="_blank" class="hover:text-orange-400">Discord</a>
-        <a href="#" class="ml-4 px-4 py-2 rounded bg-orange-500 hover:bg-orange-600 text-white font-semibold">Log In</a>
+        <a href="#home" class="hover:text-orange-400 transition">Home</a>
+        <a href="#store" class="hover:text-orange-400 transition">Store</a>
+        <a href="#appeal" class="hover:text-orange-400 transition">Appeal</a>
+        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer" class="hover:text-orange-400 transition">Discord</a>
+        <a href="#" class="ml-4 px-4 py-2 rounded bg-orange-500 hover:bg-orange-600 text-white font-semibold transition">Log In</a>
       </nav>
     </div>
   </header>
@@ -53,28 +77,35 @@
   <!-- Hero -->
   <section id="home" class="pt-40 pb-24 px-6 text-center">
     <div class="max-w-4xl mx-auto fade-in">
-      <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp?format=webp&width=819&height=819" alt="Bee Logo" class="w-44 h-44 mx-auto mb-4 hover:scale-105 transition duration-300 hover-glow float-bee" />
-      <h2 class="text-5xl font-extrabold text-orange-400 glow-text">Welcome to Event Alerts</h2>
-      <p class="mt-4 text-gray-300 text-lg">Minecraft server updates, rewards, and events all in one place.</p>
+      <img
+        src="https://media.discordapp.net/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp?format=webp&width=819&height=819"
+        alt="Bee Logo Large"
+        class="w-44 h-44 mx-auto mb-4 hover:scale-105 transition duration-300 hover-glow floating-bee object-contain"
+        loading="lazy"
+      />
+      <h2 class="text-5xl font-extrabold glow-text select-none">Welcome to Event Alerts</h2>
+      <p class="mt-4 text-gray-300 text-lg max-w-xl mx-auto">
+        Minecraft server updates, rewards, and events all in one place.
+      </p>
     </div>
   </section>
 
   <!-- Store -->
   <section id="store" class="py-20 px-6">
     <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400 glow-text">Server Store</h2>
+      <h2 class="text-4xl font-bold glow-text select-none">Server Store</h2>
       <p class="text-gray-400">Support the server and earn exclusive perks!</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20 cursor-pointer">
         <h3 class="text-xl font-semibold text-orange-300">VIP Rank</h3>
         <p class="text-gray-400 mt-2">Priority access + monthly gifts.</p>
       </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20 cursor-pointer">
         <h3 class="text-xl font-semibold text-orange-300">Event Crates</h3>
         <p class="text-gray-400 mt-2">Get rare items from limited crates.</p>
       </div>
-      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20">
+      <div class="bg-gray-800 p-6 rounded-xl hover:scale-105 transition shadow-lg border border-orange-500/20 cursor-pointer">
         <h3 class="text-xl font-semibold text-orange-300">Cosmetics Pack</h3>
         <p class="text-gray-400 mt-2">Trails, pets, and exclusive gear.</p>
       </div>
@@ -84,43 +115,111 @@
   <!-- Appeal -->
   <section id="appeal" class="py-20 px-6 bg-gray-950">
     <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400 glow-text">Submit a Ban Appeal</h2>
+      <h2 class="text-4xl font-bold glow-text select-none">Submit a Ban Appeal</h2>
       <p class="text-gray-400">Think your ban was unfair? Appeal it here.</p>
-      <a href="https://forms.gle/8NqGuoFEAwsAgrwp6" target="_blank" class="inline-block mt-8 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105">Submit Appeal</a>
+      <a
+        href="https://forms.gle/8NqGuoFEAwsAgrwp6"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block mt-8 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition hover:scale-105"
+      >Submit Appeal</a>
     </div>
   </section>
 
   <!-- Event Feed -->
   <section id="events" class="py-20 px-6">
     <div class="text-center">
-      <h2 class="text-4xl font-bold text-orange-400 glow-text">Live Event Feed</h2>
+      <h2 class="text-4xl font-bold glow-text select-none">Live Event Feed</h2>
       <p class="text-gray-400">See the latest happenings on the server!</p>
     </div>
     <div class="max-w-4xl mx-auto mt-10 space-y-6">
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
+      <div
+        class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20 cursor-default"
+        tabindex="0"
+      >
         <h4 class="text-orange-300 font-semibold">🎉 Double XP Weekend</h4>
         <p class="text-gray-300 text-sm">Earn double experience points this weekend only! Starts Friday 6PM EST.</p>
       </div>
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
+      <div
+        class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20 cursor-default"
+        tabindex="0"
+      >
         <h4 class="text-orange-300 font-semibold">🧨 Firework Building Contest</h4>
         <p class="text-gray-300 text-sm">Join the community build contest and win rare crates! Submissions due Sunday.</p>
       </div>
-      <div class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20">
+      <div
+        class="bg-gray-800 p-5 rounded-lg shadow hover:scale-[1.02] transition border border-orange-500/20 cursor-default"
+        tabindex="0"
+      >
         <h4 class="text-orange-300 font-semibold">🐝 Bee Hunt Mini-Game</h4>
         <p class="text-gray-300 text-sm">Find the hidden bees across the map and earn sweet rewards!</p>
       </div>
     </div>
   </section>
 
-  <!-- Server Status -->
-  <section class="py-10 text-center bg-gray-950 text-gray-300">
-    <h3 class="text-xl mb-2">Server IP: <span class="text-white font-bold">play.eventalerts.gg</span></h3>
-    <p class="italic text-sm">Real-time server status coming soon...</p>
+  <!-- Interactive Server Selector -->
+  <section id="server-selector" class="py-20 px-6 bg-gray-950">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold glow-text select-none">Choose Your Server</h2>
+      <p class="text-gray-400 max-w-xl mx-auto">
+        Select a server below to see its status and connect easily.
+      </p>
+    </div>
+    <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
+      <div
+        id="server-card"
+        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-orange-500/20 flex flex-col items-center hover:scale-105 transition cursor-pointer select-none"
+        tabindex="0"
+        role="button"
+        aria-pressed="false"
+      >
+        <h3 class="text-2xl font-semibold text-orange-300 mb-2">Event Alerts Main</h3>
+        <p class="text-gray-400 mb-4">
+          IP: <span class="text-white font-mono">play.eventalerts.gg</span>
+        </p>
+        <p id="server-status" class="text-lg font-bold mb-4">Checking status...</p>
+        <button
+          id="copy-ip-btn"
+          class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded transition"
+          aria-label="Copy server IP"
+        >
+          Copy IP
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 py-6 text-center text-sm text-gray-500">
+  <footer class="bg-gray-800 py-6 text-center text-sm text-gray-500 select-none">
     &copy; 2025 Event Alerts. All rights reserved.
   </footer>
+
+  <script>
+    // Copy IP button functionality
+    document.getElementById('copy-ip-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText('play.eventalerts.gg').then(() => {
+        alert('Server IP copied to clipboard!');
+      });
+    });
+
+    // Mock server status checker (replace with real API call if available)
+    function checkServerStatus() {
+      const statusEl = document.getElementById('server-status');
+      // Simulate API fetch with random online/offline (hardcoded online for now)
+      setTimeout(() => {
+        const isOnline = true; // Set false to test offline display
+        if (isOnline) {
+          statusEl.textContent = '🟢 Online — 124 Players';
+          statusEl.classList.remove('text-red-500');
+          statusEl.classList.add('text-green-400', 'font-semibold');
+        } else {
+          statusEl.textContent = '🔴 Offline';
+          statusEl.classList.remove('text-green-400');
+          statusEl.classList.add('text-red-500', 'font-semibold');
+        }
+      }, 1000);
+    }
+    checkServerStatus();
+  </script>
 </body>
 </html>
