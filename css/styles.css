@@ -1,295 +1,141 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-:root {
-  --background: #0d0d0d;
-  --foreground: #1a1a1a;
-  --card: #1f1f1f;
-  --accent: #00ff9f;
-  --text: #f0f0f0;
-  --subtle-text: #aaa;
-  --border: #2a2a2a;
-}
-
-/* Reset & base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', sans-serif;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
 body {
-  background: linear-gradient(135deg, #0d0d0d 0%, #111e1a 100%);
-  color: var(--text);
-  line-height: 1.6;
-  min-height: 100vh;
+  background-color: #0d0d0d;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
 }
 
-/* Header */
-.header {
-  background-color: var(--foreground);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.logo {
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.header nav a {
-  color: var(--text);
-  margin-left: 24px;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.header nav a:hover {
-  color: var(--accent);
-}
-
-/* Modrinth Banner */
-.modrinth-banner {
-  background-color: var(--foreground);
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.modrinth-content {
+.modrinth {
+  background-color: #1a1a1a;
+  border-radius: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-  gap: 15px;
+  padding: 15px;
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+
+.modrinth span {
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 20px;
 }
 
 .modrinth-button {
   display: flex;
   align-items: center;
-  background-color: #1a1a1a;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  transition: background 0.3s ease;
   text-decoration: none;
+  color: white;
+  font-weight: 600;
+  background-color: #00ff9f;
+  border-radius: 15px;
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
 }
 
 .modrinth-button img {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   margin-right: 10px;
+  border-radius: 10px;
 }
 
-.modrinth-button:hover {
-  background-color: var(--card);
-}
-
-/* Container */
 .container {
-  max-width: 1200px;
-  padding: 20px;
-  margin: 0 auto;
-}
-
-/* Main container flex */
-.main-container {
   display: flex;
   gap: 30px;
-  margin-top: 40px;
+  max-width: 1000px;
 }
 
-/* Sidebar */
 .sidebar {
-  width: 300px;
-  background-color: var(--foreground);
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  flex-shrink: 0;
+  width: 280px;
 }
 
 .sidebar h2 {
-  margin-bottom: 16px;
-  font-size: 1.3rem;
+  font-size: 22px;
+  margin-bottom: 15px;
 }
 
-/* Changelog card */
 .changelog-card {
-  background-color: var(--card);
+  background-color: #1a1a1a;
   padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  box-shadow: 0 0 15px #00ff9f;
 }
 
 .changelog-card h3 {
+  font-size: 18px;
   margin-bottom: 8px;
 }
 
-.view-full {
-  margin-top: 10px;
-  padding: 8px 12px;
+.changelog-card p {
+  margin-bottom: 12px;
+}
+
+.changelog-card button {
+  padding: 8px 15px;
+  background-color: #00ff9f;
   border: none;
-  border-radius: 8px;
-  background-color: var(--accent);
-  color: #000;
+  border-radius: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.view-full:hover {
-  background-color: #00e68c;
-}
-
-/* Content */
 .content {
   flex: 1;
 }
 
 h1 {
-  font-weight: 700;
-  font-size: 2.5rem;
-  margin-bottom: 16px;
+  font-size: 42px;
+  margin-bottom: 25px;
 }
 
-h2 {
-  font-weight: 600;
+.feature-card {
+  background-color: #1a1a1a;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px #00ff9f;
+  max-width: 600px;
+}
+
+.feature-card h2 {
+  font-size: 28px;
   margin-bottom: 12px;
 }
 
-p {
-  font-weight: 400;
-  color: var(--subtle-text);
-  line-height: 1.5;
-  margin-bottom: 16px;
+.feature-card p {
+  margin-bottom: 15px;
 }
 
-/* Feature cards grid */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-top: 20px;
-}
-
-/* Feature card */
-.feature-card {
-  background-color: var(--card);
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: default;
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 20px rgba(0, 255, 159, 0.3);
-  cursor: pointer;
-}
-
-/* Status box */
 .status-box {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .status {
-  padding: 6px 10px;
-  border-radius: 12px;
+  padding: 8px 12px;
+  border-radius: 15px;
   font-weight: 600;
-  font-size: 0.85rem;
-  user-select: none;
+  margin-right: 12px;
 }
 
 .status.success {
-  background-color: #00cc88;
-  color: #000;
+  background-color: #00ff9f;
+  color: black;
 }
 
 .status.warning {
-  background-color: #ffbb33;
-  color: #000;
+  background-color: #f2d42e;
+  color: black;
 }
 
-/* Download button */
 .download-button {
   display: inline-block;
-  padding: 12px 22px;
-  background-color: var(--accent);
-  color: #000;
+  padding: 12px 25px;
+  background-color: #00ff9f;
+  color: black;
   font-weight: 700;
+  border-radius: 15px;
   text-decoration: none;
-  border-radius: 14px;
-  transition: background 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #00e68c;
-}
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 20px;
-  color: var(--subtle-text);
-  font-size: 0.9rem;
-  border-top: 1px solid var(--border);
-  margin-top: 40px;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .main-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    margin-bottom: 30px;
-  }
-  
-  .header-container {
-    flex-wrap: wrap;
-  }
-  
-  .header nav {
-    margin-top: 10px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .header nav a {
-    margin: 0 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 2rem;
-  }
+  cursor: pointer;
 }
