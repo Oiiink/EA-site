@@ -291,6 +291,66 @@
       margin-top: 0;
       text-align: center;
     }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 9999;
+    }
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: #222222;
+      padding: 30px 25px;
+      border-radius: 12px;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 0 40px #ff7a0044;
+      position: relative;
+      color: white;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      color: #ff7a00;
+      letter-spacing: 0.05em;
+      margin-bottom: 15px;
+    }
+    .modal-content p {
+      margin-bottom: 10px;
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: #ff7a00;
+      font-size: 1.5em;
+      cursor: pointer;
+      font-weight: 700;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .modal-close:hover,
+    .modal-close:focus {
+      color: #e06a00;
+    }
   </style>
 </head>
 <body>
@@ -332,50 +392,4 @@
             <div class="price-bar">2 GB RAM</div>
           </div>
           <div class="spec-package">
-            <h3>Advanced Tier</h3>
-            <p class="description">Enhanced hosting with 4 GB RAM, supports up to 25 players.</p>
-            <div class="price-bar">4 GB RAM</div>
-          </div>
-          <div class="spec-package">
-            <h3>Pro Tier</h3>
-            <p class="description">Premium hosting with 8 GB RAM, ideal for up to 50 players.</p>
-            <div class="price-bar">8 GB RAM</div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <aside class="sidebar">
-      <section class="changelog">
-        <h2>Changelog</h2>
-        <article class="changelog-entry">
-          <img src="https://via.placeholder.com/350x150?text=Update+1" alt="Changelog update 1" />
-          <h3>Version 1.2.0 - New Features</h3>
-          <p>Added event countdown timers and improved alert customization options.</p>
-          <button class="view-full-btn" onclick="alert('Full changelog link or content here for Version 1.2.0');">View Full Changelog</button>
-        </article>
-        <article class="changelog-entry">
-          <img src="https://via.placeholder.com/350x150?text=Update+2" alt="Changelog update 2" />
-          <h3>Version 1.1.0 - Performance</h3>
-          <p>Optimized mod loading times and fixed minor bugs reported by users.</p>
-          <button class="view-full-btn" onclick="alert('Full changelog link or content here for Version 1.1.0');">View Full Changelog</button>
-        </article>
-        <article class="changelog-entry">
-          <img src="https://via.placeholder.com/350x150?text=Update+3" alt="Changelog update 3" />
-          <h3>Version 1.0.0 - Initial Release</h3>
-          <p>Launched EventUtils mod with core alert features and basic UI.</p>
-          <button class="view-full-btn" onclick="alert('Full changelog link or content here for Version 1.0.0');">View Full Changelog</button>
-        </article>
-      </section>
-    </aside>
-  </main>
-
-  <section class="partner-section">
-    <img
-      src="https://cdn.discordapp.com/icons/651050427758886421/0e4958c6d754a43a8954d9e4a4b8f57d.png"
-      alt="Modrinth Logo"
-    />
-    <a href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">Download on Modrinth</a>
-  </section>
-</body>
-</html>
+            <
