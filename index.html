@@ -1,389 +1,609 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-
-<style>
-  /* Reset and base */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  html, body {
-    margin: 0; padding: 0;
-    height: 100%;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(180deg, #101217 0%, #181c24 100%);
-    color: #d8d8d8;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
-  }
-  a {
-    color: #ff6a00;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  a:hover {
-    color: #ffa243;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #1a1c22;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #ff6a00cc;
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #ff6a00;
-  }
-
-  /* Header */
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 56px;
-    background: #1a1c22;
-    border-bottom: 1px solid #2a2c33;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    z-index: 1000;
-    user-select: none;
-    box-shadow: 0 3px 12px #0008;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #ff6a00;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-  .logo img {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    box-shadow: 0 0 14px #ff6a00cc;
-  }
-  .download-btn {
-    background: linear-gradient(135deg, #ff6a00, #ff9533);
-    color: white;
-    padding: 10px 28px;
-    font-weight: 600;
-    border-radius: 28px;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    box-shadow: 0 6px 16px #ff6a0055;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    user-select: none;
-  }
-  .download-btn:hover {
-    background: linear-gradient(135deg, #ff9533, #ff6a00);
-    box-shadow: 0 8px 22px #ff6a0077;
-  }
-
-  /* Layout */
-  #app {
-    display: flex;
-    height: 100vh;
-    padding-top: 56px;
-    overflow: hidden;
-  }
-
-  /* Main content */
-  main.content {
-    flex-grow: 1;
-    padding: 56px 64px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 48px;
-    max-width: 1000px;
-    margin-left: 64px;
-    margin-right: 64px;
-    user-select: text;
-  }
-  main.content h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: #ff6a00;
-    letter-spacing: 0.12em;
-    margin: 0 0 12px 0;
-    text-shadow: 0 0 20px #ff6a0040;
-  }
-  main.content p.subtitle {
-    font-weight: 500;
-    font-size: 1.25rem;
-    color: #bfbfbf;
-    max-width: 720px;
-    line-height: 1.6;
-  }
-
-  /* Features list */
-  .features-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 22px 40px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .features-list li {
-    background: rgba(30, 33, 40, 0.85);
-    padding: 18px 24px;
-    border-radius: 18px;
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: #ddd;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 0 22px #ff6a0024;
-    transition: background-color 0.3s ease;
-  }
-  .features-list li::before {
-    content: '✔';
-    color: #ff6a00;
-    font-weight: 900;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    text-shadow: 0 0 14px #ff6a0040;
-  }
-  .features-list li:hover {
-    background: rgba(44, 47, 57, 0.95);
-    box-shadow: 0 0 30px #ff6a0044;
-  }
-
-  /* Client logos */
-  .clients-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 42px;
-    max-width: 720px;
-    align-items: center;
-    user-select: none;
-  }
-  .clients-row img {
-    height: 70px;
-    width: auto;
-    border-radius: 14px;
-    filter: drop-shadow(0 0 12px #ff6a0044);
-    transition: transform 0.3s ease, filter 0.3s ease;
-  }
-  .clients-row img:hover {
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 26px #ff6a0099);
-  }
-
-  /* Sidebar */
-  aside.sidebar {
-    width: 360px;
-    background: rgba(26, 28, 34, 0.9);
-    border-left: 3px solid #ff6a00;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    box-shadow: inset 3px 0 18px #ff6a0044;
-    padding: 36px 28px;
-    scroll-behavior: smooth;
-    user-select: none;
-  }
-  aside.sidebar h2 {
-    font-weight: 700;
-    font-size: 2rem;
-    color: #ff6a00;
-    border-bottom: 3px solid #ff6a00;
-    padding-bottom: 12px;
-    margin: 0 0 30px 0;
-    letter-spacing: 0.07em;
-  }
-
-  /* Changelog list */
-  .changelog-list {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-  }
-  .changelog-entry {
-    background: rgba(40, 43, 54, 0.9);
-    border-radius: 20px;
-    box-shadow: 0 0 30px #ff6a0055;
-    padding: 24px 32px;
-    transition: background-color 0.3s ease;
-    cursor: default;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .changelog-entry:hover {
-    background: rgba(60, 63, 80, 0.95);
-    box-shadow: 0 0 38px #ff6a0080;
-  }
-  .changelog-entry img {
-    border-radius: 16px;
-    max-height: 140px;
-    object-fit: cover;
-    user-select: none;
-    pointer-events: none;
-    box-shadow: 0 0 22px #ff6a0044;
-  }
-  .changelog-entry p {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #e0e0e0;
-    line-height: 1.5;
-  }
-  .changelog-entry .date {
-    font-weight: 400;
-    font-size: 0.9rem;
-    color: #ff6a00cc;
-    letter-spacing: 0.04em;
-    font-style: italic;
-    user-select: text;
-  }
-  .changelog-entry button {
-    background: linear-gradient(135deg, #ff6a00cc, #ff953300);
-    border: none;
-    padding: 10px 26px;
-    font-weight: 600;
-    color: #ff6a00;
-    border-radius: 24px;
-    align-self: flex-start;
-    cursor: pointer;
-    box-shadow: 0 3px 14px #ff6a0055;
-    transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-    user-select: none;
-  }
-  .changelog-entry button:hover {
-    background: linear-gradient(135deg, #ff9533, #ff6a00cc);
-    box-shadow: 0 6px 22px #ff6a00cc;
-    color: #fff;
-  }
-
-  /* Responsive */
-  @media (max-width: 1200px) {
-    main.content {
-      margin-left: 48px;
-      margin-right: 48px;
-      padding: 48px 48px 48px 48px;
-      max-width: 720px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Alerts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset & basics */
+    * {
+      box-sizing: border-box;
     }
-    aside.sidebar {
-      width: 280px;
-      padding: 28px 20px;
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0e0e0e;
+      color: #f0f0f0;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-  }
 
-  @media (max-width: 900px) {
-    #app {
-      flex-direction: column-reverse;
-      padding-bottom: 48px;
-      overflow: visible;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
-    main.content {
-      margin: 0 auto;
-      max-width: 100%;
-      padding: 48px 32px 32px 32px;
-      overflow: visible;
+    a:hover {
+      text-decoration: underline;
     }
-    aside.sidebar {
-      width: 100%;
-      height: 320px;
-      border-left: none;
-      border-top: 3px solid #ff6a00;
-      box-shadow: none;
-      padding: 20px 24px;
-      overflow-x: auto;
-      flex-direction: row;
+
+    /* Sticky header */
+    header {
+      position: sticky;
+      top: 0;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      padding: 15px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
       gap: 12px;
-      scroll-snap-type: x mandatory;
-      overflow-y: hidden;
-      border-radius: 0;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #ff7a00;
+      user-select: none;
+      cursor: default;
     }
-    .changelog-list {
-      flex-direction: row;
-      gap: 18px;
-      overflow-x: auto;
+
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 6px;
+      object-fit: cover;
     }
+
+    .download-btn {
+      background-color: #ff7a00;
+      color: #0e0e0e;
+      padding: 12px 24px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 12px #ff7a0055;
+    }
+    .download-btn:hover {
+      background-color: #e16900;
+      box-shadow: 0 4px 16px #e1690055;
+    }
+
+    /* Layout wrapper */
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 40px;
+      padding: 0 20px;
+      flex-grow: 1;
+      min-height: 80vh;
+    }
+
+    /* Main content area */
+    .main-content {
+      background-color: #171717;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    /* Title area */
+    .eventutils-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .eventutils-title-left h1 {
+      font-size: 3rem;
+      margin: 0;
+      color: #ff7a00;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .eventutils-logo-right {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      filter: drop-shadow(0 0 5px #ff7a00);
+      transition: transform 0.3s ease;
+    }
+    .eventutils-logo-right:hover {
+      transform: rotate(12deg) scale(1.05);
+    }
+
+    /* Tab controls */
+    .tabs {
+      display: flex;
+      gap: 24px;
+      border-bottom: 2px solid #333;
+      user-select: none;
+    }
+    .tab {
+      padding: 12px 24px;
+      font-weight: 700;
+      color: #ccc;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      background-color: #171717;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .tab.active {
+      background-color: #ff7a00;
+      color: #0e0e0e;
+      box-shadow: 0 4px 10px #ff7a0055;
+    }
+    .tab:hover:not(.active) {
+      color: #ff7a00;
+    }
+
+    /* Tab content */
+    .tab-content {
+      margin-top: 24px;
+    }
+    .tab-content > * {
+      display: none;
+    }
+    .tab-content > .active {
+      display: block;
+    }
+
+    /* Feature list */
+    ul.features {
+      list-style: none;
+      padding-left: 0;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: #ddd;
+    }
+    ul.features li {
+      margin-bottom: 14px;
+      position: relative;
+      padding-left: 32px;
+      color: #eee;
+      font-weight: 600;
+    }
+    ul.features li::before {
+      content: '✔';
+      position: absolute;
+      left: 0;
+      color: #27ae60;
+      font-weight: 900;
+    }
+
+    /* Clients grid */
+    .clients-grid {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 10px;
+    }
+    .client-logo {
+      width: 60px;
+      height: 60px;
+      background-color: #222;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ff7a0055;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .client-logo img {
+      max-width: 40px;
+      max-height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 2px #000);
+      user-select: none;
+    }
+    .client-logo:hover {
+      box-shadow: 0 0 18px #ff7a00cc;
+      transform: scale(1.1);
+    }
+    .clients-caption {
+      margin-top: 12px;
+      font-weight: 600;
+      color: #bbb;
+    }
+
+    /* Event Host Specs */
+    .event-host-specs {
+      background-color: #1a1a1a;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+    }
+    .event-host-specs h2 {
+      color: #ff7a00;
+      margin-bottom: 24px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+    }
+    .spec-packages {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+      gap: 20px;
+    }
+    .spec-package {
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      text-align: center;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      cursor: default;
+    }
+    .spec-package:hover {
+      background-color: #3b3b3b;
+      box-shadow: 0 0 15px #ff7a0033;
+    }
+    .spec-package h3 {
+      color: #ff7a00;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
+    .price-bar {
+      background-color: #27ae60;
+      padding: 6px 14px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: inline-block;
+      user-select: none;
+      box-shadow: 0 0 6px #27ae6077;
+    }
+    .spec-package p.description {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    /* Partner section */
+    .partner-section {
+      margin-top: 48px;
+      background-color: #1f1f1f;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #ff7a0044;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: #ddd;
+      font-weight: 600;
+      user-select: none;
+    }
+    .partner-section img {
+      height: 48px;
+      filter: drop-shadow(0 0 3px #ff7a00);
+      object-fit: contain;
+    }
+    .partner-section a {
+      background-color: #ff7a00;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: #0e0e0e;
+      font-weight: 700;
+      box-shadow: 0 0 12px #ff7a00aa;
+      transition: background-color 0.3s;
+    }
+    .partner-section a:hover {
+      background-color: #e16900;
+      box-shadow: 0 0 18px #e1690099;
+    }
+
+    /* Sidebar changelog */
+    aside.sidebar {
+      background-color: #171717;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #ff7a0033;
+      padding: 24px;
+      position: sticky;
+      top: 90px;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    aside.sidebar h2 {
+      color: #ff7a00;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 0.04em;
+      user-select: none;
+      border-bottom: 2px solid #ff7a00;
+      padding-bottom: 8px;
+    }
+
     .changelog-entry {
-      min-width: 320px;
-      max-width: 320px;
-      scroll-snap-align: start;
-      flex-shrink: 0;
-      padding: 18px 20px;
-      gap: 12px;
+      background-color: #222;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ff7a0044;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
     }
-  }
-</style>
+    .changelog-entry:hover {
+      box-shadow: 0 0 20px #ff7a0077;
+      background-color: #2e2e2e;
+    }
+
+    .changelog-entry img {
+      width: 100%;
+      height: auto;
+      border-bottom: 1px solid #333;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+    }
+
+    .changelog-text {
+      padding: 14px 16px;
+      color: #ddd;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .changelog-text strong {
+      color: #ff7a00;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .changelog-footer {
+      padding: 8px 16px 16px;
+      font-size: 0.8rem;
+      font-style: italic;
+      color: #999;
+      user-select: none;
+    }
+
+    .changelog-entry button {
+      background-color: #ff7a00;
+      border: none;
+      color: #0e0e0e;
+      padding: 8px 14px;
+      margin: 12px 16px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      align-self: flex-start;
+      transition: background-color 0.3s;
+    }
+    .changelog-entry button:hover {
+      background-color: #e16900;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 0.9rem;
+      color: #555;
+      background-color: #121212;
+      user-select: none;
+      box-shadow: inset 0 1px 4px #222;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      main {
+        grid-template-columns: 1fr;
+        margin: 20px 16px 40px;
+      }
+      aside.sidebar {
+        position: relative;
+        height: auto;
+        top: 0;
+        max-height: none;
+        margin-top: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 15px 20px;
+      }
+      .eventutils-title-left h1 {
+        font-size: 2rem;
+      }
+      .download-btn {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+      }
+      .clients-grid {
+        justify-content: center;
+      }
+      .client-logo {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-<header>
-  <div class="logo" aria-label="Event Alerts Logo">
-    <img src="https://cdn.discordapp.com/attachments/1058030920240950956/8517afc664df6deccac46de611a2dcbf.png" alt="Event Alerts Logo" />
-    EVENT ALERTS
-  </div>
-  <a href="https://impactclient.net/" target="_blank" rel="noopener" class="download-btn" aria-label="Download Impact Client">Download Impact</a>
-</header>
-
-<div id="app" role="main">
-  <main class="content" tabindex="0" aria-label="Event Utilities">
-    <h1>EventUtils</h1>
-    <p class="subtitle">Powerful Minecraft event alert utilities for mod clients and vanilla.</p>
-
-    <ul class="features-list" aria-label="Key Features">
-      <li>Robust event detection for popular clients</li>
-      <li>Accurate client identification & support</li>
-      <li>Lightweight and efficient codebase</li>
-      <li>Easy integration with existing mods and clients</li>
-    </ul>
-
-    <div class="clients-row" aria-label="Supported Minecraft Clients">
-      <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client logo" title="Lunar Client" />
-      <img src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client logo" title="Feather Client" />
-      <img src="https://multimc.org/images/infinity32.png" alt="MultiMC logo" title="MultiMC" />
-      <img src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft logo" title="Vanilla Minecraft" />
+  <header>
+    <div class="logo">
+      <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Event Alerts Logo" />
+      Event Alerts
     </div>
+    <button class="download-btn" aria-label="Download Event Alerts">Download</button>
+  </header>
+
+  <main>
+    <section class="main-content" aria-label="Main Content Area">
+      <div class="eventutils-title">
+        <div class="eventutils-title-left">
+          <h1>EventUtils</h1>
+          <p style="color:#aaa; font-weight: 500; margin-top: 6px;">
+            The best Minecraft event utility tool.
+          </p>
+        </div>
+        <img
+          class="eventutils-logo-right"
+          src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp"
+          alt="EventUtils Logo"
+          loading="lazy"
+          width="80"
+          height="80"
+        />
+      </div>
+
+      <!-- Tabs -->
+      <nav class="tabs" role="tablist" aria-label="Main sections">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="features-panel" id="features-tab">Features</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="clients-panel" id="clients-tab">Minecraft Clients</button>
+      </nav>
+
+      <div class="tab-content">
+        <!-- Features Tab -->
+        <div id="features-panel" role="tabpanel" aria-labelledby="features-tab" class="active">
+          <ul class="features" aria-live="polite">
+            <li>Instant event alerts with configurable sounds and visuals</li>
+            <li>Customizable overlays with transparency options</li>
+            <li>Support for multiple Minecraft clients</li>
+            <li>Lightweight and performance-friendly</li>
+            <li>Detailed statistics and logging</li>
+          </ul>
+        </div>
+
+        <!-- Minecraft Clients Tab -->
+        <div id="clients-panel" role="tabpanel" aria-labelledby="clients-tab" hidden>
+          <div class="clients-grid" role="list">
+            <div class="client-logo" role="listitem" tabindex="0" aria-label="Lunar Client">
+              <img src="https://store.lunarclient.com/cdn-cgi/image/width=55,height=50,dpr=1/static/img/logo.webp" alt="Lunar Client Logo" />
+            </div>
+            <div class="client-logo" role="listitem" tabindex="0" aria-label="Feather Client">
+              <img src="https://imgs.search.brave.com/zcNiLCaqUrlUAApaSe7G9cban02eRzeOPoMDzL-VOZ8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMWRmYTc5OWUz/NzY1YjRkNzNjMWEy/ZjM2ODI2NTk3N2Nh/ZTNlMDMzYTZlZDI5/ZWVlOTZhZTZjZmZk/NWE0M2VhMy9mZWF0/aGVybWMuY29tLw" alt="Feather Client Logo" />
+            </div>
+            <div class="client-logo" role="listitem" tabindex="0" aria-label="MultiMC">
+              <img src="https://multimc.org/images/infinity32.png" alt="MultiMC Logo" />
+            </div>
+            <div class="client-logo" role="listitem" tabindex="0" aria-label="Vanilla Minecraft">
+              <img src="https://imgs.search.brave.com/-287umXlR6B6sDfw8L4roXFzWDRvgnTRtJggLu0gqzw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTE3MTAxZTdj/OTZkOGQ0MWY0NmI3/MGY0Y2ZmM2I2MTll/OGM5OGQxN2IyNTQ0/MzY1OTY4NjFlOTU2/YjlhM2I3OC93d3cu/bWluZWNyYWZ0Lm5l/dC8" alt="Vanilla Minecraft Logo" />
+            </div>
+          </div>
+          <p class="clients-caption" style="margin-top: 16px; font-weight: 500; color: #bbb;">
+            Supported Minecraft clients with EventUtils.
+          </p>
+        </div>
+      </div>
+
+      <!-- Event Host Specs -->
+      <section class="event-host-specs" aria-label="Event Host Specifications">
+        <h2>Event Host Specs</h2>
+        <div class="spec-packages">
+          <div class="spec-package" tabindex="0" aria-label="Basic Package">
+            <h3>Basic</h3>
+            <div class="price-bar">$5 / month</div>
+            <p class="description">Access to core alert features and basic support.</p>
+          </div>
+          <div class="spec-package" tabindex="0" aria-label="Pro Package">
+            <h3>Pro</h3>
+            <div class="price-bar">$15 / month</div>
+            <p class="description">Includes premium overlays, custom sounds, and priority support.</p>
+          </div>
+          <div class="spec-package" tabindex="0" aria-label="Enterprise Package">
+            <h3>Enterprise</h3>
+            <div class="price-bar">$50 / month</div>
+            <p class="description">All features unlocked, dedicated account manager, and white-label options.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Partner Section -->
+      <section class="partner-section" aria-label="Partner Invitation">
+        <span>Want to partner with us?</span>
+        <a href="#" role="button" aria-label="Apply to Partner">Apply Here</a>
+      </section>
+    </section>
+
+    <!-- Sidebar for Changelog -->
+    <aside class="sidebar" aria-label="Changelog Sidebar">
+      <h2>Changelog</h2>
+
+      <article class="changelog-entry" aria-live="polite">
+        <img src="https://i.imgur.com/u3aPZpr.png" alt="Feature Update" />
+        <div class="changelog-text">
+          <strong>Added new client detection for Lunar, Feather, MultiMC, and Vanilla.</strong><br />
+          Improved UI responsiveness and added tabbed interface.
+        </div>
+        <div class="changelog-footer">Implemented on 2025-05-27</div>
+      </article>
+
+      <article class="changelog-entry" aria-live="polite">
+        <img src="https://i.imgur.com/6EgLVxk.png" alt="Bug Fixes" />
+        <div class="changelog-text">
+          <strong>Fixed Feather Client logo and updated changelog sidebar styling.</strong><br />
+          Enhanced accessibility and keyboard navigation support.
+        </div>
+        <div class="changelog-footer">Implemented on 2025-05-26</div>
+      </article>
+
+      <article class="changelog-entry" aria-live="polite">
+        <img src="https://i.imgur.com/e7C3rVF.png" alt="Initial Release" />
+        <div class="changelog-text">
+          <strong>Initial release with EventUtils overview and Event Host Specs.</strong><br />
+          Included partner invitation and download button.
+        </div>
+        <div class="changelog-footer">Implemented on 2025-05-25</div>
+      </article>
+    </aside>
   </main>
 
-  <aside class="sidebar" aria-label="Changelog">
-    <h2>Changelog</h2>
-    <section class="changelog-list" role="list">
-      <article class="changelog-entry" role="listitem" tabindex="0">
-        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629319676228872/Screen_Shot_2023-09-08_at_6.43.49_PM.png" alt="Updated UI screenshot" loading="lazy" />
-        <p>Revamped user interface for improved clarity and responsiveness.</p>
-        <div class="date">Implemented: 2023-09-08</div>
-        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about UI revamp">More Info</button>
-      </article>
+  <footer>
+    © 2025 Event Alerts. All rights reserved.
+  </footer>
 
-      <article class="changelog-entry" role="listitem" tabindex="0">
-        <img src="https://cdn.discordapp.com/attachments/1123589692592736306/1145629361876729671/Screen_Shot_2023-09-08_at_6.45.22_PM.png" alt="Client detection feature" loading="lazy" />
-        <p>Added Minecraft client detection for Lunar, Feather, Vanilla, and MultiMC.</p>
-        <div class="date">Implemented: 2023-09-08</div>
-        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about client detection feature">More Info</button>
-      </article>
+  <script>
+    // Tabs functionality
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-content > div');
 
-      <article class="changelog-entry" role="listitem" tabindex="0">
-        <p>Minor bug fixes and performance optimizations.</p>
-        <div class="date">Implemented: 2023-09-07</div>
-        <button type="button" onclick="alert('More details coming soon!')" aria-label="More information about bug fixes">More Info</button>
-      </article>
-    </section>
-  </aside>
-</div>
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        // Deselect all tabs
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+
+        // Hide all panels
+        panels.forEach(panel => panel.hidden = true);
+
+        // Activate clicked tab
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        const panelId = tab.getAttribute('aria-controls');
+        document.getElementById(panelId).hidden = false;
+      });
+    });
+  </script>
 </body>
 </html>
