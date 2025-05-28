@@ -1,97 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
 </head>
+
 <body>
+  <!-- Navigation -->
   <nav class="navbar">
-    <div class="nav-container container">
-      <a href="#" class="nav-logo">Event Alerts</a>
+    <div class="nav-container">
+      <a href="#" class="nav-logo">EventAlerts</a>
       <ul class="nav-menu">
         <li><a href="#features">Features</a></li>
-        <li><a href="#changelog">Changelog</a></li>
         <li><a href="#download">Download</a></li>
+        <li><a href="#changelog">Changelog</a></li>
       </ul>
     </div>
   </nav>
 
+  <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content container">
-      <h1>Stay Updated with Event Alerts</h1>
-      <p>Real-time notifications for your favorite Minecraft events, optimized and easy to use.</p>
-      <a href="#download" class="btn-primary">Download Now</a>
+      <h1>Stay Ahead with Event Alerts</h1>
+      <p>Enhance your Minecraft experience with real-time event notifications and seamless mod integration.</p>
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">Download Now</a>
     </div>
   </header>
 
-  <main class="main-content container">
-    <section class="features-grid" id="features">
+  <!-- Main Container -->
+  <div class="container main-content">
+    <!-- Features Grid -->
+    <section id="features" class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
-        <h3>Instant Alerts</h3>
-        <p>Get notified the moment events happen, no delay.</p>
+        <h3>Fast & Reliable</h3>
+        <p>Receive instant event alerts without lag, optimized for performance.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🛠️</div>
-        <h3>Customizable</h3>
-        <p>Adjust alert preferences to suit your needs.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <h3>Multi-Platform</h3>
-        <p>Receive alerts on desktop and mobile seamlessly.</p>
+        <h3>Easy Integration</h3>
+        <p>Simple setup with Modrinth and Minecraft clients, zero hassle.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔒</div>
-        <h3>Privacy First</h3>
-        <p>Your data stays private and secure with us.</p>
+        <h3>Secure & Private</h3>
+        <p>Your data stays private. We do not collect unnecessary info.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Cross-Platform</h3>
+        <p>Works on Windows, Mac, and Linux with seamless updates.</p>
       </div>
     </section>
 
-    <aside class="sidebar" id="changelog">
+    <!-- Sidebar with changelog -->
+    <aside id="changelog" class="sidebar">
       <h2>Changelog</h2>
       <div class="changelog-card">
-        <h3>v1.2.0 - May 2025</h3>
-        <p>Added multi-platform support and enhanced alert customization.</p>
+        <div class="changelog-header">
+          <h3>v1.0.0</h3>
+          <span class="changelog-date">2025-04-01</span>
+        </div>
+        <p>Initial release of EventUtils</p>
+        <button class="view-full">View Full Changelog</button>
       </div>
       <div class="changelog-card">
-        <h3>v1.1.0 - Mar 2025</h3>
-        <p>Improved notification speed and UI tweaks.</p>
+        <div class="changelog-header">
+          <h3>v1.1.0</h3>
+          <span class="changelog-date">2025-05-20</span>
+        </div>
+        <p>Added multi-language support and bug fixes</p>
+        <button class="view-full">View Full Changelog</button>
       </div>
-      <button class="view-full" onclick="window.location='#changelog'">View Full Changelog</button>
     </aside>
-  </main>
+  </div>
 
-  <section class="download-section" id="download">
-    <h2>Download Event Alerts</h2>
-    <p>Available now for Minecraft Java Edition, Bedrock, and more.</p>
-    <a href="https://example.com/download" class="download-button" target="_blank" rel="noopener noreferrer">Download</a>
-  </section>
-
-  <section class="modrinth-banner">
-    <div class="modrinth-content container">
-      <span>Get it on Modrinth</span>
-      <a href="https://modrinth.com/" class="modrinth-button" target="_blank" rel="noopener noreferrer" aria-label="Download on Modrinth">
-        <img
-          src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/public/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/Modrinth_Dark_Logo.png"
-          alt="Modrinth Logo"
-        />
-        Download
-      </a>
+  <!-- Download Section -->
+  <section id="download" class="download-section">
+    <div class="container feature-card">
+      <h2>Get EventUtils Now</h2>
+      <p>Download the latest version from Modrinth and stay updated with new features.</p>
+      <a class="download-button" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
     </div>
   </section>
 
+  <!-- Modrinth Banner -->
+  <div class="modrinth-banner">
+    <div class="modrinth-content container">
+      <span>Download <strong>EventUtils</strong> for Minecraft</span>
+      <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">
+        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/Modrinth_Dark_Logo.png" alt="Modrinth Logo" />
+        <span>Get it on Modrinth</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
   <footer class="footer">
-    <div class="footer-content container">
-      <div>&copy; 2025 Event Alerts. All rights reserved.</div>
+    <div class="container footer-content">
+      <p>© 2025 Event Alerts. All rights reserved.</p>
       <div class="social-links">
         <a href="#" aria-label="Twitter">🐦</a>
         <a href="#" aria-label="Discord">💬</a>
@@ -100,4 +110,5 @@
     </div>
   </footer>
 </body>
+
 </html>
