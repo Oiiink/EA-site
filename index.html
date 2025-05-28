@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts - Lunar Client Style</title>
+<title>Event Alerts</title>
 <style>
   /* Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
 
   /* Reset */
   * {
@@ -14,9 +14,9 @@
   }
 
   body {
+    background-color: #0a0a0a; /* nearly black */
     font-family: 'Poppins', sans-serif;
-    background: #101010;
-    color: #eee;
+    color: #e0e0e0;
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
@@ -24,110 +24,104 @@
 
   /* Sidebar */
   aside.sidebar {
-    background: #121212;
-    width: 280px;
-    padding: 24px 20px;
-    border-right: 1px solid #2a2a2a;
+    width: 240px;
+    background-color: #121212;
+    border-right: 1px solid #222;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    user-select: none;
-  }
-
-  aside.sidebar h2 {
-    color: #ff6600;
-    font-weight: 600;
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    padding-top: 40px;
   }
 
   aside.sidebar ul {
     list-style: none;
   }
 
-  aside.sidebar ul li {
-    padding: 12px 0;
-    border-bottom: 1px solid #222;
-    font-weight: 500;
-    font-size: 1rem;
-    color: #bbb;
-    cursor: default;
-    transition: color 0.2s ease;
+  aside.sidebar li {
+    position: relative;
+    padding: 18px 24px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #777;
+    cursor: pointer;
+    transition: color 0.25s ease;
   }
 
-  aside.sidebar ul li:hover {
-    color: #ff6600;
+  aside.sidebar li:hover,
+  aside.sidebar li.active {
+    color: #f97316;
   }
 
-  /* Main content */
+  aside.sidebar li.active::before,
+  aside.sidebar li:hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    background-color: #f97316;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Main Content */
   main.content {
     flex-grow: 1;
-    padding: 32px 48px;
+    padding: 48px 64px;
+    background-color: #0f0f0f;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    background: linear-gradient(135deg, #121212, #1a1a1a);
   }
 
   main.content header {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 24px;
   }
 
   main.content header img.logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 8px;
-    filter: drop-shadow(0 0 6px #ff6600aa);
+    width: 72px;
+    height: 72px;
   }
 
   main.content header h1 {
-    font-weight: 600;
-    font-size: 2.4rem;
-    color: #ff6600;
-    letter-spacing: 0.07em;
+    font-weight: 700;
+    font-size: 2.5rem;
+    letter-spacing: 0.12em;
+    color: #f97316;
+    text-transform: uppercase;
+    user-select: none;
   }
 
   main.content p.subtitle {
-    color: #bbb;
+    color: #555;
     font-size: 1.1rem;
     max-width: 600px;
-    user-select: text;
   }
 
   /* Buttons */
   .btn {
+    padding: 14px 36px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 2px solid #f97316;
     background: transparent;
-    border: 2px solid #ff6600;
-    padding: 12px 28px;
-    border-radius: 8px;
-    color: #ff6600;
-    font-weight: 600;
-    font-size: 1rem;
+    color: #f97316;
     cursor: pointer;
-    transition: all 0.3s ease;
     user-select: none;
-    max-width: 180px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 0;
+    box-shadow: inset 0 0 0 0 #f97316;
   }
 
-  .btn-primary {
-    background: #ff6600;
-    color: #121212;
-    box-shadow: 0 0 10px #ff6600aa;
-  }
-
-  .btn-primary:hover {
-    background: #ff8500;
-    box-shadow: 0 0 20px #ff8500cc;
-  }
-
-  .btn-secondary:hover {
-    background: #ff660022;
-    box-shadow: 0 0 12px #ff660044;
-    color: #ff6600;
+  .btn:hover {
+    background: #f97316;
+    color: #0a0a0a;
+    box-shadow: inset 400px 0 0 0 #f97316;
   }
 
   /* Chatbot toggle */
@@ -137,22 +131,25 @@
     right: 28px;
     width: 56px;
     height: 56px;
-    border-radius: 12px;
-    background: #ff6600;
-    color: #121212;
-    font-size: 28px;
+    border-radius: 0;
+    background: #f97316;
+    color: #0a0a0a;
     font-weight: 700;
+    font-size: 28px;
     border: none;
     cursor: pointer;
-    box-shadow: 0 0 16px #ff6600aa;
+    box-shadow: 0 0 16px #f97316aa;
     user-select: none;
     z-index: 9999;
     transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #chatbot-toggle:hover {
-    background: #ff8500;
-    box-shadow: 0 0 28px #ff8500cc;
+    background: #ff8c3b;
+    box-shadow: 0 0 30px #ff8c3bcc;
   }
 
   /* Chatbot popup */
@@ -162,9 +159,9 @@
     right: 28px;
     width: 360px;
     max-height: 480px;
-    background: #181818;
-    border-radius: 14px;
-    box-shadow: 0 0 20px #ff660055;
+    background: #121212;
+    border: 2px solid #f97316;
+    box-shadow: 0 0 16px #f97316aa;
     display: none;
     flex-direction: column;
     overflow: hidden;
@@ -191,19 +188,21 @@
   }
 
   #chatbot-popup header {
-    background: #222;
+    background: #171717;
     padding: 16px 20px;
-    color: #ff6600;
-    font-weight: 600;
+    color: #f97316;
+    font-weight: 700;
     font-size: 1.2rem;
-    user-select: text;
+    text-transform: uppercase;
+    user-select: none;
+    border-bottom: 1px solid #2a2a2a;
   }
 
   #chatbot-popup .chat-messages {
     flex-grow: 1;
     padding: 16px 20px;
     overflow-y: auto;
-    color: #ccc;
+    color: #ddd;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -212,62 +211,62 @@
   .chat-message {
     max-width: 75%;
     padding: 12px 20px;
-    border-radius: 16px;
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.3;
     user-select: text;
     word-wrap: break-word;
+    border-radius: 0;
   }
 
   .chat-message.user {
     align-self: flex-end;
-    background: linear-gradient(90deg, #ff6600, #ff7a00);
-    color: #121212;
-    box-shadow: 0 0 16px #ff6600cc;
+    background: #f97316;
+    color: #0a0a0a;
+    box-shadow: 0 0 16px #f97316cc;
   }
 
   .chat-message.bot {
     align-self: flex-start;
-    background: #292929;
-    color: #eee;
+    background: #222;
+    color: #ddd;
   }
 
   #chatbot-popup footer {
     display: flex;
     padding: 12px 20px;
-    background: #222;
-    border-top: 1px solid #333;
+    background: #171717;
+    border-top: 1px solid #2a2a2a;
     gap: 12px;
   }
 
   #chatbot-popup footer input {
     flex-grow: 1;
-    border-radius: 14px;
+    border-radius: 0;
     border: none;
     padding: 12px 16px;
     font-size: 1rem;
-    background: #121212;
-    color: #eee;
+    background: #0a0a0a;
+    color: #ddd;
     outline: none;
     font-family: 'Poppins', sans-serif;
     user-select: text;
   }
 
   #chatbot-popup footer button {
-    border-radius: 14px;
+    border-radius: 0;
     border: none;
     padding: 0 24px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1rem;
-    background: #ff6600;
-    color: #121212;
+    background: #f97316;
+    color: #0a0a0a;
     cursor: pointer;
     transition: background 0.3s ease;
     user-select: none;
   }
 
   #chatbot-popup footer button:hover {
-    background: #ff8500;
+    background: #ff8c3b;
   }
 
   /* Scrollbar */
@@ -276,7 +275,7 @@
   }
 
   #chatbot-popup .chat-messages::-webkit-scrollbar-thumb {
-    background: #ff6600;
+    background: #f97316;
     border-radius: 3px;
   }
 
@@ -289,15 +288,16 @@
     aside.sidebar {
       width: 100%;
       border-right: none;
-      border-bottom: 1px solid #2a2a2a;
+      border-bottom: 1px solid #222;
       padding: 16px 12px;
       flex-direction: row;
       overflow-x: auto;
       gap: 12px;
     }
 
-    aside.sidebar h2 {
-      display: none;
+    aside.sidebar li {
+      padding: 12px 16px;
+      font-size: 12px;
     }
 
     main.content {
@@ -314,13 +314,12 @@
 </head>
 <body>
   <aside class="sidebar" aria-label="Changelog">
-    <h2>Changelog</h2>
     <ul>
-      <li>🚀 Initial public release</li>
-      <li>⚙️ Added Discord integration</li>
-      <li>🐞 Fixed bug with alerts timing</li>
-      <li>✨ UI improvements & bug fixes</li>
-      <li>🛠️ Planned: Mobile support & new features</li>
+      <li class="active">🚀 Initial Release</li>
+      <li>⚙️ Discord Integration</li>
+      <li>🐞 Bug Fixes</li>
+      <li>✨ UI Improvements</li>
+      <li>🛠️ Mobile Support Planned</li>
     </ul>
   </aside>
 
@@ -329,10 +328,10 @@
       <img src="https://cdn.discordapp.com/attachments/1100137747387479859/1149829164630248590/ea.png" alt="Event Alerts Logo" class="logo" />
       <h1>Event Alerts</h1>
     </header>
-    <p class="subtitle">Get instant updates on your favorite Minecraft servers and events.</p>
-    <div style="display: flex; gap: 16px; margin-top: 16px;">
-      <a href="https://discord.gg/bWQXMwJszU" target="_blank" rel="noopener noreferrer" class="btn btn-primary" aria-label="Join Discord">Join Discord</a>
-      <a href="https://github.com/TinyTownTeller/Event-Alerts" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" aria-label="View on GitHub">View on GitHub</a>
+    <p class="subtitle">Instant updates on your favorite Minecraft servers and events.</p>
+    <div style="margin-top: 24px;">
+      <button class="btn" onclick="window.open('https://discord.gg/bWQXMwJszU', '_blank')">Join Discord</button>
+      <button class="btn" style="margin-left:16px" onclick="window.open('https://github.com/TinyTownTeller/Event-Alerts', '_blank')">GitHub</button>
     </div>
   </main>
 
