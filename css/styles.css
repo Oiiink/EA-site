@@ -1,127 +1,182 @@
-/* General body and background */
+/* Fonts & base */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  --orange: #FF6A00;
+  --orange-hover: #e05a00;
+  --bg-dark: #1a1c1f;
+  --bg-panel: #222529;
+  --text-light: #e1e3e6;
+  --text-muted: #a0a3a8;
+  --shadow: rgba(255, 106, 0, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #121212;  /* Dark background */
-  color: #f5f5f5;             /* Light text */
   margin: 0;
-  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
-  box-sizing: border-box;
 }
 
-/* Logo animation */
+/* Logo with subtle glow */
 .logo {
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  box-shadow: 0 0 15px var(--orange);
   margin-bottom: 2rem;
+  user-select: none;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Main content and sidebar container */
+/* Main content container */
 main {
-  display: flex;
-  max-width: 900px;
+  max-width: 960px;
   width: 100%;
+  display: flex;
   gap: 2rem;
-  align-items: flex-start;
 }
 
-/* EventUtils section styling */
+/* Left section */
 .eventutils {
-  flex: 3;
-  background: #1e1e1e;
-  border-radius: 0.5rem;
+  flex-grow: 3;
+  background: var(--bg-panel);
   padding: 2rem;
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+  border-radius: 12px;
+  box-shadow:
+    0 6px 12px -4px var(--shadow),
+    inset 0 0 8px #fff1;
 }
 
-/* Changelog sidebar */
-.changelog {
-  flex: 1;
-  background-color: #1e1e1e;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  max-height: 400px;
-  overflow-y: auto;
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
-  color: #f97316; /* Orange accent */
-}
-
-.changelog h2 {
+.eventutils h1 {
   margin-top: 0;
-  color: #f97316;
+  font-weight: 700;
+  font-size: 2.5rem;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
 }
 
-.changelog ul {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 1rem;
-  color: #ddd;
+.eventutils p {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
 }
 
-.changelog li {
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
+/* Buttons container */
+.buttons {
+  display: flex;
+  gap: 1rem;
 }
 
-/* Buttons styled similar to lilypad.gg's orange theme */
+/* Button styles */
 .btn-primary {
-  background-color: #f97316; /* orange-500 */
+  background-color: var(--orange);
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
   font-weight: 600;
-  box-shadow: 0 4px 6px rgba(249, 115, 22, 0.5);
-  transition: background-color 0.2s ease;
-  text-decoration: none;
-  display: inline-block;
+  padding: 0.75rem 2rem;
+  font-size: 1.125rem;
+  border-radius: 30px;
+  border: none;
   cursor: pointer;
+  box-shadow: 0 6px 15px var(--shadow);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
 .btn-primary:hover {
-  background-color: #ea580c; /* orange-600 */
-  box-shadow: 0 6px 8px rgba(234, 88, 12, 0.6);
+  background-color: var(--orange-hover);
+  box-shadow: 0 10px 25px var(--shadow);
   transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background-color: transparent;
-  color: #f97316;
-  border: 2px solid #f97316;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  background: transparent;
+  border: 2px solid var(--orange);
+  color: var(--orange);
   font-weight: 600;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  text-decoration: none;
-  display: inline-block;
+  padding: 0.75rem 2rem;
+  font-size: 1.125rem;
+  border-radius: 30px;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
 .btn-secondary:hover {
-  background-color: #f97316;
+  background-color: var(--orange);
   color: white;
 }
 
-/* Chatbot popup styling */
+/* Right sidebar (changelog) */
+.changelog {
+  flex-basis: 320px;
+  background: var(--bg-panel);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow:
+    0 6px 12px -4px var(--shadow),
+    inset 0 0 8px #fff1;
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--orange) transparent;
+}
+
+.changelog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.changelog::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.changelog::-webkit-scrollbar-thumb {
+  background-color: var(--orange);
+  border-radius: 4px;
+}
+
+/* Changelog heading */
+.changelog h2 {
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--orange);
+}
+
+/* Changelog list */
+.changelog ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+  color: var(--text-light);
+}
+
+.changelog li {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Chatbot popup */
 #chatbot-container {
   position: fixed;
   bottom: 1.5rem;
@@ -131,90 +186,105 @@ main {
 }
 
 #chatbot-toggle {
-  background-color: #f97316;
+  background-color: var(--orange);
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 24px;
+  width: 56px;
+  height: 56px;
+  font-size: 28px;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(249, 115, 22, 0.6);
+  box-shadow: 0 8px 20px var(--shadow);
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
 #chatbot-toggle:hover {
-  background-color: #ea580c;
+  background-color: var(--orange-hover);
 }
 
 #chatbot {
-  width: 320px;
-  max-height: 400px;
-  background-color: #1e1e1e;
+  width: 360px;
+  max-height: 450px;
+  background-color: var(--bg-panel);
   color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 0 20px var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 #chatbot-header {
-  background-color: #f97316;
+  background-color: var(--orange);
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  user-select: none;
 }
 
 #chatbot-close {
   background: transparent;
   border: none;
   color: white;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
 }
 
 #chatbot-messages {
   flex-grow: 1;
   padding: 1rem;
   overflow-y: auto;
-  font-size: 14px;
+  font-size: 15px;
+  color: var(--text-light);
+  user-select: text;
 }
 
 #chatbot-form {
   display: flex;
-  padding: 0.5rem 1rem;
-  background-color: #272727;
-  border-top: 1px solid #333;
+  padding: 0.75rem 1rem;
+  background-color: #2c2f33;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-top: 1px solid #3a3d42;
 }
 
 #chatbot-input {
   flex-grow: 1;
   border: none;
-  border-radius: 4px;
-  padding: 0.5rem;
-  font-size: 14px;
-  background-color: #3a3a3a;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 15px;
+  background-color: #3a3d42;
   color: white;
   outline: none;
+  user-select: text;
 }
 
 #chatbot-form button {
-  background-color: #f97316;
+  background-color: var(--orange);
   border: none;
   color: white;
-  padding: 0 1rem;
-  margin-left: 0.5rem;
-  border-radius: 4px;
+  padding: 0 1.5rem;
+  margin-left: 0.75rem;
+  border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.3s ease;
+  user-select: none;
 }
 
 #chatbot-form button:hover {
-  background-color: #ea580c;
+  background-color: var(--orange-hover);
 }
