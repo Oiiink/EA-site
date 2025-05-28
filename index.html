@@ -3,336 +3,407 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
   <style>
+    /* Base */
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #0e0e0e;
-      color: #ddd; /* light gray text */
+      background: #121212;
+      color: #e0e0e0;
       display: flex;
-      min-height: 100vh;
-      flex-direction: row;
       justify-content: center;
-      align-items: flex-start;
       padding: 2rem;
+      min-height: 100vh;
       gap: 2rem;
     }
 
     header {
+      width: 100%;
       text-align: center;
-      padding: 2rem 1rem 1rem;
+      margin-bottom: 2rem;
     }
 
     .logo {
       width: 96px;
       height: 96px;
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      animation: pulse 2.5s ease-in-out infinite;
+      box-shadow:
+        0 0 12px #ff6600,
+        0 0 24px #ff6600;
     }
 
     @keyframes pulse {
-      0% {
+      0%, 100% {
         transform: scale(1);
+        box-shadow:
+          0 0 12px #ff6600,
+          0 0 24px #ff6600;
       }
       50% {
-        transform: scale(1.05);
-      }
-      100% {
-        transform: scale(1);
+        transform: scale(1.1);
+        box-shadow:
+          0 0 24px #ff6600,
+          0 0 36px #ff6600;
       }
     }
 
+    /* Layout */
     main.section {
       max-width: 600px;
       flex-grow: 1;
     }
 
-    main h1 {
-      color: #ff7a00;
-      margin-bottom: 0.25rem;
-    }
-
-    main p {
-      color: #eee;
-      margin-top: 0;
-      margin-bottom: 1.5rem;
-    }
-
     aside.changelog {
-      background-color: #1a1a1a;
-      padding: 1.5rem;
-      border-radius: 8px;
       max-width: 320px;
-      height: fit-content;
-      color: #ff9a33; /* softer orange */
+      background: rgba(30, 30, 30, 0.7);
+      backdrop-filter: saturate(180%) blur(10px);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      color: #ff7f00;
+      font-weight: 500;
       position: sticky;
       top: 2rem;
-      align-self: flex-start;
+      height: fit-content;
+      box-shadow: 0 0 16px rgba(255, 127, 0, 0.35);
+      border: 1px solid #ff7f00;
+      user-select: none;
     }
 
     aside.changelog h2 {
       margin-top: 0;
-      color: #ff7a00;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #ff7f00;
+      margin-bottom: 1rem;
     }
 
     aside.changelog ul {
       list-style: none;
       padding-left: 0;
-      margin-top: 0.75rem;
+      margin: 0;
     }
 
     aside.changelog ul li {
-      margin-bottom: 0.75rem;
-      color: #cc7a00; /* muted orange */
-      font-weight: 500;
+      margin-bottom: 0.8rem;
+      color: #ffaa33;
+      font-size: 1rem;
+      line-height: 1.3;
+      cursor: default;
+      transition: color 0.3s ease;
     }
 
-    .button-primary,
-    .button-secondary,
-    .button-accent {
-      padding: 0.75rem 1.75rem;
-      border-radius: 10px;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.25s ease;
-      margin: 0.5rem 1rem 0 0;
-      cursor: pointer;
+    aside.changelog ul li:hover {
+      color: #ffcc66;
+    }
+
+    /* Headings and text */
+    main h1 {
+      font-weight: 700;
+      font-size: 2.25rem;
+      margin-bottom: 0.2rem;
+      color: #ff6600;
       user-select: none;
+      text-shadow: 0 0 5px rgba(255, 102, 0, 0.7);
+    }
+
+    main p {
+      font-weight: 400;
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      color: #ddd;
+      max-width: 480px;
+    }
+
+    /* Buttons */
+    .button-primary,
+    .button-secondary {
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.65rem 1.5rem;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+      transition: all 0.3s ease;
+      user-select: none;
+      box-shadow: 0 0 12px rgba(255, 102, 0, 0.3);
+      border: 1.5px solid transparent;
+      font-size: 1rem;
+      margin-right: 1rem;
     }
 
     .button-primary {
-      background-color: #2a1300;
-      color: #ff7a00;
-      border: 1px solid #ff7a00;
-      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+      background: linear-gradient(90deg, #ff6600, #ff7f00);
+      color: #121212;
+      border-color: transparent;
+      box-shadow: 0 4px 14px #ff6600;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     }
 
     .button-primary:hover {
-      background-color: #ff7a00;
-      color: #1a1a1a;
-      box-shadow: 0 6px 18px rgba(255, 122, 0, 0.6);
-      transform: translateY(-2px);
+      background: linear-gradient(90deg, #ff7f00, #ff9900);
+      box-shadow: 0 6px 22px #ff7f00;
+      transform: translateY(-3px);
     }
 
     .button-secondary {
-      background-color: transparent;
-      color: #ff7a00;
-      border: 1px solid rgba(255, 122, 0, 0.5);
-      backdrop-filter: blur(4px);
+      background: transparent;
+      color: #ff6600;
+      border-color: #ff6600;
+      box-shadow: 0 0 8px #ff6600;
+      text-shadow: none;
     }
 
     .button-secondary:hover {
-      background-color: rgba(255, 122, 0, 0.1);
-      border-color: rgba(255, 122, 0, 0.75);
-      transform: translateY(-1px);
+      background: #ff66002b;
+      border-color: #ff9900;
+      box-shadow: 0 0 14px #ff9900;
+      transform: translateY(-2px);
     }
 
-    /* Chat popup styles */
+    /* Chat popup toggle */
     #chatbot-toggle {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background-color: #ff7a00;
-      border: none;
+      bottom: 30px;
+      right: 30px;
+      background: #ff6600;
       border-radius: 50%;
+      border: none;
       width: 56px;
       height: 56px;
-      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.5);
-      color: #1a1a1a;
-      font-size: 28px;
+      box-shadow: 0 0 18px #ff6600;
       cursor: pointer;
+      font-size: 28px;
+      color: #121212;
       display: flex;
-      justify-content: center;
       align-items: center;
-      transition: background-color 0.3s ease;
+      justify-content: center;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
       z-index: 1000;
+      user-select: none;
     }
 
     #chatbot-toggle:hover {
-      background-color: #ffa040;
+      background: #ff7f1a;
+      box-shadow: 0 0 28px #ff7f1a;
     }
 
+    /* Chat popup container */
     #chatbot-popup {
       position: fixed;
-      bottom: 90px;
-      right: 24px;
-      width: 320px;
-      max-height: 420px;
-      background-color: #1a1a1a;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.4);
+      bottom: 100px;
+      right: 30px;
+      width: 340px;
+      max-height: 450px;
+      background: rgba(25, 25, 25, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      border-radius: 14px;
+      box-shadow: 0 0 20px #ff6600;
       display: none;
       flex-direction: column;
       overflow: hidden;
-      z-index: 1000;
+      z-index: 1001;
+      user-select: none;
     }
 
     #chatbot-popup header {
-      background-color: #2a1300;
-      color: #ff7a00;
-      padding: 0.75rem 1rem;
+      background: #331a00;
+      color: #ff7f00;
+      padding: 1rem 1.25rem;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       user-select: none;
     }
 
     #chatbot-popup .chat-messages {
       flex-grow: 1;
-      padding: 1rem;
+      padding: 1rem 1.25rem;
       overflow-y: auto;
       font-size: 0.9rem;
       color: #ddd;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      background-color: #0f0f0f;
+      background: #1b1b1b;
     }
 
     .chat-message {
-      padding: 0.6rem 1rem;
+      padding: 0.65rem 1rem;
       border-radius: 18px;
       max-width: 75%;
       word-wrap: break-word;
       line-height: 1.3;
       font-weight: 500;
       user-select: text;
+      box-shadow: 0 0 8px #ff6600;
     }
 
     .chat-message.user {
       align-self: flex-end;
-      background-color: #ff7a00;
-      color: #1a1a1a;
+      background: linear-gradient(90deg, #ff6600, #ff7f00);
+      color: #121212;
+      box-shadow: 0 0 16px #ff7f00;
     }
 
     .chat-message.bot {
       align-self: flex-start;
-      background-color: #333;
+      background: #222;
       color: #eee;
+      box-shadow: none;
     }
 
     #chatbot-popup footer {
       display: flex;
-      padding: 0.5rem;
-      border-top: 1px solid #333;
-      background-color: #1a1a1a;
+      padding: 0.5rem 1rem;
+      border-top: 1px solid #3a2200;
+      background: #331a00;
     }
 
     #chatbot-popup footer input {
       flex-grow: 1;
-      padding: 0.5rem 0.75rem;
-      border-radius: 20px;
       border: none;
-      background-color: #2a1300;
-      color: #ff7a00;
+      border-radius: 14px;
+      padding: 0.6rem 1rem;
       font-size: 1rem;
+      background: #121212;
+      color: #eee;
+      box-shadow: inset 0 0 6px #ff6600;
       outline: none;
-      font-weight: 600;
+      user-select: text;
     }
 
     #chatbot-popup footer button {
-      background-color: #ff7a00;
+      background: #ff6600;
       border: none;
-      padding: 0 1rem;
-      margin-left: 0.5rem;
-      border-radius: 20px;
-      color: #1a1a1a;
-      font-weight: 700;
+      color: #121212;
+      margin-left: 0.75rem;
+      padding: 0 1.25rem;
+      border-radius: 14px;
       cursor: pointer;
-      transition: background-color 0.25s ease;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 0 10px #ff7f00;
+      transition: background 0.3s ease;
+      user-select: none;
     }
 
     #chatbot-popup footer button:hover {
-      background-color: #ffa040;
+      background: #ff7f00;
+      box-shadow: 0 0 18px #ff9900;
+    }
+
+    /* Scrollbar */
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #ff6600;
+      border-radius: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      body {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      main.section {
+        max-width: 100%;
+      }
+
+      aside.changelog {
+        position: static;
+        width: 100%;
+        margin-bottom: 2rem;
+      }
+
+      #chatbot-popup {
+        width: 90vw;
+        right: 5vw;
+        bottom: 80px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="logo" />
-  </header>
+  <main class="section" role="main" aria-label="Main content">
+    <header>
+      <img src="https://cdn.discordapp.com/attachments/1100137747387479859/1149829164630248590/ea.png" alt="Event Alerts Logo" class="logo" />
+      <h1>Event Alerts</h1>
+      <p>Get instant updates on your favorite Minecraft servers and events.</p>
+    </header>
 
-  <main class="section">
-    <h1>EventUtils</h1>
-    <p>Your essential mod for receiving Minecraft event alerts.</p>
-    <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
-    <a href="#changelog" class="button-secondary">View Changelog</a>
+    <a href="https://discord.gg/bWQXMwJszU" class="button-primary" target="_blank" rel="noopener noreferrer" aria-label="Join our Discord">Join our Discord</a>
+    <a href="https://github.com/TinyTownTeller/Event-Alerts" class="button-secondary" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">View on GitHub</a>
   </main>
 
-  <aside class="section changelog" id="changelog">
+  <aside class="changelog" aria-label="Changelog">
     <h2>Changelog</h2>
     <ul>
-      <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
-      <li><strong>v1.1.0</strong> – Improved performance</li>
-      <li><strong>v1.0.0</strong> – Initial release</li>
+      <li>🚀 Initial public release</li>
+      <li>⚙️ Added Discord integration</li>
+      <li>🐞 Fixed bug with alerts timing</li>
+      <li>✨ UI improvements & bug fixes</li>
+      <li>🛠️ Planned: Mobile support & new features</li>
     </ul>
   </aside>
 
-  <!-- Chatbot toggle button -->
-  <button id="chatbot-toggle" aria-label="Open chat">💬</button>
-
-  <!-- Chatbot popup -->
-  <div id="chatbot-popup" role="dialog" aria-modal="true" aria-labelledby="chatbot-header">
-    <header id="chatbot-header">Event Alerts AI</header>
-    <div class="chat-messages" id="chat-messages"></div>
+  <button id="chatbot-toggle" aria-label="Toggle Chatbot" title="Chat with Event Alerts Bot">💬</button>
+  <div id="chatbot-popup" role="dialog" aria-modal="true" aria-hidden="true">
+    <header>Chat with Event Alerts Bot</header>
+    <div class="chat-messages" id="chat-messages" aria-live="polite" aria-atomic="true">
+      <div class="chat-message bot">Hello! How can I assist you with Event Alerts?</div>
+    </div>
     <footer>
-      <input id="chat-input" type="text" placeholder="Ask me anything..." autocomplete="off" />
-      <button id="chat-send">Send</button>
+      <input id="chat-input" type="text" placeholder="Type your message..." aria-label="Chat input" />
+      <button id="chat-send" aria-label="Send message">Send</button>
     </footer>
   </div>
 
   <script>
-    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const toggleBtn = document.getElementById('chatbot-toggle');
     const chatbotPopup = document.getElementById('chatbot-popup');
-    const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
     const chatSend = document.getElementById('chat-send');
 
-    chatbotToggle.addEventListener('click', () => {
-      if (chatbotPopup.style.display === 'flex') {
-        chatbotPopup.style.display = 'none';
-      } else {
-        chatbotPopup.style.display = 'flex';
-        chatInput.focus();
-      }
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = chatbotPopup.style.display === 'none' || chatbotPopup.style.display === '';
+      chatbotPopup.style.display = isHidden ? 'flex' : 'none';
+      chatbotPopup.setAttribute('aria-hidden', !isHidden);
+      if (isHidden) chatInput.focus();
     });
 
-    function appendMessage(text, sender) {
-      const message = document.createElement('div');
-      message.classList.add('chat-message', sender);
-      message.textContent = text;
-      chatMessages.appendChild(message);
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.classList.add('chat-message', sender);
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    async function sendMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-
-      appendMessage(text, 'user');
+    chatSend.addEventListener('click', () => {
+      const userText = chatInput.value.trim();
+      if (!userText) return;
+      addMessage(userText, 'user');
       chatInput.value = '';
-      chatInput.disabled = true;
-      chatSend.disabled = true;
 
-      // Simulated AI response delay
+      // Simulated bot response - replace with actual bot logic as needed
       setTimeout(() => {
-        // You can replace this with real API calls to AI backend
-        const botReply = `Sorry, I can't answer that yet. You asked: "${text}"`;
-        appendMessage(botReply, 'bot');
-        chatInput.disabled = false;
-        chatSend.disabled = false;
-        chatInput.focus();
-      }, 1200);
-    }
+        addMessage("Thanks for your message! I'm here to help with Event Alerts.", 'bot');
+      }, 1000);
+    });
 
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', e => {
+    chatInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        sendMessage();
+        chatSend.click();
       }
     });
   </script>
