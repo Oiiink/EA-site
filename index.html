@@ -1,52 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
+  <link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp" type="image/webp" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="icon" href="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" type="image/webp" />
-  
   <style>
     /* Reset */
     *, *::before, *::after {
-      margin: 0; padding: 0; box-sizing: border-box;
+      box-sizing: border-box;
     }
-    
-    html {
-      scroll-behavior: smooth;
+    body, h1, h2, h3, p, ul, li, a, button {
+      margin: 0; padding: 0; font-weight: normal;
+    }
+    ul {
+      list-style: none;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
     }
 
     body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      background: linear-gradient(135deg, #121212, #1c1c1c);
-      color: #eee;
+      font-family: 'Inter', sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+      line-height: 1.6;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: background 0.4s ease, color 0.4s ease;
-    }
-
-    body.light {
-      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
-      color: #111;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    a:hover, a:focus-visible {
-      color: #f59e0b; /* amber-500 */
-      outline: none;
     }
 
     /* Container */
     .container {
-      max-width: 1200px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 0 1.5rem;
       width: 100%;
@@ -54,19 +49,12 @@
 
     /* Header */
     header {
-      position: fixed;
+      position: sticky;
       top: 0;
-      width: 100%;
-      background: rgba(20, 20, 20, 0.95);
+      background: rgba(18,18,18,0.95);
       backdrop-filter: saturate(180%) blur(12px);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.8);
-      z-index: 999;
-      transition: background 0.3s ease;
-    }
-
-    header.light {
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.7);
+      z-index: 1000;
     }
 
     nav {
@@ -76,215 +64,336 @@
       height: 72px;
     }
 
-    /* Logo and nav left */
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
+    /* Logo + Text */
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
+      gap: 1rem;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #f59e0b;
+      text-shadow: 0 0 10px #f59e0b80;
       user-select: none;
-      transition: transform 0.3s ease;
-      will-change: transform;
-    }
-
-    .logo img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 3px #f59e0b);
       transition: filter 0.3s ease;
     }
 
-    .logo-text {
-      font-weight: 800;
-      font-size: 1.8rem;
-      letter-spacing: 0.15em;
-      color: #f59e0b;
-      text-shadow: 0 0 8px #f59e0b;
-      user-select: none;
+    .logo img {
+      height: 52px;
+      width: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 4px #f59e0b88);
+      transition: transform 0.4s ease;
+      will-change: transform;
     }
 
     .logo:hover img,
     .logo:focus-visible img {
-      filter: drop-shadow(0 0 8px #f59e0b);
+      animation: bee-wiggle 1.6s ease-in-out infinite;
     }
 
-    /* Nav menu */
+    /* Nav Links */
     .nav-links {
       display: flex;
       gap: 2rem;
       font-weight: 600;
       font-size: 1rem;
+      letter-spacing: 0.04em;
     }
 
     .nav-links a {
+      color: #bbb;
+      padding: 8px 0;
       position: relative;
-      padding: 0.25rem 0;
       transition: color 0.3s ease;
     }
 
     .nav-links a::after {
       content: "";
       position: absolute;
-      bottom: -4px;
-      left: 50%;
+      left: 0;
+      bottom: 2px;
       width: 0%;
       height: 2px;
       background: #f59e0b;
-      transition: width 0.3s ease, left 0.3s ease;
+      transition: width 0.3s ease;
       border-radius: 1px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: #f59e0b;
     }
 
     .nav-links a:hover::after,
     .nav-links a:focus-visible::after {
       width: 100%;
-      left: 0;
     }
 
-    /* Right nav */
-    .nav-right {
+    /* Server Status & Theme Toggle */
+    .nav-extras {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.6rem;
+      font-size: 0.9rem;
+      color: #ccc;
+      user-select: none;
     }
 
     .server-status {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #fbbf24;
-      background: rgba(255 255 255 / 0.1);
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      box-shadow: 0 0 10px #fbbf24aa;
-      user-select: none;
-      min-width: 100px;
-      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: #bbb;
     }
 
     .status-dot {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background-color: #dc2626;
-      box-shadow: 0 0 10px #dc2626aa;
-      transition: background-color 0.4s ease, box-shadow 0.4s ease;
+      background: #a00;
+      box-shadow: 0 0 6px #a00;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
     }
 
     .status-online {
-      background-color: #22c55e;
-      box-shadow: 0 0 15px #22c55eaa;
+      background: #2ecc40;
+      box-shadow: 0 0 8px #2ecc40;
+      color: #2ecc40;
     }
 
-    /* Button */
-    .btn {
-      background: #f59e0b;
-      color: #111;
-      font-weight: 700;
-      padding: 0.5rem 1.4rem;
-      border-radius: 28px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 15px #f59e0baa;
-      border: none;
-      user-select: none;
+    .status-text {
+      color: inherit;
+      font-weight: 600;
+      user-select: text;
     }
 
-    .btn:hover,
-    .btn:focus-visible {
-      background: #d97706;
-      box-shadow: 0 0 22px #d97706bb;
-      outline: none;
-    }
-
-    /* Theme toggle */
     #theme-toggle {
-      background: transparent;
-      border: 2px solid #f59e0b;
-      color: #f59e0b;
-      padding: 0.3rem 0.9rem;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 0 15px #f59e0baa;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      background: #f59e0b;
+      color: #121212;
+      padding: 8px 18px;
+      border-radius: 24px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 18px #f59e0b99;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
       user-select: none;
     }
 
     #theme-toggle:hover,
     #theme-toggle:focus-visible {
-      background-color: #f59e0b;
-      color: #111827;
+      background: #d97706;
+      box-shadow: 0 0 22px #d97706cc;
       outline: none;
-      box-shadow: 0 0 22px #f59e0bcc;
     }
 
     /* Hamburger menu */
     .hamburger {
       display: none;
       flex-direction: column;
-      justify-content: space-around;
-      width: 28px;
-      height: 24px;
+      justify-content: space-between;
+      width: 26px;
+      height: 20px;
       cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-      z-index: 1100;
     }
 
     .hamburger span {
-      width: 100%;
+      display: block;
       height: 3px;
-      background: #fbbf24;
+      background: #f59e0b;
       border-radius: 2px;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+      transform: translateY(8.5px) rotate(45deg);
     }
     .hamburger.active span:nth-child(2) {
       opacity: 0;
     }
     .hamburger.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(6px, -6px);
+      transform: translateY(-8.5px) rotate(-45deg);
     }
 
-    /* Mobile nav */
-    @media (max-width: 768px) {
+    /* Main */
+    main {
+      flex-grow: 1;
+      padding: 5rem 1.5rem 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    section {
+      margin-bottom: 4.5rem;
+      background: linear-gradient(135deg, #1f1f1f, #292929);
+      padding: 3.5rem 3rem;
+      border-radius: 14px;
+      box-shadow:
+        0 0 14px rgba(245, 158, 11, 0.3),
+        inset 0 0 12px rgba(255, 198, 64, 0.1);
+      transition: background-color 0.4s ease;
+      text-align: center;
+    }
+
+    body.light section {
+      background: linear-gradient(135deg, #fafafa, #f0f0f0);
+      box-shadow:
+        0 0 14px rgba(245, 158, 11, 0.5),
+        inset 0 0 14px rgba(245, 158, 11, 0.1);
+      color: #222;
+    }
+
+    h1, h2, h3 {
+      font-weight: 800;
+      color: #f59e0b;
+      text-shadow: 0 0 12px #f59e0b88;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.05em;
+    }
+
+    body.light h1, body.light h2, body.light h3 {
+      text-shadow: 0 0 10px #f59e0b44;
+    }
+
+    p {
+      color: #d3d3d3;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      user-select: text;
+    }
+
+    body.light p {
+      color: #555;
+    }
+
+    /* Buttons */
+    .btn {
+      background: #f59e0b;
+      color: #121212;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.85rem 2.2rem;
+      border-radius: 28px;
+      box-shadow: 0 0 20px #f59e0bbb;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      letter-spacing: 0.05em;
+      border: none;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: #d97706;
+      box-shadow: 0 0 26px #d97706cc;
+      outline: none;
+    }
+
+    /* Store Grid */
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      margin-top: 1.8rem;
+    }
+
+    .store-card {
+      background: #222;
+      border-radius: 14px;
+      padding: 2rem 1.8rem;
+      box-shadow:
+        0 0 14px rgba(245, 158, 11, 0.4);
+      color: #eee;
+      user-select: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: default;
+    }
+
+    .store-card:hover {
+      transform: translateY(-8px);
+      box-shadow:
+        0 10px 26px rgba(245, 158, 11, 0.8);
+    }
+
+    body.light .store-card {
+      background: #fff;
+      box-shadow:
+        0 0 14px rgba(245, 158, 11, 0.6);
+      color: #222;
+      user-select: text;
+    }
+
+    .store-card h3 {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.8rem;
+      color: #fbbf24;
+      text-shadow: 0 0 8px #fbbf24aa;
+    }
+
+    .store-card p {
+      font-size: 1rem;
+      line-height: 1.4;
+      color: inherit;
+      user-select: text;
+    }
+
+    /* Appeal Form */
+    form {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      padding-top: 1rem;
+    }
+
+    form button {
+      width: 100%;
+    }
+
+    /* Footer */
+    footer {
+      padding: 1.25rem 0;
+      font-size: 0.85rem;
+      text-align: center;
+      color: #777;
+      user-select: none;
+      background: #111;
+      border-top: 1px solid #222;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
       .nav-links {
+        display: none;
         position: fixed;
         top: 72px;
         right: 0;
-        background: #1a1a1a;
+        width: 230px;
+        background: #121212;
+        height: calc(100% - 72px);
         flex-direction: column;
-        width: 220px;
-        height: calc(100vh - 72px);
-        padding: 2rem 1rem;
-        gap: 1.8rem;
+        gap: 1.5rem;
+        padding: 2rem 1.5rem;
+        box-shadow: -4px 0 14px rgba(0,0,0,0.85);
+        transition: transform 0.4s ease;
         transform: translateX(100%);
-        transition: transform 0.3s ease;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
-        border-left: 2px solid #f59e0b;
-        font-weight: 700;
-        font-size: 1.2rem;
+        z-index: 999;
       }
 
       .nav-links.open {
         transform: translateX(0);
       }
 
-      .nav-right {
-        display: none;
+      .nav-extras {
+        gap: 1rem;
       }
 
       .hamburger {
@@ -292,254 +401,90 @@
       }
     }
 
-    /* Main content */
-    main {
-      padding-top: 90px;
-      flex-grow: 1;
-    }
-
-    section {
-      padding: 6rem 1rem 4rem;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgb(245 158 11 / 0.15);
-      background: linear-gradient(135deg, #191919, #252525);
-      margin-bottom: 4rem;
-      transition: background 0.3s ease;
-    }
-
-    body.light section {
-      background: linear-gradient(135deg, #ffffff, #f3f4f6);
-      box-shadow: 0 0 15px rgb(245 158 11 / 0.3);
-      color: #222;
-    }
-
-    h1, h2, h3 {
-      font-weight: 800;
-      color: #f59e0b;
-      text-shadow: 0 0 8px #f59e0b44;
-      margin-bottom: 1rem;
-    }
-
-    p {
-      color: #ddd;
-      font-weight: 400;
-      line-height: 1.5;
-      max-width: 720px;
-      margin: 0 auto 2rem;
-      user-select: text;
-    }
-
-    body.light p {
-      color: #444;
-    }
-
-    /* Store cards */
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.8rem;
-      margin-top: 2rem;
-    }
-
-    .store-card {
-      background: #2a2a2a;
-      border-radius: 12px;
-      padding: 1.8rem 1.5rem;
-      box-shadow: 0 0 15px rgb(245 158 11 / 0.4);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: default;
-    }
-
-    body.light .store-card {
-      background: #fafafa;
-      box-shadow: 0 0 15px rgb(245 158 11 / 0.6);
-    }
-
-    .store-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 20px rgb(245 158 11 / 0.7);
-    }
-
-    .store-card h3 {
-      margin-bottom: 0.75rem;
-      font-weight: 700;
-      color: #fbbf24;
-      text-shadow: 0 0 6px #fbbf24aa;
-    }
-
-    .store-card p {
-      font-size: 0.9rem;
-      color: #ccc;
-      margin: 0;
-      user-select: text;
-    }
-
-    body.light .store-card p {
-      color: #666;
-    }
-
-    /* Appeal form */
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      text-align: left;
-    }
-
-    input[type="text"],
-    textarea {
-      padding: 0.8rem 1rem;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: 2px solid #fbbf24;
-      background: #222;
-      color: #eee;
-      resize: vertical;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      font-family: inherit;
-    }
-
-    body.light input[type="text"],
-    body.light textarea {
-      background: #fff;
-      color: #111;
-      border-color: #f59e0b;
-    }
-
-    input[type="text"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #fbbf24;
-      box-shadow: 0 0 12px #fbbf24aa;
-    }
-
-    button[type="submit"] {
-      background: #f59e0b;
-      color: #222;
-      font-weight: 700;
-      padding: 0.8rem 1.5rem;
-      border-radius: 28px;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 18px #fbbf24bb;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-      font-size: 1.1rem;
-    }
-
-    button[type="submit"]:hover,
-    button[type="submit"]:focus-visible {
-      background: #d97706;
-      box-shadow: 0 0 22px #d97706cc;
-      outline: none;
-    }
-
-    /* Footer */
-    footer {
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #888;
-      user-select: none;
-      border-top: 1px solid #444;
-      margin-top: auto;
-      background: linear-gradient(135deg, #1a1a1a, #111);
-      box-shadow: inset 0 1px 5px #0008;
-    }
-
-    body.light footer {
-      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
-      border-top-color: #ddd;
-      color: #666;
-      box-shadow: inset 0 1px 5px #fff8;
-    }
-
-    /* Logo animation */
+    /* Keyframes for bee wiggle */
     @keyframes bee-wiggle {
-      0%, 100% { transform: rotate(0deg) translateX(0); }
-      25% { transform: rotate(5deg) translateX(2px); }
-      50% { transform: rotate(0deg) translateX(0); }
-      75% { transform: rotate(-5deg) translateX(-2px); }
-    }
-
-    .logo:hover img,
-    .logo:focus-visible img,
-    .logo.animate img {
-      animation: bee-wiggle 1.5s ease-in-out infinite;
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(4deg);
+      }
+      50% {
+        transform: rotate(-4deg);
+      }
+      75% {
+        transform: rotate(3deg);
+      }
     }
   </style>
-
 </head>
 <body>
 
-<header id="header">
+<header>
   <div class="container">
     <nav>
-      <div class="nav-left">
-        <a href="#home" class="logo" aria-label="Event Alerts Home" tabindex="0">
-          <img src="https://cdn.discordapp.com/attachments/1015724913165865110/1377067390143037460/EventAlerts-BEE.webp" alt="Event Alerts Bee Logo" />
-          <span class="logo-text">EVENT ALERTS</span>
-        </a>
-        <div class="nav-links" id="nav-links">
-          <a href="#home">Home</a>
-          <a href="#store">Store</a>
-          <a href="#appeal">Appeal</a>
-          <a href="https://discord.gg/skeppy" target="_blank" rel="noopener">Discord</a>
-        </div>
-      </div>
+      <a href="#" class="logo" tabindex="0" aria-label="Event Alerts Home">
+        <img
+          src="https://cdn.discordapp.com/attachments/1015724913165865110/1377076203801935883/EventAlerts-BEE.webp"
+          alt="Event Alerts Bee Logo"
+          draggable="false"
+          />
+        Event Alerts
+      </a>
 
-      <div class="nav-right">
-        <div class="server-status" aria-live="polite" aria-label="Server Status">
-          <div class="status-dot status-offline" id="status-dot"></div>
-          <span id="status-text">Checking...</span>
-        </div>
-        <button id="theme-toggle" aria-pressed="false" aria-label="Toggle light/dark mode">Light Mode</button>
-      </div>
+      <ul class="nav-links" id="nav-links" role="menu" aria-label="Primary navigation">
+        <li role="none"><a href="#" role="menuitem" tabindex="0">Home</a></li>
+        <li role="none"><a href="#" role="menuitem" tabindex="0">Store</a></li>
+        <li role="none"><a href="https://forms.gle/8NqGuoFEAwsAgrwp6" role="menuitem" tabindex="0" target="_blank" rel="noopener noreferrer">Appeal</a></li>
+        <li role="none"><a href="https://discord.gg/skeppy" role="menuitem" tabindex="0" target="_blank" rel="noopener noreferrer">Discord</a></li>
+      </ul>
 
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-extras">
+        <div class="server-status" aria-live="polite" aria-atomic="true" aria-label="Server status">
+          <div id="status-dot" class="status-dot status-offline" aria-hidden="true"></div>
+          <span id="status-text" class="status-text">Loading...</span>
+        </div>
+
+        <button id="theme-toggle" aria-pressed="false" aria-label="Toggle dark and light mode">Light Mode</button>
+
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </nav>
   </div>
 </header>
 
 <main>
-  <section id="home" tabindex="0" aria-label="Welcome Section">
-    <h1>Welcome to Event Alerts</h1>
-    <p>Your premier Minecraft server alert system — stay notified about upcoming events, claim exclusive rewards, and join a community that’s buzzing with activity.</p>
-    <button class="btn" onclick="window.location.href='#store'">Visit Store</button>
+  <section aria-labelledby="welcome-title">
+    <h1 id="welcome-title">Welcome to Event Alerts</h1>
+    <p>Your go-to server for exciting Minecraft events, giveaways, and updates. Join our community and stay informed about the latest happenings.</p>
   </section>
 
-  <section id="store" tabindex="0" aria-label="Store Section">
-    <h2>Server Store</h2>
-    <p>Support the server and unlock exclusive perks with our carefully curated packages.</p>
-    <div class="store-grid" aria-live="polite">
-      <article class="store-card" tabindex="0">
-        <h3>VIP Rank</h3>
-        <p>Enjoy in-game rewards, priority queue, and more to enhance your gameplay experience.</p>
+  <section aria-labelledby="store-title">
+    <h2 id="store-title">Store</h2>
+    <div class="store-grid" role="list">
+      <article class="store-card" role="listitem" tabindex="0" aria-label="Rank Package">
+        <h3>Rank Package</h3>
+        <p>Unlock exclusive ranks, perks, and features with our rank packages.</p>
       </article>
-      <article class="store-card" tabindex="0">
-        <h3>Event Crates</h3>
-        <p>Open special crates for rare gear and blocks to elevate your adventures.</p>
+      <article class="store-card" role="listitem" tabindex="0" aria-label="Cosmetics">
+        <h3>Cosmetics</h3>
+        <p>Customize your player experience with cool skins, pets, and gadgets.</p>
       </article>
-      <article class="store-card" tabindex="0">
-        <h3>Cosmetics Pack</h3>
-        <p>Access exclusive skins, trails, pets, and stand out in the crowd.</p>
+      <article class="store-card" role="listitem" tabindex="0" aria-label="Boosts">
+        <h3>Boosts</h3>
+        <p>Speed up your progress and earn rewards faster with our boosts.</p>
       </article>
     </div>
   </section>
 
-  <section id="appeal" tabindex="0" aria-label="Ban Appeal Section">
-    <h2>Ban Appeals</h2>
-    <p>Think you were banned unfairly? Submit your appeal via our Google Form.</p>
-    <form
-      action="https://docs.google.com/forms/d/e/8NqGuoFEAwsAgrwp6/formResponse" method="GET" target="_blank" aria-label="Ban Appeal Form">
-      <button type="submit" class="btn">Submit Appeal</button>
+  <section aria-labelledby="appeal-title">
+    <h2 id="appeal-title">Submit an Appeal</h2>
+    <form action="https://forms.gle/8NqGuoFEAwsAgrwp6" method="GET" target="_blank" aria-label="Appeal submission form">
+      <button class="btn" type="submit">Submit Appeal</button>
     </form>
   </section>
 </main>
@@ -568,9 +513,13 @@
     if(body.classList.contains('light')) {
       themeToggleBtn.textContent = 'Dark Mode';
       themeToggleBtn.setAttribute('aria-pressed', 'true');
+      body.style.background = '#fafafa';
+      body.style.color = '#222';
     } else {
       themeToggleBtn.textContent = 'Light Mode';
       themeToggleBtn.setAttribute('aria-pressed', 'false');
+      body.style.background = '#121212';
+      body.style.color = '#e0e0e0';
     }
   }
 
@@ -581,13 +530,13 @@
 
   updateThemeButton();
 
-  // Server status simulation (replace with real API calls as needed)
+  // Server status simulation (replace with real API calls)
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
 
-  // Simulated async status check
+  // Simulate server status check after 2 seconds
   setTimeout(() => {
-    // Randomize for demo
+    // For demo, random online/offline
     const online = Math.random() > 0.3;
     if(online) {
       statusDot.classList.remove('status-offline');
@@ -599,13 +548,6 @@
       statusText.textContent = 'Offline';
     }
   }, 2000);
-
-  // Animate bee logo on hover/focus for accessibility
-  const logo = document.querySelector('.logo');
-  logo.addEventListener('mouseenter', () => logo.classList.add('animate'));
-  logo.addEventListener('mouseleave', () => logo.classList.remove('animate'));
-  logo.addEventListener('focus', () => logo.classList.add('animate'));
-  logo.addEventListener('blur', () => logo.classList.remove('animate'));
 </script>
 
 </body>
