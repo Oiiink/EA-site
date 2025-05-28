@@ -12,11 +12,15 @@
       font-family: 'Inter', sans-serif;
       background-color: #0e0e0e;
       color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
       text-align: center;
       padding: 2rem 1rem 1rem;
+      flex-shrink: 0;
     }
 
     .logo {
@@ -40,10 +44,22 @@
       }
     }
 
-    .section {
-      max-width: 960px;
-      margin: 0 auto;
+    main {
+      flex-grow: 1;
+      max-width: 720px;
       padding: 2rem;
+      color: #ff7a00; /* Orange text accent */
+    }
+
+    main h1 {
+      color: #ff7a00;
+      font-weight: 700;
+    }
+
+    main p {
+      color: #ffa040;
+      font-weight: 400;
+      margin-bottom: 1rem;
     }
 
     .button-primary,
@@ -60,53 +76,70 @@
     }
 
     .button-primary {
-      background-color: #1f1f1f;
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      background-color: #2a1300;
+      color: #ff7a00;
+      border: 1px solid #ff7a00;
+      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
     }
 
     .button-primary:hover {
-      background-color: #2a2a2a;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      background-color: #ff7a00;
+      color: #1a1a1a;
+      box-shadow: 0 6px 18px rgba(255, 122, 0, 0.6);
       transform: translateY(-2px);
     }
 
     .button-secondary {
       background-color: transparent;
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ff7a00;
+      border: 1px solid rgba(255, 122, 0, 0.5);
       backdrop-filter: blur(4px);
     }
 
     .button-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.25);
+      background-color: rgba(255, 122, 0, 0.1);
+      border-color: rgba(255, 122, 0, 0.8);
       transform: translateY(-1px);
     }
 
-    .button-accent {
-      background-color: #4f46e5;
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    /* Layout wrapper to hold main content + sidebar */
+    .content-wrapper {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+      gap: 2rem;
+      padding: 0 2rem;
+      box-sizing: border-box;
+      flex-wrap: wrap;
     }
 
-    .button-accent:hover {
-      background-color: #635bfa;
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-      transform: translateY(-2px);
-    }
-
-    .changelog {
+    /* Sidebar */
+    aside.changelog {
       background-color: #1a1a1a;
       padding: 1.5rem;
       border-radius: 8px;
-      margin-top: 2rem;
+      width: 300px;
+      flex-shrink: 0;
+      color: #ff7a00;
+      box-shadow: 0 0 10px rgba(255, 122, 0, 0.3);
+      height: fit-content;
     }
 
-    .changelog h2 {
+    aside.changelog h2 {
       margin-top: 0;
+      color: #ff7a00;
+    }
+
+    aside.changelog ul {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+      color: #ffa040;
+    }
+
+    aside.changelog li {
+      margin-bottom: 0.75rem;
+      font-weight: 500;
     }
 
     /* Chatbot styles */
@@ -115,14 +148,14 @@
       border-radius: 8px;
       padding: 1.5rem;
       margin-top: 3rem;
-      max-width: 960px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: 720px;
+      color: #ff7a00;
     }
 
     #chatbot-section h2 {
       margin-top: 0;
       margin-bottom: 1rem;
+      color: #ff7a00;
     }
 
     #chat-container {
@@ -153,8 +186,8 @@
     }
 
     .chat-message.user {
-      background-color: #4f46e5;
-      color: #fff;
+      background-color: #ff7a00;
+      color: #1a1a1a;
       align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
@@ -189,9 +222,9 @@
     }
 
     #send-btn {
-      background-color: #4f46e5;
+      background-color: #ff7a00;
       border: none;
-      color: white;
+      color: #1a1a1a;
       font-weight: 600;
       padding: 0 1.5rem;
       margin-left: 0.5rem;
@@ -201,7 +234,27 @@
     }
 
     #send-btn:hover {
-      background-color: #635bfa;
+      background-color: #ffa040;
+    }
+
+    @media (max-width: 960px) {
+      .content-wrapper {
+        flex-direction: column;
+        padding: 0 1rem;
+      }
+
+      aside.changelog {
+        width: 100%;
+        margin-top: 2rem;
+      }
+
+      main {
+        max-width: 100%;
+      }
+
+      #chatbot-section {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -211,33 +264,34 @@
     <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" class="logo" />
   </header>
 
-  <main class="section">
-    <h1>EventUtils</h1>
-    <p>Your essential mod for receiving Minecraft event alerts.</p>
-    <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
-    <a href="#changelog" class="button-secondary">View Changelog</a>
-  </main>
+  <div class="content-wrapper">
+    <main>
+      <h1>EventUtils</h1>
+      <p>Your essential mod for receiving Minecraft event alerts.</p>
+      <a href="https://modrinth.com/mod/alerts" class="button-primary">Download EventUtils</a>
+      <a href="#changelog" class="button-secondary">View Changelog</a>
 
-  <aside class="section changelog" id="changelog">
-    <h2>Changelog</h2>
-    <ul>
-      <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
-      <li><strong>v1.1.0</strong> – Improved performance</li>
-      <li><strong>v1.0.0</strong> – Initial release</li>
-    </ul>
-  </aside>
+      <section id="chatbot-section">
+        <h2>Ask Event Alerts AI</h2>
+        <div id="chat-container">
+          <div id="chat-log"></div>
+          <div id="chat-input-container">
+            <input id="chat-input" type="text" placeholder="Ask me anything about Event Alerts..." autocomplete="off" />
+            <button id="send-btn">Send</button>
+          </div>
+        </div>
+      </section>
+    </main>
 
-  <!-- Chatbot Section -->
-  <section class="section" id="chatbot-section">
-    <h2>Ask Event Alerts AI</h2>
-    <div id="chat-container">
-      <div id="chat-log"></div>
-      <div id="chat-input-container">
-        <input id="chat-input" type="text" placeholder="Ask me anything about Event Alerts..." autocomplete="off" />
-        <button id="send-btn">Send</button>
-      </div>
-    </div>
-  </section>
+    <aside class="changelog" id="changelog">
+      <h2>Changelog</h2>
+      <ul>
+        <li><strong>v1.2.0</strong> – Added new Discord webhook integration</li>
+        <li><strong>v1.1.0</strong> – Improved performance</li>
+        <li><strong>v1.0.0</strong> – Initial release</li>
+      </ul>
+    </aside>
+  </div>
 
   <script>
     const chatLog = document.getElementById('chat-log');
@@ -253,7 +307,6 @@
     }
 
     function botReply(userText) {
-      // Simple static responses for demo - replace with your AI logic or API calls!
       userText = userText.toLowerCase();
       let reply = "Sorry, I didn't understand that. Try asking about EventUtils features or the changelog.";
 
@@ -276,7 +329,6 @@
 
       appendMessage(userText, 'user');
       chatInput.value = '';
-      // simulate bot typing delay
       setTimeout(() => {
         const reply = botReply(userText);
         appendMessage(reply, 'bot');
