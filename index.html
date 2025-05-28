@@ -48,8 +48,24 @@
 
     main {
       padding: 40px;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
+      display: flex;
+      gap: 40px;
+    }
+
+    .main-content {
+      flex: 3;
+    }
+
+    .sidebar {
+      flex: 1;
+      position: sticky;
+      top: 40px;
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+      height: fit-content;
     }
 
     .eventutils-title {
@@ -64,6 +80,17 @@
       display: flex;
       align-items: center;
       gap: 15px;
+    }
+
+    .eventutils-title-left img {
+      width: 40px;
+      height: 40px;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #ff7a00;
+      margin: 0;
     }
 
     .features {
@@ -100,15 +127,9 @@
       text-decoration: none;
     }
 
-    .changelog {
-      margin-top: 60px;
-      background-color: #1c1c1c;
-      padding: 20px;
-      border-radius: 12px;
-    }
-
     .changelog h2 {
       color: #ff7a00;
+      margin-bottom: 20px;
     }
 
     .changelog-entry {
@@ -134,14 +155,26 @@
       margin-bottom: 15px;
     }
 
-    .event-host-specs ul {
-      list-style: none;
-      padding-left: 0;
+    .spec-packages {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
     }
 
-    .event-host-specs li {
-      padding: 10px 0;
-      border-bottom: 1px solid #333;
+    .spec-package {
+      background-color: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+
+    .spec-package h3 {
+      color: #ff7a00;
+    }
+
+    .spec-package p {
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -155,60 +188,61 @@
   </header>
 
   <main>
-    <div class="eventutils-title">
-      <div class="eventutils-title-left">
-        <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
-        <h1>EventUtils</h1>
+    <div class="main-content">
+      <div class="eventutils-title">
+        <div class="eventutils-title-left">
+          <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Bee Logo">
+          <h1>EventUtils</h1>
+        </div>
+        <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download</a>
       </div>
-      <a class="download-btn" href="https://modrinth.com/mod/alerts" target="_blank">Download</a>
-    </div>
-    <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
-    <ul class="features">
-      <li>✅ Easy server alerts and notifications</li>
-      <li>✅ Seamless mod integration</li>
-      <li>✅ Lightweight & optimized</li>
-      <li>✅ Customizable settings</li>
-    </ul>
+      <p>Your ultimate Minecraft event utility mod, packed with powerful features:</p>
+      <ul class="features">
+        <li>✅ Easy server alerts and notifications</li>
+        <li>✅ Seamless mod integration</li>
+        <li>✅ Lightweight & optimized</li>
+        <li>✅ Customizable settings</li>
+      </ul>
 
-    <div class="changelog">
+      <div class="event-host-specs">
+        <h2>Event Host Specs</h2>
+        <div class="spec-packages">
+          <div class="spec-package">
+            <h3>FREE</h3>
+            <p>1v1 Hosting</p>
+            <p>$0/month</p>
+          </div>
+          <div class="spec-package">
+            <h3>PREMIUM</h3>
+            <p>Small Events</p>
+            <p>$9.99/month</p>
+          </div>
+          <div class="spec-package">
+            <h3>ENTERPRISE</h3>
+            <p>Full Custom Events</p>
+            <p>$24.99/month</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="partner-section">
+        <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo">
+        <p>LilyPad is the Official Hosting Partner of Event Alerts</p>
+        <a href="https://lilypad.gg" target="_blank">Visit Lilypad</a>
+      </div>
+    </div>
+
+    <aside class="sidebar changelog">
       <h2>Latest Updates</h2>
       <div class="changelog-entry">
-        <img src="https://via.placeholder.com/800x300.png?text=Update+Image" alt="Changelog Image">
+        <img src="https://via.placeholder.com/300x150.png?text=Update+Image" alt="Changelog Image">
         <p><strong>v1.2.0</strong> - Added server ping alerts and improved UI responsiveness.</p>
       </div>
       <div class="changelog-entry">
-        <img src="https://via.placeholder.com/800x300.png?text=New+Feature" alt="Changelog Image">
+        <img src="https://via.placeholder.com/300x150.png?text=New+Feature" alt="Changelog Image">
         <p><strong>v1.1.0</strong> - Introduced customizable themes and bug fixes.</p>
       </div>
-    </div>
-
-    <div class="event-host-specs">
-      <h2>Event Host Specs</h2>
-      <ul>
-        <li>🧰 Ryzen 9 7950X CPU</li>
-        <li>🚀 64GB DDR5 RAM</li>
-        <li>📀 NVMe SSD Storage</li>
-        <li>🌐 10Gbps Network Bandwidth</li>
-        <li>⏱ 99.99% Uptime SLA</li>
-      </ul>
-    </div>
-
-    <div class="partner-section">
-      <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo">
-      <p>LilyPad is the Official Hosting Partner of Event Alerts</p>
-      <a href="https://lilypad.gg" target="_blank">Visit Lilypad</a>
-    </div>
+    </aside>
   </main>
 </body>
 </html>
-    .eventutils-title img {
-      width: 60px;
-      height: 60px;
-    }
-
-    h1 {
-      font-size: 3em;
-      color: #ff7a00;
-      margin: 0;
-    }
-
