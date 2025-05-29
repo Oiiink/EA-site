@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- Google Fonts already imported in CSS -->
 </head>
 
 <body>
@@ -35,9 +34,9 @@
   </header>
 
   <!-- Main Container -->
-  <div class="container main-content" style="display:flex; gap: 2rem;">
+  <div class="container main-content">
     <!-- Features Grid -->
-    <section id="features" class="features-grid" style="flex:1;">
+    <section id="features" class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Fast & Reliable</h3>
@@ -61,11 +60,10 @@
     </section>
 
     <!-- Sidebar with changelog -->
-    <aside id="changelog" class="sidebar" style="flex-shrink: 0;">
+    <aside id="changelog" class="sidebar">
       <h2>Changelog</h2>
-      
       <div class="changelog-card latest">
-        <img src="assets/images/sounds.png" alt="Customizable Sounds Update" class="changelog-image" />
+        <img src="assets/images/sounds.png" alt="Update Image" class="changelog-image" />
         <div>
           <div class="changelog-date">Jan 21, 2025</div>
           <h3 class="changelog-title">v2.2.0</h3>
@@ -73,9 +71,8 @@
           <button class="view-full">View Full Changelog</button>
         </div>
       </div>
-
       <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Initial Release" class="changelog-image" />
+        <img src="assets/images/EventUtils-2.1.2.png" alt="Initial Release Image" class="changelog-image" />
         <div>
           <div class="changelog-date">Jan 13, 2025</div>
           <h3 class="changelog-title">v2.1.2</h3>
@@ -88,7 +85,7 @@
 
   <!-- Download Section -->
   <section id="download" class="download-section">
-    <div class="container feature-card" style="max-width: 600px; margin: 0 auto;">
+    <div class="container feature-card">
       <h2>Get EventUtils Now</h2>
       <p>Download the latest version from Modrinth and stay updated with new features.</p>
       <a class="download-button" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
@@ -99,8 +96,8 @@
   <div class="modrinth-banner">
     <div class="modrinth-content container">
       <span>Download <strong>EventUtils</strong> for Minecraft</span>
-      <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; gap:0.5rem; text-decoration:none; color:#eee;">
-        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" style="height:32px; user-select:none;" />
+      <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">
+        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" />
         <span>Get it on Modrinth</span>
       </a>
     </div>
@@ -110,10 +107,10 @@
   <footer class="footer">
     <div class="container footer-content">
       <p>© 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links" style="font-size:1.4rem; margin-top:0.5rem; user-select:none;">
-        <a href="#" aria-label="Twitter" style="margin: 0 0.5rem;">🐦</a>
-        <a href="#" aria-label="Discord" style="margin: 0 0.5rem;">💬</a>
-        <a href="#" aria-label="GitHub" style="margin: 0 0.5rem;">🐙</a>
+      <div class="social-links">
+        <a href="#" aria-label="Twitter">🐦</a>
+        <a href="#" aria-label="Discord">💬</a>
+        <a href="#" aria-label="GitHub">🐙</a>
       </div>
     </div>
   </footer>
