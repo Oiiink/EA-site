@@ -1,12 +1,10 @@
-/* --- Base styles & colors --- */
+/* Variables */
 :root {
-  --primary-color: #ff6600; /* Orange theme main */
-  --primary-color-dark: #cc5200;
-  --accent-color: #00b87c; /* Green accent from animations */
   --bg-color: #121212;
+  --card-bg-hover: #1e1e1e;
+  --accent-color: #ff6600;
+  --primary-color: #ff6600;
   --text-color: #eee;
-  --card-bg: #1e1e1e;
-  --card-bg-hover: #2a2a2a;
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -15,113 +13,19 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: var(--font-family);
+  padding: 2rem;
 }
 
-/* --- Buttons --- */
-.btn-primary {
-  background-color: var(--primary-color);
-  color: #000;
-  border: none;
-  padding: 0.75em 1.5em;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-  user-select: none;
-}
-
-.btn-primary:hover {
-  background-color: var(--accent-color);
-  color: #000;
-  box-shadow: 0 0 20px 6px var(--accent-color);
-  transform: scale(1.05);
-}
-
-/* --- Hero Section --- */
-.hero {
-  text-align: center;
-  padding: 5rem 1rem 3rem;
-  font-size: 2.5rem;
+h2 {
+  margin-bottom: 1.5rem;
   font-weight: 700;
-  color: var(--primary-color);
-  opacity: 0; /* for animation */
-  animation: fadeSlideUp 0.8s ease forwards;
 }
 
-/* --- Feature Grid --- */
-.feature-grid {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  padding: 2rem 1rem;
-  flex-wrap: wrap;
-}
-
-.feature-card {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  padding: 2rem 1.5rem;
-  width: 280px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.5);
-  opacity: 0; /* for animation */
-  animation: fadeSlideUp 0.8s ease forwards;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  user-select: none;
-}
-
-.feature-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 0 20px 6px var(--accent-color);
-  cursor: default;
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-  transition: color 0.3s ease, filter 0.3s ease;
-}
-
-.feature-card:hover .feature-icon {
-  color: var(--accent-color);
-  filter: drop-shadow(0 0 6px var(--accent-color));
-}
-
-.feature-card h3 {
-  margin: 0 0 0.5rem;
-  font-weight: 700;
-  font-size: 1.25rem;
-}
-
-.feature-card p {
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-/* --- Changelog Sidebar --- */
-.changelog-sidebar {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  padding: 1rem;
-  max-width: 320px;
-  color: var(--text-color);
-}
-
-.changelog-card {
-  background-color: var(--card-bg-hover);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  opacity: 0; /* for animation */
-  animation: fadeSlideUp 0.8s ease forwards;
-  user-select: none;
-}
-
-/* --- Animations --- */
+/* Animations */
 @keyframes fadeSlideUp {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
@@ -129,24 +33,69 @@ body {
   }
 }
 
-/* Stagger feature cards animation */
-.feature-card:nth-child(1) {
-  animation-delay: 0.2s;
-}
-.feature-card:nth-child(2) {
-  animation-delay: 0.4s;
-}
-.feature-card:nth-child(3) {
-  animation-delay: 0.6s;
+/* Changelog Container */
+.changelog-container {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* Stagger changelog cards animation */
-.changelog-card:nth-child(1) {
-  animation-delay: 0.3s;
+/* Changelog Card */
+.changelog-card {
+  background-color: var(--card-bg-hover);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease forwards;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  transition: box-shadow 0.3s ease;
 }
-.changelog-card:nth-child(2) {
-  animation-delay: 0.5s;
+
+.changelog-card:hover {
+  box-shadow: 0 0 20px 6px var(--accent-color);
 }
-.changelog-card:nth-child(3) {
-  animation-delay: 0.7s;
+
+/* Image */
+.changelog-image {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 160px;
+  filter: brightness(0.85);
+  transition: filter 0.3s ease;
+}
+
+.changelog-card:hover .changelog-image {
+  filter: brightness(1);
+}
+
+/* Date */
+.changelog-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+/* Title */
+.changelog-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  user-select: text;
+}
+
+/* Description */
+.changelog-description {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.4;
+  user-select: text;
 }
