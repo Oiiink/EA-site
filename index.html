@@ -13,7 +13,10 @@
   <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="#" class="nav-logo">EventAlerts</a>
+      <a href="#" class="nav-logo">
+        <img src="assets/logo.png" alt="EventAlerts Logo" class="nav-logo-img" />
+        EventAlerts
+      </a>
       <ul class="nav-menu">
         <li><a href="#features">Features</a></li>
         <li><a href="#download">Download</a></li>
@@ -27,15 +30,14 @@
     <div class="hero-content container">
       <h1>Stay Ahead with EventUtils</h1>
       <p>Enhance your Minecraft experience with real-time event notifications and seamless mod integration.</p>
-      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">Download
-        Now</a>
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">Download Now</a>
     </div>
   </header>
 
   <!-- Main Container -->
-  <div class="container main-content" style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+  <div class="container main-content">
     <!-- Features Grid -->
-    <section id="features" class="features-grid" style="flex: 1 1 400px; max-width: 600px;">
+    <section id="features" class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Fast & Reliable</h3>
@@ -58,46 +60,28 @@
       </div>
     </section>
 
-    <!-- FULL Changelog Section with images and dates -->
-    <section id="changelog" style="flex: 1 1 320px; max-width: 400px;">
-      <h2>Latest Changelog</h2>
-
-      <div class="changelog-container">
-        <div class="changelog-card" style="animation-delay: 0.1s">
-          <img class="changelog-image"
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
-            alt="Orange geometric shapes" />
-          <div class="changelog-date">May 28, 2025</div>
-          <h4 class="changelog-title">New Feature Release: Orange-Themed UI</h4>
-          <p class="changelog-description">
-            We’ve rolled out a fresh orange-themed design inspired by Lunar Client and Lilypad with smooth
-            animations and better UX!
-          </p>
-        </div>
-
-        <div class="changelog-card" style="animation-delay: 0.3s">
-          <img class="changelog-image"
-            src="https://images.unsplash.com/photo-1497493292307-31c376b6e479?auto=format&fit=crop&w=600&q=80"
-            alt="Smooth orange gradient" />
-          <div class="changelog-date">May 15, 2025</div>
-          <h4 class="changelog-title">Performance Improvements</h4>
-          <p class="changelog-description">
-            Backend optimizations have reduced load times by 40%, ensuring a faster, smoother user experience.
-          </p>
-        </div>
-
-        <div class="changelog-card" style="animation-delay: 0.5s">
-          <img class="changelog-image"
-            src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=600&q=80"
-            alt="Orange tech grid pattern" />
-          <div class="changelog-date">April 30, 2025</div>
-          <h4 class="changelog-title">Integrated Modrinth Button</h4>
-          <p class="changelog-description">
-            Added a “Get it on Modrinth” button with the official logo for easy access to downloads and updates.
-          </p>
+    <!-- Sidebar with changelog -->
+    <aside id="changelog" class="sidebar">
+      <h2>Changelog</h2>
+      <div class="changelog-card latest">
+        <img src="https://i.imgur.com/TlhB7Xj.png" alt="Update Image" class="changelog-image" />
+        <div>
+          <div class="changelog-date">May 25, 2025</div>
+          <h3 class="changelog-title">v1.1.0</h3>
+          <p class="changelog-description">Added multi-language support and bug fixes to improve stability.</p>
+          <button class="view-full">View Full Changelog</button>
         </div>
       </div>
-    </section>
+      <div class="changelog-card">
+        <img src="https://i.imgur.com/0sZmNQx.png" alt="Initial Release Image" class="changelog-image" />
+        <div>
+          <div class="changelog-date">April 10, 2025</div>
+          <h3 class="changelog-title">v1.0.0</h3>
+          <p class="changelog-description">Initial release of EventUtils with core event alert features.</p>
+          <button class="view-full">View Full Changelog</button>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <!-- Download Section -->
@@ -114,9 +98,7 @@
     <div class="modrinth-content container">
       <span>Download <strong>EventUtils</strong> for Minecraft</span>
       <a class="modrinth-button" href="https://modrinth.com/mod/alerts" target="_blank" rel="noopener noreferrer">
-        <img
-          src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png"
-          alt="Modrinth Logo" />
+        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" />
         <span>Get it on Modrinth</span>
       </a>
     </div>
