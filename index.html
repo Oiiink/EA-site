@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
+        <img src="assets/images/logo.png" alt="Event Alerts logo" class="nav-logo-img" /> Event Alerts
       </a>
       <ul class="nav-menu">
         <li><a href="#features">Features</a></li>
@@ -20,67 +21,82 @@
     </div>
   </nav>
 
-  <section class="hero">
+  <!-- Hero Section -->
+  <header class="hero">
     <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+      <img src="assets/images/logo.png" alt="Event Alerts logo" class="hero-logo" />
     </div>
     <h1>Stay ahead with EventUtils</h1>
-    <p>Meant for events. Made for events.</p>
+    <h2 class="hero-subtitle">Meant for events. Made for events.</h2>
     <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
+      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth logo" class="modrinth-icon" />
       Get it on Modrinth
     </a>
-  </section>
+  </header>
 
+  <!-- Main Content -->
   <div class="container main-content">
+    <!-- Features Grid -->
     <div class="features-grid" id="features">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Higher FPS</h3>
-        <p>Seeing players/entities actually decreases your FPS significantly, using EventUtils you can hide players.</p>
+        <p>Seeing players/entities actually decreases your FPS significantly. EventUtils lets you hide them for a smoother experience.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🛠️</div>
         <h3>Event Notifications</h3>
-        <p>Receive event notifications in-game without worrying about being tabbed into discord.</p>
+        <p>Receive real-time event notifications in-game — no need to check Discord constantly.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📊</div>
-        <h3>Made for every client</h3>
-        <p>We custom configurated everything to support different clients.</p>
+        <h3>Made for Every Client</h3>
+        <p>Custom-configured for compatibility across all popular clients.</p>
       </div>
     </div>
 
+    <!-- Sidebar / Changelog -->
     <aside class="sidebar" id="changelog">
       <h2>Changelog</h2>
+
       <div class="changelog-card">
-        <img src="assets/images/sounds.png" alt="Update Screenshot" class="changelog-image" />
+        <img src="assets/images/sounds.png" alt="Update screenshot for v2.2.0" class="changelog-image" />
         <div class="changelog-date">Jan 21, 2025</div>
         <div class="changelog-title">v2.2.0 Release</div>
         <div class="changelog-description">
-          Customizable notification sounds via config, notifications in the main menu, less crashes, etc
+          Customizable notification sounds via config, notifications in the main menu, less crashes, and more.
         </div>
         <button class="view-full">View Full Changelog</button>
       </div>
+
       <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
+        <img src="assets/images/EventUtils-2.1.2.png" alt="Update screenshot for v2.1.2" class="changelog-image" />
         <div class="changelog-date">Jan 13, 2025</div>
         <div class="changelog-title">v2.1.2 Patch</div>
         <div class="changelog-description">
-          Fixed update checker, fixed event info, etc
+          Fixed update checker, fixed event info issues, and other minor patches.
         </div>
         <button class="view-full">View Full Changelog</button>
       </div>
     </aside>
   </div>
 
+  <!-- Placeholder for Stats Section -->
+  <section id="stats" style="text-align:center; padding: 3rem 1rem;">
+    <h2 style="color:#ff6600;">Stats (Coming Soon)</h2>
+    <p>We're working on a detailed statistics section. Stay tuned!</p>
+  </section>
+
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
       <p>&copy; 2025 Event Alerts. All rights reserved.</p>
       <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Twitter</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Discord</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
     </div>
-  </footer
+  </footer>
+</body>
+</html>
