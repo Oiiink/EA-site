@@ -2,93 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event Alerts</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="#" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
+      <div class="nav-logo">
+        <img src="logo.png" alt="Logo" class="nav-logo-img" />
+        Event Alerts
+      </div>
       <ul class="nav-menu">
         <li><a href="#features">Features</a></li>
         <li><a href="#changelog">Changelog</a></li>
-        <li><a href="#stats">Stats</a></li>
+        <li><a href="#download">Download</a></li>
       </ul>
     </div>
   </nav>
 
+  <!-- Hero -->
   <section class="hero">
     <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+      <img src="logo.png" alt="Logo" class="hero-logo" />
     </div>
-    <h1>Stay ahead with EventUtils</h1>
-    <p class="typing-text">Meant for events. Made for events.</p>
+    <div class="typing-text">Get notified of server events instantly</div>
     <div>
-      <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
-        Get it on Modrinth
+      <a href="#download" class="btn-primary">
+        <img src="modrinth-icon.png" alt="Modrinth" class="modrinth-icon" />
+        Download
       </a>
-      <a class="btn-discord" href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer">
-        <img src="https://imgs.search.brave.com/zkISrBQncHBgqOwdZCFf-IxPDMARRJI4D_Lezp5v0W8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGQwOWJhNTcw/N2RkNmVlZjU3MTc1/M2RhZmFhODk2M2Nh/ZGIyZTY4YmVjMTJm/YWI3OTNlOGEwYjBi/Mjg1MzIxZi9kaXNj/b3JkLmNvbS8" alt="Discord" style="width:20px; height:20px;"/>
-        Join our Discord
-      </a>
+      <a href="https://discord.gg/" target="_blank" class="btn-discord">Join Discord</a>
     </div>
   </section>
 
+  <!-- Main Content -->
   <div class="container main-content">
-    <div class="features-grid" id="features">
+    
+    <!-- Features Grid -->
+    <section class="features-grid" id="features">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
-        <h3>Higher FPS</h3>
-        <p>Seeing players/entities actually decreases your FPS significantly, using EventUtils you can hide players.</p>
+        <h3>Instant Alerts</h3>
+        <p>Receive real-time alerts when events happen.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🛠️</div>
-        <h3>Event Notifications</h3>
-        <p>Receive event notifications in-game without worrying about being tabbed into discord.</p>
+        <div class="feature-icon">🔔</div>
+        <h3>Custom Notifications</h3>
+        <p>Choose what to be notified about and how.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📊</div>
-        <h3>Made for every client</h3>
-        <p>We custom configurated everything to support different clients.</p>
+        <h3>Insightful Stats</h3>
+        <p>See event history and player trends at a glance.</p>
       </div>
-    </div>
+    </section>
 
+    <!-- Sidebar Changelog -->
     <aside class="sidebar" id="changelog">
       <h2>Changelog</h2>
       <div class="changelog-card">
-        <img src="assets/images/sounds.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">Jan 21, 2025</div>
-        <div class="changelog-title">v2.2.0 Release</div>
-        <div class="changelog-description">
-          Customizable notification sounds via config, notifications in the main menu, less crashes, etc
-        </div>
-        <button class="view-full">View Full Changelog</button>
+        <img src="update1.jpg" alt="Update" class="changelog-image"/>
+        <div class="changelog-date">May 2025</div>
+        <div class="changelog-title">Improved UI</div>
+        <div class="changelog-description">We've overhauled the design for better usability and aesthetics.</div>
+        <button class="view-full">View Full</button>
       </div>
       <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">Jan 13, 2025</div>
-        <div class="changelog-title">v2.1.2 Patch</div>
-        <div class="changelog-description">
-          Fixed update checker, fixed event info, etc
-        </div>
-        <button class="view-full">View Full Changelog</button>
+        <img src="update2.jpg" alt="Update" class="changelog-image"/>
+        <div class="changelog-date">April 2025</div>
+        <div class="changelog-title">Performance Boost</div>
+        <div class="changelog-description">Event alerts are now faster and more reliable than ever.</div>
+        <button class="view-full">View Full</button>
       </div>
     </aside>
+
   </div>
 
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+      <p>© 2025 Event Alerts. All rights reserved.</p>
       <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
+        <a href="https://github.com/">GitHub</a>
+        <a href="https://discord.gg/">Discord</a>
+        <a href="#">Privacy</a>
       </div>
     </div>
   </footer>
+
 </body>
 </html>
