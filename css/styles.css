@@ -97,28 +97,25 @@ a:hover {
   margin-bottom: 0.75rem;
 }
 
-.hero-subtitle {
-  font-size: 1.5rem;
-  color: #fff;
-  margin-top: 1rem;
-  font-family: monospace;
+.hero p {
+  font-size: 1.25rem;
+  height: 28px; /* Reserve height to avoid jump */
+  margin-bottom: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid rgba(255,255,255,0.75);
+  width: 26ch;
+  animation: typing 4.5s steps(26) forwards, blink-caret 0.75s step-end infinite;
 }
 
-.cursor {
-  display: inline-block;
-  width: 1px;
-  background-color: #fff;
-  margin-left: 2px;
-  animation: blink 0.7s infinite;
+@keyframes typing {
+  from { width: 0 }
+  to { width: 26ch }
 }
 
-@keyframes blink {
-  0%, 50%, 100% {
-    opacity: 1;
-  }
-  25%, 75% {
-    opacity: 0;
-  }
+@keyframes blink-caret {
+  50% { border-color: transparent }
+  100% { border-color: rgba(255,255,255,0.75) }
 }
 
 /* Buttons */
@@ -170,7 +167,7 @@ a:hover {
 .feature-card {
   background-color: #282828;
   border-radius: 12px;
-  padding: 1.5rem 1.25rem;
+  padding: 1rem 1rem;  /* reduced padding */
   box-shadow: 0 2px 8px rgba(0,0,0,0.8);
   display: flex;
   flex-direction: column;
@@ -178,83 +175,89 @@ a:hover {
   align-items: center;
   text-align: center;
   transition: background-color 0.3s ease;
-  height: 100%;
+  height: auto;          /* removed fixed height */
+  max-height: 180px;     /* limit max height */
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  background-color: #333333;
 }
 
 .feature-icon {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   margin-bottom: 0.8rem;
 }
 
-.feature-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #ffa066;
-}
-
-.feature-card p {
-  font-size: 0.95rem;
-  color: #ccc;
-}
-
-/* Sidebar - Changelog */
+/* Sidebar - changelog */
 .sidebar {
   flex: 1 1 30%;
   background-color: #1e1e1e;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.8);
-  max-height: 600px;
-  overflow-y: auto;
+  max-height: none;     /* remove max height */
+  overflow-y: visible;  /* disable scrolling */
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .sidebar h2 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
+  font-weight: 700;
   color: #ff6600;
 }
 
 .changelog-card {
-  margin-bottom: 1.5rem;
   background-color: #282828;
   border-radius: 10px;
   padding: 1rem;
-  box-shadow: inset 0 0 8px rgba(255, 102, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #ddd;
 }
 
 .changelog-image {
   width: 100%;
+  height: auto;
   border-radius: 8px;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem;
 }
 
 .changelog-date {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #bbb;
-  margin-bottom: 0.25rem;
+  font-style: italic;
 }
 
 .changelog-title {
   font-weight: 700;
-  color: #ffa066;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
 }
 
 .changelog-description {
-  font-size: 0.9rem;
-  color: #ddd;
-  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.7rem;
+  color: #ccc;
 }
 
 .view-full {
+  align-self: flex-start;
   background-color: #ff6600;
   border: none;
-  border-radius: 20px;
-  padding: 0.4rem 1rem;
-  font-weight: 600;
-  color: #fff;
+  color: white;
+  padding: 0.4rem 1.1rem;
+  font-weight: 700;
+  border-radius: 24px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  box-shadow: 0 3px 8px rgba(255,102,0,0.6);
 }
 
 .view-full:hover {
@@ -264,23 +267,25 @@ a:hover {
 /* Footer */
 .footer {
   background-color: #181818;
-  padding: 1rem 2rem;
-  color: #777;
+  padding: 1.25rem 2rem;
   text-align: center;
-  border-top: 1px solid #2a2a2a;
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px solid #2c2c2c;
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 1rem;
 }
 
 .social-links a {
-  margin: 0 1rem;
+  margin-left: 1rem;
   color: #ff6600;
   font-weight: 600;
   transition: color 0.3s ease;
@@ -291,18 +296,24 @@ a:hover {
 }
 
 /* Responsive */
-
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .container.main-content {
     flex-direction: column;
   }
   
   .features-grid {
     grid-template-columns: 1fr 1fr;
+    min-height: auto;
+    margin-bottom: 2rem;
   }
 
   .sidebar {
+    width: 100%;
+    position: relative;
+    top: auto;
     max-height: none;
+    overflow: visible;
+    box-shadow: none;
   }
 }
 
@@ -312,6 +323,10 @@ a:hover {
   }
 
   .nav-menu {
-    display: none; /* For mobile, you can add hamburger later */
+    display: none; /* for simplicity, hide nav on small screens */
+  }
+
+  .hero h1 {
+    font-size: 2rem;
   }
 }
