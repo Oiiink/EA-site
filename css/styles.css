@@ -101,15 +101,15 @@ body {
   border-right: 3px solid #ff6a00;
   white-space: nowrap;
   overflow: hidden;
-  width: 31ch; /* matches full text length */
+  width: 0ch; /* Start hidden */
   margin: 0 auto;
-  animation: typing 3.5s steps(31, end), blink 0.75s step-end infinite;
+  animation: typing 3.5s steps(31, end) forwards, blink 0.75s step-end infinite;
   max-width: 100%;
 }
 
 @keyframes typing {
   from {
-    width: 0;
+    width: 0ch;
   }
   to {
     width: 31ch; /* full text length */
@@ -122,53 +122,43 @@ body {
   }
 }
 
-/* Buttons */
-.btn-primary {
+/* Buttons (Reverted smaller size & placement) */
+.btn-primary,
+.btn-discord {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #ff6a00;
-  color: white;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-decoration: none;
-  box-shadow: 0 3px 6px rgba(255, 106, 0, 0.6);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
   transition: background-color 0.3s ease;
+  color: white;
   margin-top: 1.5rem;
+}
+
+.btn-primary {
+  background-color: #ff6a00;
+  box-shadow: 0 3px 6px rgba(255, 106, 0, 0.6);
 }
 
 .btn-primary:hover {
   background-color: #e65c00;
 }
 
-.modrinth-icon {
-  width: 24px;
-  height: 24px;
-}
-
-/* Discord Button next to Modrinth */
 .btn-discord {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
   background-color: #5865F2;
-  color: white;
-  padding: 0.8rem 1.3rem;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-decoration: none;
   box-shadow: 0 3px 6px rgba(88, 101, 242, 0.6);
-  transition: background-color 0.3s ease;
-  margin-left: 1rem;
+  margin-left: 0.75rem;
 }
 
 .btn-discord:hover {
   background-color: #4752c4;
 }
 
+.btn-primary img,
 .btn-discord img {
   width: 20px;
   height: 20px;
@@ -183,7 +173,7 @@ body {
   gap: 3rem;
 }
 
-/* Features Grid with background */
+/* Features Grid with smaller background height */
 .features-grid {
   background-color: #2a2a2a;
   padding: 2rem;
@@ -193,7 +183,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 2rem;
-  min-height: 280px; /* reduced height */
+  min-height: auto; /* removed fixed height */
 }
 
 .feature-card {
@@ -341,7 +331,7 @@ body {
   }
   
   .btn-discord {
-    margin-left: 0.7rem;
+    margin-left: 0.5rem;
   }
   
   .nav-menu {
