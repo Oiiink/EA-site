@@ -17,11 +17,13 @@ body {
   flex-direction: column;
 }
 
-a {
-  color: inherit;
+/* Remove link underlines */
+a, a:visited, a:hover, a:active, a:focus {
   text-decoration: none;
+  color: inherit;
 }
 
+/* Image and media */
 img {
   max-width: 100%;
   display: block;
@@ -31,7 +33,7 @@ img {
 .navbar {
   background-color: #1f1f1f;
   padding: 0.75rem 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -78,7 +80,7 @@ img {
 /* Hero section */
 .hero {
   text-align: center;
-  padding: 3rem 1rem 4rem;
+  padding: 3rem 1rem 2rem;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -94,7 +96,6 @@ img {
   display: block;
 }
 
-/* Typing text fix: fixed width to prevent button shifting */
 .typing-text {
   font-size: 1.25rem;
   font-weight: 500;
@@ -102,15 +103,14 @@ img {
   white-space: nowrap;
   overflow: hidden;
   border-right: 3px solid rgba(255, 255, 255, 0.75);
-  width: 34ch; /* width matches full text length */
+  width: 34ch;
   max-width: 100%;
   display: inline-block;
   height: 1.5em;
-  animation: typing 4s steps(34) forwards, blink-caret 0.75s step-end infinite;
-  box-sizing: content-box; /* border-right doesn't affect width */
+  animation: typing 4s steps(34, end) forwards, blink-caret 0.75s step-end infinite;
+  box-sizing: content-box;
 }
 
-/* Typing animation keyframes */
 @keyframes typing {
   from { width: 0 }
   to { width: 34ch }
@@ -122,7 +122,8 @@ img {
 }
 
 /* Buttons */
-.btn-primary, .btn-discord {
+.btn-primary,
+.btn-discord {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -130,7 +131,7 @@ img {
   color: #ff6600;
   font-weight: 700;
   padding: 0.6rem 1.3rem;
-  border-radius: 12px; /* Rounded corners */
+  border-radius: 12px;
   margin: 0 0.4rem;
   box-shadow: 0 3px 6px rgba(255, 102, 0, 0.4);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -140,6 +141,7 @@ img {
   text-align: center;
   border: none;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .btn-primary:hover {
@@ -150,6 +152,7 @@ img {
 .btn-discord {
   background-color: #5865f2;
   color: #fff;
+  box-shadow: 0 3px 6px rgba(88, 101, 242, 0.4);
 }
 
 .btn-discord:hover {
@@ -161,7 +164,7 @@ img {
   width: auto;
 }
 
-/* Container main content layout */
+/* Main layout */
 .container.main-content {
   max-width: 1200px;
   margin: 0 auto 3rem;
@@ -172,10 +175,10 @@ img {
   justify-content: center;
 }
 
-/* Features grid background height fix: shrink to content */
+/* Features grid */
 .features-grid {
   background: #1f1f1f;
-  padding: 1.5rem 1.5rem;
+  padding: 1.5rem;
   border-radius: 8px;
   flex: 1 1 65%;
   display: grid;
@@ -183,8 +186,6 @@ img {
   gap: 1.25rem;
   color: #ddd;
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.3);
-  height: auto;
-  min-height: 0;
 }
 
 .feature-card {
@@ -209,7 +210,7 @@ img {
   background-color: #1a1a1a;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(255,102,0,0.3);
+  box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
   position: sticky;
   top: 80px;
   align-self: flex-start;
@@ -228,7 +229,7 @@ img {
   background-color: #292929;
   border-radius: 8px;
   padding: 0.75rem;
-  box-shadow: inset 0 0 6px rgba(255,102,0,0.2);
+  box-shadow: inset 0 0 6px rgba(255, 102, 0, 0.2);
   user-select: none;
 }
 
@@ -273,14 +274,14 @@ img {
   background-color: #e65500;
 }
 
-/* Footer styles */
+/* Footer */
 .footer {
   background-color: #1f1f1f;
   padding: 1.5rem 1rem;
   text-align: center;
   color: #aaa;
   margin-top: auto;
-  box-shadow: inset 0 1px 5px rgba(255,102,0,0.2);
+  box-shadow: inset 0 1px 5px rgba(255, 102, 0, 0.2);
 }
 
 .footer-content {
