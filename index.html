@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-
 <body>
   <!-- Navigation -->
   <nav class="navbar">
@@ -31,7 +29,7 @@
     <div class="hero-content container">
       <h1>Stay Ahead with EventUtils</h1>
       <p>Enhance your Minecraft experience with real-time event notifications and seamless mod integration.</p>
-      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary modrinth-button-hero">
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary modrinth-btn">
         <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" />
         Get it on Modrinth
       </a>
@@ -42,78 +40,42 @@
   <div class="container main-content">
     <!-- Features Grid -->
     <section id="features" class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Fast & Reliable</h3>
-        <p>Receive instant event alerts without lag, optimized for performance.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛠️</div>
-        <h3>Easy Integration</h3>
-        <p>Simple setup with Modrinth and Minecraft clients, zero hassle.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Secure & Private</h3>
-        <p>Your data stays private. We do not collect unnecessary info.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌐</div>
-        <h3>Cross-Platform</h3>
-        <p>Works on Windows, Mac, and Linux with seamless updates.</p>
-      </div>
+      <!-- feature cards here -->
     </section>
 
-    <!-- Stats/Analytics Section -->
-    <section id="stats" class="stats-section container">
-      <h2>EventUtils At a Glance</h2>
+    <!-- Stats Section -->
+    <section id="stats" class="stats-section">
+      <h2>EventUtils at a Glance</h2>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-number">12,345+</div>
+          <div class="stat-number" data-target="1500">0</div>
           <div class="stat-label">Active Users</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">⬇️</div>
-          <div class="stat-number">45,678+</div>
-          <div class="stat-label">Downloads</div>
+          <div class="stat-number" data-target="250000">0</div>
+          <div class="stat-label">Events Processed</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">🖥️</div>
-          <div class="stat-number">3,210+</div>
-          <div class="stat-label">Servers Using EventUtils</div>
+          <div class="stat-number" data-target="98">0</div>
+          <div class="stat-label">Uptime (%)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">⏱️</div>
-          <div class="stat-number">99.9%</div>
-          <div class="stat-label">Uptime</div>
+          <div class="stat-number" data-target="40">0</div>
+          <div class="stat-label">Countries Served</div>
         </div>
       </div>
     </section>
 
     <!-- Sidebar with changelog -->
     <aside id="changelog" class="sidebar">
-      <h2>Changelog</h2>
-      <div class="changelog-card latest">
-        <img src="assets/images/sounds.png" alt="Update Image" class="changelog-image" />
-        <div class="changelog-info">
-          <div class="changelog-date">Jan 21, 2025</div>
-          <h3 class="changelog-title">v2.2.0</h3>
-          <p class="changelog-description">Customizable sounds, code improvements, & bug fixes</p>
-          <button class="view-full">View Full Changelog</button>
-        </div>
-      </div>
-      <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Initial Release Image" class="changelog-image" />
-        <div class="changelog-info">
-          <div class="changelog-date">Jan 13, 2025</div>
-          <h3 class="changelog-title">v2.1.2</h3>
-          <p class="changelog-description">Bug fixes and small features.</p>
-          <button class="view-full">View Full Changelog</button>
-        </div>
-      </div>
+      <!-- changelog cards -->
     </aside>
   </div>
+
+  <!-- Download Section -->
+  <section id="download" class="download-section">
+    <!-- download content -->
+  </section>
 
   <!-- Footer -->
   <footer class="footer">
@@ -126,6 +88,26 @@
       </div>
     </div>
   </footer>
-</body>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const counters = document.querySelectorAll('.stat-number');
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-target');
+          const count = +counter.innerText.replace(/,/g, '');
+          const increment = target / 100;
+
+          if (count < target) {
+            counter.innerText = Math.ceil(count + increment).toLocaleString();
+            setTimeout(updateCount, 20);
+          } else {
+            counter.innerText = target.toLocaleString();
+          }
+        };
+        updateCount();
+      });
+    });
+  </script>
+</body>
 </html>
