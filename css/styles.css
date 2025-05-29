@@ -104,13 +104,13 @@ a:hover {
   white-space: nowrap;
   overflow: hidden;
   border-right: 3px solid rgba(255,255,255,0.75);
-  width: 26ch;
-  animation: typing 4.5s steps(26) forwards, blink-caret 0.75s step-end infinite;
+  width: 29ch; /* length of "Meant for events. Made for events." */
+  animation: typing 4.5s steps(29) forwards, blink-caret 0.75s step-end infinite;
 }
 
 @keyframes typing {
   from { width: 0 }
-  to { width: 26ch }
+  to { width: 29ch }
 }
 
 @keyframes blink-caret {
@@ -162,7 +162,7 @@ a:hover {
   background-color: #1e1e1e;
   border-radius: 12px;
   padding: 2rem;
-  min-height: 200px; /* smaller height */
+  min-height: 180px;
 }
 
 .feature-card {
@@ -199,7 +199,7 @@ a:hover {
   gap: 1.25rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.7);
   z-index: 10;
-  max-height: none; /* Let it expand */
+  max-height: none;
   overflow: visible;
 }
 
@@ -242,91 +242,97 @@ a:hover {
 
 .changelog-description {
   font-size: 0.95rem;
-  margin-bottom: 0.7rem;
-  color: #ccc;
+  margin-bottom: 0.8rem;
+  line-height: 1.3;
 }
 
 .view-full {
-  align-self: flex-start;
-  background-color: #ff6600;
-  border: none;
-  color: white;
-  padding: 0.4rem 1.1rem;
-  font-weight: 700;
-  border-radius: 24px;
+  background-color: transparent;
+  border: 1.5px solid #ff6600;
+  border-radius: 28px;
+  padding: 0.35rem 1rem;
+  font-weight: 600;
+  color: #ff6600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.9rem;
-  box-shadow: 0 3px 8px rgba(255,102,0,0.6);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  align-self: flex-start;
 }
 
 .view-full:hover {
-  background-color: #ff9933;
+  background-color: #ff6600;
+  color: #121212;
 }
 
 /* Footer */
 .footer {
   background-color: #181818;
-  padding: 1.25rem 2rem;
-  text-align: center;
+  padding: 1.75rem 1rem;
+  color: #999;
   font-size: 0.9rem;
-  color: #777;
-  border-top: 1px solid #2c2c2c;
+  text-align: center;
+  border-top: 1px solid #333;
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.social-links {
+  margin-top: 0.75rem;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: center;
+  justify-content: center;
   gap: 1rem;
 }
 
 .social-links a {
-  margin-left: 1rem;
   color: #ff6600;
   font-weight: 600;
-  transition: color 0.3s ease;
 }
 
 .social-links a:hover {
-  color: #ffa066;
+  text-decoration: underline;
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+
+@media (max-width: 1000px) {
   .container.main-content {
     flex-direction: column;
+    padding: 0 1rem;
   }
-  
   .features-grid {
     grid-template-columns: 1fr 1fr;
-    min-height: auto;
     margin-bottom: 2rem;
   }
-
   .sidebar {
     width: 100%;
     position: relative;
     top: auto;
     max-height: none;
     overflow: visible;
-    box-shadow: none;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .features-grid {
     grid-template-columns: 1fr;
   }
-
-  .nav-menu {
-    display: none; /* for simplicity, hide nav on small screens */
+  .nav-container {
+    flex-direction: column;
+    gap: 0.75rem;
   }
-
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .hero h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+  .hero p {
+    font-size: 1rem;
+  }
+  .btn-primary {
+    font-size: 0.9rem;
   }
 }
