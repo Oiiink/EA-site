@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- Google Fonts imported in CSS -->
 </head>
 
 <body>
@@ -27,12 +26,14 @@
 
   <!-- Hero Section -->
   <header class="hero">
-    <img src="assets/images/logo.png" alt="EventAlerts Logo" class="hero-logo" />
+    <div class="logo-wrapper">
+      <img src="assets/images/logo.png" alt="EventUtils Logo" class="hero-logo" />
+    </div>
     <div class="hero-content container">
       <h1>Stay Ahead with EventUtils</h1>
       <p>Enhance your Minecraft experience with real-time event notifications and seamless mod integration.</p>
-      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary modrinth-btn" aria-label="Get it on Modrinth">
-        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" />
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary modrinth-button">
+        <img src="https://media.beehiiv.com/uploads/publication/logo/a49f8e1b/thumb_Modrinth_Dark_Logo.png" alt="Modrinth Logo" class="modrinth-icon" />
         <span>Get it on Modrinth</span>
       </a>
     </div>
@@ -64,33 +65,6 @@
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section id="stats" class="stats-section">
-      <h2>EventUtils at a Glance</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-number" data-target="1500">0</div>
-          <div class="stat-label">Active Users</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📈</div>
-          <div class="stat-number" data-target="250000">0</div>
-          <div class="stat-label">Events Processed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏱️</div>
-          <div class="stat-number" data-target="98">0</div>
-          <div class="stat-label">Uptime (%)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🌍</div>
-          <div class="stat-number" data-target="40">0</div>
-          <div class="stat-label">Countries Served</div>
-        </div>
-      </div>
-    </section>
-
     <!-- Sidebar with changelog -->
     <aside id="changelog" class="sidebar">
       <h2>Changelog</h2>
@@ -115,15 +89,6 @@
     </aside>
   </div>
 
-  <!-- Download Section -->
-  <section id="download" class="download-section">
-    <div class="container feature-card">
-      <h2>Get EventUtils Now</h2>
-      <p>Download the latest version from Modrinth and stay updated with new features.</p>
-      <a class="download-button" href="https://modrinth.com/mod/alerts" target="_blank">Download EventUtils</a>
-    </div>
-  </section>
-
   <!-- Footer -->
   <footer class="footer">
     <div class="container footer-content">
@@ -135,26 +100,6 @@
       </div>
     </div>
   </footer>
-
-  <script>
-    // Animate stats numbers counting up
-    const counters = document.querySelectorAll('.stat-number');
-    counters.forEach(counter => {
-      const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = target / 200; // animation speed
-
-        if (count < target) {
-          counter.innerText = Math.ceil(count + increment);
-          setTimeout(updateCount, 10);
-        } else {
-          counter.innerText = target.toLocaleString();
-        }
-      };
-      updateCount();
-    });
-  </script>
 </body>
 
 </html>
