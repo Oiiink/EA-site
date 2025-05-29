@@ -115,6 +115,7 @@ body {
 
 .modrinth-icon {
   height: 24px;
+  width: auto;
 }
 
 /* Layout */
@@ -129,18 +130,20 @@ body {
   flex-wrap: nowrap;
   justify-content: space-between;
   gap: 2rem;
+  align-items: flex-start;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   flex: 1 1 60%;
+  align-self: flex-start;
 }
 
 .feature-card {
   background-color: var(--card-bg-hover);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
@@ -153,8 +156,9 @@ body {
 
 /* Changelog Section */
 .sidebar {
-  flex: 1 1 35%;
+  flex: 0 0 30%;
   margin-top: 2rem;
+  align-self: flex-start;
 }
 
 .sidebar h2 {
