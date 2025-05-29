@@ -26,10 +26,16 @@
     </div>
     <h1>Stay ahead with EventUtils</h1>
     <p class="typing-text">Meant for events. Made for events.</p>
-    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
-      Get it on Modrinth
-    </a>
+    <div class="button-group">
+      <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
+        <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
+        Get it on Modrinth
+      </a>
+      <a class="btn-discord" href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer">
+        <img src="https://imgs.search.brave.com/zkISrBQncHBgqOwdZCFf-IxPDMARRJI4D_Lezp5v0W8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGQwOWJhNTcw/N2RkNmVlZjU3MTc1/M2RhZmFhODk2M2Nh/ZGIyZTY4YmVjMTJm/YWI3OTNlOGEwYjBi/Mjg1MzIxZi9kaXNj/b3JkLmNvbS8" alt="Discord" class="discord-icon" />
+        Join our Discord
+      </a>
+    </div>
   </section>
 
   <div class="container main-content">
@@ -84,5 +90,25 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    // Typing animation script
+    document.addEventListener("DOMContentLoaded", () => {
+      const typingText = document.querySelector('.typing-text');
+      const fullText = "Meant for events. Made for events.";
+      let i = 0;
+      typingText.textContent = '';
+      typingText.style.width = 'auto'; // reset width for animation fallback
+
+      function type() {
+        if (i < fullText.length) {
+          typingText.textContent += fullText.charAt(i);
+          i++;
+          setTimeout(type, 50);
+        }
+      }
+      type();
+    });
+  </script>
 </body>
 </html>
