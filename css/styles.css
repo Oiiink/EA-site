@@ -1,88 +1,269 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Event Alerts</title>
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="#" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
-      <ul class="nav-menu">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#changelog">Changelog</a></li>
-        <li><a href="#stats">Stats</a></li>
-      </ul>
-    </div>
-  </nav>
+/* Root Variables */
+:root {
+  --bg-color: #121212;
+  --card-bg-hover: #1e1e1e;
+  --accent-color: #ff6600;
+  --primary-color: #ff6600;
+  --text-color: #eee;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  <section class="hero">
-    <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
-    </div>
-    <h1>Stay ahead with Event Alerts</h1>
-    <p>Reliable and powerful tools for Minecraft event servers, built with performance and customization in mind.</p>
-    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
-      Get it on Modrinth
-    </a>
-  </section>
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  padding: 0;
+}
 
-  <div class="container main-content">
-    <div class="features-grid" id="features">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Lightweight</h3>
-        <p>Event Alerts is designed to be fast and efficient, with minimal performance impact.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛠️</div>
-        <h3>Highly Customizable</h3>
-        <p>Configure every aspect of your event mechanics to suit your needs.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Analytics Ready</h3>
-        <p>Track events and user engagement in real time.</p>
-      </div>
-    </div>
+/* Navigation */
+.navbar {
+  background-color: #1a1a1a;
+  padding: 1rem 2rem;
+}
 
-    <aside class="sidebar" id="changelog">
-      <h2>Changelog</h2>
-      <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">May 28, 2025</div>
-        <div class="changelog-title">v1.4 Release</div>
-        <div class="changelog-description">
-          Added new command structures, improved backend performance, and fixed several minor bugs.
-        </div>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-      <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.1.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">April 15, 2025</div>
-        <div class="changelog-title">v1.3 Patch</div>
-        <div class="changelog-description">
-          Minor UI improvements and resolved compatibility issues with Minecraft 1.20.
-        </div>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-    </aside>
-  </div>
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
-      </div>
-    </div>
-  </footer>
-</body>
-</html>
+.nav-logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.nav-logo-img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-menu li a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  background-color: var(--bg-color);
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.hero-logo {
+  height: 80px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #e65c00;
+}
+
+.modrinth-icon {
+  height: 24px;
+  width: auto;
+}
+
+/* Layout */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-content {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  flex: 0 1 auto;
+  max-width: 70%;
+  align-self: flex-start;
+}
+
+.feature-card {
+  background-color: var(--card-bg-hover);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Changelog Section */
+.sidebar {
+  flex: 0 0 300px;
+  margin-left: auto;
+  margin-top: 2rem;
+  align-self: flex-start;
+}
+
+.sidebar h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.changelog-card {
+  background-color: var(--card-bg-hover);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeSlideUp 0.8s ease forwards;
+  user-select: none;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.changelog-card:hover {
+  box-shadow: 0 0 20px 6px var(--accent-color);
+}
+
+.changelog-image {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 250px;
+  filter: brightness(0.9);
+  margin-bottom: 1rem;
+  transition: filter 0.3s ease;
+}
+
+.changelog-card:hover .changelog-image {
+  filter: brightness(1);
+}
+
+.changelog-date {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.changelog-title {
+  font-size: 1.75rem;
+  margin: 0.5rem 0;
+  font-weight: 700;
+}
+
+.changelog-description {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.view-full {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Footer */
+.footer {
+  background-color: #1a1a1a;
+  padding: 2rem 1rem;
+  margin-top: 4rem;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.social-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.25rem;
+  margin-left: 1rem;
+}
