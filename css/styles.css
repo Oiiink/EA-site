@@ -127,18 +127,18 @@ body {
 
 .main-content {
   display: flex;
-  justify-content: space-between; /* push features left, sidebar right */
-  gap: 2rem;
-  align-items: flex-start;
   flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 1rem;
+  align-items: flex-start;
 }
 
 .features-grid {
-  flex: 1 1 auto;
-  max-width: 70%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
+  flex: 0 1 auto;
+  max-width: 70%;
   align-self: flex-start;
 }
 
@@ -157,7 +157,8 @@ body {
 
 /* Changelog Section */
 .sidebar {
-  flex: 0 0 28%;
+  flex: 0 0 300px;
+  margin-left: auto;
   margin-top: 2rem;
   align-self: flex-start;
 }
