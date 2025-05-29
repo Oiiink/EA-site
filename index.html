@@ -2,95 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="nav-logo">
-        <img src="logo.png" alt="Logo" class="nav-logo-img" />
-        Event Alerts
-      </div>
-      <div class="nav-menu">
-        <a href="#">Home</a>
-        <a href="#">Features</a>
-        <a href="#">Download</a>
-      </div>
+      <a href="#" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#changelog">Changelog</a></li>
+        <li><a href="#stats">Stats</a></li>
+      </ul>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="logo-wrapper">
-      <img src="logo.png" alt="Event Alerts Logo" class="hero-logo" />
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
     </div>
-    <h1>Event Alerts</h1>
-    <div class="typing-text">Meant for events. Made for events</div>
-    <div class="button-group">
-      <a href="https://modrinth.com" class="btn-primary">
-        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968705.png" alt="Modrinth" class="modrinth-icon" />
-        Get it on Modrinth
-      </a>
-      <a href="https://discord.gg/skeppy" class="btn-primary">
-        <img src="https://imgs.search.brave.com/zkISrBQncHBgqOwdZCFf-IxPDMARRJI4D_Lezp5v0W8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGQwOWJhNTcw/N2RkNmVlZjU3MTc1/M2RhZmFhODk2M2Nh/ZGIyZTY4YmVjMTJm/YWI3OTNlOGEwYjBi/Mjg1MzIxZi9kaXNj/b3JkLmNvbS8" alt="Discord" class="modrinth-icon" />
-        Join our Discord
-      </a>
-    </div>
+    <h1>Stay ahead with EventUtils</h1>
+    <p>Meant for events. Made for events.</p>
+    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
+      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
+      Get it on Modrinth
+    </a>
   </section>
 
-  <!-- Main Content -->
-  <div class="container">
-    <!-- Features -->
-    <div class="features-grid">
+  <div class="container main-content">
+    <div class="features-grid" id="features">
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Higher FPS</h3>
-        <p>Boost performance during large Minecraft events with optimizations built-in.</p>
+        <p>Seeing players/entities actually decreases your FPS significantly, using EventUtils you can hide players.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🔔</div>
+        <div class="feature-icon">🛠️</div>
         <h3>Event Notifications</h3>
-        <p>Instant alerts for key events like Sumo starts, drop parties, or giveaways.</p>
+        <p>Receive event notifications in-game without worrying about being tabbed into discord.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>Ping Optimized</h3>
-        <p>Reduce client-side lag spikes and ensure your hits land when it counts.</p>
+        <div class="feature-icon">📊</div>
+        <h3>Made for every client</h3>
+        <p>We custom configurated everything to support different clients.</p>
       </div>
     </div>
 
-    <!-- Changelog -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="changelog">
       <h2>Changelog</h2>
       <div class="changelog-card">
-        <img src="https://via.placeholder.com/300x150" class="changelog-image" alt="Update" />
-        <div class="changelog-date">May 28, 2025</div>
-        <div class="changelog-title">Initial Release</div>
-        <div class="changelog-description">Event Alerts v1.0 is now live on Modrinth with optimized performance and alert features.</div>
-        <button class="view-full">View Full Log</button>
+        <img src="assets/images/sounds.png" alt="Update Screenshot" class="changelog-image" />
+        <div class="changelog-date">Jan 21, 2025</div>
+        <div class="changelog-title">v2.2.0 Release</div>
+        <div class="changelog-description">
+          Customizable notification sounds via config, notifications in the main menu, less crashes, etc
+        </div>
+        <button class="view-full">View Full Changelog</button>
       </div>
       <div class="changelog-card">
-        <img src="https://via.placeholder.com/300x150" class="changelog-image" alt="Update" />
-        <div class="changelog-date">May 27, 2025</div>
-        <div class="changelog-title">Beta Fixes</div>
-        <div class="changelog-description">Squashed critical bugs and improved Discord integration before launch.</div>
-        <button class="view-full">View Full Log</button>
+        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
+        <div class="changelog-date">Jan 13, 2025</div>
+        <div class="changelog-title">v2.1.2 Patch</div>
+        <div class="changelog-description">
+          Fixed update checker, fixed event info, etc
+        </div>
+        <button class="view-full">View Full Changelog</button>
       </div>
     </aside>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <p>© 2025 Event Alerts. All rights reserved.</p>
+      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
       <div class="social-links">
-        <a href="https://discord.gg/skeppy">Discord</a>
-        <a href="https://modrinth.com">Modrinth</a>
+        <a href="#">Twitter</a>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
       </div>
     </div>
   </footer>
-</body>
-</html>
