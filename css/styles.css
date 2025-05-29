@@ -21,12 +21,6 @@ ul {
   list-style: none;
 }
 
-img {
-  image-rendering: auto;
-  filter: none;
-  mix-blend-mode: normal;
-}
-
 /* Navbar */
 .navbar {
   background-color: #1a1a1a;
@@ -100,13 +94,13 @@ img {
   white-space: nowrap;
   overflow: hidden;
   border-right: 2px solid orange;
-  width: 0;
+  width: 330px;
   animation: typing 3s steps(40, end) forwards, blink 0.75s step-end infinite;
 }
 
 @keyframes typing {
   from { width: 0; }
-  to { width: 300px; }
+  to { width: 330px; }
 }
 
 @keyframes blink {
@@ -144,35 +138,38 @@ img {
 
 /* Main Layout */
 .container {
-  max-width: 1300px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   align-items: flex-start;
+  justify-content: space-between;
 }
 
-/* Features Grid */
+/* Features Section */
 .features-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex: 1 1 60%;
   gap: 1.5rem;
-  flex: 2;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .feature-card {
   background-color: #1e1e1e;
   padding: 2rem;
+  flex: 1 1 calc(33.33% - 1rem);
+  min-width: 260px;
+  max-width: 100%;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.25);
   text-align: center;
-  flex: 1 1 calc(33.33% - 1rem);
-  min-width: 260px;
-  height: 320px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 280px;
 }
 
 .feature-icon {
@@ -192,8 +189,7 @@ img {
 
 /* Sidebar */
 .sidebar {
-  flex: 1;
-  margin-left: auto;
+  flex: 1 1 35%;
 }
 
 .sidebar h2 {
@@ -278,36 +274,22 @@ img {
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .features-grid {
-    justify-content: center;
-  }
-
-  .feature-card {
-    flex: 1 1 calc(50% - 1rem);
-  }
-
+@media (max-width: 768px) {
   .container {
+    flex-direction: column;
+  }
+
+  .features-grid {
     flex-direction: column;
     align-items: center;
   }
 
-  .sidebar {
-    margin-left: 0;
-    width: 100%;
-  }
-}
-
-@media (max-width: 600px) {
   .feature-card {
-    flex: 1 1 100%;
+    width: 100%;
+    height: auto;
   }
 
   .nav-menu {
     display: none;
-  }
-
-  .typing-text {
-    font-size: 1rem;
   }
 }
