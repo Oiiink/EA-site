@@ -5,18 +5,18 @@
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #eee;
-  /* background-color removed */
+  background-color: transparent; /* Removed background */
   text-decoration: none;
 }
 
 body {
-  /* background-color removed */
+  background-color: transparent; /* Removed background */
   line-height: 1.6;
 }
 
 /* Navbar */
 .navbar {
-  /* background-color removed */
+  background-color: #1f1f21;
   padding: 1rem 2rem;
   box-shadow: 0 2px 5px rgb(255 111 0 / 0.2);
   position: sticky;
@@ -72,8 +72,8 @@ body {
   text-align: center;
   padding: 4rem 1rem 3rem;
   max-width: 720px;
-  margin: 2rem auto;
-  /* background removed */
+  margin: 0 auto;
+  /* Removed background-color */
   border-radius: 12px;
   box-shadow: 0 0 20px rgb(255 111 0 / 0.15);
 }
@@ -100,33 +100,117 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Buttons */
-.btn-primary {
-  padding: 0.8rem 2.5rem;
-  border-radius: 25px;
-  background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
-  color: #121214;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgb(255 111 0 / 0.7);
-  text-decoration: none;
-  border: none;
-  transition: box-shadow 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+.modrinth-icon {
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 0.5rem;
 }
 
-.btn-primary:hover {
-  box-shadow: 0 6px 20px rgb(255 167 38 / 0.9);
+/* Main container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem 4rem;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  /* Removed background */
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgb(255 111 0 / 0.15);
+}
+
+.sidebar h2 {
+  color: #ff6f00;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.changelog-card {
+  margin-bottom: 1.5rem;
+}
+
+.changelog-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.changelog-date {
+  font-size: 0.9rem;
+  color: #ffa726;
+}
+
+.changelog-title {
+  font-weight: 700;
+  margin-top: 0.3rem;
+}
+
+.changelog-description {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 0.3rem 0;
+}
+
+.view-full {
+  background: none;
+  border: 1px solid #ff6f00;
+  color: #ff6f00;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-full:hover {
+  background: #ff6f00;
+  color: #121214;
+}
+
+/* Features Section */
+.features-grid {
+  margin-top: 4rem;
+  display: flex;         /* horizontal layout */
+  flex-wrap: nowrap;     /* no wrap */
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: auto;      /* horizontal scroll if overflow */
+  padding-bottom: 1rem;  /* spacing for scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
+
+.feature-card {
+  /* Keep fixed width, no shrink */
+  flex: 0 0 280px;
+  /* Removed background */
+  border-radius: 12px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
+  text-align: center;
+  color: #eee;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+  color: #ff6f00;
 }
 
 /* Plans Section */
 .plans-section {
-  margin: 4rem auto;
-  max-width: 1200px;
-  padding: 0 2rem;
+  margin-top: 3rem;
   text-align: center;
 }
 
@@ -137,7 +221,6 @@ body {
   font-size: 2rem;
 }
 
-/* Plans grid */
 .plans-grid {
   display: flex;
   gap: 2rem;
@@ -145,9 +228,8 @@ body {
   flex-wrap: wrap;
 }
 
-/* Individual plan card */
 .plan-card {
-  /* background removed */
+  /* Removed background */
   border-radius: 12px;
   padding: 2rem 2.5rem;
   width: 280px;
@@ -164,8 +246,8 @@ body {
 }
 
 .plan-card.featured {
-  /* background removed */
-  color: #ff6f00; /* changed to orange to highlight */
+  background: linear-gradient(135deg, #ff6f00, #ffa726);
+  color: #121214;
   box-shadow: 0 0 30px rgb(255 167 38 / 0.8);
 }
 
@@ -209,66 +291,29 @@ body {
   border-bottom: none;
 }
 
-/* Features Section */
-.features-grid {
-  margin-top: 2rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.feature-card {
-  /* background removed */
-  border-radius: 12px;
-  padding: 1.8rem 2rem;
-  width: 280px;
-  box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
-  text-align: center;
-  color: #eee;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.feature-icon {
-  font-size: 3rem;
-  color: #ff6f00;
-}
-
-/* Testimonial text styling */
-.feature-card p {
-  font-style: italic;
-  font-size: 1rem;
-  color: #ccc;
-  flex-grow: 1;
-}
-
-.feature-card strong {
+/* Buttons */
+.btn-primary {
+  padding: 0.8rem 2.5rem;
+  border-radius: 25px;
+  background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
+  color: #121214;
   font-weight: 700;
-  color: #ff6f00;
-  margin-top: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgb(255 111 0 / 0.7);
+  text-decoration: none;
+  border: none;
+  transition: box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* FAQ Section */
-/* Re-use feature-card style for FAQ cards */
-.features-grid .feature-card h3 {
-  margin-bottom: 0.5rem;
-  color: #ff6f00;
-}
-
-.features-grid .feature-card p {
-  font-style: normal;
-  color: #ddd;
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgb(255 167 38 / 0.9);
 }
 
 /* Footer */
 .footer {
-  /* background removed */
+  background-color: #1f1f21;
   padding: 1.5rem 2rem;
   text-align: center;
   box-shadow: inset 0 1px 3px rgb(255 111 0 / 0.2);
@@ -312,6 +357,10 @@ body {
     gap: 1rem;
   }
 
+  .container {
+    flex-direction: column;
+  }
+
   .plans-grid,
   .features-grid {
     flex-direction: column;
@@ -322,8 +371,7 @@ body {
     flex-direction: column;
   }
 
-  .plan-card {
+  .sidebar {
     width: 100%;
-    max-width: 360px;
   }
 }
