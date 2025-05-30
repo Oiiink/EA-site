@@ -1,355 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BlockHost - Minecraft Server Hosting</title>
-<style>
-  /* Reset */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121214;
-    color: #e0e0e0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.5;
-  }
-  a {
-    text-decoration: none;
-    color: #ff6f00;
-    transition: color 0.3s ease;
-  }
-  a:hover {
-    color: #ffa726;
-  }
-  /* Container */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-  /* Navbar */
-  nav {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid #292929;
-  }
-  .nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .logo {
-    font-weight: 700;
-    font-size: 1.75rem;
-    color: #ff6f00;
-    letter-spacing: 2px;
-    user-select: none;
-  }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-  }
-  .nav-links a {
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-  }
-  .nav-links a.active,
-  .nav-links a:hover {
-    background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
-    color: #121214;
-    font-weight: 600;
-  }
-  /* Hero */
-  .hero {
-    padding: 8rem 0 6rem;
-    text-align: center;
-  }
-  .hero h1 {
-    font-weight: 900;
-    font-size: 3.5rem;
-    max-width: 700px;
-    margin: 0 auto 1rem;
-    letter-spacing: 1.2px;
-  }
-  .hero p {
-    font-weight: 400;
-    font-size: 1.25rem;
-    color: #bdbdbd;
-    max-width: 550px;
-    margin: 0 auto 3rem;
-    line-height: 1.6;
-  }
-  .btn-primary {
-    background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
-    color: #121214;
-    font-weight: 700;
-    padding: 1rem 3rem;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgb(255 111 0 / 0.7);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 6px 25px rgb(255 167 38 / 0.9);
-    transform: translateY(-3px);
-  }
-
-  /* Features Grid */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 2.5rem;
-    padding-bottom: 5rem;
-  }
-  .feature-card {
-    background: #1f1f21;
-    padding: 2.5rem 2rem;
-    border-radius: 14px;
-    box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-    user-select: none;
-  }
-  .feature-card:hover {
-    box-shadow: 0 0 25px rgb(255 167 38 / 0.5);
-    transform: translateY(-5px);
-  }
-  .feature-icon {
-    font-size: 3rem;
-    color: #ff6f00;
-    margin-bottom: 1rem;
-  }
-  .feature-title {
-    font-weight: 700;
-    font-size: 1.4rem;
-    margin-bottom: 0.75rem;
-  }
-  .feature-desc {
-    color: #cfcfcf;
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-
-  /* Pricing Section */
-  .pricing {
-    background: #18181a;
-    padding: 5rem 1.5rem 7rem;
-    border-radius: 16px;
-    box-shadow: 0 0 35px rgb(255 111 0 / 0.1);
-    margin-bottom: 4rem;
-  }
-  .pricing h2 {
-    text-align: center;
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: #ff6f00;
-    margin-bottom: 3rem;
-    letter-spacing: 1.3px;
-  }
-  .plans {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  .plan {
-    background: #1f1f21;
-    border-radius: 16px;
-    width: 280px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 0 18px rgb(255 111 0 / 0.2);
-    display: flex;
-    flex-direction: column;
-    user-select: none;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-  }
-  .plan:hover {
-    box-shadow: 0 0 28px rgb(255 167 38 / 0.5);
-    transform: translateY(-6px);
-  }
-  .plan-title {
-    font-weight: 900;
-    font-size: 1.8rem;
-    color: #ffa726;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  .plan-price {
-    font-weight: 900;
-    font-size: 3rem;
-    color: #ff6f00;
-    margin-bottom: 1.8rem;
-    text-align: center;
-  }
-  .plan-details {
-    font-weight: 400;
-    font-size: 1rem;
-    color: #cfcfcf;
-    line-height: 1.5;
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  .plan button {
-    background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
-    border: none;
-    padding: 1rem 0;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    cursor: pointer;
-    color: #121214;
-    box-shadow: 0 4px 15px rgb(255 111 0 / 0.7);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-  }
-  .plan button:hover {
-    box-shadow: 0 6px 25px rgb(255 167 38 / 0.9);
-    transform: translateY(-3px);
-  }
-
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 3rem 1rem;
-    font-size: 0.9rem;
-    color: #666;
-    border-top: 1px solid #292929;
-    user-select: none;
-  }
-  footer a {
-    color: #ff6f00;
-    font-weight: 600;
-    margin: 0 0.8rem;
-  }
-  footer a:hover {
-    color: #ffa726;
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .plans {
-      flex-direction: column;
-      align-items: center;
-    }
-    .plan {
-      width: 90%;
-      max-width: 350px;
-    }
-  }
-  @media (max-width: 500px) {
-    .hero h1 {
-      font-size: 2.4rem;
-    }
-    .hero p {
-      font-size: 1rem;
-    }
-    nav {
-      padding: 1rem 0;
-    }
-    .nav-links {
-      display: none; /* Simplify mobile nav for now */
-    }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Server Hosting - Event Alerts</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-
-  <nav>
-    <div class="container nav-container">
-      <div class="logo">BlockHost</div>
-      <ul class="nav-links">
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#pricing">Plans</a></li>
-        <li><a href="#contact">Contact</a></li>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#changelog">Changelog</a></li>
+        <li><a href="index.html#stats">Stats</a></li>
+        <li><a href="servers.html" class="active">Servers</a></li>
       </ul>
     </div>
   </nav>
 
   <section class="hero">
-    <div class="container">
-      <h1>Effortless Minecraft Server Hosting<br />Built for Players & Creators</h1>
-      <p>Fast, reliable, and scalable Minecraft servers with 1-click setup, DDoS protection, and 24/7 support.</p>
-      <a href="#pricing" class="btn-primary">Get Started</a>
+    <div class="logo-wrapper">
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
     </div>
+    <h1>Minecraft Server Hosting Plans</h1>
+    <p>Reliable, affordable, and scalable Minecraft servers for your community.</p>
   </section>
 
-  <section class="container features" id="features">
-    <div class="feature-card">
-      <div class="feature-icon">🚀</div>
-      <h3 class="feature-title">Instant Setup</h3>
-      <p class="feature-desc">Launch your Minecraft server in seconds with our user-friendly control panel.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔐</div>
-      <h3 class="feature-title">DDoS Protection</h3>
-      <p class="feature-desc">Keep your server online and safe from attacks with enterprise-grade security.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚙️</div>
-      <h3 class="feature-title">Mod & Plugin Support</h3>
-      <p class="feature-desc">Easily install popular mods and plugins for the ultimate Minecraft experience.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🌍</div>
-      <h3 class="feature-title">Global Network</h3>
-      <p class="feature-desc">Choose from multiple data centers worldwide to reduce lag for your players.</p>
-    </div>
-  </section>
+  <main class="container main-content">
 
-  <section class="pricing" id="pricing">
-    <h2>Our Plans</h2>
-    <div class="plans">
-      <div class="plan">
-        <h3 class="plan-title">Starter</h3>
-        <div class="plan-price">$8/mo</div>
-        <p class="plan-details">
-          2 GB RAM<br />
-          25 Slots<br />
-          Standard Support<br />
-          Unlimited Bandwidth
-        </p>
-        <button>Order Now</button>
+    <!-- Plans Section -->
+    <section class="plans-section" aria-label="Server Hosting Plans">
+      <h2>Choose Your Plan</h2>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <h3>Starter</h3>
+          <p class="price">$5 <span>/ month</span></p>
+          <ul>
+            <li>1 GB RAM</li>
+            <li>10 Player Slots</li>
+            <li>Instant Setup</li>
+            <li>24/7 Uptime</li>
+          </ul>
+          <button class="btn-primary buy-btn" data-plan="Starter">$5 Buy Now</button>
+        </div>
+        <div class="plan-card featured">
+          <h3>Pro</h3>
+          <p class="price">$15 <span>/ month</span></p>
+          <ul>
+            <li>4 GB RAM</li>
+            <li>50 Player Slots</li>
+            <li>Free DDoS Protection</li>
+            <li>24/7 Uptime</li>
+          </ul>
+          <button class="btn-primary buy-btn" data-plan="Pro">$15 Buy Now</button>
+        </div>
+        <div class="plan-card">
+          <h3>Enterprise</h3>
+          <p class="price">$30 <span>/ month</span></p>
+          <ul>
+            <li>8 GB RAM</li>
+            <li>Unlimited Player Slots</li>
+            <li>Dedicated IP</li>
+            <li>Priority Support</li>
+          </ul>
+          <button class="btn-primary buy-btn" data-plan="Enterprise">$30 Buy Now</button>
+        </div>
       </div>
-      <div class="plan">
-        <h3 class="plan-title">Pro</h3>
-        <div class="plan-price">$15/mo</div>
-        <p class="plan-details">
-          4 GB RAM<br />
-          50 Slots<br />
-          Priority Support<br />
-          Unlimited Bandwidth
-        </p>
-        <button>Order Now</button>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-grid" id="features" aria-label="Features">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast Servers</h3>
+        <p>Low latency and powerful hardware guarantee smooth gameplay for all players.</p>
       </div>
-      <div class="plan">
-        <h3 class="plan-title">Ultimate</h3>
-        <div class="plan-price">$30/mo</div>
-        <p class="plan-details">
-          12 GB RAM<br />
-          150 Slots<br />
-          24/7 Support<br />
-          Unlimited Bandwidth
-        </p>
-        <button>Order Now</button>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Secure & Protected</h3>
+        <p>DDoS protection and automatic backups keep your server safe and your data secure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>Easy Setup & Control</h3>
+        <p>Intuitive control panel lets you manage plugins, players, and settings effortlessly.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#">Twitter</a>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
       </div>
     </div>
-  </section>
-
-  <footer id="contact">
-    <p>Contact us: <a href="mailto:support@blockhost.com">support@blockhost.com</a></p>
-    <p>&copy; 2025 BlockHost. All rights reserved.</p>
-    <p>
-      <a href="#">Discord</a> | <a href="#">Twitter</a> | <a href="#">GitHub</a>
-    </p>
   </footer>
 
+  <script>
+    // Example: Simple Buy button click handler
+    document.querySelectorAll('.buy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const plan = button.dataset.plan;
+        alert(`You selected the ${plan} plan. Redirecting to checkout...`);
+        // TODO: Replace alert with real checkout flow
+      });
+    });
+  </script>
 </body>
 </html>
