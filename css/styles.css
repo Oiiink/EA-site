@@ -374,3 +374,42 @@ body {
     width: 100%;
   }
 }
+
+/* Hosting Section */
+.hosting-section {
+  background: rgba(255, 111, 0, 0.03);
+  margin-top: 4rem;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255, 111, 0, 0.08);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hosting-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+  text-align: left;
+}
+
+.hosting-logo {
+  height: 64px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 111, 0, 0.2);
+}
+
+.hosting-content h2 {
+  color: #ff6f00;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.hosting-content p {
+  color: #ccc;
+  font-size: 1.1rem;
+}
