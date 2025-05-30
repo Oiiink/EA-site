@@ -6,281 +6,399 @@
   <title>Servers - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
-    /* Section Headers */
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #ff6600;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 36px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-menu li a {
+      color: #eee;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .nav-menu li a:hover {
+      color: #ff6600;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem;
+      background: linear-gradient(135deg, #ff6600, #cc4400);
+      color: white;
+    }
+
+    .hero-logo {
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2.8rem;
+      font-weight: 900;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 3rem auto 6rem;
+      padding: 0 1.5rem;
+    }
+
     .section-header {
       text-align: center;
       font-size: 2rem;
       font-weight: 700;
-      margin: 3rem 0 2rem;
+      margin-bottom: 2rem;
       color: #ff6600;
+      user-select: none;
     }
 
-    /* Feature Cards - now horizontal scroll */
+    /* Horizontal feature cards container */
     .features-grid {
       display: flex;
-      gap: 2rem;
+      gap: 1.5rem;
       overflow-x: auto;
-      padding-bottom: 1rem;
+      padding: 1rem 1rem 1rem 1rem;
       scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+      -webkit-overflow-scrolling: touch;
+      justify-content: flex-start;
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
     }
+    .features-grid::-webkit-scrollbar {
+      display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+    }
+
     .feature-card {
+      flex: 0 0 auto;
+      min-width: 280px;
+      max-width: 280px;
       background: linear-gradient(145deg, #292929, #1f1f1f);
       border-radius: 16px;
       box-shadow:
         5px 5px 10px #1a1a1a,
         -5px -5px 10px #3a3a3a;
-      padding: 2rem;
-      width: 280px;
+      padding: 2rem 1.8rem 2.2rem;
       color: #f0f0f0;
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      flex: 0 0 280px; /* fixed width, prevents shrinking */
+      user-select: none;
     }
     .feature-card:hover {
-      transform: translateY(-10px);
+      transform: translateY(-6px);
       box-shadow:
-        8px 8px 15px #151515,
-        -8px -8px 15px #454545;
+        8px 8px 16px #141414,
+        -8px -8px 16px #4a4a4a;
     }
     .feature-icon {
       font-size: 3rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
     .feature-card h3 {
-      font-size: 1.6rem;
-      margin-bottom: 0.75rem;
+      margin: 0 0 0.6rem;
+      font-weight: 700;
+      font-size: 1.4rem;
       color: #ff6600;
     }
     .feature-card p {
       font-size: 1rem;
-      flex-grow: 1;
-      margin-bottom: 1.5rem;
       color: #ccc;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
     }
     .btn-primary {
       background-color: #ff6600;
       color: white;
-      padding: 0.7rem 1.2rem;
-      border: none;
+      padding: 0.6rem 1.3rem;
+      font-weight: 700;
+      font-size: 1rem;
       border-radius: 8px;
-      font-weight: 600;
       text-decoration: none;
       transition: background-color 0.3s ease;
+      user-select: none;
     }
     .btn-primary:hover {
-      background-color: #e05500;
+      background-color: #e65500;
     }
 
-    /* Plans Grid */
+    /* Server plans grid */
     .plans-grid {
       display: flex;
       gap: 2rem;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 4rem;
+      margin-top: 1rem;
     }
+
     .plan-card {
       background-color: #1e1e1e;
       border-radius: 12px;
       padding: 2rem;
-      width: 300px;
+      width: 280px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.7);
       transition: transform 0.3s ease;
-      color: #fff;
+      user-select: none;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .plan-card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(255,102,0,0.7);
     }
     .plan-icon {
       font-size: 2.5rem;
       margin-bottom: 1rem;
+      color: #ff6600;
     }
     .plan-title {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #ff6600;
+      color: #fff;
       margin-bottom: 0.5rem;
+      user-select: none;
     }
     .plan-details {
       font-size: 1rem;
       color: #ccc;
       margin-bottom: 1.5rem;
+      min-height: 56px;
     }
 
-    /* Plan Comparison Table */
-    .comparison-table-container {
-      max-width: 960px;
-      margin: 0 auto 4rem;
+    /* Plan comparison table */
+    .comparison-container {
+      margin-top: 4rem;
       overflow-x: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      background: #1f1f1f;
       border-radius: 12px;
+      padding: 1rem 1rem 1.5rem;
+      box-shadow:
+        5px 5px 15px #121212,
+        -5px -5px 15px #2f2f2f;
     }
-    table.comparison-table {
+
+    table {
       width: 100%;
       border-collapse: collapse;
-      background-color: #1e1e1e;
-      color: #fff;
-      font-size: 1rem;
-      min-width: 700px;
+      min-width: 600px;
+      color: #ddd;
+      user-select: none;
     }
-    table.comparison-table th,
-    table.comparison-table td {
-      padding: 1rem 1.5rem;
+
+    th, td {
+      padding: 1rem 1.2rem;
       text-align: center;
       border-bottom: 1px solid #333;
+      font-weight: 600;
     }
-    table.comparison-table th {
-      background-color: #ff6600;
-      color: #fff;
-      font-weight: 700;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-    table.comparison-table tbody tr:hover {
+
+    th {
       background-color: #292929;
-    }
-    table.comparison-table td.plan-name {
-      font-weight: 700;
       color: #ff6600;
+      font-size: 1.1rem;
+      user-select: none;
     }
-    table.comparison-table td.checkmark {
-      font-size: 1.3rem;
+
+    td {
+      background-color: #1f1f1f;
+    }
+
+    tr:hover td {
+      background-color: #333;
+    }
+
+    /* Checkmark icon */
+    .checkmark {
       color: #4caf50;
+      font-weight: 700;
+      font-size: 1.2rem;
     }
-    table.comparison-table td.crossmark {
-      font-size: 1.3rem;
-      color: #e74c3c;
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      .plans-grid {
+        justify-content: center;
+      }
+      .plan-card {
+        width: 100%;
+        max-width: 320px;
+      }
     }
   </style>
 </head>
 <body>
   <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
-      <ul class="nav-menu">
-        <li><a href="index.html#features">Features</a></li>
-        <li><a href="index.html#changelog">Changelog</a></li>
-        <li><a href="index.html#stats">Stats</a></li>
-        <li><a href="servers.html">Servers</a></li>
-      </ul>
-    </div>
+    <a href="index.html" class="nav-logo">
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" /> Event Alerts
+    </a>
+    <ul class="nav-menu">
+      <li><a href="index.html#features">Features</a></li>
+      <li><a href="index.html#changelog">Changelog</a></li>
+      <li><a href="index.html#stats">Stats</a></li>
+      <li><a href="servers.html">Servers</a></li>
+    </ul>
   </nav>
 
   <section class="hero">
-    <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
-    </div>
+    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
     <h1>Get Your Own Event Server</h1>
     <p>Powerful and reliable Minecraft servers, made for events.</p>
   </section>
 
-  <div class="container main-content">
+  <div class="container">
     <h2 class="section-header">Partnered Servers</h2>
-    <section class="features-grid">
+    <section class="features-grid" aria-label="Partnered servers">
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
         <h3>MCEvents</h3>
         <p>One of the most trusted event servers powered by EventUtils.</p>
-        <a class="btn-primary" href="#">Join Now</a>
+        <a class="btn-primary" href="#" role="button">Join Now</a>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
         <h3>BuildCon</h3>
         <p>Massive building competition hub with thousands of players.</p>
-        <a class="btn-primary" href="#">Join Now</a>
+        <a class="btn-primary" href="#" role="button">Join Now</a>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
         <h3>PvP Battle</h3>
         <p>Top-tier event PvP tournaments hosted regularly.</p>
-        <a class="btn-primary" href="#">Join Now</a>
+        <a class="btn-primary" href="#" role="button">Join Now</a>
       </div>
     </section>
 
     <h2 class="section-header">Server Plans</h2>
-    <section class="plans-grid">
+    <section class="plans-grid" aria-label="Server hosting plans">
       <div class="plan-card">
         <div class="plan-icon">🎉</div>
         <div class="plan-title">Free Plan</div>
         <div class="plan-details">1 GB RAM • 10 Players Max • Community Support</div>
-        <a class="btn-primary" href="#">Get Started</a>
+        <a class="btn-primary" href="#" role="button">Get Started</a>
       </div>
       <div class="plan-card">
         <div class="plan-icon">🚀</div>
         <div class="plan-title">Pro Plan</div>
         <div class="plan-details">4 GB RAM • 50 Players Max • Mod Support • Priority Support</div>
-        <a class="btn-primary" href="#">Buy Now - $5/mo</a>
+        <a class="btn-primary" href="#" role="button">Buy Now - $5/mo</a>
       </div>
       <div class="plan-card">
         <div class="plan-icon">🏆</div>
         <div class="plan-title">Elite Plan</div>
-        <div class="plan-details">8 GB RAM • Unlimited Players • Full Plugin Support • 24/7 Support</div>
-        <a class="btn-primary" href="#">Buy Now - $15/mo</a>
+        <div class="plan-details">8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</div>
+        <a class="btn-primary" href="#" role="button">Buy Now - $12/mo</a>
       </div>
     </section>
 
-    <h2 class="section-header">Plan Comparison</h2>
-    <div class="comparison-table-container">
-      <table class="comparison-table">
+    <h2 class="section-header">Plan Comparisons</h2>
+    <div class="comparison-container" role="region" aria-label="Plan comparison table">
+      <table>
         <thead>
           <tr>
-            <th>Features</th>
-            <th>Free</th>
-            <th>Pro</th>
-            <th>Elite</th>
+            <th>Feature</th>
+            <th>Free Plan</th>
+            <th>Pro Plan</th>
+            <th>Elite Plan</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="plan-name">RAM</td>
+            <td>RAM</td>
             <td>1 GB</td>
             <td>4 GB</td>
             <td>8 GB</td>
           </tr>
           <tr>
-            <td class="plan-name">Max Players</td>
+            <td>Max Players</td>
             <td>10</td>
             <td>50</td>
             <td>Unlimited</td>
           </tr>
           <tr>
-            <td class="plan-name">Plugin Support</td>
-            <td class="crossmark">✗</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
+            <td>Mod Support</td>
+            <td><span class="checkmark">✘</span></td>
+            <td><span class="checkmark">✔</span></td>
+            <td><span class="checkmark">✔</span></td>
           </tr>
           <tr>
-            <td class="plan-name">Priority Support</td>
-            <td class="crossmark">✗</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
+            <td>Priority Support</td>
+            <td><span class="checkmark">✘</span></td>
+            <td><span class="checkmark">✔</span></td>
+            <td><span class="checkmark">✔</span></td>
           </tr>
           <tr>
-            <td class="plan-name">24/7 Support</td>
-            <td class="crossmark">✗</td>
-            <td class="crossmark">✗</td>
-            <td class="checkmark">✓</td>
+            <td>Dedicated Resources</td>
+            <td><span class="checkmark">✘</span></td>
+            <td><span class="checkmark">✘</span></td>
+            <td><span class="checkmark">✔</span></td>
           </tr>
           <tr>
-            <td class="plan-name">Price</td>
-            <td>Free</td>
-            <td>$5/mo</td>
-            <td>$15/mo</td>
+            <td>Community Support</td>
+            <td><span class="checkmark">✔</span></td>
+            <td><span class="checkmark">✔</span></td>
+            <td><span class="checkmark">✔</span></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+  <footer class="footer" style="background:#1a1a1a; color:#ccc; text-align:center; padding:1.5rem 0; user-select:none;">
+    <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+    <div style="margin-top: 0.5rem;">
+      <a href="#" style="color:#ff6600; margin: 0 0.5rem; text-decoration:none;">Twitter</a>
+      <a href="#" style="color:#ff6600; margin: 0 0.5rem; text-decoration:none;">Discord</a>
+      <a href="#" style="color:#ff6600; margin: 0 0.5rem; text-decoration:none;">GitHub</a>
+    </div>
+  </footer>
 </body>
 </html>
