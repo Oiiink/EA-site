@@ -178,20 +178,18 @@ body {
 .features-grid {
   margin-top: 4rem;
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  overflow-x: auto;
   padding-bottom: 1rem;
-  -webkit-overflow-scrolling: touch;
 }
 
 .feature-card {
   flex: 0 0 280px;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #1c1c1e;
   padding: 1.8rem 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
