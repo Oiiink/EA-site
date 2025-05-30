@@ -3,8 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Server Hosting - Event Alerts</title>
+  <title>Servers - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .section-header {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 3rem 0 2rem;
+      color: #ff6600;
+    }
+    .plans-grid {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .plan-card {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+      transition: transform 0.3s ease;
+    }
+    .plan-card:hover {
+      transform: translateY(-5px);
+    }
+    .plan-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .plan-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .plan-details {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+    .comparison-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+      background-color: #1e1e1e;
+      color: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .comparison-table th, .comparison-table td {
+      border: 1px solid #333;
+      padding: 1rem;
+      text-align: center;
+    }
+    .comparison-table th {
+      background-color: #2a2a2a;
+      font-weight: 700;
+      color: #ff6600;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -16,81 +78,93 @@
         <li><a href="index.html#features">Features</a></li>
         <li><a href="index.html#changelog">Changelog</a></li>
         <li><a href="index.html#stats">Stats</a></li>
-        <li><a href="servers.html" class="active">Servers</a></li>
+        <li><a href="servers.html">Servers</a></li>
       </ul>
     </div>
   </nav>
 
-  <section class="hero">
+  <section class="hero" style="background-color: #1a1a1a; padding: 4rem 2rem; text-align: center;">
     <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" style="width: 120px;" />
     </div>
-    <h1>Minecraft Server Hosting Plans</h1>
-    <p>Reliable, affordable, and scalable Minecraft servers for your community.</p>
+    <h1 style="color: #fff; font-size: 2.5rem; margin-top: 1rem;">Get Your Own Event Server</h1>
+    <p style="color: #ccc; font-size: 1.2rem;">Powerful and reliable Minecraft servers, made for events.</p>
   </section>
 
-  <main class="container main-content">
-
-    <!-- Plans Section -->
-    <section class="plans-section" aria-label="Server Hosting Plans">
-      <h2>Choose Your Plan</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <h3>Starter</h3>
-          <p class="price">$5 <span>/ month</span></p>
-          <ul>
-            <li>1 GB RAM</li>
-            <li>10 Player Slots</li>
-            <li>Instant Setup</li>
-            <li>24/7 Uptime</li>
-          </ul>
-          <button class="btn-primary buy-btn" data-plan="Starter">$5 Buy Now</button>
-        </div>
-        <div class="plan-card featured">
-          <h3>Pro</h3>
-          <p class="price">$15 <span>/ month</span></p>
-          <ul>
-            <li>4 GB RAM</li>
-            <li>50 Player Slots</li>
-            <li>Free DDoS Protection</li>
-            <li>24/7 Uptime</li>
-          </ul>
-          <button class="btn-primary buy-btn" data-plan="Pro">$15 Buy Now</button>
-        </div>
-        <div class="plan-card">
-          <h3>Enterprise</h3>
-          <p class="price">$30 <span>/ month</span></p>
-          <ul>
-            <li>8 GB RAM</li>
-            <li>Unlimited Player Slots</li>
-            <li>Dedicated IP</li>
-            <li>Priority Support</li>
-          </ul>
-          <button class="btn-primary buy-btn" data-plan="Enterprise">$30 Buy Now</button>
-        </div>
+  <div class="container main-content" style="text-decoration: none;">
+    <h2 class="section-header">Partnered Servers</h2>
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🌟</div>
+        <h3>MCEvents</h3>
+        <p>One of the most trusted event servers powered by EventUtils.</p>
+        <a class="btn-primary" href="#">Join Now</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌟</div>
+        <h3>BuildCon</h3>
+        <p>Massive building competition hub with thousands of players.</p>
+        <a class="btn-primary" href="#">Join Now</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌟</div>
+        <h3>PvP Battle</h3>
+        <p>Top-tier event PvP tournaments hosted regularly.</p>
+        <a class="btn-primary" href="#">Join Now</a>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-grid" id="features" aria-label="Features">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Lightning Fast Servers</h3>
-        <p>Low latency and powerful hardware guarantee smooth gameplay for all players.</p>
+    <h2 class="section-header">Server Plans</h2>
+    <section class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-icon">🎉</div>
+        <div class="plan-title">Free Plan</div>
+        <div class="plan-details">1 GB RAM • 10 Players Max • Community Support</div>
+        <a class="btn-primary" href="#">Get Started</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Secure & Protected</h3>
-        <p>DDoS protection and automatic backups keep your server safe and your data secure.</p>
+      <div class="plan-card">
+        <div class="plan-icon">🚀</div>
+        <div class="plan-title">Pro Plan</div>
+        <div class="plan-details">4 GB RAM • 50 Players Max • Mod Support • Priority Support</div>
+        <a class="btn-primary" href="#">Buy Now - $5/mo</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚙️</div>
-        <h3>Easy Setup & Control</h3>
-        <p>Intuitive control panel lets you manage plugins, players, and settings effortlessly.</p>
+      <div class="plan-card">
+        <div class="plan-icon">🏆</div>
+        <div class="plan-title">Elite Plan</div>
+        <div class="plan-details">8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</div>
+        <a class="btn-primary" href="#">Buy Now - $12/mo</a>
       </div>
     </section>
 
-  </main>
+    <h2 class="section-header">Compare Plans</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th>Pro</th>
+          <th>Elite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>RAM</td><td>1 GB</td><td>4 GB</td><td>8 GB</td></tr>
+        <tr><td>Max Players</td><td>10</td><td>50</td><td>Unlimited</td></tr>
+        <tr><td>Mod Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Priority Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Dedicated Resources</td><td>✗</td><td>✗</td><td>✓</td></tr>
+        <tr><td>Custom Domain</td><td>✗</td><td>✗</td><td>✓</td></tr>
+      </tbody>
+    </table>
+
+    <aside class="sidebar" style="background-color:#1a1a1a; padding: 1rem; border-radius: 8px; margin-top: 3rem; max-width: 300px; float: right;">
+      <h3 style="color:#ff6600; margin-bottom: 1rem;">Changelog</h3>
+      <ul style="color:#ccc; list-style-type: disc; padding-left: 1.2rem;">
+        <li>New Elite Plan Added</li>
+        <li>Partnered Servers Updated</li>
+        <li>Improved Server Uptime</li>
+      </ul>
+    </aside>
+  </div>
 
   <footer class="footer">
     <div class="footer-content">
@@ -102,16 +176,5 @@
       </div>
     </div>
   </footer>
-
-  <script>
-    // Example: Simple Buy button click handler
-    document.querySelectorAll('.buy-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const plan = button.dataset.plan;
-        alert(`You selected the ${plan} plan. Redirecting to checkout...`);
-        // TODO: Replace alert with real checkout flow
-      });
-    });
-  </script>
 </body>
 </html>
