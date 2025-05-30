@@ -10,7 +10,11 @@
 }
 
 body {
-  background-color: #000;
+  background-color: #121214;
+  background-image: radial-gradient(rgba(255, 111, 0, 0.05) 1px, transparent 1px),
+                    radial-gradient(rgba(255, 111, 0, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
   line-height: 1.6;
 }
 
@@ -189,18 +193,13 @@ body {
 
 .feature-card {
   flex: 0 0 280px;
-  background-color: #1c1c1e;
-  padding: 1.8rem 2rem;
+  background: rgba(255, 111, 0, 0.05);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 1.8rem 2rem;
+  box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
   text-align: center;
   color: #eee;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
 }
 
 .feature-icon {
