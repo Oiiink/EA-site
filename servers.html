@@ -6,6 +6,13 @@
   <title>Servers - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
+    /* Container to keep content centered and constrained */
+    .container.main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem; /* horizontal padding */
+    }
+
     .section-header {
       text-align: center;
       font-size: 2rem;
@@ -13,57 +20,190 @@
       margin: 3rem 0 2rem;
       color: #ff6600;
     }
-    .plans-grid {
+
+    /* Features Grid */
+    .features-grid {
       display: flex;
-      gap: 2rem;
       flex-wrap: wrap;
+      gap: 2rem;
       justify-content: center;
     }
+
+    .feature-card {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 1.5rem;
+      flex: 1 1 280px;
+      max-width: 320px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      text-align: center;
+      color: #fff;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #e65500;
+    }
+
+    /* Plans Grid */
+    .plans-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      padding-bottom: 3rem;
+    }
+
     .plan-card {
       background-color: #1e1e1e;
       border-radius: 12px;
       padding: 2rem;
-      width: 300px;
-      text-align: center;
+      flex: 1 1 280px;
+      max-width: 320px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+      text-align: center;
+      color: #fff;
       transition: transform 0.3s ease;
     }
+
     .plan-card:hover {
       transform: translateY(-5px);
     }
+
     .plan-icon {
       font-size: 2.5rem;
       margin-bottom: 1rem;
     }
+
     .plan-title {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #fff;
       margin-bottom: 0.5rem;
     }
+
     .plan-details {
       font-size: 1rem;
       color: #ccc;
       margin-bottom: 1.5rem;
     }
-    .comparison-table {
-      width: 100%;
-      max-width: 900px;
-      margin: 2rem auto;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-      color: #eee;
-      border-radius: 8px;
-      overflow: hidden;
+
+    /* Navbar styling (assumed from existing css) */
+    nav.navbar {
+      background-color: #111;
+      padding: 1rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
-    .comparison-table th, .comparison-table td {
-      border: 1px solid #333;
-      padding: 1rem;
-      text-align: center;
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .comparison-table th {
-      background-color: #2a2a2a;
+
+    .nav-logo {
+      color: #ff6600;
       font-weight: 700;
+      font-size: 1.4rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: 32px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-menu li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .nav-menu li a:hover {
+      color: #ff6600;
+    }
+
+    /* Hero section */
+    .hero {
+      background-color: #111;
+      color: #fff;
+      text-align: center;
+      padding: 6rem 1rem 4rem;
+    }
+
+    .hero-logo {
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+      color: #ff6600;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Footer */
+    footer.footer {
+      background-color: #111;
+      color: #666;
+      padding: 2rem 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .social-links a {
+      margin: 0 0.5rem;
+      color: #666;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .social-links a:hover {
       color: #ff6600;
     }
   </style>
@@ -135,26 +275,6 @@
         <a class="btn-primary" href="#">Buy Now - $12/mo</a>
       </div>
     </section>
-
-    <h2 class="section-header">Compare Plans</h2>
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>Free</th>
-          <th>Pro</th>
-          <th>Elite</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>RAM</td><td>1 GB</td><td>4 GB</td><td>8 GB</td></tr>
-        <tr><td>Max Players</td><td>10</td><td>50</td><td>Unlimited</td></tr>
-        <tr><td>Mod Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
-        <tr><td>Priority Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
-        <tr><td>Dedicated Resources</td><td>✗</td><td>✗</td><td>✓</td></tr>
-        <tr><td>Custom Domain</td><td>✗</td><td>✗</td><td>✓</td></tr>
-      </tbody>
-    </table>
   </div>
 
   <footer class="footer">
