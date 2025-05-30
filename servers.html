@@ -2,70 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Servers - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <style>
-    .servers-hero {
-      background: linear-gradient(135deg, #ff6600, #ff9933);
-      padding: 5rem 2rem;
-      text-align: center;
-      color: #fff;
-    }
-
-    .servers-hero h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      font-weight: 800;
-    }
-
-    .servers-hero p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .servers-list {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .server-card {
-      background-color: #1e1e1e;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-      transition: transform 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .server-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .server-name {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #ff6600;
-    }
-
-    .server-desc {
-      font-size: 1rem;
-      color: #ccc;
-    }
-
-    .server-ip {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #ffa066;
-    }
-  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -82,28 +21,36 @@
     </div>
   </nav>
 
-  <section class="servers-hero">
-    <h1>Event-Supported Servers</h1>
-    <p>Explore public and private servers using EventUtils. Join a thriving community where events matter.</p>
+  <section class="hero">
+    <div class="logo-wrapper">
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+    </div>
+    <h1>Get Your Own Event Server</h1>
+    <p>Powerful and reliable Minecraft servers, made for events.</p>
   </section>
 
-  <section class="servers-list">
-    <div class="server-card">
-      <div class="server-name">PlayCube Events</div>
-      <div class="server-desc">Known for their weekly PvP and UHC events, this server runs EventUtils for notifications and visibility control.</div>
-      <div class="server-ip">IP: play.playcube.net</div>
-    </div>
-    <div class="server-card">
-      <div class="server-name">SkyRush Network</div>
-      <div class="server-desc">Event-focused Skyblock and Minigames with real-time alerts and in-game UI powered by EventUtils.</div>
-      <div class="server-ip">IP: skyrush.gg</div>
-    </div>
-    <div class="server-card">
-      <div class="server-name">EliteGames</div>
-      <div class="server-desc">Invite-only server for tournament events using fully customized EventUtils integration.</div>
-      <div class="server-ip">IP: elitegames.pro (Whitelist Only)</div>
-    </div>
-  </section>
+  <div class="container main-content">
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎉</div>
+        <h3>Free Plan</h3>
+        <p>1 GB RAM • 10 Players Max • Community Support</p>
+        <a class="btn-primary" href="#">Get Started</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Pro Plan</h3>
+        <p>4 GB RAM • 50 Players Max • Mod Support • Priority Support</p>
+        <a class="btn-primary" href="#">Buy Now - $5/mo</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Elite Plan</h3>
+        <p>8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</p>
+        <a class="btn-primary" href="#">Buy Now - $12/mo</a>
+      </div>
+    </section>
+  </div>
 
   <footer class="footer">
     <div class="footer-content">
