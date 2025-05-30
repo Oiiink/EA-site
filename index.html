@@ -27,6 +27,12 @@
     </div>
     <h1>Stay ahead with EventUtils</h1>
     <p>Meant for events. Made for events.</p>
+
+    <!-- Typing animation container -->
+    <div class="typing-wrapper">
+      <span class="typing-text"></span>
+    </div>
+
     <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
       <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
       Get it on Modrinth
@@ -85,5 +91,21 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    const typingText = document.querySelector('.typing-text');
+    const textToType = "Built for performance, designed for you.";
+    let index = 0;
+
+    function type() {
+      if (index < textToType.length) {
+        typingText.textContent += textToType.charAt(index);
+        index++;
+        setTimeout(type, 100);
+      }
+    }
+
+    type();
+  </script>
 </body>
 </html>
