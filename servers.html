@@ -5,6 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Servers - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .section-header {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 3rem 0 2rem;
+      color: #ff6600;
+    }
+    .plans-grid {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .plan-card {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+      transition: transform 0.3s ease;
+    }
+    .plan-card:hover {
+      transform: translateY(-5px);
+    }
+    .plan-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .plan-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .plan-details {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+    .comparison-table {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-collapse: collapse;
+      background-color: #1e1e1e;
+      color: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .comparison-table th, .comparison-table td {
+      border: 1px solid #333;
+      padding: 1rem;
+      text-align: center;
+    }
+    .comparison-table th {
+      background-color: #2a2a2a;
+      font-weight: 700;
+      color: #ff6600;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -30,48 +92,69 @@
   </section>
 
   <div class="container main-content">
+    <h2 class="section-header">Partnered Servers</h2>
     <section class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
-        <h3>Partnered Server: MCEvents</h3>
+        <h3>MCEvents</h3>
         <p>One of the most trusted event servers powered by EventUtils.</p>
         <a class="btn-primary" href="#">Join Now</a>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
-        <h3>Partnered Server: BuildCon</h3>
+        <h3>BuildCon</h3>
         <p>Massive building competition hub with thousands of players.</p>
         <a class="btn-primary" href="#">Join Now</a>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌟</div>
-        <h3>Partnered Server: PvP Battle</h3>
+        <h3>PvP Battle</h3>
         <p>Top-tier event PvP tournaments hosted regularly.</p>
         <a class="btn-primary" href="#">Join Now</a>
       </div>
     </section>
 
-    <h2 style="margin-top: 4rem; text-align: center; color: #ff6600;">Server Plans</h2>
-    <section class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎉</div>
-        <h3>Free Plan</h3>
-        <p>1 GB RAM • 10 Players Max • Community Support</p>
+    <h2 class="section-header">Server Plans</h2>
+    <section class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-icon">🎉</div>
+        <div class="plan-title">Free Plan</div>
+        <div class="plan-details">1 GB RAM • 10 Players Max • Community Support</div>
         <a class="btn-primary" href="#">Get Started</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🚀</div>
-        <h3>Pro Plan</h3>
-        <p>4 GB RAM • 50 Players Max • Mod Support • Priority Support</p>
+      <div class="plan-card">
+        <div class="plan-icon">🚀</div>
+        <div class="plan-title">Pro Plan</div>
+        <div class="plan-details">4 GB RAM • 50 Players Max • Mod Support • Priority Support</div>
         <a class="btn-primary" href="#">Buy Now - $5/mo</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏆</div>
-        <h3>Elite Plan</h3>
-        <p>8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</p>
+      <div class="plan-card">
+        <div class="plan-icon">🏆</div>
+        <div class="plan-title">Elite Plan</div>
+        <div class="plan-details">8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</div>
         <a class="btn-primary" href="#">Buy Now - $12/mo</a>
       </div>
     </section>
+
+    <h2 class="section-header">Compare Plans</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th>Pro</th>
+          <th>Elite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>RAM</td><td>1 GB</td><td>4 GB</td><td>8 GB</td></tr>
+        <tr><td>Max Players</td><td>10</td><td>50</td><td>Unlimited</td></tr>
+        <tr><td>Mod Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Priority Support</td><td>✗</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Dedicated Resources</td><td>✗</td><td>✗</td><td>✓</td></tr>
+        <tr><td>Custom Domain</td><td>✗</td><td>✗</td><td>✓</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <footer class="footer">
