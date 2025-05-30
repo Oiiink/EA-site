@@ -15,13 +15,14 @@
       color: #ff6600;
     }
 
-    /* Feature Cards */
+    /* Feature Cards - now horizontal scroll */
     .features-grid {
       display: flex;
-      justify-content: center;
       gap: 2rem;
-      flex-wrap: wrap;
-      margin-bottom: 3rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
     }
     .feature-card {
       background: linear-gradient(145deg, #292929, #1f1f1f);
@@ -37,6 +38,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      flex: 0 0 280px; /* fixed width, prevents shrinking */
     }
     .feature-card:hover {
       transform: translateY(-10px);
@@ -223,20 +225,20 @@
       <div class="plan-card">
         <div class="plan-icon">🏆</div>
         <div class="plan-title">Elite Plan</div>
-        <div class="plan-details">8 GB RAM • Unlimited Players • Full Access • Dedicated Resources</div>
-        <a class="btn-primary" href="#">Buy Now - $12/mo</a>
+        <div class="plan-details">8 GB RAM • Unlimited Players • Full Plugin Support • 24/7 Support</div>
+        <a class="btn-primary" href="#">Buy Now - $15/mo</a>
       </div>
     </section>
 
-    <h2 class="section-header">Compare Plans</h2>
+    <h2 class="section-header">Plan Comparison</h2>
     <div class="comparison-table-container">
-      <table class="comparison-table" aria-label="Server Plans Comparison">
+      <table class="comparison-table">
         <thead>
           <tr>
             <th>Features</th>
-            <th>Free Plan</th>
-            <th>Pro Plan</th>
-            <th>Elite Plan</th>
+            <th>Free</th>
+            <th>Pro</th>
+            <th>Elite</th>
           </tr>
         </thead>
         <tbody>
@@ -253,43 +255,32 @@
             <td>Unlimited</td>
           </tr>
           <tr>
-            <td class="plan-name">Mod Support</td>
-            <td><span class="crossmark">✗</span></td>
-            <td><span class="checkmark">✓</span></td>
-            <td><span class="checkmark">✓</span></td>
+            <td class="plan-name">Plugin Support</td>
+            <td class="crossmark">✗</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
           </tr>
           <tr>
             <td class="plan-name">Priority Support</td>
-            <td><span class="crossmark">✗</span></td>
-            <td><span class="checkmark">✓</span></td>
-            <td><span class="checkmark">✓</span></td>
+            <td class="crossmark">✗</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
           </tr>
           <tr>
-            <td class="plan-name">Dedicated Resources</td>
-            <td><span class="crossmark">✗</span></td>
-            <td><span class="crossmark">✗</span></td>
-            <td><span class="checkmark">✓</span></td>
+            <td class="plan-name">24/7 Support</td>
+            <td class="crossmark">✗</td>
+            <td class="crossmark">✗</td>
+            <td class="checkmark">✓</td>
           </tr>
           <tr>
-            <td class="plan-name">Community Support</td>
-            <td><span class="checkmark">✓</span></td>
-            <td><span class="checkmark">✓</span></td>
-            <td><span class="checkmark">✓</span></td>
+            <td class="plan-name">Price</td>
+            <td>Free</td>
+            <td>$5/mo</td>
+            <td>$15/mo</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
-      </div>
-    </div>
-  </footer>
 </body>
 </html>
