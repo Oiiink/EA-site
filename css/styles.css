@@ -6,6 +6,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #eee;
   background-color: #121214;
+  text-decoration: none;
 }
 
 body {
@@ -54,7 +55,6 @@ body {
 
 .nav-menu li a {
   color: #eee;
-  text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
   padding: 0.3rem 0.6rem;
@@ -73,6 +73,9 @@ body {
   padding: 4rem 1rem 3rem;
   max-width: 720px;
   margin: 0 auto;
+  background: linear-gradient(145deg, #1f1f21, #181819);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgb(255 111 0 / 0.15);
 }
 
 .logo-wrapper {
@@ -97,31 +100,10 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Typing animation styles */
-.typing-wrapper {
-  max-width: 600px;
-  margin: 1.5rem auto 2rem auto;
-  white-space: nowrap;
-  overflow: visible;
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #ff6f00;
-  height: 2.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-right: 2px solid #ff6f00; /* cursor effect */
-  animation: blink-caret 0.75s step-end infinite;
-}
-
-@keyframes blink-caret {
-  50% {
-    border-color: transparent;
-  }
-  100% {
-    border-color: #ff6f00;
-  }
+.modrinth-icon {
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 0.5rem;
 }
 
 /* Main container */
@@ -129,6 +111,94 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem 2rem 4rem;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  background: #1f1f21;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgb(255 111 0 / 0.15);
+}
+
+.sidebar h2 {
+  color: #ff6f00;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.changelog-card {
+  margin-bottom: 1.5rem;
+}
+
+.changelog-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.changelog-date {
+  font-size: 0.9rem;
+  color: #ffa726;
+}
+
+.changelog-title {
+  font-weight: 700;
+  margin-top: 0.3rem;
+}
+
+.changelog-description {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 0.3rem 0;
+}
+
+.view-full {
+  background: none;
+  border: 1px solid #ff6f00;
+  color: #ff6f00;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-full:hover {
+  background: #ff6f00;
+  color: #121214;
+}
+
+/* Features Section */
+.features-grid {
+  margin-top: 4rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: #1f1f21;
+  border-radius: 12px;
+  padding: 1.8rem 2rem;
+  width: 280px;
+  box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
+  text-align: center;
+  color: #eee;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+  color: #ff6f00;
 }
 
 /* Plans Section */
@@ -214,6 +284,7 @@ body {
   border-bottom: none;
 }
 
+/* Buttons */
 .btn-primary {
   padding: 0.8rem 2.5rem;
   border-radius: 25px;
@@ -225,35 +296,12 @@ body {
   text-decoration: none;
   border: none;
   transition: box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-primary:hover {
   box-shadow: 0 6px 20px rgb(255 167 38 / 0.9);
-}
-
-/* Features Section */
-.features-grid {
-  margin-top: 4rem;
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.feature-card {
-  background: #1f1f21;
-  border-radius: 12px;
-  padding: 1.8rem 2rem;
-  width: 280px;
-  box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
-  text-align: center;
-  color: #eee;
-}
-
-.feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.8rem;
-  color: #ff6f00;
 }
 
 /* Footer */
@@ -274,6 +322,7 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .social-links a {
@@ -281,33 +330,41 @@ body {
   margin-left: 1rem;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .social-links a:hover {
-  text-decoration: underline;
-}
-
-/* Modrinth icon */
-.modrinth-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 0.5rem;
-  vertical-align: middle;
+  color: #ffa726;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none; /* Could add mobile menu later */
+  .nav-container {
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .features-grid, .plans-grid {
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .container {
+    flex-direction: column;
+  }
+
+  .plans-grid,
+  .features-grid {
     flex-direction: column;
     align-items: center;
   }
 
   .footer-content {
     flex-direction: column;
-    gap: 0.5rem;
+  }
+
+  .sidebar {
+    width: 100%;
   }
 }
