@@ -2,141 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="assets/images/favicon.png" />
 </head>
 <body>
-
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="#" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts" class="nav-logo-img" />
-        Event Alerts
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
       </a>
       <ul class="nav-menu">
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="servers.html">Servers</a></li>
-        <li><a href="changelog.html">Changelog</a></li>
-        <li><a href="#download">Download</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="servers.html">Server Hosting</a></li>
       </ul>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="logo-wrapper">
       <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
     </div>
-    <h1>Event Alerts</h1>
-    <p>Never miss a Minecraft event again. Instant notifications, easy server setup, and more.</p>
-    <a href="#download" class="btn-primary">
-      <img src="assets/images/modrinth-icon.png" class="modrinth-icon" alt="Modrinth Icon" />
-      Download on Modrinth
+    <h1>Stay ahead with EventUtils</h1>
+    <p>Meant for events. Made for events.</p>
+    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
+      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=24,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
+      Get it on Modrinth
     </a>
   </section>
 
-  <!-- Main Layout -->
-  <div class="container">
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Features -->
-      <section class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🔔</div>
-          <h3>Real-time Alerts</h3>
-          <p>Get notified the moment an event starts.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🛠️</div>
-          <h3>Easy Setup</h3>
-          <p>Plug & play support for Paper, Purpur, and more.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Fast & Lightweight</h3>
-          <p>Minimal impact on server performance.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📡</div>
-          <h3>Discord Integration</h3>
-          <p>Send alerts directly to your Discord server.</p>
-        </div>
-      </section>
-
-      <!-- Hosting Section -->
-      <section class="hosting-section">
-        <div class="hosting-content">
-          <img src="assets/images/pebblehost.png" alt="PebbleHost Logo" class="hosting-logo">
-          <div>
-            <h2>Hosted by PebbleHost</h2>
-            <p>
-              Event Alerts is proudly powered by PebbleHost's reliable and affordable hosting.
-              Our services run smoothly thanks to their high-performance infrastructure.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Plans Section -->
-      <section class="plans-section" id="download">
-        <h2>Get Started</h2>
-        <div class="plans-grid">
-          <div class="plan-card">
-            <h3>Free</h3>
-            <div class="price">$0<span>/mo</span></div>
-            <ul>
-              <li>Real-time Alerts</li>
-              <li>Basic Discord Support</li>
-              <li>Regular Updates</li>
-            </ul>
-            <a class="btn-primary" href="https://modrinth.com/plugin/event-alerts" target="_blank">Download</a>
-          </div>
-          <div class="plan-card featured">
-            <h3>Pro</h3>
-            <div class="price">$5<span>/mo</span></div>
-            <ul>
-              <li>All Free Features</li>
-              <li>Advanced Webhook Control</li>
-              <li>Priority Support</li>
-            </ul>
-            <a class="btn-primary" href="https://modrinth.com/plugin/event-alerts" target="_blank">Upgrade</a>
-          </div>
-        </div>
-      </section>
+  <div class="container main-content">
+    <div class="features-grid" id="features">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Higher FPS</h3>
+        <p>Seeing players/entities actually decreases your FPS significantly, using EventUtils you can hide players.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛠️</div>
+        <h3>Event Notifications</h3>
+        <p>Receive event notifications in-game without worrying about being tabbed into discord.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Made for every client</h3>
+        <p>We custom configurated everything to support different clients.</p>
+      </div>
     </div>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="changelog">
       <h2>Changelog</h2>
       <div class="changelog-card">
-        <img src="assets/images/update1.png" alt="Update" class="changelog-image" />
-        <div class="changelog-date">May 30, 2025</div>
-        <div class="changelog-title">v1.2 Released</div>
-        <div class="changelog-description">New features, bug fixes, and performance improvements.</div>
+        <img src="assets/images/sounds.png" alt="Update Screenshot" class="changelog-image" />
+        <div class="changelog-date">Jan 21, 2025</div>
+        <div class="changelog-title">v2.2.0 Release</div>
+        <div class="changelog-description">
+          Customizable notification sounds via config, notifications in the main menu, less crashes, etc
+        </div>
+        <button class="view-full">View Full Changelog</button>
       </div>
       <div class="changelog-card">
-        <img src="assets/images/update2.png" alt="Update" class="changelog-image" />
-        <div class="changelog-date">May 18, 2025</div>
-        <div class="changelog-title">v1.1 Patch</div>
-        <div class="changelog-description">Fixed minor issues and improved alert accuracy.</div>
+        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
+        <div class="changelog-date">Jan 13, 2025</div>
+        <div class="changelog-title">v2.1.2 Patch</div>
+        <div class="changelog-description">
+          Fixed update checker, fixed event info, etc
+        </div>
+        <button class="view-full">View Full Changelog</button>
       </div>
-      <button class="view-full" onclick="window.location.href='changelog.html'">View Full Changelog</button>
     </aside>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <div>&copy; 2025 Event Alerts. All rights reserved.</div>
+      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
       <div class="social-links">
-        <a href="https://github.com/event-alerts" target="_blank">GitHub</a>
-        <a href="https://discord.gg/eventalerts" target="_blank">Discord</a>
+        <a href="#">Twitter</a>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
       </div>
     </div>
   </footer>
-
 </body>
 </html>
