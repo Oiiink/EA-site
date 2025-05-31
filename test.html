@@ -1,262 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Event Alerts Launcher</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --orange: #ff7a00;
-      --bg-dark: #0c0c0c;
-      --bg-light: #1c1c1c;
-      --panel: #121212;
-      --text: #ffffff;
-      --muted: #aaa;
-      --border: #2a2a2a;
-      --radius: 0.75rem;
-      --glass: rgba(255, 255, 255, 0.05);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Alerts Launcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #ff7a00;
+    --orange-dark: #e06900;
+    --bg-dark: #0a0a0a;
+    --bg-light: #1c1c1c;
+    --panel: #121212;
+    --text-primary: #fff;
+    --text-muted: #bbb;
+    --border: #2a2a2a;
+    --radius: 12px;
+    --shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+    --transition: 0.3s ease;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body, html {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
+    color: var(--text-primary);
+    overflow: hidden;
+  }
+  .launcher {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    backdrop-filter: blur(12px);
+  }
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    background: rgba(20, 20, 20, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin-bottom: 3rem;
+    box-shadow: 0 0 20px var(--orange);
+    object-fit: cover;
+  }
+  .tab-button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 1.15rem;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--transition), color var(--transition);
+  }
+  .tab-button.active,
+  .tab-button:hover {
+    background: var(--orange);
+    color: #121212;
+    box-shadow: var(--shadow);
+  }
+  /* Main area */
+  .main {
+    flex-grow: 1;
+    padding: 3rem 4rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .header h1 {
+    font-weight: 800;
+    font-size: 2.75rem;
+    color: var(--orange);
+    user-select: none;
+  }
+  #status {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--text-muted);
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+  /* Play tab content */
+  .play-tab {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 
-    html, body {
-      height: 100%;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #1c1c1c, #0c0c0c);
-      color: var(--text);
-      overflow: hidden;
-    }
+  /* Left panel - Play controls */
+  .play-panel {
+    background: var(--panel);
+    border-radius: var(--radius);
+    padding: 2.5rem 3rem;
+    box-shadow: var(--shadow);
+    flex: 1 1 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 
-    .launcher {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      height: 100%;
-      backdrop-filter: blur(10px);
-    }
+  .play-panel label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--orange);
+  }
+  .play-panel input[type="text"],
+  .play-panel select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #121212;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color var(--transition);
+  }
+  .play-panel input[type="text"]:focus,
+  .play-panel select:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 8px var(--orange);
+  }
+  .play-button {
+    background: var(--orange);
+    color: #121212;
+    font-weight: 700;
+    padding: 1.2rem 0;
+    font-size: 1.4rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: background var(--transition), transform 0.2s ease;
+  }
+  .play-button:hover {
+    background: var(--orange-dark);
+    transform: scale(1.05);
+  }
 
-    .sidebar {
-      background-color: var(--panel);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-    }
+  /* Right panel - Mod profiles */
+  .mod-panel {
+    background: var(--panel);
+    border-radius: var(--radius);
+    padding: 2.5rem 3rem;
+    box-shadow: var(--shadow);
+    flex: 1 1 300px;
+  }
+  .mod-panel h2 {
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--orange);
+  }
+  .mod-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .mod-list li {
+    background: #1c1c1c;
+    padding: 0.75rem 1.2rem;
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+  }
+  .mod-list li:hover,
+  .mod-list li.active {
+    background: var(--orange);
+    color: #121212;
+  }
 
-    .sidebar img {
-      width: 90px;
-      border-radius: 50%;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 15px var(--orange);
+  /* Animated tab fade */
+  .tab-content {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+  .tab-content.active {
+    opacity: 1;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
     }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-    .sidebar button {
-      background: none;
-      border: none;
-      color: var(--muted);
-      padding: 0.75rem;
-      width: 100%;
-      text-align: left;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-      font-size: 1rem;
-    }
-
-    .sidebar button.active,
-    .sidebar button:hover {
-      background: var(--orange);
-      color: #000;
-    }
-
-    .main {
-      display: flex;
-      flex-direction: column;
-      padding: 2rem;
-      overflow-y: auto;
-      background: linear-gradient(to bottom right, var(--bg-light), var(--bg-dark));
-    }
-
-    .header {
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header h1 {
-      font-size: 1.75rem;
-      color: var(--orange);
-    }
-
-    .tab {
-      display: none;
-      animation: fadeInUp 0.4s ease forwards;
-    }
-
-    .tab.active {
-      display: block;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .launcher-controls {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-
-    .launcher-controls input,
-    .launcher-controls select {
-      background: var(--panel);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-    }
-
-    .play-button {
-      padding: 1rem 2rem;
-      background: var(--orange);
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: transform 0.2s ease;
-    }
-
-    .play-button:hover {
-      transform: scale(1.05);
-    }
-
-    .news-item {
-      background: var(--glass);
-      padding: 1rem;
-      border-radius: var(--radius);
-      margin-bottom: 1rem;
-      border-left: 4px solid var(--orange);
-    }
-
-    .news-item h3 {
-      color: var(--orange);
-      margin-bottom: 0.25rem;
-    }
-
-    .mod-profile {
-      background: var(--panel);
-      padding: 1rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      margin-top: 2rem;
-    }
-
-    .mod-profile h3 {
-      color: var(--orange);
-    }
-
-    .mod-profile ul {
-      list-style: disc;
-      margin-left: 1.5rem;
-      color: var(--muted);
-    }
-
-    #status {
-      font-size: 0.9rem;
-      color: var(--muted);
-      font-style: italic;
-    }
-  </style>
+  /* Scrollbar for main */
+  .main::-webkit-scrollbar {
+    width: 8px;
+  }
+  .main::-webkit-scrollbar-thumb {
+    background: var(--orange);
+    border-radius: var(--radius);
+  }
+</style>
 </head>
 <body>
   <div class="launcher">
-    <div class="sidebar">
-      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo">
+    <aside class="sidebar">
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" />
       <button class="tab-button active" onclick="switchTab('play')">▶ Play</button>
       <button class="tab-button" onclick="switchTab('news')">📰 News</button>
-      <button class="tab-button" onclick="checkUpdate()">⬆ Update</button>
-    </div>
-    <div class="main">
-      <div class="header">
+      <button class="tab-button" onclick="checkUpdate()">⬆ Updates</button>
+    </aside>
+    <main class="main">
+      <header class="header">
         <h1>Event Alerts Launcher</h1>
         <span id="status"></span>
-      </div>
+      </header>
 
-      <div class="tab active" id="playTab">
-        <div class="launcher-controls">
-          <input type="text" id="username" placeholder="Username">
-          <select id="version">
-            <option value="1.20.1">1.20.1</option>
-            <option value="1.19.4">1.19.4</option>
-            <option value="1.8.9">1.8.9</option>
-          </select>
-          <button class="play-button" onclick="launchGame()">PLAY</button>
-        </div>
-        <div class="mod-profile">
-          <h3>Mod Profile: Default</h3>
-          <ul>
-            <li>OptiFine</li>
-            <li>Replay Mod</li>
-            <li>Minimap Mod</li>
-          </ul>
-        </div>
-      </div>
+      <section id="playTab" class="tab-content active">
+        <div class="play-tab">
+          <div class="play-panel">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your Minecraft username" />
+            
+            <label for="version">Minecraft Version</label>
+            <select id="version">
+              <option value="1.20.1">1.20.1</option>
+              <option value="1.19.4">1.19.4</option>
+              <option value="1.8.9">1.8.9</option>
+            </select>
 
-      <div class="tab" id="newsTab">
-        <div class="news-item">
-          <h3>🔥 Version 1.20.1 Released</h3>
-          <p>Enhanced performance and updated mods.</p>
+            <button class="play-button" onclick="launchGame()">PLAY</button>
+          </div>
+
+          <aside class="mod-panel">
+            <h2>Mod Profiles</h2>
+            <ul class="mod-list" id="modList">
+              <li class="active" onclick="selectMod(this)">Default</li>
+              <li onclick="selectMod(this)">OptiFine Boost</li>
+              <li onclick="selectMod(this)">PvP Pack</li>
+              <li onclick="selectMod(this)">Adventure Mode</li>
+            </ul>
+          </aside>
         </div>
-        <div class="news-item">
-          <h3>🎨 Full UI Redesign</h3>
-          <p>Inspired by Lunar and Feather Client.</p>
-        </div>
-      </div>
-    </div>
+      </section>
+
+      <section id="newsTab" class="tab-content" style="display:none;">
+        <article class="news-item">
+          <h3>🔥 1.20.1 Released</h3>
+          <p>Enjoy better performance, UI enhancements, and updated support for new mods.</p>
+        </article>
+        <article class="news-item">
+          <h3>🎨 UI Redesign</h3>
+          <p>Inspired by Lunar and Feather Client, enjoy a sleek, modern experience.</p>
+        </article>
+      </section>
+    </main>
   </div>
 
   <script>
     function switchTab(tab) {
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+        content.classList.remove('active');
+      });
       event.target.classList.add('active');
-      document.querySelectorAll('.tab').forEach(panel => panel.classList.remove('active'));
-      document.getElementById(tab + 'Tab').classList.add('active');
+      const selectedTab = document.getElementById(tab + 'Tab');
+      selectedTab.style.display = 'block';
+      setTimeout(() => selectedTab.classList.add('active'), 10);
+      document.getElementById('status').textContent = '';
     }
 
     function checkUpdate() {
       const status = document.getElementById("status");
-      status.innerText = "Checking for updates...";
+      status.textContent = "Checking for updates...";
       setTimeout(() => {
-        status.innerText = "You're running the latest version.";
+        status.textContent = "You're running the latest version.";
       }, 1500);
     }
 
     function launchGame() {
-      const username = document.getElementById("username").value;
+      const username = document.getElementById("username").value.trim();
       const version = document.getElementById("version").value;
       const status = document.getElementById("status");
       if (!username) {
-        status.innerText = "Please enter a username.";
+        status.textContent = "Please enter a username.";
         return;
       }
-      status.innerText = `Launching Minecraft ${version} for ${username}...`;
+      status.textContent = `Launching Minecraft ${version} for ${username}...`;
+    }
+
+    function selectMod(el) {
+      document.querySelectorAll('.mod-list li').forEach(li => li.classList.remove('active'));
+      el.classList.add('active');
+      const status = document.getElementById("status");
+      status.textContent = `Mod profile selected: ${el.textContent}`;
     }
   </script>
 </body>
