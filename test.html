@@ -1,267 +1,358 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Minecraft Launcher</title>
-<style>
-  /* Reset */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minecraft Launcher - Modrinth Style</title>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f7;
+      color: #2c2c2c;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-  body {
-    background: #121212;
-    color: #eee;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-  }
+    #app {
+      display: flex;
+      flex: 1;
+      height: 100vh;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgb(0 0 0 / 0.05);
+    }
 
-  .launcher {
-    background: #1f1f1f;
-    width: 460px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: #ffffff;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 20px;
+      box-shadow: inset -1px 0 0 #ddd;
+    }
 
-  /* Header */
-  .launcher-header {
-    background: linear-gradient(90deg, #4caf50, #087f23);
-    padding: 20px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
-    user-select: none;
-    text-align: center;
-  }
+    .sidebar h1 {
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin-bottom: 40px;
+      color: #7e3ff2; /* Modrinth purple accent */
+      user-select: none;
+    }
 
-  /* Login Screen */
-  .login-screen {
-    padding: 30px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    .nav-button {
+      background: none;
+      border: none;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #4b4b4b;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  .login-screen input[type="text"] {
-    padding: 14px 15px;
-    border-radius: 6px;
-    border: none;
-    font-size: 1rem;
-    background: #2b2b2b;
-    color: #eee;
-    outline-offset: 2px;
-    outline-color: transparent;
-    transition: outline-color 0.2s ease;
-  }
+    .nav-button:hover, .nav-button.active {
+      background: #7e3ff2;
+      color: white;
+      box-shadow: 0 4px 12px rgb(126 63 242 / 0.25);
+    }
 
-  .login-screen input[type="text"]:focus {
-    outline-color: #4caf50;
-  }
+    .nav-button svg {
+      fill: currentColor;
+      width: 18px;
+      height: 18px;
+    }
 
-  .login-screen button {
-    background: #4caf50;
-    border: none;
-    padding: 14px 0;
-    font-weight: 600;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
+    /* Main Content */
+    .content {
+      flex: 1;
+      background: #fff;
+      padding: 40px 50px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
 
-  .login-screen button:hover:not(:disabled) {
-    background: #3a9430;
-  }
+    /* Login screen */
+    .login-screen {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 18px rgb(0 0 0 / 0.1);
+      padding: 40px 35px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
 
-  .login-screen button:disabled {
-    background: #2f6121;
-    cursor: default;
-  }
+    .login-screen h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #4b4b4b;
+      margin-bottom: 10px;
+      user-select: none;
+    }
 
-  /* Dashboard */
-  .dashboard {
-    padding: 30px 35px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-  }
+    .login-screen input {
+      font-size: 1rem;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1.5px solid #ddd;
+      outline-offset: 2px;
+      outline-color: transparent;
+      transition: border-color 0.3s ease;
+    }
+    .login-screen input:focus {
+      border-color: #7e3ff2;
+      outline-color: #7e3ff2;
+    }
 
-  /* Profile greeting */
-  .greeting {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #d0d0d0;
-    user-select: none;
-  }
+    .login-screen button {
+      background: #7e3ff2;
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1.15rem;
+      padding: 15px 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .login-screen button:disabled {
+      background: #b8aef6;
+      cursor: default;
+    }
+    .login-screen button:not(:disabled):hover {
+      background: #6c33d1;
+    }
 
-  /* News panel */
-  .news-panel {
-    background: #292929;
-    border-radius: 10px;
-    padding: 20px 20px;
-    max-height: 120px;
-    overflow-y: auto;
-  }
+    /* Dashboard Header */
+    .dashboard-header {
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: 30px;
+      user-select: none;
+    }
 
-  .news-panel h3 {
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: #4caf50;
-  }
+    /* News Card */
+    .card {
+      background: #fafafa;
+      border-radius: 14px;
+      padding: 25px 30px;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.05);
+      margin-bottom: 30px;
+    }
+    .card h3 {
+      color: #7e3ff2;
+      margin-bottom: 15px;
+      font-weight: 700;
+      user-select: none;
+    }
+    .card ul {
+      list-style: disc;
+      padding-left: 18px;
+      color: #444;
+      font-size: 1rem;
+      line-height: 1.4;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .card ul::-webkit-scrollbar {
+      width: 7px;
+    }
+    .card ul::-webkit-scrollbar-thumb {
+      background-color: #7e3ff2;
+      border-radius: 10px;
+    }
 
-  .news-panel ul {
-    list-style: disc;
-    padding-left: 20px;
-    font-size: 0.95rem;
-    line-height: 1.3;
-  }
+    /* Version selector */
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+    select {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: 1.5px solid #ddd;
+      background: white;
+      color: #2c2c2c;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+      appearance: none;
+      outline-offset: 2px;
+      outline-color: transparent;
+    }
+    select:focus {
+      border-color: #7e3ff2;
+      outline-color: #7e3ff2;
+    }
 
-  /* Version selector */
-  label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-    user-select: none;
-  }
+    /* Launch Button */
+    .launch-btn {
+      margin-top: 30px;
+      width: 100%;
+      background: #7e3ff2;
+      border: none;
+      border-radius: 14px;
+      padding: 18px 0;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgb(126 63 242 / 0.5);
+      transition: background 0.3s ease;
+    }
+    .launch-btn:hover {
+      background: #6c33d1;
+    }
 
-  select {
-    width: 100%;
-    padding: 14px 15px;
-    border-radius: 8px;
-    font-size: 1rem;
-    border: none;
-    background: #2e2e2e;
-    color: #eee;
-    outline-offset: 2px;
-    outline-color: transparent;
-    transition: outline-color 0.2s ease;
-    appearance: none;
-    cursor: pointer;
-  }
+    /* Profile Info */
+    .profile-info {
+      margin-bottom: 40px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #555;
+      user-select: none;
+    }
 
-  select:focus {
-    outline-color: #4caf50;
-  }
+    /* Utility - hide elements */
+    .hidden {
+      display: none !important;
+    }
 
-  /* Launch button */
-  .launch-btn {
-    margin-top: 25px;
-    width: 100%;
-    padding: 16px 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-radius: 8px;
-    border: none;
-    background: #4caf50;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-
-  .launch-btn:hover {
-    background: #3a9430;
-  }
-
-  /* Scrollbar styling for news panel */
-  .news-panel::-webkit-scrollbar {
-    width: 8px;
-  }
-  .news-panel::-webkit-scrollbar-track {
-    background: #292929;
-  }
-  .news-panel::-webkit-scrollbar-thumb {
-    background: #4caf50;
-    border-radius: 10px;
-  }
-</style>
+  </style>
 </head>
 <body>
+  <div id="app">
 
-<div class="launcher" id="launcher">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <h1>MCL</h1>
+      <button class="nav-button active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10zm10 8h8v-6h-8v6zm0-8h8V3h-8v10zm-10 8h8v-6H3v6z"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-button" data-tab="mods" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13H5v-2h14v2z"/></svg>
+        Mods (Coming soon)
+      </button>
+      <button class="nav-button" data-tab="settings" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.43 12.98l1.77-1.02-1.77-1.02-.34-2.4h-2.06l-.33-2.39-1.77-1.01-1.02-1.76-1.02 1.76-1.77 1.01-.33 2.39h-2.06l-.33 2.4 1.77 1.02.34 2.39h2.06l.33 2.4 1.77 1.01 1.02 1.76 1.02-1.76 1.77-1.01.33-2.4h2.06l.33-2.4z"/></svg>
+        Settings (Coming soon)
+      </button>
+    </nav>
 
-  <!-- Header -->
-  <div class="launcher-header">
-    Minecraft Launcher
+    <!-- Main Content Area -->
+    <main class="content">
+
+      <!-- Login Screen -->
+      <section class="login-screen" id="loginScreen">
+        <h2>Sign In</h2>
+        <input
+          type="text"
+          id="usernameInput"
+          placeholder="Username or Email"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="loginBtn" disabled>Sign In</button>
+      </section>
+
+      <!-- Dashboard -->
+      <section id="dashboard" class="hidden">
+        <div class="profile-info" id="profileInfo">Logged in as <strong>User</strong></div>
+
+        <div class="card news-card">
+          <h3>Latest News</h3>
+          <ul>
+            <li>Welcome to the new Minecraft Launcher!</li>
+            <li>Version 1.20.1 now available.</li>
+            <li>Upcoming: mod support and profiles.</li>
+          </ul>
+        </div>
+
+        <label for="versionSelect">Minecraft Version</label>
+        <select id="versionSelect">
+          <option value="1.20.1">1.20.1</option>
+          <option value="1.19.4">1.19.4</option>
+          <option value="1.18.2">1.18.2</option>
+          <option value="1.17.1">1.17.1</option>
+        </select>
+
+        <button class="launch-btn" id="launchBtn">Launch Minecraft</button>
+      </section>
+    </main>
+
   </div>
 
-  <!-- Login Screen -->
-  <div class="login-screen" id="loginScreen">
-    <input
-      type="text"
-      id="usernameInput"
-      placeholder="Enter your username"
-      autocomplete="off"
-      spellcheck="false"
-    />
-    <button id="loginBtn" disabled>Login</button>
-  </div>
+  <script>
+    // Simple tab switching & login logic
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginBtn = document.getElementById('loginBtn');
+    const usernameInput = document.getElementById('usernameInput');
+    const profileInfo = document.getElementById('profileInfo');
+    const launchBtn = document.getElementById('launchBtn');
+    const navButtons = document.querySelectorAll('.nav-button');
 
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard" style="display:none;">
-    <div class="greeting" id="greetingText">Welcome, Player!</div>
+    usernameInput.addEventListener('input', () => {
+      loginBtn.disabled = usernameInput.value.trim().length === 0;
+    });
 
-    <div class="news-panel">
-      <h3>Latest News</h3>
-      <ul>
-        <li>Welcome to the Minecraft Launcher!</li>
-        <li>New snapshot 23w20a available now.</li>
-        <li>Upcoming: Mod support and custom profiles.</li>
-      </ul>
-    </div>
+    loginBtn.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      if (username.length === 0) return;
 
-    <label for="versionSelect">Select Minecraft Version</label>
-    <select id="versionSelect">
-      <option value="1.20.1">1.20.1</option>
-      <option value="1.19.4">1.19.4</option>
-      <option value="1.18.2">1.18.2</option>
-      <option value="1.17.1">1.17.1</option>
-      <option value="snapshot-23w20a">Snapshot 23w20a</option>
-    </select>
+      loginScreen.classList.add('hidden');
+      dashboard.classList.remove('hidden');
+      profileInfo.innerHTML = `Logged in as <strong>${username}</strong>`;
 
-    <button class="launch-btn" id="launchBtn">Launch Minecraft</button>
-  </div>
+      // Activate dashboard nav button
+      navButtons.forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.nav-button[data-tab="dashboard"]').classList.add('active');
+    });
 
-</div>
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return; // Ignore disabled tabs
 
-<script>
-  const usernameInput = document.getElementById('usernameInput');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginScreen = document.getElementById('loginScreen');
-  const dashboard = document.getElementById('dashboard');
-  const greetingText = document.getElementById('greetingText');
-  const launchBtn = document.getElementById('launchBtn');
-  const versionSelect = document.getElementById('versionSelect');
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-  usernameInput.addEventListener('input', () => {
-    loginBtn.disabled = usernameInput.value.trim().length === 0;
-  });
+        // For now, only dashboard is implemented
+        if (btn.dataset.tab === 'dashboard') {
+          loginScreen.classList.add('hidden');
+          dashboard.classList.remove('hidden');
+        } else {
+          // Show a placeholder or hide content
+          dashboard.classList.add('hidden');
+          loginScreen.classList.add('hidden');
+        }
+      });
+    });
 
-  loginBtn.addEventListener('click', () => {
-    const username = usernameInput.value.trim();
-    if (!username) return;
-
-    greetingText.textContent = `Welcome, ${username}!`;
-    loginScreen.style.display = 'none';
-    dashboard.style.display = 'flex';
-  });
-
-  launchBtn.addEventListener('click', () => {
-    const version = versionSelect.value;
-    alert(`Launching Minecraft version ${version}...`);
-    // Here you would add actual launch logic in a real app
-  });
-</script>
-
+    launchBtn.addEventListener('click', () => {
+      alert('Launching Minecraft with version ' + document.getElementById('versionSelect').value);
+    });
+  </script>
 </body>
 </html>
