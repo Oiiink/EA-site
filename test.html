@@ -1,431 +1,623 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts Launcher</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --orange: #ff7a00;
-    --orange-dark: #e06900;
-    --bg-dark: #0a0a0a;
-    --bg-light: #1c1c1c;
-    --panel-bg: rgba(18, 18, 18, 0.75);
-    --panel-blur: 12px;
-    --text-primary: #fff;
-    --text-muted: #bbb;
-    --border: #2a2a2a;
-    --radius: 16px;
-    --shadow: 0 8px 20px rgba(255, 122, 0, 0.4);
-    --transition: 0.3s ease;
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body, html {
-    height: 100%;
-    font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
-    color: var(--text-primary);
-    overflow: hidden;
-    user-select: none;
-  }
-  .launcher {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    backdrop-filter: blur(var(--panel-blur));
-  }
-  /* Sidebar */
-  .sidebar {
-    width: 260px;
-    background: var(--panel-bg);
-    backdrop-filter: blur(var(--panel-blur));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 3rem 1rem;
-    border-right: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  .sidebar .logo {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    margin-bottom: 3rem;
-    box-shadow: 0 0 20px var(--orange);
-    object-fit: cover;
-    user-select: none;
-  }
-  .tab-button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 1.15rem;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius);
-    margin-bottom: 0.8rem;
-    cursor: pointer;
-    text-align: left;
-    transition: background var(--transition), color var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .tab-button svg {
-    width: 20px;
-    height: 20px;
-    fill: var(--text-muted);
-    transition: fill var(--transition);
-  }
-  .tab-button.active,
-  .tab-button:hover {
-    background: var(--orange);
-    color: #121212;
-  }
-  .tab-button.active svg,
-  .tab-button:hover svg {
-    fill: #121212;
-  }
-
-  /* Main area */
-  .main {
-    flex-grow: 1;
-    padding: 3rem 4rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    position: relative;
-  }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  .header h1 {
-    font-weight: 800;
-    font-size: 2.75rem;
-    color: var(--orange);
-    user-select: none;
-  }
-  #status {
-    font-size: 0.95rem;
-    font-style: italic;
-    color: var(--text-muted);
-    height: 24px;
-  }
-
-  /* Minecraft Profile (top-right) */
-  .profile {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--panel-bg);
-    backdrop-filter: blur(var(--panel-blur));
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    box-shadow: var(--shadow);
-    user-select: none;
-    cursor: default;
-    z-index: 10;
-  }
-  .profile img {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 8px var(--orange);
-  }
-  .profile .username {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--orange);
-  }
-
-  /* Play tab content */
-  .play-tab {
-    display: flex;
-    gap: 3rem;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  /* Play panel */
-  .play-panel {
-    background: var(--panel-bg);
-    border-radius: var(--radius);
-    padding: 3rem 4rem;
-    box-shadow: var(--shadow);
-    flex: 1 1 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2rem;
-  }
-
-  /* Play controls */
-  .play-controls {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .version-select {
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: #121212;
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    min-width: 140px;
-    cursor: pointer;
-    transition: border-color var(--transition), box-shadow var(--transition);
-  }
-  .version-select:focus {
-    outline: none;
-    border-color: var(--orange);
-    box-shadow: 0 0 10px var(--orange);
-  }
-
-  .play-button {
-    background: var(--orange);
-    color: #121212;
-    font-weight: 700;
-    padding: 1.4rem 3.5rem;
-    font-size: 1.6rem;
-    border-radius: var(--radius);
-    border: none;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: background var(--transition), transform 0.2s ease;
-    flex-shrink: 0;
-  }
-  .play-button:hover {
-    background: var(--orange-dark);
-    transform: scale(1.08);
-  }
-
-  /* Right panel - Mod profiles */
-  .mod-panel {
-    background: var(--panel-bg);
-    border-radius: var(--radius);
-    padding: 3rem 3.5rem;
-    box-shadow: var(--shadow);
-    flex: 1 1 320px;
-    display: flex;
-    flex-direction: column;
-  }
-  .mod-panel h2 {
-    font-weight: 800;
-    margin-bottom: 2rem;
-    color: var(--orange);
-  }
-  .mod-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 0.3rem;
-  }
-  .mod-list li {
-    background: #1c1c1c;
-    padding: 0.9rem 1.5rem;
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background var(--transition), color var(--transition);
-    user-select: none;
-  }
-  .mod-list li:hover,
-  .mod-list li.active {
-    background: var(--orange);
-    color: #121212;
-  }
-
-  /* News tab */
-  .news-tab {
-    background: var(--panel-bg);
-    border-radius: var(--radius);
-    padding: 3rem 3.5rem;
-    box-shadow: var(--shadow);
-    color: var(--text-primary);
-    font-weight: 400;
-    max-width: 720px;
-    user-select: none;
-  }
-  .news-tab h3 {
-    font-weight: 700;
-    color: var(--orange);
-    margin-bottom: 1rem;
-  }
-  .news-tab p {
-    line-height: 1.5;
-    color: var(--text-muted);
-  }
-  .news-item + .news-item {
-    margin-top: 2rem;
-  }
-
-  /* Animated tab fade */
-  .tab-content {
-    animation: fadeInUp 0.5s ease forwards;
-    opacity: 0;
-    display: none;
-  }
-  .tab-content.active {
-    opacity: 1;
-    display: block;
-  }
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Alerts Launcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff7a00;
+      --orange-dark: #e06900;
+      --bg-dark: #0a0a0a;
+      --bg-light: #1c1c1c;
+      --panel-bg: rgba(28, 28, 28, 0.75);
+      --panel-blur: 16px;
+      --text-primary: #fff;
+      --text-muted: #bbb;
+      --border: #2a2a2a;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(255, 122, 0, 0.45);
+      --transition: 0.3s ease;
+      --font-family: 'Inter', sans-serif;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
-
-  /* Scrollbar for mod list */
-  .mod-list::-webkit-scrollbar {
-    width: 8px;
-  }
-  .mod-list::-webkit-scrollbar-thumb {
-    background: var(--orange);
-    border-radius: var(--radius);
-  }
-</style>
+    body, html {
+      height: 100%;
+      font-family: var(--font-family);
+      background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
+      color: var(--text-primary);
+      overflow: hidden;
+      user-select: none;
+    }
+    .launcher {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      backdrop-filter: blur(var(--panel-blur));
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(var(--panel-blur));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1rem;
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .sidebar .logo {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      margin-bottom: 3rem;
+      box-shadow: 0 0 22px var(--orange);
+      object-fit: cover;
+      user-select: none;
+      transition: transform 0.3s ease;
+    }
+    .sidebar .logo:hover {
+      transform: scale(1.05);
+    }
+    .tab-button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 1rem 1.7rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background var(--transition), color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      user-select: none;
+    }
+    .tab-button svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--text-muted);
+      transition: fill var(--transition);
+      flex-shrink: 0;
+    }
+    .tab-button.active,
+    .tab-button:hover {
+      background: var(--orange);
+      color: #121212;
+    }
+    .tab-button.active svg,
+    .tab-button:hover svg {
+      fill: #121212;
+    }
+    /* Main area */
+    .main {
+      flex-grow: 1;
+      padding: 3.2rem 4rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+      position: relative;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+    .header h1 {
+      font-weight: 800;
+      font-size: 2.9rem;
+      color: var(--orange);
+      letter-spacing: 0.06em;
+    }
+    #status {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--text-muted);
+      height: 26px;
+    }
+    /* Minecraft Profile (top-right) with dropdown */
+    .profile {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(var(--panel-blur));
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 20;
+      user-select: none;
+      transition: box-shadow 0.3s ease;
+      width: 200px;
+      justify-content: space-between;
+    }
+    .profile:hover {
+      box-shadow: 0 0 25px var(--orange);
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .profile img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 10px var(--orange);
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .profile img:hover {
+      transform: scale(1.1);
+    }
+    .username {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--orange);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+    .dropdown-arrow {
+      width: 18px;
+      height: 18px;
+      fill: var(--orange);
+      transition: transform 0.3s ease;
+    }
+    .profile.open .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+    /* Dropdown menu */
+    .account-dropdown {
+      position: fixed;
+      top: 74px;
+      right: 20px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(var(--panel-blur));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 200px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0.8rem 0;
+      z-index: 25;
+      user-select: none;
+    }
+    .account-dropdown::-webkit-scrollbar {
+      width: 8px;
+    }
+    .account-dropdown::-webkit-scrollbar-thumb {
+      background: var(--orange);
+      border-radius: var(--radius);
+    }
+    .account-dropdown li {
+      list-style: none;
+      padding: 0.8rem 1.3rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .account-dropdown li:hover {
+      background: var(--orange);
+      color: #121212;
+    }
+    /* Play tab content */
+    .play-tab {
+      display: flex;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    /* Play panel */
+    .play-panel {
+      background: var(--panel-bg);
+      border-radius: var(--radius);
+      padding: 3.2rem 4rem;
+      box-shadow: var(--shadow);
+      flex: 1 1 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3rem;
+    }
+    /* Play controls - horizontally aligned with bigger play button */
+    .play-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
+    .play-button {
+      background: var(--orange);
+      color: #121212;
+      font-weight: 800;
+      padding: 1.9rem 5rem;
+      font-size: 2.3rem;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: background var(--transition), transform 0.2s ease;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .play-button:hover {
+      background: var(--orange-dark);
+      transform: scale(1.1);
+    }
+    /* Version select to the right */
+    .version-select {
+      padding: 1.1rem 1.3rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #121212;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      min-width: 160px;
+      cursor: pointer;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      user-select: none;
+    }
+    .version-select:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 15px var(--orange);
+    }
+    /* Right panel - Mod profiles */
+    .mod-panel {
+      background: var(--panel-bg);
+      border-radius: var(--radius);
+      padding: 3rem 3.5rem;
+      flex: 1 1 320px;
+      box-shadow: var(--shadow);
+      max-height: 380px;
+      overflow-y: auto;
+      user-select: none;
+    }
+    .mod-panel h2 {
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: 1.8rem;
+      color: var(--orange);
+      user-select: none;
+    }
+    .mod-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .mod-list li {
+      background: #151515;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      transition: background var(--transition), color var(--transition);
+      user-select: none;
+      border: 2px solid transparent;
+    }
+    .mod-list li:hover {
+      background: var(--orange);
+      color: #121212;
+    }
+    .mod-list li.active {
+      background: var(--orange);
+      color: #121212;
+      border-color: #fff;
+      box-shadow: 0 0 8px #fff;
+    }
+    /* News tab content */
+    .news-tab {
+      flex-grow: 1;
+      background: var(--panel-bg);
+      border-radius: var(--radius);
+      padding: 3rem 4rem;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+      user-select: none;
+      color: var(--text-primary);
+    }
+    .news-tab h2 {
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: var(--orange);
+    }
+    .news-item {
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      user-select: none;
+    }
+    .news-item:last-child {
+      border-bottom: none;
+    }
+    .news-item h3 {
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 0.2rem;
+    }
+    .news-item p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--orange);
+      border-radius: var(--radius);
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 850px) {
+      .launcher {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: 90px;
+        flex-direction: row;
+        padding: 0 2rem;
+        align-items: center;
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        box-shadow: none;
+      }
+      .sidebar .logo {
+        width: 60px;
+        height: 60px;
+        margin: 0;
+      }
+      .tab-button {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0;
+        border-radius: 14px;
+      }
+      .main {
+        padding: 2rem 2rem;
+      }
+      .play-panel {
+        flex: 1 1 100%;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+      .mod-panel {
+        flex: 1 1 100%;
+        max-height: 300px;
+        padding: 2rem;
+      }
+      .play-controls {
+        justify-content: space-between;
+      }
+      .play-button {
+        padding: 1.4rem 3.8rem;
+        font-size: 1.8rem;
+      }
+      .version-select {
+        min-width: 120px;
+        font-size: 1rem;
+      }
+      .profile {
+        top: 10px;
+        right: 10px;
+        width: 170px;
+      }
+      .account-dropdown {
+        width: 170px;
+        top: 60px;
+        right: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="launcher">
-    <aside class="sidebar" aria-label="Main navigation">
-      <img class="logo" src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
-      <button class="tab-button active" onclick="switchTab('play')" aria-current="page" aria-label="Play tab">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+  <div class="launcher" role="main" aria-label="Minecraft Launcher Application">
+    <nav class="sidebar" aria-label="Main Navigation">
+      <img src="https://crafatar.com/avatars/0" alt="Launcher Logo" class="logo" />
+      <button class="tab-button active" id="playTab" onclick="switchTab('play')" aria-current="page" aria-label="Play Tab">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         Play
       </button>
-      <button class="tab-button" onclick="switchTab('news')" aria-label="News tab">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v2H4zM4 7h16v2H4zM4 10h10v2H4z"/></svg>
+      <button class="tab-button" id="newsTab" onclick="switchTab('news')" aria-label="News Tab">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h12v2H3zm0 6h18v2H3z"/></svg>
         News
       </button>
-      <button class="tab-button" onclick="checkUpdate()" aria-label="Check for updates">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v8h8"/></svg>
-        Updates
-      </button>
-    </aside>
-
-    <main class="main" role="main">
-      <header class="header">
+    </nav>
+    <section class="main">
+      <header class="header" role="banner">
         <h1>Event Alerts Launcher</h1>
-        <span id="status" aria-live="polite"></span>
+        <div id="status" aria-live="polite" aria-atomic="true"></div>
       </header>
-
-      <!-- Minecraft Profile top right -->
-      <div class="profile" aria-label="Minecraft Profile">
-        <img src="https://mc-heads.net/avatar/YourMinecraftName" alt="Player Avatar" id="profileAvatar" />
-        <span class="username" id="profileName">YourMinecraftName</span>
-      </div>
-
-      <!-- Play Tab -->
-      <section id="playTab" class="tab-content active" role="tabpanel" aria-labelledby="play-tab">
-        <div class="play-tab">
-          <div class="play-panel">
-            <div class="play-controls" role="group" aria-label="Launch controls">
-              <select id="version" class="version-select" aria-label="Select Minecraft version">
-                <option value="1.20.1">1.20.1</option>
-                <option value="1.19.4">1.19.4</option>
-                <option value="1.8.9">1.8.9</option>
-              </select>
-              <button class="play-button" onclick="launchGame()" aria-label="Launch Minecraft">PLAY</button>
-            </div>
+      <article class="play-tab" id="playTabContent" role="tabpanel" aria-labelledby="playTab">
+        <div class="play-panel" aria-label="Game Controls">
+          <div class="play-controls">
+            <button class="play-button" onclick="launchGame()" aria-label="Play Minecraft">PLAY</button>
+            <select class="version-select" id="version" aria-label="Select Minecraft Version" title="Select Minecraft Version">
+              <option value="1.20.4">1.20.4 (Latest)</option>
+              <option value="1.19.4">1.19.4</option>
+              <option value="1.18.2">1.18.2</option>
+              <option value="1.17.1">1.17.1</option>
+              <option value="1.16.5">1.16.5</option>
+            </select>
           </div>
-
-          <aside class="mod-panel" aria-label="Mod Profiles">
+          <div class="mod-panel" aria-label="Mod Profiles">
             <h2>Mod Profiles</h2>
-            <ul class="mod-list" id="modList" role="list">
-              <li class="active" tabindex="0" onclick="selectMod(this)">Default</li>
-              <li tabindex="0" onclick="selectMod(this)">OptiFine Boost</li>
-              <li tabindex="0" onclick="selectMod(this)">PvP Pack</li>
-              <li tabindex="0" onclick="selectMod(this)">Adventure Mode</li>
+            <ul class="mod-list" role="list">
+              <li class="active" tabindex="0" onclick="selectMod(this)" aria-selected="true">Vanilla</li>
+              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">Forge Mods</li>
+              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">Fabric Mods</li>
+              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">LiteLoader</li>
             </ul>
-          </aside>
+          </div>
         </div>
-      </section>
+      </article>
+      <article class="news-tab" id="newsTabContent" role="tabpanel" aria-labelledby="newsTab" hidden>
+        <h2>Latest News</h2>
+        <div class="news-item">
+          <h3>New Event Alerts Feature</h3>
+          <p>We've added dynamic server status alerts to keep you updated during gameplay.</p>
+        </div>
+        <div class="news-item">
+          <h3>Launcher Update 1.2.0</h3>
+          <p>Performance improvements and bug fixes to enhance your experience.</p>
+        </div>
+        <div class="news-item">
+          <h3>Community Mod Packs</h3>
+          <p>Explore curated mod packs shared by our vibrant community.</p>
+        </div>
+      </article>
+    </section>
+    <!-- Profile dropdown -->
+    <div class="profile" id="profileDropdown" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Minecraft Profile Selector" onclick="toggleProfileDropdown()" onkeydown="if(event.key==='Enter' || event.key===' ') toggleProfileDropdown()">
+      <div class="profile-info" aria-live="polite" aria-atomic="true">
+        <img id="profileAvatar" src="https://crafatar.com/avatars/0" alt="Minecraft avatar of User" />
+        <span class="username" id="profileUsername">User</span>
+      </div>
+      <svg class="dropdown-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+    </div>
+    <ul class="account-dropdown" id="accountDropdown" role="listbox" tabindex="-1" hidden aria-label="Available Minecraft Accounts">
+      <!-- Example accounts -->
+      <li role="option" tabindex="0" onclick="selectAccount('User')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('User')">User</li>
+      <li role="option" tabindex="0" onclick="selectAccount('Gamer123')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('Gamer123')">Gamer123</li>
+      <li role="option" tabindex="0" onclick="selectAccount('BuilderXYZ')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('BuilderXYZ')">BuilderXYZ</li>
+    </ul>
 
-      <!-- News Tab -->
-      <section id="newsTab" class="tab-content news-tab" role="tabpanel" aria-labelledby="news-tab" style="display:none;">
-        <article class="news-item">
-          <h3>🔥 1.20.1 Released</h3>
-          <p>Enjoy better performance, UI enhancements, and updated support for new mods.</p>
-        </article>
-        <article class="news-item">
-          <h3>🎨 UI Redesign</h3>
-          <p>Inspired by Lunar and Feather Client, enjoy a sleek, modern experience.</p>
-        </article>
-      </section>
-    </main>
   </div>
 
   <script>
-    // Stub: Replace with real user profile fetch in a real app
-    const userName = "CoolPlayer123";
-    const avatarURL = `https://mc-heads.net/avatar/${userName}`;
+    // Dummy user data
+    const accounts = {
+      User: "https://crafatar.com/avatars/0",
+      Gamer123: "https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7", // Example UUID for Notch
+      BuilderXYZ: "https://crafatar.com/avatars/853c80ef3c3749fdaa49938b674adae6" // Example UUID for jeb_
+    };
+
+    let currentAccount = "User";
 
     function updateProfile() {
-      document.getElementById('profileName').textContent = userName;
-      document.getElementById('profileAvatar').src = avatarURL;
-      document.getElementById('profileAvatar').alt = `Minecraft avatar of ${userName}`;
+      const userName = currentAccount;
+      const avatarUrl = accounts[currentAccount] || "https://crafatar.com/avatars/0";
+      const avatar = document.getElementById('profileAvatar');
+      const username = document.getElementById('profileUsername');
+      avatar.src = avatarUrl;
+      avatar.alt = `Minecraft avatar of ${userName}`;
+      username.textContent = userName;
     }
-    updateProfile();
+
+    function toggleProfileDropdown() {
+      const dropdown = document.getElementById('accountDropdown');
+      const profile = document.getElementById('profileDropdown');
+      if (dropdown.hasAttribute('hidden')) {
+        dropdown.removeAttribute('hidden');
+        profile.classList.add('open');
+        profile.setAttribute('aria-expanded', 'true');
+        dropdown.focus();
+      } else {
+        dropdown.setAttribute('hidden', '');
+        profile.classList.remove('open');
+        profile.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function selectAccount(name) {
+      currentAccount = name;
+      updateProfile();
+      toggleProfileDropdown();
+    }
+
+    // Close dropdown if clicking outside
+    window.addEventListener('click', e => {
+      const profile = document.getElementById('profileDropdown');
+      const dropdown = document.getElementById('accountDropdown');
+      if (!profile.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.setAttribute('hidden', '');
+        profile.classList.remove('open');
+        profile.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Keyboard navigation for account list
+    const accountDropdown = document.getElementById('accountDropdown');
+    accountDropdown.addEventListener('keydown', e => {
+      const options = Array.from(accountDropdown.querySelectorAll('li'));
+      const index = options.findIndex(opt => opt === document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = (index + 1) % options.length;
+        options[nextIndex].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = (index - 1 + options.length) % options.length;
+        options[prevIndex].focus();
+      } else if (e.key === 'Escape') {
+        toggleProfileDropdown();
+        document.getElementById('profileDropdown').focus();
+      }
+    });
 
     // Tab switching logic
     function switchTab(tab) {
       const tabs = ['play', 'news'];
       tabs.forEach(t => {
         document.getElementById(t + 'Tab').classList.remove('active');
-        const btn = document.querySelector(`.tab-button[onclick="switchTab('${t}')"]`);
-        btn.classList.remove('active');
-        btn.removeAttribute('aria-current');
+        document.getElementById(t + 'TabContent').hidden = true;
       });
       document.getElementById(tab + 'Tab').classList.add('active');
-      const activeBtn = document.querySelector(`.tab-button[onclick="switchTab('${tab}')"]`);
-      activeBtn.classList.add('active');
-      activeBtn.setAttribute('aria-current', 'page');
+      document.getElementById(tab + 'TabContent').hidden = false;
     }
 
     // Mod profile selection
     function selectMod(el) {
-      document.querySelectorAll('.mod-list li').forEach(li => li.classList.remove('active'));
+      document.querySelectorAll('.mod-list li').forEach(li => {
+        li.classList.remove('active');
+        li.setAttribute('aria-selected', 'false');
+      });
       el.classList.add('active');
+      el.setAttribute('aria-selected', 'true');
     }
 
     // Placeholder launch
     function launchGame() {
       const version = document.getElementById('version').value;
       const modProfile = document.querySelector('.mod-list li.active').textContent;
-      alert(`Launching Minecraft ${version} with profile: ${modProfile}`);
+      alert(`Launching Minecraft ${version} with profile: ${modProfile} as ${currentAccount}`);
     }
 
-    // Stub check update
-    function checkUpdate() {
-      alert("Checking for updates...");
-      document.getElementById('status').textContent = "You're up to date!";
-      setTimeout(() => { document.getElementById('status').textContent = ''; }, 4000);
-    }
+    updateProfile();
   </script>
 </body>
 </html>
