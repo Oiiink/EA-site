@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MineX Client</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121214;
+    color: #eee;
+    height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background-color: #1f1f21;
+    border-right: 2px solid #ff6f00;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  .sidebar h2 {
+    color: #ff6f00;
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+  .nav-item {
+    padding: 1rem 1.5rem;
+    color: #ccc;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s, color 0.3s;
+  }
+  .nav-item:hover,
+  .nav-item.active {
+    background: #ff6f00;
+    color: #121214;
+    font-weight: 700;
+  }
+
+  /* Main Content */
+  .main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ff6f00;
+    margin-bottom: 1.5rem;
+    user-select: none;
+  }
+
+  /* Sections */
+  section {
+    flex-grow: 1;
+    background-color: #222224;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 0 15px rgb(255 111 0 / 0.3);
+    overflow-y: auto;
+  }
+
+  /* Main tab */
+  #mainTab p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  /* Mods tab */
+  #modsTab ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  #modsTab li {
+    background: #1f1f21;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mod-info {
+    flex-grow: 1;
+  }
+  .mod-name {
+    font-weight: 700;
+    color: #ff6f00;
+    margin-bottom: 0.3rem;
+  }
+  .mod-desc {
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 22px;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #444;
+    border-radius: 22px;
+    top: 0; left: 0; right: 0; bottom: 0;
+    transition: 0.4s;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #eee;
+    border-radius: 50%;
+    transition: 0.4s;
+  }
+  input:checked + .slider {
+    background-color: #ff6f00;
+  }
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  /* Settings tab */
+  #settingsTab label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+  }
+  #settingsTab input[type="range"] {
+    width: 100%;
+  }
+  #settingsTab .setting {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Event Alerts tab */
+  #alertsTab ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  #alertsTab li {
+    background: #1f1f21;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #ff6f00;
+    font-weight: 700;
+  }
+
+  /* Scrollbar */
+  section::-webkit-scrollbar {
+    width: 8px;
+  }
+  section::-webkit-scrollbar-track {
+    background: #121214;
+  }
+  section::-webkit-scrollbar-thumb {
+    background-color: #ff6f00;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>MineX Client</h2>
+  <div class="nav-item active" data-tab="mainTab">Main</div>
+  <div class="nav-item" data-tab="modsTab">Mods</div>
+  <div class="nav-item" data-tab="settingsTab">Settings</div>
+  <div class="nav-item" data-tab="alertsTab">Event Alerts</div>
+</div>
+
+<div class="main-content">
+  <div class="header">MineX Client v1.0</div>
+  
+  <section id="mainTab" class="tab-content">
+    <h3>Welcome to MineX!</h3>
+    <p>This is your custom Minecraft client interface. Use the sidebar to navigate through mods, settings, and event alerts.</p>
+  </section>
+
+  <section id="modsTab" class="tab-content" style="display:none;">
+    <h3>Mods List</h3>
+    <ul>
+      <li>
+        <div class="mod-info">
+          <div class="mod-name">Better FPS</div>
+          <div class="mod-desc">Improve your game performance by hiding unnecessary entities.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" checked />
+          <span class="slider"></span>
+        </label>
+      </li>
+      <li>
+        <div class="mod-info">
+          <div class="mod-name">Event Notifier</div>
+          <div class="mod-desc">Receive in-game event notifications without distractions.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </li>
+      <li>
+        <div class="mod-info">
+          <div class="mod-name">Custom HUD</div>
+          <div class="mod-desc">Personalize your heads-up display with useful info.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </li>
+    </ul>
+  </section>
+
+  <section id="settingsTab" class="tab-content" style="display:none;">
+    <h3>Settings</h3>
+    <div class="setting">
+      <label for="volume">Notification Volume</label>
+      <input type="range" id="volume" min="0" max="100" value="75" />
+    </div>
+    <div class="setting">
+      <label for="fpsLimit">FPS Limit</label>
+      <input type="range" id="fpsLimit" min="30" max="240" value="144" />
+    </div>
+    <div class="setting">
+      <label for="themeSelect">Theme</label>
+      <select id="themeSelect">
+        <option value="dark" selected>Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </div>
+  </section>
+
+  <section id="alertsTab" class="tab-content" style="display:none;">
+    <h3>Event Alerts</h3>
+    <ul>
+      <li>Player Joined Your Server</li>
+      <li>Double XP Weekend Active</li>
+      <li>New Update Available!</li>
+      <li>Server Maintenance Scheduled</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  // Simple tab navigation
+  const navItems = document.querySelectorAll('.nav-item');
+  const tabs = document.querySelectorAll('.tab-content');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Remove active from all
+      navItems.forEach(i => i.classList.remove('active'));
+      tabs.forEach(t => t.style.display = 'none');
+
+      // Add active to clicked and show tab
+      item.classList.add('active');
+      document.getElementById(item.dataset.tab).style.display = 'block';
+    });
+  });
+</script>
+
+</body>
+</html>
