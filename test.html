@@ -1,459 +1,622 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Event Alerts Launcher</title>
-<style>
-  /* Reset and base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212;
-    color: #e0e0e0;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  /* Sidebar */
-  .sidebar {
-    width: 280px;
-    background: #1f1f1f;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 16px;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.7);
-  }
-  .sidebar .logo {
-    font-weight: 700;
-    font-size: 1.6rem;
-    margin-bottom: 32px;
-    user-select: none;
-    letter-spacing: 0.1em;
-    color: #f97316; /* orange accent */
-  }
-  .nav-links {
-    flex-grow: 1;
-  }
-  .nav-links button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 1rem;
-    padding: 14px 20px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-  .nav-links button svg {
-    width: 20px;
-    height: 20px;
-    stroke: currentColor;
-  }
-  .nav-links button.active,
-  .nav-links button:hover {
-    background-color: #f97316;
-    color: #121212;
-    box-shadow: 0 0 8px #f97316aa;
-  }
-
-  /* User Profile */
-  .profile {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-  }
-  .profile .avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #f97316;
-    font-weight: 700;
-    font-size: 1.2rem;
-  }
-  .profile .username {
-    font-weight: 600;
-    color: #f97316;
-  }
-  .profile .dropdown {
-    position: absolute;
-    bottom: 60px;
-    left: 0;
-    background: #1f1f1f;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.8);
-    min-width: 160px;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-  }
-  .profile.open .dropdown {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-  .dropdown button {
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 14px 16px;
-    color: #eee;
-    text-align: left;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  .dropdown button:hover {
-    background: #f97316;
-    color: #121212;
-  }
-
-  /* Main Content */
-  .main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background: #181818;
-    padding: 32px 48px;
-  }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-  }
-  .header h1 {
-    font-weight: 700;
-    font-size: 2.4rem;
-    color: #f97316;
-  }
-  .header .version-selector {
-    background: #2a2a2a;
-    border-radius: 8px;
-    padding: 10px 16px;
-    color: #ddd;
-    font-size: 1rem;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    width: 140px;
-    transition: background-color 0.2s ease;
-  }
-  .header .version-selector:hover {
-    background: #f97316;
-    color: #121212;
-  }
-
-  /* Play Section */
-  .play-section {
-    background: #242424;
-    border-radius: 12px;
-    padding: 48px 64px;
-    box-shadow: 0 0 48px #f97316aa;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 520px;
-    margin: 0 auto;
-    gap: 28px;
-  }
-  .play-section .mod-profile-list {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-  }
-  .mod-profile-list::-webkit-scrollbar {
-    height: 6px;
-  }
-  .mod-profile-list::-webkit-scrollbar-thumb {
-    background: #f97316aa;
-    border-radius: 3px;
-  }
-  .mod-profile-list button {
-    background: #1f1f1f;
-    color: #ddd;
-    border-radius: 16px;
-    padding: 10px 22px;
-    font-weight: 600;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    white-space: nowrap;
-  }
-  .mod-profile-list button.active,
-  .mod-profile-list button:hover {
-    background: #f97316;
-    color: #121212;
-    box-shadow: 0 0 10px #f97316bb;
-  }
-  .play-button {
-    margin-top: 12px;
-    background: #f97316;
-    border: none;
-    color: #121212;
-    font-weight: 800;
-    font-size: 1.6rem;
-    padding: 18px 64px;
-    border-radius: 48px;
-    cursor: pointer;
-    box-shadow: 0 8px 18px #f973160d;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  .play-button:hover {
-    background: #fb7d26;
-    box-shadow: 0 12px 28px #fb7d26cc;
-  }
-
-  /* News Section */
-  .news-section {
-    flex-grow: 1;
-    margin-top: 40px;
-    overflow-y: auto;
-    max-width: 640px;
-    margin-left: auto;
-    padding-right: 24px;
-  }
-  .news-section h2 {
-    font-weight: 700;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    color: #f97316;
-  }
-  .news-item {
-    background: #1e1e1e;
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin-bottom: 18px;
-    box-shadow: 0 0 8px #f97316aa;
-    transition: background-color 0.3s ease;
-  }
-  .news-item:hover {
-    background: #f9731622;
-  }
-  .news-item h3 {
-    margin: 0 0 10px 0;
-    font-weight: 700;
-    font-size: 1.2rem;
-  }
-  .news-item p {
-    margin: 0;
-    font-size: 1rem;
-    color: #d8d8d8;
-    line-height: 1.4;
-  }
-
-  /* Scrollbar for news */
-  .news-section::-webkit-scrollbar {
-    width: 8px;
-  }
-  .news-section::-webkit-scrollbar-thumb {
-    background: #f97316cc;
-    border-radius: 4px;
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    body {
-      flex-direction: column;
-      overflow-y: auto;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Alerts Launcher</title>
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
     }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+    }
+
+    /* Sidebar */
     .sidebar {
-      width: 100%;
-      flex-direction: row;
-      padding: 12px 24px;
-      box-shadow: none;
-      overflow-x: auto;
-      gap: 24px;
-      justify-content: space-between;
-      align-items: center;
+      width: 280px;
+      background: #1f1f1f;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.7);
+    }
+    .sidebar .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin-bottom: 32px;
+      user-select: none;
+      letter-spacing: 0.1em;
+      color: #f97316; /* orange accent */
     }
     .nav-links {
-      display: flex;
-      flex-direction: row;
-      gap: 12px;
       flex-grow: 1;
-      margin: 0;
-      padding: 0;
     }
     .nav-links button {
-      margin: 0;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      border-radius: 12px;
-      flex-shrink: 0;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 1rem;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
+    .nav-links button svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+    .nav-links button.active,
+    .nav-links button:hover {
+      background-color: #f97316;
+      color: #121212;
+      box-shadow: 0 0 8px #f97316aa;
+    }
+
+    /* User Profile */
     .profile {
-      margin: 0;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
     }
+    .profile .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #f97316;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    .profile .username {
+      font-weight: 600;
+      color: #f97316;
+    }
+    .profile .dropdown {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      background: #1f1f1f;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      min-width: 160px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+    .profile.open .dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .dropdown button {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 14px 16px;
+      color: #eee;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .dropdown button:hover {
+      background: #f97316;
+      color: #121212;
+    }
+
+    /* Main Content */
     .main {
-      padding: 24px 32px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #181818;
+      padding: 32px 48px;
+      position: relative;
     }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: #f97316;
+    }
+
+    /* Play Section */
     .play-section {
-      padding: 32px 24px;
-      max-width: 100%;
+      background: #242424;
+      border-radius: 12px;
+      padding: 48px 64px;
+      box-shadow: 0 0 48px #f97316aa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 520px;
+      margin: 0 auto;
+      gap: 28px;
+      position: relative;
+    }
+    .play-buttons {
+      display: flex;
+      gap: 16px;
+    }
+    button.play-button,
+    button.settings-button {
+      border-radius: 48px;
+      padding: 18px 64px;
+      font-weight: 800;
+      font-size: 1.6rem;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 8px 18px #f973160d;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    button.play-button {
+      background: #f97316;
+      color: #121212;
+    }
+    button.play-button:hover {
+      background: #fb7d26;
+      box-shadow: 0 12px 28px #fb7d26cc;
+    }
+    button.settings-button {
+      background: #333333;
+      color: #eee;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 16px 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
       box-shadow: none;
-      margin: 0 0 24px 0;
     }
+    button.settings-button:hover {
+      background: #f97316;
+      color: #121212;
+      box-shadow: 0 8px 20px #f97316cc;
+    }
+    button.settings-button svg {
+      stroke: currentColor;
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s ease;
+    }
+    button.settings-button.open svg {
+      transform: rotate(90deg);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 4px solid #f973160d;
+      border-top: 4px solid #f97316;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin-top: 12px;
+    }
+    @keyframes spin {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #333;
+      border-radius: 6px;
+      margin-top: 24px;
+      overflow: hidden;
+      box-shadow: inset 0 0 6px #000000aa;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .progress-bar.active {
+      opacity: 1;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #f97316;
+      border-radius: 6px 0 0 6px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px #f97316bb;
+    }
+
+    /* News Section */
     .news-section {
-      max-width: 100%;
-      margin: 0;
-      padding-right: 0;
-      max-height: 280px;
+      flex-grow: 1;
+      margin-top: 40px;
+      overflow-y: auto;
+      max-width: 640px;
+      margin-left: auto;
+      padding-right: 24px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      user-select: none;
     }
-  }
-</style>
+    .news-section.visible {
+      opacity: 1;
+      pointer-events: auto;
+      user-select: auto;
+    }
+    .news-section h2 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #f97316;
+    }
+    .news-item {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 8px #f97316aa;
+      transition: background-color 0.3s ease;
+    }
+    .news-item:hover {
+      background: #f9731622;
+    }
+    .news-item h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .news-item p {
+      margin: 0;
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    /* Settings Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: #242424;
+      border-radius: 16px;
+      padding: 32px 40px;
+      width: 420px;
+      max-width: 95vw;
+      box-shadow: 0 0 24px #f97316cc;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      color: #f97316;
+      font-weight: 700;
+      font-size: 1.6rem;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: #f97316;
+      font-size: 1.6rem;
+      cursor: pointer;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0;
+      user-select: none;
+      transition: color 0.25s ease;
+    }
+    .modal-close:hover {
+      color: #fb7d26;
+    }
+    .modal-content label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #e0e0e0;
+      user-select: none;
+    }
+    .modal-content select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background: #333333;
+      color: #f97316;
+      font-weight: 700;
+      box-shadow: inset 0 0 8px #f973160d;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .modal-content select:hover,
+    .modal-content select:focus {
+      background: #f97316;
+      color: #121212;
+      outline: none;
+      box-shadow: 0 0 12px #f97316cc;
+    }
+    .modal-footer {
+      margin-top: 32px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+    .modal-footer button {
+      padding: 12px 28px;
+      border-radius: 48px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .modal-footer button.save-btn {
+      background: #f97316;
+      color: #121212;
+    }
+    .modal-footer button.save-btn:hover {
+      background: #fb7d26;
+    }
+    .modal-footer button.cancel-btn {
+      background: #444;
+      color: #eee;
+    }
+    .modal-footer button.cancel-btn:hover {
+      background: #555;
+    }
+
+  </style>
 </head>
 <body>
-
-  <nav class="sidebar" aria-label="Main navigation">
-    <div class="logo" aria-label="Event Alerts Launcher">EVENT ALERTS</div>
-    <div class="nav-links" role="list">
-      <button class="active" role="listitem" aria-pressed="true" aria-label="Play tab">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        Play
+  <aside class="sidebar" aria-label="Navigation Sidebar">
+    <div class="logo" aria-label="Event Alerts Launcher Logo">EVENT ALERTS</div>
+    <nav class="nav-links" aria-label="Main Navigation">
+      <button class="active" aria-current="page" aria-label="Home">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3z"/></svg>
+        Home
       </button>
-      <button role="listitem" aria-pressed="false" aria-label="News tab">
-        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        News
+      <button aria-label="Settings" disabled>
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings (coming soon)
       </button>
-    </div>
-    <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="User profile menu">
-      <div class="avatar" aria-hidden="true">EA</div>
-      <div class="username">Player123</div>
-      <div class="dropdown" role="menu" aria-label="User profile actions" hidden>
-        <button role="menuitem">Settings</button>
-        <button role="menuitem">Logout</button>
+    </nav>
+    <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="User Profile">
+      <div class="avatar" aria-hidden="true">A</div>
+      <div class="username">Alex</div>
+      <div class="dropdown" role="menu" aria-label="User menu">
+        <button role="menuitem" tabindex="-1">Account</button>
+        <button role="menuitem" tabindex="-1">Logout</button>
       </div>
     </div>
-  </nav>
-
-  <main class="main" role="main">
+  </aside>
+  <main class="main" role="main" aria-live="polite">
     <header class="header">
-      <h1>Launch Minecraft</h1>
-      <select class="version-selector" aria-label="Select Minecraft version">
-        <option value="1.20.1">1.20.1</option>
-        <option value="1.19.4">1.19.4</option>
-        <option value="1.18.2">1.18.2</option>
-        <option value="1.17.1">1.17.1</option>
-      </select>
+      <h1>Welcome, Alex</h1>
     </header>
-
-    <section class="play-section" aria-label="Play section with mod profiles">
-      <div class="mod-profile-list" role="list" aria-label="Available mod profiles">
-        <button class="active" role="listitem" aria-pressed="true">Vanilla</button>
-        <button role="listitem" aria-pressed="false">Fabric</button>
-        <button role="listitem" aria-pressed="false">Forge</button>
-        <button role="listitem" aria-pressed="false">LiteLoader</button>
+    <section class="play-section" aria-label="Game launcher controls">
+      <div class="play-buttons">
+        <button id="playBtn" class="play-button" aria-live="assertive" aria-busy="false" aria-label="Play game">Play</button>
+        <button id="settingsBtn" class="settings-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsModal" aria-label="Open settings">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
       </div>
-      <button class="play-button" aria-label="Launch Minecraft">PLAY</button>
+      <div id="loadingState" aria-live="polite" role="status" style="display:none; margin-top:16px; text-align:center;">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div id="progressText" style="margin-top: 8px; font-weight: 600; color: #f97316;">Launching...</div>
+      </div>
     </section>
 
-    <section class="news-section" aria-label="Latest news and updates" hidden>
+    <section class="news-section visible" aria-label="Latest news">
       <h2>Latest News</h2>
-      <article class="news-item" tabindex="0">
+      <article class="news-item">
         <h3>New Update Released!</h3>
-        <p>We’ve added new Event Alert features and performance improvements for 1.20.1.</p>
+        <p>Version 1.4.2 is out with bug fixes and new features.</p>
       </article>
-      <article class="news-item" tabindex="0">
-        <h3>Maintenance Scheduled</h3>
-        <p>Servers will undergo maintenance on June 5th from 2:00 - 4:00 AM UTC.</p>
-      </article>
-      <article class="news-item" tabindex="0">
-        <h3>Community Event</h3>
-        <p>Join us for the Summer Build Contest starting June 10th. Amazing prizes await!</p>
+      <article class="news-item">
+        <h3>Event Alerts Now Supports Mods</h3>
+        <p>You can now customize your experience by managing mod profiles in the settings.</p>
       </article>
     </section>
   </main>
 
-<script>
-  // Sidebar nav tab toggle
-  const navButtons = document.querySelectorAll('.nav-links button');
-  const playSection = document.querySelector('.play-section');
-  const newsSection = document.querySelector('.news-section');
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" tabindex="-1" hidden>
+    <div class="modal" role="document">
+      <header class="modal-header">
+        <h3 id="settingsTitle">Launcher Settings</h3>
+        <button class="modal-close" id="closeSettingsBtn" aria-label="Close settings">&times;</button>
+      </header>
+      <div class="modal-content">
+        <label for="versionSelect">Select Game Version</label>
+        <select id="versionSelect" aria-describedby="versionHelp">
+          <option value="1.18.1">1.18.1</option>
+          <option value="1.17.1">1.17.1</option>
+          <option value="1.16.5">1.16.5</option>
+          <option value="1.15.2">1.15.2</option>
+        </select>
+        <small id="versionHelp" style="color:#bbb; font-size:0.85rem;">Choose the Minecraft version to launch.</small>
 
-  navButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      navButtons.forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-pressed', 'false');
-      });
-      button.classList.add('active');
-      button.setAttribute('aria-pressed', 'true');
+        <label for="modProfileSelect" style="margin-top:24px;">Mod Profile</label>
+        <select id="modProfileSelect" aria-describedby="modProfileHelp">
+          <option value="vanilla">Vanilla</option>
+          <option value="tech_mods">Tech Mods</option>
+          <option value="magic_mods">Magic Mods</option>
+          <option value="adventure_pack">Adventure Pack</option>
+        </select>
+        <small id="modProfileHelp" style="color:#bbb; font-size:0.85rem;">Select the mod profile to use.</small>
+      </div>
+      <footer class="modal-footer">
+        <button class="cancel-btn" id="cancelSettingsBtn">Cancel</button>
+        <button class="save-btn" id="saveSettingsBtn">Save</button>
+      </footer>
+    </div>
+  </div>
 
-      if (button.textContent.trim() === 'Play') {
-        playSection.hidden = false;
-        newsSection.hidden = true;
-      } else {
-        playSection.hidden = true;
-        newsSection.hidden = false;
+  <script>
+    // Sidebar Profile Dropdown toggle
+    const profile = document.querySelector('.profile');
+    const dropdown = profile.querySelector('.dropdown');
+    profile.addEventListener('click', () => {
+      const expanded = profile.getAttribute('aria-expanded') === 'true';
+      profile.setAttribute('aria-expanded', !expanded);
+      profile.classList.toggle('open');
+    });
+    // Close dropdown on blur
+    profile.addEventListener('blur', (e) => {
+      if (!profile.contains(e.relatedTarget)) {
+        profile.setAttribute('aria-expanded', false);
+        profile.classList.remove('open');
       }
     });
-  });
 
-  // Profile dropdown toggle
-  const profile = document.querySelector('.profile');
-  const dropdown = profile.querySelector('.dropdown');
+    // Settings Modal Elements
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
-  profile.addEventListener('click', () => {
-    const isOpen = profile.classList.toggle('open');
-    dropdown.hidden = !isOpen;
-    profile.setAttribute('aria-expanded', isOpen);
-  });
+    // Play button & loading UI
+    const playBtn = document.getElementById('playBtn');
+    const loadingState = document.getElementById('loadingState');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
 
-  document.addEventListener('click', (e) => {
-    if (!profile.contains(e.target)) {
-      profile.classList.remove('open');
-      dropdown.hidden = true;
-      profile.setAttribute('aria-expanded', false);
+    // State vars for settings
+    let selectedVersion = localStorage.getItem('selectedVersion') || '1.18.1';
+    let selectedModProfile = localStorage.getItem('selectedModProfile') || 'vanilla';
+
+    // Init settings UI
+    const versionSelect = document.getElementById('versionSelect');
+    const modProfileSelect = document.getElementById('modProfileSelect');
+    versionSelect.value = selectedVersion;
+    modProfileSelect.value = selectedModProfile;
+
+    function openSettings() {
+      settingsModal.hidden = false;
+      settingsModal.classList.add('active');
+      settingsBtn.setAttribute('aria-expanded', 'true');
+      versionSelect.focus();
     }
-  });
+    function closeSettings() {
+      settingsModal.classList.remove('active');
+      settingsBtn.setAttribute('aria-expanded', 'false');
+      // Delay hiding for animation
+      setTimeout(() => settingsModal.hidden = true, 300);
+      settingsBtn.focus();
+    }
 
-  // Mod profile selection
-  const modButtons = document.querySelectorAll('.mod-profile-list button');
-  modButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      modButtons.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
+    settingsBtn.addEventListener('click', () => {
+      if (settingsModal.classList.contains('active')) {
+        closeSettings();
+      } else {
+        openSettings();
+      }
     });
-  });
+    closeSettingsBtn.addEventListener('click', closeSettings);
+    cancelSettingsBtn.addEventListener('click', closeSettings);
 
-  // Play button click
-  document.querySelector('.play-button').addEventListener('click', () => {
-    const selectedVersion = document.querySelector('.version-selector').value;
-    const selectedProfile = document.querySelector('.mod-profile-list button.active').textContent;
-    alert(`Launching Minecraft ${selectedVersion} with ${selectedProfile} profile.`);
-  });
-</script>
+    // Save settings
+    saveSettingsBtn.addEventListener('click', () => {
+      selectedVersion = versionSelect.value;
+      selectedModProfile = modProfileSelect.value;
+      localStorage.setItem('selectedVersion', selectedVersion);
+      localStorage.setItem('selectedModProfile', selectedModProfile);
+      closeSettings();
+    });
 
+    // Launch simulation with progress bar and spinner
+    playBtn.addEventListener('click', () => {
+      playBtn.disabled = true;
+      playBtn.setAttribute('aria-busy', 'true');
+      loadingState.style.display = 'block';
+      progressFill.style.width = '0%';
+      progressFill.setAttribute('aria-valuenow', '0');
+      progressText.textContent = 'Launching...';
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 10 + 5; // Random step for demo
+        if (progress >= 100) {
+          progress = 100;
+          progressText.textContent = 'Launch Complete!';
+          clearInterval(interval);
+          setTimeout(() => {
+            loadingState.style.display = 'none';
+            playBtn.disabled = false;
+            playBtn.setAttribute('aria-busy', 'false');
+          }, 1500);
+        }
+        progressFill.style.width = `${progress}%`;
+        progressFill.setAttribute('aria-valuenow', Math.floor(progress));
+      }, 500);
+    });
+  </script>
 </body>
 </html>
