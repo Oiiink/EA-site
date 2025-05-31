@@ -3,201 +3,194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minecraft Launcher UI</title>
+  <title>Lunar Client Launcher UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Basic Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background: #121212;
-      color: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f1218 0%, #1a1f2b 100%);
+      color: #fff;
       height: 100vh;
-      user-select: none;
+      display: flex;
+      overflow: hidden;
     }
 
-    .launcher {
-      background: #1e1e1e;
-      border-radius: 12px;
-      width: 360px;
-      padding: 30px 40px;
-      box-shadow:
-        0 4px 20px rgba(0,0,0,0.6),
-        inset 0 0 40px #00aaff33;
+    .sidebar {
+      width: 260px;
+      background: #181d26;
+      padding: 30px 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: space-between;
+      box-shadow: 4px 0 12px #00000040;
     }
 
-    .launcher h1 {
+    .logo {
+      font-size: 22px;
       font-weight: 700;
-      font-size: 28px;
-      margin-bottom: 25px;
-      color: #00aaff;
-      text-shadow: 0 0 8px #00aaff88;
+      color: #00b4ff;
+      text-align: center;
+      margin-bottom: 40px;
     }
 
-    label {
-      align-self: flex-start;
-      margin-bottom: 6px;
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .nav a {
+      color: #aaa;
+      text-decoration: none;
       font-weight: 600;
-      font-size: 13px;
-      color: #00aaffcc;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px 15px;
+    .nav a:hover,
+    .nav a.active {
+      background: #00b4ff20;
+      color: #00b4ff;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      background: url('https://i.imgur.com/t3Wr9tF.jpg') no-repeat center center/cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: #00000099;
+      z-index: 0;
+    }
+
+    .launcher-box {
+      z-index: 1;
+      background: #1f2735cc;
+      padding: 30px 40px;
+      border-radius: 16px;
+      width: 500px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px #00000080;
+    }
+
+    .launcher-box h2 {
+      font-size: 28px;
       margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 6px;
+      color: #bbb;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
       border: none;
       border-radius: 8px;
-      background: #292929;
-      color: #eee;
-      font-size: 15px;
-      transition: background 0.3s ease;
-    }
-    input[type="text"]:focus, input[type="password"]:focus {
-      background: #383838;
-      outline: none;
+      background: #2a3242;
+      color: #fff;
+      font-size: 14px;
     }
 
-    button {
-      width: 100%;
-      padding: 14px 0;
-      margin-bottom: 20px;
-      font-size: 16px;
-      font-weight: 700;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      background: #00aaff;
+    .play-button {
+      background: #00b4ff;
       color: white;
-      box-shadow: 0 0 12px #00aaffcc;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 15px;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00b4ff88;
       transition: background 0.3s ease;
     }
-    button:disabled {
-      background: #004466;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    button:hover:not(:disabled) {
+
+    .play-button:hover {
       background: #0099dd;
     }
 
-    .progress-bar-container {
-      width: 100%;
-      height: 18px;
-      background: #292929;
-      border-radius: 9px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: #00aaff;
-      transition: width 0.3s ease;
-    }
-
     .status {
+      margin-top: 15px;
       font-size: 14px;
-      min-height: 20px;
-      color: #00aaffcc;
-      font-weight: 600;
-      text-align: center;
+      color: #88cfff;
+    }
+
+    @media (max-width: 768px) {
+      .launcher-box {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="launcher" role="main" aria-label="Minecraft Launcher UI">
-    <h1>Minecraft Launcher</h1>
-
-    <label for="username">Username</label>
-    <input id="username" type="text" autocomplete="username" placeholder="Enter username" />
-
-    <label for="password">Password</label>
-    <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" />
-
-    <button id="login-btn">Login</button>
-    <button id="launch-btn" disabled>Launch Minecraft</button>
-
-    <div class="progress-bar-container" id="progress-container" aria-hidden="true">
-      <div class="progress-bar" id="progress-bar"></div>
+  <div class="sidebar">
+    <div>
+      <div class="logo">LUNAR</div>
+      <nav class="nav">
+        <a href="#" class="active">Home</a>
+        <a href="#">Settings</a>
+        <a href="#">Mods</a>
+        <a href="#">Accounts</a>
+      </nav>
     </div>
+    <div class="nav">
+      <a href="#">Exit</a>
+    </div>
+  </div>
 
-    <div class="status" id="status"></div>
+  <div class="content">
+    <div class="overlay"></div>
+    <div class="launcher-box">
+      <h2>Welcome Back</h2>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter your username" />
+      </div>
+      <div class="form-group">
+        <label for="version">Version</label>
+        <select id="version">
+          <option>1.20.1</option>
+          <option>1.19.4</option>
+          <option>1.8.9</option>
+        </select>
+      </div>
+      <button class="play-button" onclick="simulateLaunch()">PLAY</button>
+      <div class="status" id="status">Waiting for user action...</div>
+    </div>
   </div>
 
   <script>
-    const loginBtn = document.getElementById('login-btn');
-    const launchBtn = document.getElementById('launch-btn');
-    const status = document.getElementById('status');
-    const progressContainer = document.getElementById('progress-container');
-    const progressBar = document.getElementById('progress-bar');
-
-    let loggedIn = false;
-
-    loginBtn.addEventListener('click', () => {
+    function simulateLaunch() {
       const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        status.textContent = "Please enter username and password.";
+      if (!username) {
+        document.getElementById('status').textContent = 'Please enter your username.';
         return;
       }
 
-      status.textContent = "Logging in...";
-      loginBtn.disabled = true;
+      document.getElementById('status').textContent = 'Launching Minecraft...';
 
-      // Simulate login delay
       setTimeout(() => {
-        // Mock successful login
-        loggedIn = true;
-        status.textContent = `Logged in as ${username}`;
-        launchBtn.disabled = false;
-        loginBtn.style.display = 'none';
-        document.getElementById('username').disabled = true;
-        document.getElementById('password').disabled = true;
-      }, 1500);
-    });
-
-    launchBtn.addEventListener('click', () => {
-      if (!loggedIn) {
-        status.textContent = "You must login first.";
-        return;
-      }
-
-      launchBtn.disabled = true;
-      status.textContent = "Preparing to launch...";
-      progressContainer.style.display = 'block';
-      progressBar.style.width = '0%';
-
-      // Simulate download progress
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 1;
-        progressBar.style.width = progress + '%';
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          status.textContent = "Minecraft launched! (simulated)";
-          progressContainer.style.display = 'none';
-          launchBtn.disabled = false;
-        }
-      }, 30);
-    });
+        document.getElementById('status').textContent = `Launching ${username}'s game... (simulated)`;
+      }, 2000);
+    }
   </script>
 
 </body>
