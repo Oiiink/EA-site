@@ -27,20 +27,20 @@
     html, body {
       height: 100%;
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
+      background: linear-gradient(135deg, #1c1c1c, #0c0c0c);
       color: var(--text);
       overflow: hidden;
     }
 
     .launcher {
-      display: flex;
+      display: grid;
+      grid-template-columns: 260px 1fr;
       height: 100%;
       backdrop-filter: blur(10px);
     }
 
     .sidebar {
-      width: 260px;
-      background-color: var(--glass);
+      background-color: var(--panel);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -49,7 +49,7 @@
     }
 
     .sidebar img {
-      width: 100px;
+      width: 90px;
       border-radius: 50%;
       margin-bottom: 2rem;
       box-shadow: 0 0 15px var(--orange);
@@ -59,7 +59,7 @@
       background: none;
       border: none;
       color: var(--muted);
-      padding: 1rem;
+      padding: 0.75rem;
       width: 100%;
       text-align: left;
       border-radius: var(--radius);
@@ -70,17 +70,16 @@
 
     .sidebar button.active,
     .sidebar button:hover {
-      background: var(--panel);
-      color: var(--orange);
+      background: var(--orange);
+      color: #000;
     }
 
     .main {
-      flex: 1;
       display: flex;
       flex-direction: column;
       padding: 2rem;
       overflow-y: auto;
-      position: relative;
+      background: linear-gradient(to bottom right, var(--bg-light), var(--bg-dark));
     }
 
     .header {
@@ -91,28 +90,31 @@
     }
 
     .header h1 {
-      font-size: 2rem;
+      font-size: 1.75rem;
       color: var(--orange);
     }
 
     .tab {
-      background: var(--glass);
-      padding: 2rem;
-      border-radius: var(--radius);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
       display: none;
+      animation: fadeInUp 0.4s ease forwards;
     }
 
     .tab.active {
       display: block;
-      opacity: 1;
-      transform: translateY(0);
     }
 
-    .play-controls {
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .launcher-controls {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -120,64 +122,64 @@
       margin-bottom: 2rem;
     }
 
-    .play-controls input,
-    .play-controls select {
+    .launcher-controls input,
+    .launcher-controls select {
       background: var(--panel);
       color: var(--text);
       border: 1px solid var(--border);
       padding: 0.75rem 1rem;
       border-radius: var(--radius);
-      width: 200px;
     }
 
     .play-button {
-      padding: 1rem 2.5rem;
+      padding: 1rem 2rem;
       background: var(--orange);
-      color: #fff;
+      color: #000;
       font-weight: bold;
       border: none;
       border-radius: var(--radius);
       cursor: pointer;
-      transition: background 0.3s;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
+      transition: transform 0.2s ease;
     }
 
     .play-button:hover {
-      background: #e06900;
+      transform: scale(1.05);
     }
 
     .news-item {
-      margin-bottom: 1.5rem;
-      border-left: 3px solid var(--orange);
-      padding-left: 1rem;
+      background: var(--glass);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--orange);
     }
 
     .news-item h3 {
       color: var(--orange);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
     }
 
     .mod-profile {
       background: var(--panel);
       padding: 1rem;
       border-radius: var(--radius);
-      margin-top: 1rem;
       border: 1px solid var(--border);
+      margin-top: 2rem;
     }
 
     .mod-profile h3 {
       color: var(--orange);
-      margin-bottom: 0.5rem;
     }
 
     .mod-profile ul {
       list-style: disc;
-      margin-left: 1rem;
+      margin-left: 1.5rem;
       color: var(--muted);
     }
 
     #status {
-      margin-top: 1rem;
+      font-size: 0.9rem;
       color: var(--muted);
       font-style: italic;
     }
@@ -189,7 +191,7 @@
       <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo">
       <button class="tab-button active" onclick="switchTab('play')">▶ Play</button>
       <button class="tab-button" onclick="switchTab('news')">📰 News</button>
-      <button class="tab-button" onclick="checkUpdate()">⬆ Updates</button>
+      <button class="tab-button" onclick="checkUpdate()">⬆ Update</button>
     </div>
     <div class="main">
       <div class="header">
@@ -198,8 +200,8 @@
       </div>
 
       <div class="tab active" id="playTab">
-        <div class="play-controls">
-          <input type="text" id="username" placeholder="Enter Username">
+        <div class="launcher-controls">
+          <input type="text" id="username" placeholder="Username">
           <select id="version">
             <option value="1.20.1">1.20.1</option>
             <option value="1.19.4">1.19.4</option>
@@ -219,12 +221,12 @@
 
       <div class="tab" id="newsTab">
         <div class="news-item">
-          <h3>🔥 1.20.1 Released</h3>
-          <p>Enjoy better performance, UI enhancements, and updated support for new mods.</p>
+          <h3>🔥 Version 1.20.1 Released</h3>
+          <p>Enhanced performance and updated mods.</p>
         </div>
         <div class="news-item">
-          <h3>🎨 UI Redesign</h3>
-          <p>Inspired by Lunar and Feather Client, enjoy a sleek, modern experience.</p>
+          <h3>🎨 Full UI Redesign</h3>
+          <p>Inspired by Lunar and Feather Client.</p>
         </div>
       </div>
     </div>
@@ -234,9 +236,7 @@
     function switchTab(tab) {
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
-      document.querySelectorAll('.tab').forEach(panel => {
-        panel.classList.remove('active');
-      });
+      document.querySelectorAll('.tab').forEach(panel => panel.classList.remove('active'));
       document.getElementById(tab + 'Tab').classList.add('active');
     }
 
