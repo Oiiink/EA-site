@@ -11,12 +11,13 @@
     --orange-dark: #e06900;
     --bg-dark: #0a0a0a;
     --bg-light: #1c1c1c;
-    --panel: #121212;
+    --panel-bg: rgba(18, 18, 18, 0.75);
+    --panel-blur: 12px;
     --text-primary: #fff;
     --text-muted: #bbb;
     --border: #2a2a2a;
-    --radius: 12px;
-    --shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+    --radius: 16px;
+    --shadow: 0 8px 20px rgba(255, 122, 0, 0.4);
     --transition: 0.3s ease;
   }
   * {
@@ -30,30 +31,34 @@
     background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
     color: var(--text-primary);
     overflow: hidden;
+    user-select: none;
   }
   .launcher {
     display: flex;
     height: 100vh;
     width: 100vw;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--panel-blur));
   }
   /* Sidebar */
   .sidebar {
     width: 260px;
-    background: rgba(20, 20, 20, 0.85);
+    background: var(--panel-bg);
+    backdrop-filter: blur(var(--panel-blur));
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 3rem 1rem;
     border-right: 1px solid var(--border);
+    box-shadow: var(--shadow);
   }
-  .sidebar img {
+  .sidebar .logo {
     width: 110px;
     height: 110px;
     border-radius: 50%;
     margin-bottom: 3rem;
     box-shadow: 0 0 20px var(--orange);
     object-fit: cover;
+    user-select: none;
   }
   .tab-button {
     width: 100%;
@@ -68,13 +73,26 @@
     cursor: pointer;
     text-align: left;
     transition: background var(--transition), color var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .tab-button svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-muted);
+    transition: fill var(--transition);
   }
   .tab-button.active,
   .tab-button:hover {
     background: var(--orange);
     color: #121212;
-    box-shadow: var(--shadow);
   }
+  .tab-button.active svg,
+  .tab-button:hover svg {
+    fill: #121212;
+  }
+
   /* Main area */
   .main {
     flex-grow: 1;
@@ -83,12 +101,13 @@
     display: flex;
     flex-direction: column;
     gap: 3rem;
+    position: relative;
   }
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
   .header h1 {
     font-weight: 800;
@@ -100,6 +119,37 @@
     font-size: 0.95rem;
     font-style: italic;
     color: var(--text-muted);
+    height: 24px;
+  }
+
+  /* Minecraft Profile (top-right) */
+  .profile {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(var(--panel-blur));
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow);
+    user-select: none;
+    cursor: default;
+    z-index: 10;
+  }
+  .profile img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 8px var(--orange);
+  }
+  .profile .username {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--orange);
   }
 
   /* Play tab content */
@@ -110,84 +160,94 @@
     justify-content: flex-start;
   }
 
-  /* Left panel - Play controls */
+  /* Play panel */
   .play-panel {
-    background: var(--panel);
+    background: var(--panel-bg);
     border-radius: var(--radius);
-    padding: 2.5rem 3rem;
+    padding: 3rem 4rem;
     box-shadow: var(--shadow);
-    flex: 1 1 350px;
+    flex: 1 1 400px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 2rem;
   }
 
-  .play-panel label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--orange);
+  /* Play controls */
+  .play-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
-  .play-panel input[type="text"],
-  .play-panel select {
-    width: 100%;
-    padding: 0.8rem 1rem;
+  .version-select {
+    padding: 0.75rem 1rem;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: #121212;
     color: var(--text-primary);
-    font-size: 1rem;
-    transition: border-color var(--transition);
+    font-size: 1.1rem;
+    min-width: 140px;
+    cursor: pointer;
+    transition: border-color var(--transition), box-shadow var(--transition);
   }
-  .play-panel input[type="text"]:focus,
-  .play-panel select:focus {
+  .version-select:focus {
     outline: none;
     border-color: var(--orange);
-    box-shadow: 0 0 8px var(--orange);
+    box-shadow: 0 0 10px var(--orange);
   }
+
   .play-button {
     background: var(--orange);
     color: #121212;
     font-weight: 700;
-    padding: 1.2rem 0;
-    font-size: 1.4rem;
+    padding: 1.4rem 3.5rem;
+    font-size: 1.6rem;
     border-radius: var(--radius);
     border: none;
     cursor: pointer;
     box-shadow: var(--shadow);
     transition: background var(--transition), transform 0.2s ease;
+    flex-shrink: 0;
   }
   .play-button:hover {
     background: var(--orange-dark);
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 
   /* Right panel - Mod profiles */
   .mod-panel {
-    background: var(--panel);
+    background: var(--panel-bg);
     border-radius: var(--radius);
-    padding: 2.5rem 3rem;
+    padding: 3rem 3.5rem;
     box-shadow: var(--shadow);
-    flex: 1 1 300px;
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
   }
   .mod-panel h2 {
     font-weight: 800;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     color: var(--orange);
   }
   .mod-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.3rem;
   }
   .mod-list li {
     background: #1c1c1c;
-    padding: 0.75rem 1.2rem;
+    padding: 0.9rem 1.5rem;
     border-radius: var(--radius);
     color: var(--text-muted);
     font-weight: 600;
     cursor: pointer;
     transition: background var(--transition), color var(--transition);
+    user-select: none;
   }
   .mod-list li:hover,
   .mod-list li.active {
@@ -195,13 +255,39 @@
     color: #121212;
   }
 
+  /* News tab */
+  .news-tab {
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    padding: 3rem 3.5rem;
+    box-shadow: var(--shadow);
+    color: var(--text-primary);
+    font-weight: 400;
+    max-width: 720px;
+    user-select: none;
+  }
+  .news-tab h3 {
+    font-weight: 700;
+    color: var(--orange);
+    margin-bottom: 1rem;
+  }
+  .news-tab p {
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .news-item + .news-item {
+    margin-top: 2rem;
+  }
+
   /* Animated tab fade */
   .tab-content {
     animation: fadeInUp 0.5s ease forwards;
     opacity: 0;
+    display: none;
   }
   .tab-content.active {
     opacity: 1;
+    display: block;
   }
   @keyframes fadeInUp {
     from {
@@ -214,11 +300,11 @@
     }
   }
 
-  /* Scrollbar for main */
-  .main::-webkit-scrollbar {
+  /* Scrollbar for mod list */
+  .mod-list::-webkit-scrollbar {
     width: 8px;
   }
-  .main::-webkit-scrollbar-thumb {
+  .mod-list::-webkit-scrollbar-thumb {
     background: var(--orange);
     border-radius: var(--radius);
   }
@@ -226,47 +312,62 @@
 </head>
 <body>
   <div class="launcher">
-    <aside class="sidebar">
-      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo" />
-      <button class="tab-button active" onclick="switchTab('play')">▶ Play</button>
-      <button class="tab-button" onclick="switchTab('news')">📰 News</button>
-      <button class="tab-button" onclick="checkUpdate()">⬆ Updates</button>
+    <aside class="sidebar" aria-label="Main navigation">
+      <img class="logo" src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Event Alerts Logo" />
+      <button class="tab-button active" onclick="switchTab('play')" aria-current="page" aria-label="Play tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        Play
+      </button>
+      <button class="tab-button" onclick="switchTab('news')" aria-label="News tab">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v2H4zM4 7h16v2H4zM4 10h10v2H4z"/></svg>
+        News
+      </button>
+      <button class="tab-button" onclick="checkUpdate()" aria-label="Check for updates">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v8h8"/></svg>
+        Updates
+      </button>
     </aside>
-    <main class="main">
+
+    <main class="main" role="main">
       <header class="header">
         <h1>Event Alerts Launcher</h1>
-        <span id="status"></span>
+        <span id="status" aria-live="polite"></span>
       </header>
 
-      <section id="playTab" class="tab-content active">
+      <!-- Minecraft Profile top right -->
+      <div class="profile" aria-label="Minecraft Profile">
+        <img src="https://mc-heads.net/avatar/YourMinecraftName" alt="Player Avatar" id="profileAvatar" />
+        <span class="username" id="profileName">YourMinecraftName</span>
+      </div>
+
+      <!-- Play Tab -->
+      <section id="playTab" class="tab-content active" role="tabpanel" aria-labelledby="play-tab">
         <div class="play-tab">
           <div class="play-panel">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Enter your Minecraft username" />
-            
-            <label for="version">Minecraft Version</label>
-            <select id="version">
-              <option value="1.20.1">1.20.1</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.8.9">1.8.9</option>
-            </select>
-
-            <button class="play-button" onclick="launchGame()">PLAY</button>
+            <div class="play-controls" role="group" aria-label="Launch controls">
+              <select id="version" class="version-select" aria-label="Select Minecraft version">
+                <option value="1.20.1">1.20.1</option>
+                <option value="1.19.4">1.19.4</option>
+                <option value="1.8.9">1.8.9</option>
+              </select>
+              <button class="play-button" onclick="launchGame()" aria-label="Launch Minecraft">PLAY</button>
+            </div>
           </div>
 
-          <aside class="mod-panel">
+          <aside class="mod-panel" aria-label="Mod Profiles">
             <h2>Mod Profiles</h2>
-            <ul class="mod-list" id="modList">
-              <li class="active" onclick="selectMod(this)">Default</li>
-              <li onclick="selectMod(this)">OptiFine Boost</li>
-              <li onclick="selectMod(this)">PvP Pack</li>
-              <li onclick="selectMod(this)">Adventure Mode</li>
+            <ul class="mod-list" id="modList" role="list">
+              <li class="active" tabindex="0" onclick="selectMod(this)">Default</li>
+              <li tabindex="0" onclick="selectMod(this)">OptiFine Boost</li>
+              <li tabindex="0" onclick="selectMod(this)">PvP Pack</li>
+              <li tabindex="0" onclick="selectMod(this)">Adventure Mode</li>
             </ul>
           </aside>
         </div>
       </section>
 
-      <section id="newsTab" class="tab-content" style="display:none;">
+      <!-- News Tab -->
+      <section id="newsTab" class="tab-content news-tab" role="tabpanel" aria-labelledby="news-tab" style="display:none;">
         <article class="news-item">
           <h3>🔥 1.20.1 Released</h3>
           <p>Enjoy better performance, UI enhancements, and updated support for new mods.</p>
@@ -280,43 +381,50 @@
   </div>
 
   <script>
+    // Stub: Replace with real user profile fetch in a real app
+    const userName = "CoolPlayer123";
+    const avatarURL = `https://mc-heads.net/avatar/${userName}`;
+
+    function updateProfile() {
+      document.getElementById('profileName').textContent = userName;
+      document.getElementById('profileAvatar').src = avatarURL;
+      document.getElementById('profileAvatar').alt = `Minecraft avatar of ${userName}`;
+    }
+    updateProfile();
+
+    // Tab switching logic
     function switchTab(tab) {
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.style.display = 'none';
-        content.classList.remove('active');
+      const tabs = ['play', 'news'];
+      tabs.forEach(t => {
+        document.getElementById(t + 'Tab').classList.remove('active');
+        const btn = document.querySelector(`.tab-button[onclick="switchTab('${t}')"]`);
+        btn.classList.remove('active');
+        btn.removeAttribute('aria-current');
       });
-      event.target.classList.add('active');
-      const selectedTab = document.getElementById(tab + 'Tab');
-      selectedTab.style.display = 'block';
-      setTimeout(() => selectedTab.classList.add('active'), 10);
-      document.getElementById('status').textContent = '';
+      document.getElementById(tab + 'Tab').classList.add('active');
+      const activeBtn = document.querySelector(`.tab-button[onclick="switchTab('${tab}')"]`);
+      activeBtn.classList.add('active');
+      activeBtn.setAttribute('aria-current', 'page');
     }
 
-    function checkUpdate() {
-      const status = document.getElementById("status");
-      status.textContent = "Checking for updates...";
-      setTimeout(() => {
-        status.textContent = "You're running the latest version.";
-      }, 1500);
-    }
-
-    function launchGame() {
-      const username = document.getElementById("username").value.trim();
-      const version = document.getElementById("version").value;
-      const status = document.getElementById("status");
-      if (!username) {
-        status.textContent = "Please enter a username.";
-        return;
-      }
-      status.textContent = `Launching Minecraft ${version} for ${username}...`;
-    }
-
+    // Mod profile selection
     function selectMod(el) {
       document.querySelectorAll('.mod-list li').forEach(li => li.classList.remove('active'));
       el.classList.add('active');
-      const status = document.getElementById("status");
-      status.textContent = `Mod profile selected: ${el.textContent}`;
+    }
+
+    // Placeholder launch
+    function launchGame() {
+      const version = document.getElementById('version').value;
+      const modProfile = document.querySelector('.mod-list li.active').textContent;
+      alert(`Launching Minecraft ${version} with profile: ${modProfile}`);
+    }
+
+    // Stub check update
+    function checkUpdate() {
+      alert("Checking for updates...");
+      document.getElementById('status').textContent = "You're up to date!";
+      setTimeout(() => { document.getElementById('status').textContent = ''; }, 4000);
     }
   </script>
 </body>
