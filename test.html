@@ -5,349 +5,331 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Event Alerts Launcher</title>
 <style>
-  /* Reset & base */
-  *, *::before, *::after {
+  :root {
+    --color-bg: #121212;
+    --color-accent: #ff6a00;
+    --color-accent-light: #ff8c33;
+    --color-text-primary: #eee;
+    --color-text-secondary: #bbb;
+    --color-text-muted: #888;
+    --color-card-bg: rgba(30,30,30,0.75);
+    --color-hover-bg: rgba(255,106,0,0.15);
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Reset and base */
+  * {
     box-sizing: border-box;
   }
   body {
-    margin: 0;
-    background: linear-gradient(135deg, #0f1419, #1a1f27);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #d9d9d9;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    margin: 0; padding: 0;
+    background: linear-gradient(135deg, #1e1e1e, #121212);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
     user-select: none;
     height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
-  /* Root colors & variables */
-  :root {
-    --color-bg: #1a1f27;
-    --color-panel-bg: rgba(28, 33, 41, 0.85);
-    --color-accent: #f97316; /* bright orange */
-    --color-accent-muted: #f9731655;
-    --color-text-primary: #d9d9d9;
-    --color-text-muted: #a3a3a3;
-    --color-shadow: rgba(0,0,0,0.6);
-    --border-radius: 12px;
-    --transition: 0.3s ease;
-    --font-heading: 'Minecraftia', 'Segoe UI Bold', sans-serif;
-  }
-
   /* Header */
   header {
-    background: linear-gradient(90deg, #222b36 0%, #1f2731 100%);
-    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: var(--color-card-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+  }
+  /* Logo with text */
+  .logo-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    box-shadow: 0 2px 6px var(--color-shadow);
+    gap: 12px;
   }
-  header .logo {
-    height: 40px;
-    width: 40px;
-    border-radius: 6px;
-    background: url('https://crafatar.com/avatars/0?size=64&overlay') no-repeat center/cover;
-    box-shadow: 0 0 8px var(--color-accent);
+  .logo-svg {
+    width: 48px;
+    height: 48px;
+    fill: var(--color-accent);
+    flex-shrink: 0;
   }
-  header h1 {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
+  .logo-text {
+    font-weight: 900;
+    font-size: 1.8rem;
     color: var(--color-accent);
-    user-select: none;
-    margin-left: 1rem;
+    letter-spacing: 2px;
   }
 
-  /* Profile top right */
+  /* Profile */
   .profile {
+    position: relative;
     display: flex;
     align-items: center;
+    gap: 12px;
     cursor: pointer;
-    position: relative;
     user-select: none;
   }
   .profile img {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     border: 2px solid var(--color-accent);
-    margin-right: 10px;
-    transition: box-shadow var(--transition);
-  }
-  .profile:hover img,
-  .profile.open img {
-    box-shadow: 0 0 10px var(--color-accent);
   }
   .profile .username {
     font-weight: 600;
-    font-size: 1rem;
     color: var(--color-text-primary);
+    white-space: nowrap;
   }
   .profile .dropdown-arrow {
-    margin-left: 6px;
-    fill: var(--color-accent);
-    transition: transform var(--transition);
+    width: 18px;
+    height: 18px;
+    fill: var(--color-text-muted);
+    transition: transform 0.3s ease;
   }
   .profile.open .dropdown-arrow {
     transform: rotate(180deg);
   }
-
-  /* Profile dropdown */
   .account-dropdown {
     position: absolute;
-    top: 50px;
+    top: 56px;
     right: 0;
-    background: var(--color-panel-bg);
-    backdrop-filter: blur(14px);
-    border-radius: var(--border-radius);
-    box-shadow: 0 8px 24px var(--color-shadow);
-    overflow: hidden;
+    background: var(--color-card-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
     width: 160px;
-    z-index: 10;
+    overflow: hidden;
+    font-size: 0.9rem;
+    user-select: none;
+    z-index: 20;
   }
   .account-dropdown li {
-    padding: 10px 16px;
-    font-size: 0.95rem;
+    padding: 12px 16px;
     color: var(--color-text-primary);
+    list-style: none;
     cursor: pointer;
-    transition: background var(--transition);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: background-color 0.2s ease;
+  }
+  .account-dropdown li:last-child {
+    border-bottom: none;
   }
   .account-dropdown li:hover,
   .account-dropdown li:focus {
-    background: var(--color-accent-muted);
+    background: var(--color-accent-light);
     outline: none;
   }
 
-  /* Main container */
+  /* Launcher layout */
   .launcher {
     flex: 1;
     display: flex;
+    background: var(--color-card-bg);
+    margin: 16px 24px;
+    border-radius: 16px;
     overflow: hidden;
-    min-height: 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.75);
   }
 
   /* Sidebar */
   nav.sidebar {
-    width: 90px;
-    background: var(--color-panel-bg);
-    backdrop-filter: blur(12px);
-    box-shadow: inset -1px 0 0 var(--color-accent-muted);
+    width: 72px;
+    background: #222;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1rem 0;
+    padding: 20px 0;
     gap: 24px;
+    box-shadow: inset -1px 0 3px rgba(255,106,0,0.3);
   }
   nav.sidebar .logo-small {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 8px;
-    border-radius: var(--border-radius);
-    background: url('https://crafatar.com/avatars/0?size=64&overlay') no-repeat center/cover;
-    box-shadow: 0 0 10px var(--color-accent);
+    width: 36px;
+    height: 36px;
+    fill: var(--color-accent);
+    margin-bottom: 16px;
+    flex-shrink: 0;
   }
-  nav.sidebar button.tab-button {
+  .tab-button {
     background: transparent;
     border: none;
     color: var(--color-text-muted);
-    cursor: pointer;
-    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: color var(--transition), transform var(--transition);
-    width: 100%;
+    gap: 4px;
+    cursor: pointer;
+    width: 48px;
+    font-size: 0.65rem;
+    padding: 8px 0;
+    transition: color 0.25s ease;
+    position: relative;
+    border-radius: 12px;
   }
-  nav.sidebar button.tab-button svg {
-    fill: var(--color-text-muted);
-    width: 28px;
-    height: 28px;
-    margin-bottom: 6px;
+  .tab-button svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
   }
-  nav.sidebar button.tab-button:hover,
-  nav.sidebar button.tab-button:focus {
+  .tab-button:hover,
+  .tab-button:focus {
     color: var(--color-accent);
     outline: none;
+    background: var(--color-hover-bg);
   }
-  nav.sidebar button.tab-button:hover svg,
-  nav.sidebar button.tab-button:focus svg {
-    fill: var(--color-accent);
-  }
-  nav.sidebar button.tab-button.active {
+  .tab-button.active {
     color: var(--color-accent);
-    font-weight: 700;
+    background: var(--color-hover-bg);
   }
-  nav.sidebar button.tab-button.active svg {
-    fill: var(--color-accent);
-    transform: scale(1.15);
+  /* Show label tooltip on sidebar */
+  .tab-button::after {
+    content: attr(title);
+    position: absolute;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-card-bg);
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+    user-select: none;
+  }
+  .tab-button:hover::after,
+  .tab-button:focus::after,
+  .tab-button.active::after {
+    opacity: 1;
   }
 
   /* Main content */
   section.main {
     flex: 1;
-    padding: 2rem 3rem;
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
-    min-width: 0;
+    padding: 24px 32px;
+    overflow: hidden;
   }
 
-  /* Play tab content */
+  /* Play Tab */
   .play-tab {
-    flex: 1;
     display: flex;
     flex-direction: column;
-  }
-
-  /* Game controls panel */
-  .play-panel {
-    background: var(--color-panel-bg);
-    border-radius: var(--border-radius);
-    padding: 2.2rem 3rem;
-    box-shadow: 0 10px 30px var(--color-shadow);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 24px;
-    max-width: 640px;
-    width: 100%;
   }
-
-  /* PLAY button */
+  .play-panel {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    max-width: 480px;
+  }
   .play-button {
+    flex-grow: 1;
+    padding: 18px 0;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
     background: var(--color-accent);
-    color: #121212;
-    font-weight: 800;
-    font-size: 2.1rem;
-    padding: 18px 48px;
-    border-radius: 40px;
     border: none;
+    border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 6px 16px var(--color-accent);
+    box-shadow: 0 8px 20px rgba(255,106,0,0.6);
     transition: background 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0;
+    user-select: none;
   }
-  .play-button:hover {
-    background: #f97434;
-    box-shadow: 0 10px 22px #f97434bb;
+  .play-button:hover,
+  .play-button:focus {
+    background: var(--color-accent-light);
+    box-shadow: 0 10px 28px rgba(255,140,51,0.8);
+    outline: none;
   }
-  .play-button:active {
-    background: #c85c11;
-    box-shadow: none;
-  }
-
-  /* Version select */
   .version-select {
-    font-weight: 600;
-    font-size: 1.1rem;
-    padding: 10px 16px;
+    width: 160px;
+    padding: 12px 16px;
+    font-size: 1rem;
     border-radius: 32px;
     border: none;
-    background: #252d3c;
+    background: #333;
     color: var(--color-text-primary);
     cursor: pointer;
-    min-width: 160px;
-    transition: background 0.3s ease;
+    user-select: none;
+    transition: background-color 0.3s ease;
   }
   .version-select:hover,
   .version-select:focus {
-    background: #37465a;
+    background: #444;
     outline: none;
   }
 
-  /* Mod profiles panel */
+  /* Mod profiles */
   .mod-panel {
-    margin-top: 2rem;
-    max-width: 640px;
-    background: var(--color-panel-bg);
-    border-radius: var(--border-radius);
-    padding: 2rem 2.5rem;
-    box-shadow: 0 8px 24px var(--color-shadow);
-    user-select: none;
+    max-width: 480px;
   }
   .mod-panel h2 {
     font-weight: 700;
-    font-size: 1.6rem;
-    margin-bottom: 1.2rem;
-    color: var(--color-accent);
-    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    color: var(--color-text-primary);
   }
   .mod-list {
-    list-style: none;
     display: flex;
-    gap: 1.2rem;
-    padding: 0;
-    margin: 0;
+    gap: 12px;
+    flex-wrap: wrap;
   }
   .mod-list li {
-    flex: 1 1 auto;
-    background: #252d3c;
-    padding: 0.8rem 1.6rem;
-    border-radius: 28px;
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--color-text-muted);
-    text-align: center;
+    padding: 8px 20px;
+    background: #333;
+    border-radius: 32px;
     cursor: pointer;
     user-select: none;
-    transition: background var(--transition), color var(--transition);
-    box-shadow: inset 0 0 0 2px transparent;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-  .mod-list li:hover {
-    background: var(--color-accent-muted);
-    color: var(--color-accent);
-  }
-  .mod-list li.active {
+  .mod-list li.active,
+  .mod-list li:hover,
+  .mod-list li:focus {
     background: var(--color-accent);
-    color: #121212;
-    box-shadow: inset 0 0 0 2px #fff;
+    color: #fff;
+    outline: none;
   }
 
-  /* News tab content */
+  /* News Tab */
   .news-tab {
-    flex: 1;
-    background: var(--color-panel-bg);
-    border-radius: var(--border-radius);
-    padding: 2rem 3rem;
-    box-shadow: 0 8px 24px var(--color-shadow);
     overflow-y: auto;
+    padding-right: 12px;
   }
   .news-tab h2 {
+    margin-bottom: 16px;
     font-weight: 700;
-    font-size: 2rem;
-    margin-bottom: 1.8rem;
-    color: var(--color-accent);
-    letter-spacing: 1px;
+    color: var(--color-text-primary);
   }
   .news-item {
-    border-bottom: 1px solid #37465a;
-    padding-bottom: 1.4rem;
-    margin-bottom: 1.4rem;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    background: #222;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    user-select: none;
+    transition: background-color 0.2s ease;
   }
-  .news-item:last-child {
-    border-bottom: none;
+  .news-item:hover {
+    background: var(--color-hover-bg);
   }
   .news-item h3 {
+    margin: 0 0 6px 0;
     font-weight: 700;
-    font-size: 1.2rem;
-    margin: 0 0 0.3rem;
-    color: var(--color-text-primary);
+    color: var(--color-accent);
   }
   .news-item p {
     margin: 0;
-    color: var(--color-text-muted);
-    line-height: 1.5;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
   }
 
-  /* Scrollbar styling for news */
+  /* Scrollbar for news */
   .news-tab::-webkit-scrollbar {
     width: 8px;
   }
@@ -355,48 +337,58 @@
     background: transparent;
   }
   .news-tab::-webkit-scrollbar-thumb {
-    background: var(--color-accent-muted);
-    border-radius: 4px;
+    background: var(--color-accent-light);
+    border-radius: 5px;
   }
 
   /* Responsive */
-  @media (max-width: 840px) {
-    section.main {
-      padding: 1.5rem 2rem;
-    }
-    .play-panel {
+  @media (max-width: 760px) {
+    .launcher {
       flex-direction: column;
-      gap: 16px;
-      max-width: 100%;
-      padding: 1.6rem 2rem;
-    }
-    .play-button {
-      width: 100%;
-      padding: 16px 0;
-      font-size: 1.8rem;
-      border-radius: 32px;
-    }
-    .version-select {
-      min-width: 100%;
-      text-align: center;
-      border-radius: 32px;
+      margin: 16px 12px;
+      border-radius: 12px;
     }
     nav.sidebar {
-      width: 70px;
-      padding: 0.8rem 0;
-      gap: 18px;
+      flex-direction: row;
+      width: 100%;
+      padding: 12px 0;
+      gap: 20px;
+      box-shadow: inset 0 -1px 3px rgba(255,106,0,0.3);
     }
-    nav.sidebar .logo-small {
-      width: 40px;
-      height: 40px;
+    .tab-button {
+      width: auto;
+      flex-direction: row;
+      gap: 8px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
     }
-    nav.sidebar button.tab-button {
-      font-size: 0.65rem;
-    }
-    nav.sidebar button.tab-button svg {
+    .tab-button svg {
       width: 22px;
       height: 22px;
-      margin-bottom: 4px;
+    }
+    .tab-button::after {
+      display: none;
+    }
+    section.main {
+      padding: 16px 20px;
+    }
+    .play-panel {
+      max-width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .play-button {
+      flex-grow: 1;
+      font-size: 1.8rem;
+    }
+    .version-select {
+      width: 100%;
+      max-width: 280px;
+      margin-top: 8px;
+    }
+    .mod-panel {
+      max-width: 100%;
+      margin-top: 16px;
     }
   }
 </style>
@@ -404,15 +396,19 @@
 <body>
 
 <header>
-  <div style="display:flex; align-items:center;">
-    <div class="logo" title="Event Alerts Launcher"></div>
-    <h1>Event Alerts</h1>
+  <div class="logo-container" aria-label="Event Alerts Launcher Logo">
+    <!-- Minecraft-style block logo SVG -->
+    <svg class="logo-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <rect x="8" y="8" width="48" height="48" rx="8" ry="8"/>
+      <rect x="20" y="20" width="24" height="24" fill="#121212"/>
+    </svg>
+    <div class="logo-text">EVENT ALERTS</div>
   </div>
 
-  <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" id="profileButton">
-    <img src="https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7?size=64&overlay" alt="Minecraft Profile" />
+  <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" id="profileButton" role="button" aria-label="User profile menu">
+    <img src="https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7?size=64&overlay" alt="Minecraft avatar" />
     <span class="username">Steve</span>
-    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M7 10l5 5 5-5z" />
     </svg>
 
@@ -423,9 +419,12 @@
   </div>
 </header>
 
-<div class="launcher">
+<div class="launcher" role="main">
   <nav class="sidebar" aria-label="Launcher navigation">
-    <div class="logo-small" title="Event Alerts"></div>
+    <svg class="logo-small" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" title="Event Alerts">
+      <rect x="8" y="8" width="48" height="48" rx="8" ry="8" fill="currentColor"/>
+      <rect x="20" y="20" width="24" height="24" fill="#121212"/>
+    </svg>
     <button class="tab-button active" aria-pressed="true" aria-controls="playTab" id="playTabBtn" title="Play">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
         <path d="M8 5v14l11-7z"></path>
@@ -443,7 +442,7 @@
   <section class="main">
     <section class="play-tab" id="playTab" role="tabpanel" aria-labelledby="playTabBtn">
       <div class="play-panel" role="region" aria-label="Game controls">
-        <button class="play-button" id="playButton">PLAY</button>
+        <button class="play-button" id="playButton" aria-label="Play Minecraft">PLAY</button>
         <select class="version-select" id="versionSelect" aria-label="Select Minecraft version">
           <option value="1.20.1">Minecraft 1.20.1</option>
           <option value="1.19.4">Minecraft 1.19.4</option>
@@ -458,94 +457,91 @@
           <li class="active" role="option" tabindex="0" aria-selected="true">Vanilla</li>
           <li role="option" tabindex="0">Event Alerts</li>
           <li role="option" tabindex="0">Optifine</li>
-          <li role="option" tabindex="0">Fabric</li>
-          <li role="option" tabindex="0">Forge</li>
+          <li role="option" tabindex="0">PvP</li>
         </ul>
       </div>
     </section>
 
     <section class="news-tab" id="newsTab" role="tabpanel" aria-labelledby="newsTabBtn" hidden>
       <h2>Latest News</h2>
-      <article class="news-item">
-        <h3>Event Alerts 1.3 Released</h3>
-        <p>New mod profiles and performance improvements. Get ready for an improved experience!</p>
+      <article class="news-item" tabindex="0">
+        <h3>New Update Released!</h3>
+        <p>We’ve added new Event Alert features and performance improvements for 1.20.1.</p>
       </article>
-      <article class="news-item">
-        <h3>Server Maintenance Scheduled</h3>
-        <p>Servers will be down on Sunday from 2 AM to 4 AM UTC for maintenance and upgrades.</p>
+      <article class="news-item" tabindex="0">
+        <h3>Maintenance Scheduled</h3>
+        <p>Servers will undergo maintenance on June 5th from 2:00 - 4:00 AM UTC.</p>
       </article>
-      <article class="news-item">
-        <h3>Join Our Discord!</h3>
-        <p>Connect with the community, get support, and share your feedback on our Discord server.</p>
+      <article class="news-item" tabindex="0">
+        <h3>Community Event</h3>
+        <p>Join us for the Summer Build Contest starting June 10th. Amazing prizes await!</p>
       </article>
     </section>
   </section>
 </div>
 
 <script>
+  // Profile dropdown toggle
+  const profileBtn = document.getElementById("profileButton");
+  const accountDropdown = document.getElementById("accountDropdown");
+
+  profileBtn.addEventListener("click", () => {
+    const expanded = profileBtn.getAttribute("aria-expanded") === "true";
+    profileBtn.setAttribute("aria-expanded", !expanded);
+    profileBtn.classList.toggle("open");
+    accountDropdown.hidden = expanded;
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener("click", (e) => {
+    if (!profileBtn.contains(e.target)) {
+      profileBtn.setAttribute("aria-expanded", "false");
+      profileBtn.classList.remove("open");
+      accountDropdown.hidden = true;
+    }
+  });
+
   // Tab switching
-  const playBtn = document.getElementById('playTabBtn');
-  const newsBtn = document.getElementById('newsTabBtn');
-  const playTab = document.getElementById('playTab');
-  const newsTab = document.getElementById('newsTab');
+  const playTabBtn = document.getElementById("playTabBtn");
+  const newsTabBtn = document.getElementById("newsTabBtn");
+  const playTab = document.getElementById("playTab");
+  const newsTab = document.getElementById("newsTab");
 
-  function setActiveTab(tab) {
-    if(tab === 'play') {
-      playBtn.classList.add('active');
-      playBtn.setAttribute('aria-pressed', 'true');
-      newsBtn.classList.remove('active');
-      newsBtn.setAttribute('aria-pressed', 'false');
-      playTab.hidden = false;
-      newsTab.hidden = true;
-    } else {
-      newsBtn.classList.add('active');
-      newsBtn.setAttribute('aria-pressed', 'true');
-      playBtn.classList.remove('active');
-      playBtn.setAttribute('aria-pressed', 'false');
-      newsTab.hidden = false;
-      playTab.hidden = true;
-    }
-  }
-  playBtn.addEventListener('click', () => setActiveTab('play'));
-  newsBtn.addEventListener('click', () => setActiveTab('news'));
-
-  // Profile dropdown
-  const profile = document.getElementById('profileButton');
-  const dropdown = document.getElementById('accountDropdown');
-
-  profile.addEventListener('click', () => {
-    const isOpen = dropdown.hasAttribute('hidden') === false;
-    if (isOpen) {
-      dropdown.setAttribute('hidden', '');
-      profile.setAttribute('aria-expanded', 'false');
-      profile.classList.remove('open');
-    } else {
-      dropdown.removeAttribute('hidden');
-      profile.setAttribute('aria-expanded', 'true');
-      profile.classList.add('open');
-    }
+  playTabBtn.addEventListener("click", () => {
+    playTabBtn.classList.add("active");
+    newsTabBtn.classList.remove("active");
+    playTabBtn.setAttribute("aria-pressed", "true");
+    newsTabBtn.setAttribute("aria-pressed", "false");
+    playTab.hidden = false;
+    newsTab.hidden = true;
   });
 
-  // Close dropdown if clicked outside
-  document.addEventListener('click', (e) => {
-    if (!profile.contains(e.target)) {
-      dropdown.setAttribute('hidden', '');
-      profile.setAttribute('aria-expanded', 'false');
-      profile.classList.remove('open');
-    }
+  newsTabBtn.addEventListener("click", () => {
+    newsTabBtn.classList.add("active");
+    playTabBtn.classList.remove("active");
+    newsTabBtn.setAttribute("aria-pressed", "true");
+    playTabBtn.setAttribute("aria-pressed", "false");
+    newsTab.hidden = false;
+    playTab.hidden = true;
   });
 
-  // Mod profile selection logic
-  const mods = document.querySelectorAll('.mod-list li');
-  mods.forEach(mod => {
-    mod.addEventListener('click', () => {
-      mods.forEach(m => {
-        m.classList.remove('active');
-        m.setAttribute('aria-selected', 'false');
+  // Mod profile selection
+  const modList = document.querySelector(".mod-list");
+  modList.addEventListener("click", (e) => {
+    if (e.target.tagName.toLowerCase() === "li") {
+      modList.querySelectorAll("li").forEach(li => {
+        li.classList.remove("active");
+        li.setAttribute("aria-selected", "false");
       });
-      mod.classList.add('active');
-      mod.setAttribute('aria-selected', 'true');
-    });
+      e.target.classList.add("active");
+      e.target.setAttribute("aria-selected", "true");
+    }
+  });
+
+  // Play button placeholder functionality
+  const playButton = document.getElementById("playButton");
+  playButton.addEventListener("click", () => {
+    alert("Launching Minecraft version " + document.getElementById("versionSelect").value + " with selected mod profile.");
   });
 </script>
 
