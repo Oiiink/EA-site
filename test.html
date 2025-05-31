@@ -8,11 +8,11 @@
   <style>
     :root {
       --orange: #ff7a00;
-      --bg: #121212;
-      --card-bg: #1e1e1e;
-      --border: #333;
+      --bg: #0d0d0d;
+      --panel-bg: rgba(30, 30, 30, 0.75);
       --text: #ffffff;
-      --muted: #aaa;
+      --muted: #999;
+      --border: #222;
     }
 
     * {
@@ -21,162 +21,155 @@
       box-sizing: border-box;
     }
 
-    body {
-      background: linear-gradient(145deg, #1a1a1a, #101010);
+    body, html {
+      height: 100%;
+      background: linear-gradient(135deg, #0e0e0e, #1a1a1a);
       font-family: 'Inter', sans-serif;
       color: var(--text);
-      height: 100vh;
+      overflow: hidden;
+    }
+
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #111 25%, #0a0a0a 75%);
+      z-index: -1;
+    }
+
+    .launcher {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #111;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+    }
+
+    .sidebar img {
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 2rem;
+    }
+
+    .tab-button {
+      width: 100%;
+      padding: 1rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      text-align: left;
+      padding-left: 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .tab-button:hover, .tab-button.active {
+      color: var(--orange);
+      background-color: #1a1a1a;
+    }
+
+    .main {
+      flex: 1;
+      padding: 2rem;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    header {
-      background-color: var(--card-bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    header img {
-      height: 40px;
-      border-radius: 50%;
-    }
-
-    nav {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.3s;
-    }
-
-    nav a:hover, nav a.active {
-      color: var(--orange);
-    }
-
-    .container {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      padding: 2rem;
+    .panel {
+      background: var(--panel-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(255, 122, 0, 0.2);
-      width: 100%;
-      max-width: 500px;
+      padding: 2rem;
+      margin-bottom: 2rem;
     }
 
-    .card h1 {
+    h1 {
       color: var(--orange);
-      margin-bottom: 1.5rem;
-    }
-
-    .input-group {
       margin-bottom: 1rem;
     }
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: var(--muted);
-    }
-
-    input, select {
-      width: 100%;
+    input, select, button {
       padding: 0.75rem 1rem;
-      border: none;
       border-radius: 0.5rem;
+      border: none;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      width: 100%;
       background: #111;
       color: var(--text);
     }
 
     button {
-      width: 100%;
-      margin-top: 1rem;
-      background: var(--orange);
-      border: none;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      color: #fff;
+      background-color: var(--orange);
       font-weight: bold;
       cursor: pointer;
     }
 
-    .news-section {
-      padding: 1rem 2rem;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      overflow-y: auto;
-      height: 250px;
+    #newsPanel .news-item {
+      margin-bottom: 1.5rem;
     }
 
-    .news-item {
-      margin-bottom: 1rem;
-    }
-
-    .news-item h3 {
+    #newsPanel .news-item h3 {
       color: var(--orange);
-      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo">
-    <nav>
-      <a href="#" class="active">Launcher</a>
-      <a href="#" onclick="showNews()">News</a>
-      <a href="#" onclick="checkUpdate()">Check for Updates</a>
-    </nav>
-  </header>
-
-  <div class="container" id="launcher">
-    <div class="card">
-      <h1>Play Minecraft</h1>
-      <div class="input-group">
-        <label for="username">Username</label>
+  <div class="background"></div>
+  <div class="launcher">
+    <div class="sidebar">
+      <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo">
+      <button class="tab-button active" onclick="showTab('playPanel', this)">Play</button>
+      <button class="tab-button" onclick="showTab('newsPanel', this)">News</button>
+      <button class="tab-button" onclick="checkUpdate()">Check for Updates</button>
+    </div>
+    <div class="main">
+      <div class="panel" id="playPanel">
+        <h1>Launch Minecraft</h1>
+        <label>Username</label>
         <input type="text" id="username" placeholder="Enter your username">
-      </div>
-      <div class="input-group">
-        <label for="version">Version</label>
+
+        <label>Version</label>
         <select id="version">
           <option value="1.20.1">1.20.1</option>
           <option value="1.19.4">1.19.4</option>
           <option value="1.8.9">1.8.9</option>
         </select>
-      </div>
-      <button onclick="launchGame()">Launch Game</button>
-      <p id="status"></p>
-    </div>
-  </div>
 
-  <div class="news-section" id="news" style="display: none;">
-    <div class="news-item">
-      <h3>Update 1.20.1 Released</h3>
-      <p>Check out the latest version of Minecraft with performance improvements and mod support.</p>
-    </div>
-    <div class="news-item">
-      <h3>Launcher Update</h3>
-      <p>New orange UI, news section, and update checker now available!</p>
+        <button onclick="launchGame()">Launch Game</button>
+        <p id="status"></p>
+      </div>
+
+      <div class="panel" id="newsPanel" style="display: none;">
+        <h1>Launcher News</h1>
+        <div class="news-item">
+          <h3>1.20.1 Released</h3>
+          <p>New features, better performance, and more supported mods!</p>
+        </div>
+        <div class="news-item">
+          <h3>Launcher UI Update</h3>
+          <p>New Lunar-style sidebar, blurred backgrounds, and orange theme!</p>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    function showNews() {
-      document.getElementById('launcher').style.display = 'none';
-      document.getElementById('news').style.display = 'block';
+    function showTab(id, btn) {
+      document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('playPanel').style.display = id === 'playPanel' ? 'block' : 'none';
+      document.getElementById('newsPanel').style.display = id === 'newsPanel' ? 'block' : 'none';
     }
 
     function checkUpdate() {
@@ -186,11 +179,12 @@
     function launchGame() {
       const user = document.getElementById("username").value;
       const version = document.getElementById("version").value;
-      if (user === "") {
-        document.getElementById("status").innerText = "Please enter a username.";
+      const status = document.getElementById("status");
+      if (!user) {
+        status.innerText = "Please enter a username.";
         return;
       }
-      document.getElementById("status").innerText = `Launching Minecraft ${version} for ${user}...`;
+      status.innerText = `Launching Minecraft ${version} for ${user}...`;
     }
   </script>
 </body>
