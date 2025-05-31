@@ -1,414 +1,187 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modern Minecraft Launcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Launcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    :root {
+      --bg: #0f0f11;
+      --panel: #1a1a1e;
+      --primary: #00e5ff;
+      --accent: #0088ff;
+      --text: #f0f0f0;
+      --muted: #888;
+    }
 
-    /* Reset & base */
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      user-select: none;
-      font-smooth: antialiased;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    body, html {
-      height: 100%;
-      background: #121214;
-      font-family: 'Poppins', sans-serif;
-      color: #ddd;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
     }
 
-    #launcher {
-      width: 960px;
-      height: 580px;
-      background: #1a1a1d;
-      border-radius: 20px;
+    body {
+      background: var(--bg);
+      color: var(--text);
       display: flex;
-      box-shadow: 0 0 40px #7a00ff80;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .launcher {
+      width: 1000px;
+      height: 620px;
+      background: var(--panel);
+      border-radius: 18px;
+      box-shadow: 0 0 30px #000;
+      display: flex;
       overflow: hidden;
     }
 
-    /* Sidebar */
-    nav.sidebar {
-      width: 260px;
-      background: linear-gradient(180deg, #2e0050 0%, #17002c 100%);
-      padding: 48px 30px;
+    .sidebar {
+      width: 240px;
+      background: #121214;
       display: flex;
       flex-direction: column;
-      gap: 30px;
-      box-shadow: inset -4px 0 15px #7a00ff88;
+      align-items: center;
+      padding: 30px 20px;
     }
-    nav.sidebar .logo {
-      font-weight: 800;
-      font-size: 2.8rem;
-      text-align: center;
-      color: #aa52ff;
-      text-shadow: 0 0 8px #a64fffaa;
-      letter-spacing: 0.2em;
-      user-select: none;
+
+    .sidebar h1 {
+      font-size: 1.6rem;
+      margin-bottom: 40px;
+      color: var(--primary);
     }
-    nav.sidebar button.nav-btn {
-      background: transparent;
+
+    .nav-btn {
+      width: 100%;
+      padding: 12px 20px;
+      background: none;
       border: none;
-      color: #d7c6ff;
-      font-size: 1.15rem;
-      font-weight: 600;
-      padding: 18px 20px;
-      border-radius: 14px;
-      cursor: pointer;
       text-align: left;
-      box-shadow: inset 0 0 0 3px transparent;
-      transition: all 0.3s ease;
-    }
-    nav.sidebar button.nav-btn:hover:not(:disabled) {
-      color: #fff;
-      box-shadow: inset 0 0 12px #aa52ff;
-      background: #43007f;
-    }
-    nav.sidebar button.nav-btn.active {
-      color: #fff;
-      background: #7a00ff;
-      box-shadow: 0 0 18px #b277ff;
-    }
-    nav.sidebar button.nav-btn:disabled {
-      color: #4a2d66;
-      cursor: not-allowed;
-      box-shadow: none;
+      color: var(--text);
+      font-weight: 600;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      cursor: pointer;
     }
 
-    /* Main content */
-    section.content {
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .content {
       flex-grow: 1;
-      padding: 60px 70px;
-      background: #222226;
+      padding: 40px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      border-radius: 0 20px 20px 0;
-      position: relative;
-      color: #ccc;
-      box-shadow: inset 0 0 70px #7a00ff66;
+      justify-content: space-between;
     }
 
-    /* Login form */
-    .login-panel {
-      max-width: 460px;
-      margin: 0 auto;
-      background: #2a2640;
-      border-radius: 28px;
-      padding: 48px 50px;
-      box-shadow: 0 0 30px #7a00ffcc;
+    .header {
       display: flex;
-      flex-direction: column;
-      gap: 38px;
-      user-select: none;
+      justify-content: space-between;
+      align-items: center;
     }
-    .login-panel h2 {
-      color: #d9c8ff;
-      font-weight: 700;
-      font-size: 2.4rem;
-      text-align: center;
-      letter-spacing: 0.1em;
+
+    .header h2 {
+      font-size: 1.8rem;
     }
-    .input-group {
-      position: relative;
-      width: 100%;
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .input-group input {
-      width: 100%;
-      border-radius: 18px;
-      padding: 18px 18px 18px 50px;
-      background: #3b3573;
-      border: none;
-      font-size: 1.3rem;
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #333;
+    }
+
+    .profile span {
       font-weight: 600;
-      color: #fff;
-      outline: none;
-      transition: background 0.3s ease;
-    }
-    .input-group input::placeholder {
-      color: #a994d6;
-      font-weight: 500;
-      opacity: 0.7;
-    }
-    .input-group input:focus {
-      background: #573ebf;
-      box-shadow: 0 0 16px #a86affaa;
-      color: #f1eaff;
-    }
-    .input-group .icon {
-      position: absolute;
-      top: 50%;
-      left: 16px;
-      transform: translateY(-50%);
-      color: #c4b0ff;
-      font-size: 1.6rem;
-      pointer-events: none;
     }
 
-    /* Buttons */
-    .btn {
-      background: linear-gradient(45deg, #7a00ff, #aa52ff);
-      border: none;
-      padding: 20px 0;
-      font-weight: 700;
-      font-size: 1.4rem;
-      border-radius: 22px;
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 0 28px #aa52ffcc;
-      transition: all 0.3s ease;
-      user-select: none;
-    }
-    .btn:hover:not(:disabled) {
-      background: linear-gradient(45deg, #aa52ff, #7a00ff);
-      box-shadow: 0 0 40px #d59effcc;
-    }
-    .btn:disabled {
-      background: #3a2a5d;
-      cursor: not-allowed;
-      box-shadow: none;
-      color: #6e5db6;
+    .main-section {
+      margin-top: 30px;
     }
 
-    /* Dashboard */
-    .dashboard {
-      max-width: 660px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-      user-select: none;
-    }
-    .profile-info {
-      text-align: center;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #d9c8ff;
-      letter-spacing: 0.05em;
-      text-shadow: 0 0 6px #7a00ff88;
-    }
-
-    .card {
-      background: #2f2a52;
-      border-radius: 24px;
-      padding: 40px 50px;
-      box-shadow: 0 0 30px #7a00ffbb;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-    .card h3 {
-      font-weight: 700;
-      font-size: 1.9rem;
-      color: #b7aaff;
-      letter-spacing: 0.06em;
-      text-shadow: 0 0 6px #7a00ff99;
-      user-select: none;
-    }
-    .card ul {
-      list-style: inside disc;
+    .section-title {
       font-size: 1.2rem;
-      color: #d0c6ff;
-      max-height: 180px;
-      overflow-y: auto;
-      line-height: 1.5;
-      padding-right: 10px;
-    }
-    .card ul::-webkit-scrollbar {
-      width: 8px;
-    }
-    .card ul::-webkit-scrollbar-thumb {
-      background: #aa52ffcc;
-      border-radius: 20px;
-    }
-    .card ul::-webkit-scrollbar-track {
-      background: #2f2a52;
+      margin-bottom: 16px;
     }
 
-    /* Version selector */
-    .version-select-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .version-select-wrapper label {
-      color: #d9c8ff;
-      font-weight: 600;
-      font-size: 1.3rem;
-      letter-spacing: 0.04em;
-      user-select: none;
-    }
-    select#versionSelect {
-      border-radius: 18px;
-      padding: 16px 22px;
-      font-size: 1.25rem;
-      font-weight: 600;
-      background: #423d6e;
-      color: #c8baff;
+    select, button.launch {
+      width: 100%;
+      padding: 16px;
+      font-size: 1rem;
+      border-radius: 10px;
       border: none;
-      outline: none;
-      cursor: pointer;
-      box-shadow: 0 0 16px #7a00ffbb;
-      transition: background 0.3s ease;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      user-select: none;
-      background-image:
-        linear-gradient(45deg, transparent 50%, #aa52ff 50%),
-        linear-gradient(135deg, #aa52ff 50%, transparent 50%),
-        linear-gradient(to right, #5f53a0, #b784ff);
-      background-position:
-        calc(100% - 20px) calc(1em + 2px),
-        calc(100% - 15px) calc(1em + 2px),
-        100% 0;
-      background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
-      background-repeat: no-repeat;
-    }
-    select#versionSelect:hover {
-      background-color: #5a50aa;
-    }
-    select#versionSelect:focus {
-      box-shadow: 0 0 25px #c784ffcc;
+      margin-bottom: 20px;
     }
 
-    /* Responsive scaling */
-    @media (max-width: 1000px) {
-      #launcher {
-        width: 90vw;
-        height: 600px;
-      }
-      nav.sidebar {
-        width: 220px;
-        padding: 30px 20px;
-      }
-      .login-panel, .dashboard {
-        max-width: 100%;
-        padding: 30px;
-      }
-      section.content {
-        padding: 40px 30px;
-      }
+    select {
+      background: #222;
+      color: var(--text);
+    }
+
+    button.launch {
+      background: var(--primary);
+      color: #000;
+      font-weight: 700;
+      transition: background 0.2s;
+    }
+
+    button.launch:hover {
+      background: #00bcd4;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
   </style>
 </head>
 <body>
-  <div id="launcher" role="application" aria-label="Minecraft Launcher">
-    <nav class="sidebar" aria-label="Main navigation">
-      <div class="logo" aria-label="Launcher logo">MC LAUNCHER</div>
-      <button class="nav-btn active" data-tab="login" aria-pressed="true">Login</button>
-      <button class="nav-btn" data-tab="dashboard" aria-pressed="false" disabled>Dashboard</button>
-      <button class="nav-btn" data-tab="mods" aria-pressed="false" disabled>Mods</button>
-      <button class="nav-btn" data-tab="settings" aria-pressed="false" disabled>Settings</button>
-    </nav>
-
-    <section class="content" tabindex="0">
-      <!-- Login panel -->
-      <div id="login" class="login-panel" role="region" aria-labelledby="loginTitle" aria-live="polite">
-        <h2 id="loginTitle">Sign In</h2>
-        <div class="input-group">
-          <span class="icon" aria-hidden="true">👤</span>
-          <input id="usernameInput" type="text" placeholder="Enter your username" aria-required="true" aria-describedby="usernameHelp" autocomplete="username" />
-          <small id="usernameHelp" style="color:#aaa; margin-top:4px;">Your Minecraft username</small>
-        </div>
-        <button id="loginBtn" class="btn" disabled aria-disabled="true">Login</button>
-      </div>
-
-      <!-- Dashboard panel -->
-      <div id="dashboard" class="dashboard" hidden role="region" aria-live="polite" aria-label="User Dashboard">
-        <div class="profile-info" id="profileInfo">Logged in as ...</div>
-
-        <div class="card" aria-label="Latest launcher news">
-          <h3>Latest News</h3>
-          <ul>
-            <li>New launcher features coming soon!</li>
-            <li>Improved Minecraft 1.20 support.</li>
-            <li>Bug fixes and performance improvements.</li>
-          </ul>
-        </div>
-
-        <div class="card" aria-label="Minecraft version selection and launch">
-          <div class="version-select-wrapper">
-            <label for="versionSelect">Select Minecraft Version</label>
-            <select id="versionSelect" aria-describedby="versionDesc">
-              <option value="1.20.1">1.20.1</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.18.2">1.18.2</option>
-              <option value="1.17.1">1.17.1</option>
-            </select>
-            <small id="versionDesc" style="color:#aaa;">Choose the version you want to play</small>
-          </div>
-          <button class="btn" id="launchBtn" style="margin-top: 24px;">Launch Minecraft</button>
+  <div class="launcher">
+    <div class="sidebar">
+      <h1>MyLauncher</h1>
+      <button class="nav-btn active">Home</button>
+      <button class="nav-btn">Mods</button>
+      <button class="nav-btn">Settings</button>
+      <button class="nav-btn">Accounts</button>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h2>Welcome Back</h2>
+        <div class="profile">
+          <img src="https://mc-heads.net/avatar/Notch/100" alt="Profile" />
+          <span>Notch</span>
         </div>
       </div>
-    </section>
+      <div class="main-section">
+        <div class="section-title">Select Minecraft Version</div>
+        <select>
+          <option>1.20.4</option>
+          <option>1.19.4</option>
+          <option>1.18.2</option>
+          <option>1.17.1</option>
+        </select>
+        <button class="launch">Launch</button>
+      </div>
+      <div class="footer">
+        &copy; 2025 MyLauncher. Not affiliated with Mojang or Microsoft.
+      </div>
+    </div>
   </div>
-
-  <script>
-    // Elements
-    const loginBtn = document.getElementById('loginBtn');
-    const usernameInput = document.getElementById('usernameInput');
-    const loginPanel = document.getElementById('login');
-    const dashboardPanel = document.getElementById('dashboard');
-    const profileInfo = document.getElementById('profileInfo');
-    const launchBtn = document.getElementById('launchBtn');
-    const navButtons = document.querySelectorAll('.nav-btn');
-
-    // Enable login button only if username entered
-    usernameInput.addEventListener('input', () => {
-      const enabled = usernameInput.value.trim().length > 0;
-      loginBtn.disabled = !enabled;
-      loginBtn.setAttribute('aria-disabled', !enabled);
-    });
-
-    // Login action
-    loginBtn.addEventListener('click', () => {
-      const username = usernameInput.value.trim();
-      if (!username) return;
-
-      loginPanel.hidden = true;
-      dashboardPanel.hidden = false;
-
-      profileInfo.textContent = `Logged in as ${username}`;
-
-      navButtons.forEach(btn => btn.disabled = false);
-      navButtons.forEach(btn => btn.classList.remove('active'));
-      document.querySelector('.nav-btn[data-tab="dashboard"]').classList.add('active');
-    });
-
-    // Navigation clicks
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.disabled) return;
-
-        navButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (btn.dataset.tab === 'login') {
-          loginPanel.hidden = false;
-          dashboardPanel.hidden = true;
-        } else if (btn.dataset.tab === 'dashboard') {
-          loginPanel.hidden = true;
-          dashboardPanel.hidden = false;
-        } else {
-          alert(`${btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)} coming soon!`);
-        }
-      });
-    });
-
-    // Launch button click
-    launchBtn.addEventListener('click', () => {
-      const version = document.getElementById('versionSelect').value;
-      alert(`Launching Minecraft version ${version}...`);
-    });
-  </script>
 </body>
 </html>
