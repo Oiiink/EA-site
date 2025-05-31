@@ -1,307 +1,267 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minecraft Launcher</title>
-  <style>
-    /* Reset & base */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f0f0;
-      color: #333;
-      line-height: 1.6;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-      border-radius: 8px;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minecraft Launcher</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+  body {
+    background: #121212;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
 
-    /* Header */
-    header {
-      background: #2d2d2d;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    header .logo {
-      font-weight: 700;
-      font-size: 1.5rem;
-      letter-spacing: 1.5px;
-    }
-    header nav a {
-      color: #ddd;
-      margin-left: 25px;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
-    header nav a:hover {
-      color: #0e7e00;
-    }
+  .launcher {
+    background: #1f1f1f;
+    width: 460px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, #0e7e00 0%, #4caf50 100%);
-      color: white;
-      padding: 100px 20px 80px;
-      text-align: center;
-      border-radius: 0 0 50px 50px;
-      box-shadow: 0 10px 30px rgba(14,126,0,0.4);
-    }
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 20px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    }
-    .hero p {
-      font-size: 1.3rem;
-      margin-bottom: 40px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-    }
-    .btn-download {
-      background: white;
-      color: #0e7e00;
-      font-weight: 700;
-      font-size: 1.3rem;
-      padding: 18px 50px;
-      border-radius: 35px;
-      box-shadow: 0 5px 15px rgba(0, 126, 0, 0.4);
-      cursor: pointer;
-      border: none;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .btn-download:hover {
-      background: #0e7e00;
-      color: white;
-      box-shadow: 0 8px 25px rgba(14, 126, 0, 0.8);
-    }
+  /* Header */
+  .launcher-header {
+    background: linear-gradient(90deg, #4caf50, #087f23);
+    padding: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    user-select: none;
+    text-align: center;
+  }
 
-    /* Features */
-    .features {
-      padding: 80px 20px;
-      background: white;
-      text-align: center;
-    }
-    .features h2 {
-      font-size: 2.8rem;
-      margin-bottom: 50px;
-      font-weight: 800;
-      color: #0e7e00;
-    }
-    .feature-grid {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 40px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .feature {
-      max-width: 300px;
-      padding: 10px;
-    }
-    .feature-icon {
-      font-size: 64px;
-      color: #4caf50;
-      margin-bottom: 20px;
-    }
-    .feature h3 {
-      font-size: 1.5rem;
-      margin-bottom: 15px;
-      font-weight: 700;
-      color: #2d2d2d;
-    }
-    .feature p {
-      font-size: 1.1rem;
-      color: #555;
-      line-height: 1.4;
-    }
+  /* Login Screen */
+  .login-screen {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-    /* Gallery */
-    .gallery {
-      padding: 60px 20px;
-      background: #f9f9f9;
-      text-align: center;
-    }
-    .gallery h2 {
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      color: #0e7e00;
-      font-weight: 700;
-    }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+  .login-screen input[type="text"] {
+    padding: 14px 15px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    background: #2b2b2b;
+    color: #eee;
+    outline-offset: 2px;
+    outline-color: transparent;
+    transition: outline-color 0.2s ease;
+  }
 
-    /* System requirements */
-    .requirements {
-      background: white;
-      padding: 60px 20px;
-      max-width: 800px;
-      margin: 0 auto 100px;
-      border-radius: 15px;
-      box-shadow: 0 4px 20px rgb(0 0 0 / 0.1);
-      text-align: center;
-    }
-    .requirements h2 {
-      font-size: 2.5rem;
-      margin-bottom: 25px;
-      color: #0e7e00;
-      font-weight: 700;
-    }
-    .requirements ul {
-      list-style: none;
-      padding: 0;
-      font-size: 1.2rem;
-      color: #444;
-      display: inline-block;
-      text-align: left;
-    }
-    .requirements ul li {
-      padding: 8px 0;
-      border-bottom: 1px solid #ddd;
-    }
+  .login-screen input[type="text"]:focus {
+    outline-color: #4caf50;
+  }
 
-    /* Footer */
-    footer {
-      background: #2d2d2d;
-      color: #bbb;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-    }
-    footer a {
-      color: #4caf50;
-      margin: 0 12px;
-      font-weight: 600;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
+  .login-screen button {
+    background: #4caf50;
+    border: none;
+    padding: 14px 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .feature-grid {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-  </style>
-  <!-- FontAwesome for icons -->
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    rel="stylesheet"
-  />
+  .login-screen button:hover:not(:disabled) {
+    background: #3a9430;
+  }
+
+  .login-screen button:disabled {
+    background: #2f6121;
+    cursor: default;
+  }
+
+  /* Dashboard */
+  .dashboard {
+    padding: 30px 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  /* Profile greeting */
+  .greeting {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #d0d0d0;
+    user-select: none;
+  }
+
+  /* News panel */
+  .news-panel {
+    background: #292929;
+    border-radius: 10px;
+    padding: 20px 20px;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  .news-panel h3 {
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #4caf50;
+  }
+
+  .news-panel ul {
+    list-style: disc;
+    padding-left: 20px;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+
+  /* Version selector */
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    user-select: none;
+  }
+
+  select {
+    width: 100%;
+    padding: 14px 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    border: none;
+    background: #2e2e2e;
+    color: #eee;
+    outline-offset: 2px;
+    outline-color: transparent;
+    transition: outline-color 0.2s ease;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  select:focus {
+    outline-color: #4caf50;
+  }
+
+  /* Launch button */
+  .launch-btn {
+    margin-top: 25px;
+    width: 100%;
+    padding: 16px 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    background: #4caf50;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .launch-btn:hover {
+    background: #3a9430;
+  }
+
+  /* Scrollbar styling for news panel */
+  .news-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+  .news-panel::-webkit-scrollbar-track {
+    background: #292929;
+  }
+  .news-panel::-webkit-scrollbar-thumb {
+    background: #4caf50;
+    border-radius: 10px;
+  }
+</style>
 </head>
 <body>
 
-  <header class="container">
-    <div class="logo">Minecraft Launcher</div>
-    <nav>
-      <a href="#features">Features</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#requirements">Requirements</a>
-      <a href="#download" class="btn-download" style="padding: 10px 25px; font-size: 1rem;">Download</a>
-    </nav>
-  </header>
+<div class="launcher" id="launcher">
 
-  <section class="hero">
-    <div class="container">
-      <h1>Play Minecraft with the Official Launcher</h1>
-      <p>Simple, secure, and easy to use. Access all Minecraft versions, switch accounts, and manage mods effortlessly.</p>
-      <button class="btn-download" id="download-btn">Download for Windows</button>
+  <!-- Header -->
+  <div class="launcher-header">
+    Minecraft Launcher
+  </div>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <input
+      type="text"
+      id="usernameInput"
+      placeholder="Enter your username"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="loginBtn" disabled>Login</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard" style="display:none;">
+    <div class="greeting" id="greetingText">Welcome, Player!</div>
+
+    <div class="news-panel">
+      <h3>Latest News</h3>
+      <ul>
+        <li>Welcome to the Minecraft Launcher!</li>
+        <li>New snapshot 23w20a available now.</li>
+        <li>Upcoming: Mod support and custom profiles.</li>
+      </ul>
     </div>
-  </section>
 
-  <section id="features" class="features">
-    <h2>Key Features</h2>
-    <div class="feature-grid">
-      <div class="feature">
-        <div class="feature-icon"><i class="fas fa-user"></i></div>
-        <h3>Account Management</h3>
-        <p>Switch easily between Microsoft and Mojang accounts.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><i class="fas fa-cubes"></i></div>
-        <h3>Mod Support</h3>
-        <p>Manage mods and resource packs effortlessly in one place.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><i class="fas fa-history"></i></div>
-        <h3>Multiple Versions</h3>
-        <p>Launch any Minecraft version from legacy to snapshots.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon"><i class="fas fa-cloud-download-alt"></i></div>
-        <h3>Automatic Updates</h3>
-        <p>Keep your launcher and game up to date seamlessly.</p>
-      </div>
-    </div>
-  </section>
+    <label for="versionSelect">Select Minecraft Version</label>
+    <select id="versionSelect">
+      <option value="1.20.1">1.20.1</option>
+      <option value="1.19.4">1.19.4</option>
+      <option value="1.18.2">1.18.2</option>
+      <option value="1.17.1">1.17.1</option>
+      <option value="snapshot-23w20a">Snapshot 23w20a</option>
+    </select>
 
-  <section id="gallery" class="gallery">
-    <h2>Screenshots</h2>
-    <div class="gallery-grid">
-      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher1.png" alt="Launcher Screenshot 1" />
-      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher2.png" alt="Launcher Screenshot 2" />
-      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher3.png" alt="Launcher Screenshot 3" />
-      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher4.png" alt="Launcher Screenshot 4" />
-    </div>
-  </section>
+    <button class="launch-btn" id="launchBtn">Launch Minecraft</button>
+  </div>
 
-  <section id="requirements" class="requirements">
-    <h2>System Requirements</h2>
-    <ul>
-      <li>Windows 10 or higher, macOS 10.14+ supported</li>
-      <li>4 GB RAM minimum (8 GB recommended)</li>
-      <li>2 GHz dual-core processor or better</li>
-      <li>Graphics card with OpenGL 2.0 support</li>
-      <li>Internet connection required for account login and updates</li>
-    </ul>
-  </section>
+</div>
 
-  <section class="container" style="text-align: center; margin-bottom: 100px;">
-    <a href="#" class="btn-download" style="font-size:1.5rem; padding: 20px 60px;" id="download-section-btn">Download Minecraft Launcher</a>
-    <p style="margin-top: 15px; color: #666;">Available for Windows and macOS</p>
-  </section>
+<script>
+  const usernameInput = document.getElementById('usernameInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginScreen = document.getElementById('loginScreen');
+  const dashboard = document.getElementById('dashboard');
+  const greetingText = document.getElementById('greetingText');
+  const launchBtn = document.getElementById('launchBtn');
+  const versionSelect = document.getElementById('versionSelect');
 
-  <footer>
-    <p>© 2025 Mojang Studios / Microsoft. Minecraft and the Minecraft Launcher are trademarks of Mojang AB.</p>
-    <p>
-      <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Help</a>
-    </p>
-  </footer>
+  usernameInput.addEventListener('input', () => {
+    loginBtn.disabled = usernameInput.value.trim().length === 0;
+  });
+
+  loginBtn.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    if (!username) return;
+
+    greetingText.textContent = `Welcome, ${username}!`;
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'flex';
+  });
+
+  launchBtn.addEventListener('click', () => {
+    const version = versionSelect.value;
+    alert(`Launching Minecraft version ${version}...`);
+    // Here you would add actual launch logic in a real app
+  });
+</script>
 
 </body>
 </html>
