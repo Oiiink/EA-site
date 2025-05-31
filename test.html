@@ -5,464 +5,376 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Event Alerts Launcher</title>
 <style>
-  :root {
-    --color-bg: #121212;
-    --color-accent: #ff6a00;
-    --color-accent-light: #ff8c33;
-    --color-text-primary: #eee;
-    --color-text-secondary: #bbb;
-    --color-text-muted: #888;
-    --color-card-bg: rgba(30,30,30,0.75);
-    --color-hover-bg: rgba(255,106,0,0.15);
-    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
-
   /* Reset and base */
   * {
     box-sizing: border-box;
   }
   body {
-    margin: 0; padding: 0;
-    background: linear-gradient(135deg, #1e1e1e, #121212);
-    color: var(--color-text-primary);
-    font-family: var(--font-family);
-    user-select: none;
+    margin: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    display: flex;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Header */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px;
-    background: var(--color-card-bg);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
-  }
-  /* Logo with text */
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo-svg {
-    width: 48px;
-    height: 48px;
-    fill: var(--color-accent);
-    flex-shrink: 0;
-  }
-  .logo-text {
-    font-weight: 900;
-    font-size: 1.8rem;
-    color: var(--color-accent);
-    letter-spacing: 2px;
-  }
-
-  /* Profile */
-  .profile {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--color-accent);
-  }
-  .profile .username {
-    font-weight: 600;
-    color: var(--color-text-primary);
-    white-space: nowrap;
-  }
-  .profile .dropdown-arrow {
-    width: 18px;
-    height: 18px;
-    fill: var(--color-text-muted);
-    transition: transform 0.3s ease;
-  }
-  .profile.open .dropdown-arrow {
-    transform: rotate(180deg);
-  }
-  .account-dropdown {
-    position: absolute;
-    top: 56px;
-    right: 0;
-    background: var(--color-card-bg);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    width: 160px;
     overflow: hidden;
-    font-size: 0.9rem;
-    user-select: none;
-    z-index: 20;
   }
-  .account-dropdown li {
-    padding: 12px 16px;
-    color: var(--color-text-primary);
-    list-style: none;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    transition: background-color 0.2s ease;
-  }
-  .account-dropdown li:last-child {
-    border-bottom: none;
-  }
-  .account-dropdown li:hover,
-  .account-dropdown li:focus {
-    background: var(--color-accent-light);
-    outline: none;
-  }
-
-  /* Launcher layout */
-  .launcher {
-    flex: 1;
-    display: flex;
-    background: var(--color-card-bg);
-    margin: 16px 24px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.75);
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
   /* Sidebar */
-  nav.sidebar {
-    width: 72px;
-    background: #222;
+  .sidebar {
+    width: 280px;
+    background: #1f1f1f;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    gap: 24px;
-    box-shadow: inset -1px 0 3px rgba(255,106,0,0.3);
+    padding: 24px 16px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.7);
   }
-  nav.sidebar .logo-small {
-    width: 36px;
-    height: 36px;
-    fill: var(--color-accent);
-    margin-bottom: 16px;
-    flex-shrink: 0;
+  .sidebar .logo {
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 32px;
+    user-select: none;
+    letter-spacing: 0.1em;
+    color: #f97316; /* orange accent */
   }
-  .tab-button {
-    background: transparent;
+  .nav-links {
+    flex-grow: 1;
+  }
+  .nav-links button {
+    width: 100%;
+    background: none;
     border: none;
-    color: var(--color-text-muted);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    width: 48px;
-    font-size: 0.65rem;
-    padding: 8px 0;
-    transition: color 0.25s ease;
-    position: relative;
-    border-radius: 12px;
-  }
-  .tab-button svg {
-    width: 26px;
-    height: 26px;
-    fill: currentColor;
-  }
-  .tab-button:hover,
-  .tab-button:focus {
-    color: var(--color-accent);
-    outline: none;
-    background: var(--color-hover-bg);
-  }
-  .tab-button.active {
-    color: var(--color-accent);
-    background: var(--color-hover-bg);
-  }
-  /* Show label tooltip on sidebar */
-  .tab-button::after {
-    content: attr(title);
-    position: absolute;
-    left: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--color-card-bg);
-    padding: 6px 10px;
+    color: #aaa;
+    font-size: 1rem;
+    padding: 14px 20px;
     border-radius: 8px;
-    color: var(--color-text-primary);
-    font-size: 0.8rem;
-    white-space: nowrap;
+    margin-bottom: 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  .nav-links button svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+  }
+  .nav-links button.active,
+  .nav-links button:hover {
+    background-color: #f97316;
+    color: #121212;
+    box-shadow: 0 0 8px #f97316aa;
+  }
+
+  /* User Profile */
+  .profile {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+  .profile .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #f97316;
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .profile .username {
+    font-weight: 600;
+    color: #f97316;
+  }
+  .profile .dropdown {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    background: #1f1f1f;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+    min-width: 160px;
+    overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.7);
-    user-select: none;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
   }
-  .tab-button:hover::after,
-  .tab-button:focus::after,
-  .tab-button.active::after {
+  .profile.open .dropdown {
     opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
   }
-
-  /* Main content */
-  section.main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 32px;
-    overflow: hidden;
-  }
-
-  /* Play Tab */
-  .play-tab {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .play-panel {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    max-width: 480px;
-  }
-  .play-button {
-    flex-grow: 1;
-    padding: 18px 0;
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: #fff;
-    background: var(--color-accent);
+  .dropdown button {
+    width: 100%;
+    background: none;
     border: none;
-    border-radius: 50px;
+    padding: 14px 16px;
+    color: #eee;
+    text-align: left;
+    font-size: 0.95rem;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(255,106,0,0.6);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    user-select: none;
-  }
-  .play-button:hover,
-  .play-button:focus {
-    background: var(--color-accent-light);
-    box-shadow: 0 10px 28px rgba(255,140,51,0.8);
-    outline: none;
-  }
-  .version-select {
-    width: 160px;
-    padding: 12px 16px;
-    font-size: 1rem;
-    border-radius: 32px;
-    border: none;
-    background: #333;
-    color: var(--color-text-primary);
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  .version-select:hover,
-  .version-select:focus {
-    background: #444;
-    outline: none;
-  }
-
-  /* Mod profiles */
-  .mod-panel {
-    max-width: 480px;
-  }
-  .mod-panel h2 {
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--color-text-primary);
-  }
-  .mod-list {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .mod-list li {
-    padding: 8px 20px;
-    background: #333;
-    border-radius: 32px;
-    cursor: pointer;
-    user-select: none;
-    color: var(--color-text-secondary);
-    font-weight: 600;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .mod-list li.active,
-  .mod-list li:hover,
-  .mod-list li:focus {
-    background: var(--color-accent);
-    color: #fff;
-    outline: none;
-  }
-
-  /* News Tab */
-  .news-tab {
-    overflow-y: auto;
-    padding-right: 12px;
-  }
-  .news-tab h2 {
-    margin-bottom: 16px;
-    font-weight: 700;
-    color: var(--color-text-primary);
-  }
-  .news-item {
-    padding: 12px 16px;
-    margin-bottom: 14px;
-    background: #222;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-    user-select: none;
     transition: background-color 0.2s ease;
   }
+  .dropdown button:hover {
+    background: #f97316;
+    color: #121212;
+  }
+
+  /* Main Content */
+  .main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background: #181818;
+    padding: 32px 48px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  .header h1 {
+    font-weight: 700;
+    font-size: 2.4rem;
+    color: #f97316;
+  }
+  .header .version-selector {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #ddd;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: 140px;
+    transition: background-color 0.2s ease;
+  }
+  .header .version-selector:hover {
+    background: #f97316;
+    color: #121212;
+  }
+
+  /* Play Section */
+  .play-section {
+    background: #242424;
+    border-radius: 12px;
+    padding: 48px 64px;
+    box-shadow: 0 0 48px #f97316aa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 520px;
+    margin: 0 auto;
+    gap: 28px;
+  }
+  .play-section .mod-profile-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .mod-profile-list::-webkit-scrollbar {
+    height: 6px;
+  }
+  .mod-profile-list::-webkit-scrollbar-thumb {
+    background: #f97316aa;
+    border-radius: 3px;
+  }
+  .mod-profile-list button {
+    background: #1f1f1f;
+    color: #ddd;
+    border-radius: 16px;
+    padding: 10px 22px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+  }
+  .mod-profile-list button.active,
+  .mod-profile-list button:hover {
+    background: #f97316;
+    color: #121212;
+    box-shadow: 0 0 10px #f97316bb;
+  }
+  .play-button {
+    margin-top: 12px;
+    background: #f97316;
+    border: none;
+    color: #121212;
+    font-weight: 800;
+    font-size: 1.6rem;
+    padding: 18px 64px;
+    border-radius: 48px;
+    cursor: pointer;
+    box-shadow: 0 8px 18px #f973160d;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .play-button:hover {
+    background: #fb7d26;
+    box-shadow: 0 12px 28px #fb7d26cc;
+  }
+
+  /* News Section */
+  .news-section {
+    flex-grow: 1;
+    margin-top: 40px;
+    overflow-y: auto;
+    max-width: 640px;
+    margin-left: auto;
+    padding-right: 24px;
+  }
+  .news-section h2 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #f97316;
+  }
+  .news-item {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    box-shadow: 0 0 8px #f97316aa;
+    transition: background-color 0.3s ease;
+  }
   .news-item:hover {
-    background: var(--color-hover-bg);
+    background: #f9731622;
   }
   .news-item h3 {
-    margin: 0 0 6px 0;
+    margin: 0 0 10px 0;
     font-weight: 700;
-    color: var(--color-accent);
+    font-size: 1.2rem;
   }
   .news-item p {
     margin: 0;
-    color: var(--color-text-secondary);
-    line-height: 1.3;
+    font-size: 1rem;
+    color: #d8d8d8;
+    line-height: 1.4;
   }
 
   /* Scrollbar for news */
-  .news-tab::-webkit-scrollbar {
+  .news-section::-webkit-scrollbar {
     width: 8px;
   }
-  .news-tab::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .news-tab::-webkit-scrollbar-thumb {
-    background: var(--color-accent-light);
-    border-radius: 5px;
+  .news-section::-webkit-scrollbar-thumb {
+    background: #f97316cc;
+    border-radius: 4px;
   }
 
   /* Responsive */
-  @media (max-width: 760px) {
-    .launcher {
+  @media (max-width: 900px) {
+    body {
       flex-direction: column;
-      margin: 16px 12px;
-      border-radius: 12px;
+      overflow-y: auto;
     }
-    nav.sidebar {
-      flex-direction: row;
+    .sidebar {
       width: 100%;
-      padding: 12px 0;
-      gap: 20px;
-      box-shadow: inset 0 -1px 3px rgba(255,106,0,0.3);
-    }
-    .tab-button {
-      width: auto;
       flex-direction: row;
-      gap: 8px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
+      padding: 12px 24px;
+      box-shadow: none;
+      overflow-x: auto;
+      gap: 24px;
+      justify-content: space-between;
+      align-items: center;
     }
-    .tab-button svg {
-      width: 22px;
-      height: 22px;
-    }
-    .tab-button::after {
-      display: none;
-    }
-    section.main {
-      padding: 16px 20px;
-    }
-    .play-panel {
-      max-width: 100%;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .play-button {
+    .nav-links {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
       flex-grow: 1;
-      font-size: 1.8rem;
+      margin: 0;
+      padding: 0;
     }
-    .version-select {
-      width: 100%;
-      max-width: 280px;
-      margin-top: 8px;
+    .nav-links button {
+      margin: 0;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      border-radius: 12px;
+      flex-shrink: 0;
     }
-    .mod-panel {
+    .profile {
+      margin: 0;
+    }
+    .main {
+      padding: 24px 32px;
+    }
+    .play-section {
+      padding: 32px 24px;
       max-width: 100%;
-      margin-top: 16px;
+      box-shadow: none;
+      margin: 0 0 24px 0;
+    }
+    .news-section {
+      max-width: 100%;
+      margin: 0;
+      padding-right: 0;
+      max-height: 280px;
     }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-container" aria-label="Event Alerts Launcher Logo">
-    <!-- Minecraft-style block logo SVG -->
-    <svg class="logo-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-      <rect x="8" y="8" width="48" height="48" rx="8" ry="8"/>
-      <rect x="20" y="20" width="24" height="24" fill="#121212"/>
-    </svg>
-    <div class="logo-text">EVENT ALERTS</div>
-  </div>
-
-  <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" id="profileButton" role="button" aria-label="User profile menu">
-    <img src="https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7?size=64&overlay" alt="Minecraft avatar" />
-    <span class="username">Steve</span>
-    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 10l5 5 5-5z" />
-    </svg>
-
-    <ul class="account-dropdown" role="menu" aria-label="Account options" hidden id="accountDropdown">
-      <li role="menuitem" tabindex="0">Switch Account</li>
-      <li role="menuitem" tabindex="0">Logout</li>
-    </ul>
-  </div>
-</header>
-
-<div class="launcher" role="main">
-  <nav class="sidebar" aria-label="Launcher navigation">
-    <svg class="logo-small" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" title="Event Alerts">
-      <rect x="8" y="8" width="48" height="48" rx="8" ry="8" fill="currentColor"/>
-      <rect x="20" y="20" width="24" height="24" fill="#121212"/>
-    </svg>
-    <button class="tab-button active" aria-pressed="true" aria-controls="playTab" id="playTabBtn" title="Play">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-        <path d="M8 5v14l11-7z"></path>
-      </svg>
-      Play
-    </button>
-    <button class="tab-button" aria-pressed="false" aria-controls="newsTab" id="newsTabBtn" title="News">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
-        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"></path>
-      </svg>
-      News
-    </button>
+  <nav class="sidebar" aria-label="Main navigation">
+    <div class="logo" aria-label="Event Alerts Launcher">EVENT ALERTS</div>
+    <div class="nav-links" role="list">
+      <button class="active" role="listitem" aria-pressed="true" aria-label="Play tab">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Play
+      </button>
+      <button role="listitem" aria-pressed="false" aria-label="News tab">
+        <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        News
+      </button>
+    </div>
+    <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="User profile menu">
+      <div class="avatar" aria-hidden="true">EA</div>
+      <div class="username">Player123</div>
+      <div class="dropdown" role="menu" aria-label="User profile actions" hidden>
+        <button role="menuitem">Settings</button>
+        <button role="menuitem">Logout</button>
+      </div>
+    </div>
   </nav>
 
-  <section class="main">
-    <section class="play-tab" id="playTab" role="tabpanel" aria-labelledby="playTabBtn">
-      <div class="play-panel" role="region" aria-label="Game controls">
-        <button class="play-button" id="playButton" aria-label="Play Minecraft">PLAY</button>
-        <select class="version-select" id="versionSelect" aria-label="Select Minecraft version">
-          <option value="1.20.1">Minecraft 1.20.1</option>
-          <option value="1.19.4">Minecraft 1.19.4</option>
-          <option value="1.18.2">Minecraft 1.18.2</option>
-          <option value="1.17.1">Minecraft 1.17.1</option>
-        </select>
-      </div>
+  <main class="main" role="main">
+    <header class="header">
+      <h1>Launch Minecraft</h1>
+      <select class="version-selector" aria-label="Select Minecraft version">
+        <option value="1.20.1">1.20.1</option>
+        <option value="1.19.4">1.19.4</option>
+        <option value="1.18.2">1.18.2</option>
+        <option value="1.17.1">1.17.1</option>
+      </select>
+    </header>
 
-      <div class="mod-panel" aria-label="Mod profiles">
-        <h2>Mod Profiles</h2>
-        <ul class="mod-list" role="listbox" aria-multiselectable="false" tabindex="0">
-          <li class="active" role="option" tabindex="0" aria-selected="true">Vanilla</li>
-          <li role="option" tabindex="0">Event Alerts</li>
-          <li role="option" tabindex="0">Optifine</li>
-          <li role="option" tabindex="0">PvP</li>
-        </ul>
+    <section class="play-section" aria-label="Play section with mod profiles">
+      <div class="mod-profile-list" role="list" aria-label="Available mod profiles">
+        <button class="active" role="listitem" aria-pressed="true">Vanilla</button>
+        <button role="listitem" aria-pressed="false">Fabric</button>
+        <button role="listitem" aria-pressed="false">Forge</button>
+        <button role="listitem" aria-pressed="false">LiteLoader</button>
       </div>
+      <button class="play-button" aria-label="Launch Minecraft">PLAY</button>
     </section>
 
-    <section class="news-tab" id="newsTab" role="tabpanel" aria-labelledby="newsTabBtn" hidden>
+    <section class="news-section" aria-label="Latest news and updates" hidden>
       <h2>Latest News</h2>
       <article class="news-item" tabindex="0">
         <h3>New Update Released!</h3>
@@ -477,71 +389,69 @@
         <p>Join us for the Summer Build Contest starting June 10th. Amazing prizes await!</p>
       </article>
     </section>
-  </section>
-</div>
+  </main>
 
 <script>
+  // Sidebar nav tab toggle
+  const navButtons = document.querySelectorAll('.nav-links button');
+  const playSection = document.querySelector('.play-section');
+  const newsSection = document.querySelector('.news-section');
+
+  navButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      navButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+
+      if (button.textContent.trim() === 'Play') {
+        playSection.hidden = false;
+        newsSection.hidden = true;
+      } else {
+        playSection.hidden = true;
+        newsSection.hidden = false;
+      }
+    });
+  });
+
   // Profile dropdown toggle
-  const profileBtn = document.getElementById("profileButton");
-  const accountDropdown = document.getElementById("accountDropdown");
+  const profile = document.querySelector('.profile');
+  const dropdown = profile.querySelector('.dropdown');
 
-  profileBtn.addEventListener("click", () => {
-    const expanded = profileBtn.getAttribute("aria-expanded") === "true";
-    profileBtn.setAttribute("aria-expanded", !expanded);
-    profileBtn.classList.toggle("open");
-    accountDropdown.hidden = expanded;
+  profile.addEventListener('click', () => {
+    const isOpen = profile.classList.toggle('open');
+    dropdown.hidden = !isOpen;
+    profile.setAttribute('aria-expanded', isOpen);
   });
 
-  // Close dropdown on outside click
-  document.addEventListener("click", (e) => {
-    if (!profileBtn.contains(e.target)) {
-      profileBtn.setAttribute("aria-expanded", "false");
-      profileBtn.classList.remove("open");
-      accountDropdown.hidden = true;
+  document.addEventListener('click', (e) => {
+    if (!profile.contains(e.target)) {
+      profile.classList.remove('open');
+      dropdown.hidden = true;
+      profile.setAttribute('aria-expanded', false);
     }
-  });
-
-  // Tab switching
-  const playTabBtn = document.getElementById("playTabBtn");
-  const newsTabBtn = document.getElementById("newsTabBtn");
-  const playTab = document.getElementById("playTab");
-  const newsTab = document.getElementById("newsTab");
-
-  playTabBtn.addEventListener("click", () => {
-    playTabBtn.classList.add("active");
-    newsTabBtn.classList.remove("active");
-    playTabBtn.setAttribute("aria-pressed", "true");
-    newsTabBtn.setAttribute("aria-pressed", "false");
-    playTab.hidden = false;
-    newsTab.hidden = true;
-  });
-
-  newsTabBtn.addEventListener("click", () => {
-    newsTabBtn.classList.add("active");
-    playTabBtn.classList.remove("active");
-    newsTabBtn.setAttribute("aria-pressed", "true");
-    playTabBtn.setAttribute("aria-pressed", "false");
-    newsTab.hidden = false;
-    playTab.hidden = true;
   });
 
   // Mod profile selection
-  const modList = document.querySelector(".mod-list");
-  modList.addEventListener("click", (e) => {
-    if (e.target.tagName.toLowerCase() === "li") {
-      modList.querySelectorAll("li").forEach(li => {
-        li.classList.remove("active");
-        li.setAttribute("aria-selected", "false");
+  const modButtons = document.querySelectorAll('.mod-profile-list button');
+  modButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
       });
-      e.target.classList.add("active");
-      e.target.setAttribute("aria-selected", "true");
-    }
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    });
   });
 
-  // Play button placeholder functionality
-  const playButton = document.getElementById("playButton");
-  playButton.addEventListener("click", () => {
-    alert("Launching Minecraft version " + document.getElementById("versionSelect").value + " with selected mod profile.");
+  // Play button click
+  document.querySelector('.play-button').addEventListener('click', () => {
+    const selectedVersion = document.querySelector('.version-selector').value;
+    const selectedProfile = document.querySelector('.mod-profile-list button.active').textContent;
+    alert(`Launching Minecraft ${selectedVersion} with ${selectedProfile} profile.`);
   });
 </script>
 
