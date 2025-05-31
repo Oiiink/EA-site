@@ -280,17 +280,49 @@
       contentPanels[index].classList.add('active');
     }
 
+    let accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+    let currentAccountIndex = localStorage.getItem('currentAccount') || null;
+
+    function updateProfileDisplay() {
+      if (currentAccountIndex !== null && accounts[currentAccountIndex]) {
+        const username = accounts[currentAccountIndex].username;
+        document.getElementById('username').textContent = username;
+        document.querySelector('.profile img').src = `https://mc-heads.net/avatar/${username}/100`;
+      }
+    }
+
     function login() {
       const username = document.getElementById('login-user').value;
       const password = document.getElementById('login-pass').value;
       if (username && password) {
-        document.getElementById('username').textContent = username;
-        document.querySelector('.profile img').src = `https://mc-heads.net/avatar/${username}/100`;
+        accounts.push({ username, password });
+        currentAccountIndex = accounts.length - 1;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        localStorage.setItem('currentAccount', currentAccountIndex);
+        updateProfileDisplay();
         alert('Logged in as ' + username);
       } else {
         alert('Please enter both username and password.');
       }
     }
+
+    function logout() {
+      currentAccountIndex = null;
+      localStorage.removeItem('currentAccount');
+      document.getElementById('username').textContent = 'Logged Out';
+      document.querySelector('.profile img').src = '';
+    }
+
+    function switchAccount(index) {
+      if (accounts[index]) {
+        currentAccountIndex = index;
+        localStorage.setItem('currentAccount', currentAccountIndex);
+        updateProfileDisplay();
+      }
+    }
+
+    // Initialize
+    updateProfileDisplay();
   </script>
 </body>
 </html>
