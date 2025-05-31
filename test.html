@@ -1,623 +1,553 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts Launcher</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --orange: #ff7a00;
-      --orange-dark: #e06900;
-      --bg-dark: #0a0a0a;
-      --bg-light: #1c1c1c;
-      --panel-bg: rgba(28, 28, 28, 0.75);
-      --panel-blur: 16px;
-      --text-primary: #fff;
-      --text-muted: #bbb;
-      --border: #2a2a2a;
-      --radius: 18px;
-      --shadow: 0 10px 30px rgba(255, 122, 0, 0.45);
-      --transition: 0.3s ease;
-      --font-family: 'Inter', sans-serif;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Alerts Launcher</title>
+<style>
+  /* Reset & base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #0f1419, #1a1f27);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #d9d9d9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Root colors & variables */
+  :root {
+    --color-bg: #1a1f27;
+    --color-panel-bg: rgba(28, 33, 41, 0.85);
+    --color-accent: #f97316; /* bright orange */
+    --color-accent-muted: #f9731655;
+    --color-text-primary: #d9d9d9;
+    --color-text-muted: #a3a3a3;
+    --color-shadow: rgba(0,0,0,0.6);
+    --border-radius: 12px;
+    --transition: 0.3s ease;
+    --font-heading: 'Minecraftia', 'Segoe UI Bold', sans-serif;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #222b36 0%, #1f2731 100%);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 6px var(--color-shadow);
+  }
+  header .logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 6px;
+    background: url('https://crafatar.com/avatars/0?size=64&overlay') no-repeat center/cover;
+    box-shadow: 0 0 8px var(--color-accent);
+  }
+  header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--color-accent);
+    user-select: none;
+    margin-left: 1rem;
+  }
+
+  /* Profile top right */
+  .profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+  }
+  .profile img {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 2px solid var(--color-accent);
+    margin-right: 10px;
+    transition: box-shadow var(--transition);
+  }
+  .profile:hover img,
+  .profile.open img {
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+  .profile .username {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+  }
+  .profile .dropdown-arrow {
+    margin-left: 6px;
+    fill: var(--color-accent);
+    transition: transform var(--transition);
+  }
+  .profile.open .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Profile dropdown */
+  .account-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: var(--color-panel-bg);
+    backdrop-filter: blur(14px);
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 24px var(--color-shadow);
+    overflow: hidden;
+    width: 160px;
+    z-index: 10;
+  }
+  .account-dropdown li {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+  .account-dropdown li:hover,
+  .account-dropdown li:focus {
+    background: var(--color-accent-muted);
+    outline: none;
+  }
+
+  /* Main container */
+  .launcher {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Sidebar */
+  nav.sidebar {
+    width: 90px;
+    background: var(--color-panel-bg);
+    backdrop-filter: blur(12px);
+    box-shadow: inset -1px 0 0 var(--color-accent-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 24px;
+  }
+  nav.sidebar .logo-small {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    background: url('https://crafatar.com/avatars/0?size=64&overlay') no-repeat center/cover;
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+  nav.sidebar button.tab-button {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: color var(--transition), transform var(--transition);
+    width: 100%;
+  }
+  nav.sidebar button.tab-button svg {
+    fill: var(--color-text-muted);
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+  nav.sidebar button.tab-button:hover,
+  nav.sidebar button.tab-button:focus {
+    color: var(--color-accent);
+    outline: none;
+  }
+  nav.sidebar button.tab-button:hover svg,
+  nav.sidebar button.tab-button:focus svg {
+    fill: var(--color-accent);
+  }
+  nav.sidebar button.tab-button.active {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  nav.sidebar button.tab-button.active svg {
+    fill: var(--color-accent);
+    transform: scale(1.15);
+  }
+
+  /* Main content */
+  section.main {
+    flex: 1;
+    padding: 2rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    min-width: 0;
+  }
+
+  /* Play tab content */
+  .play-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Game controls panel */
+  .play-panel {
+    background: var(--color-panel-bg);
+    border-radius: var(--border-radius);
+    padding: 2.2rem 3rem;
+    box-shadow: 0 10px 30px var(--color-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  /* PLAY button */
+  .play-button {
+    background: var(--color-accent);
+    color: #121212;
+    font-weight: 800;
+    font-size: 2.1rem;
+    padding: 18px 48px;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px var(--color-accent);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    flex-shrink: 0;
+  }
+  .play-button:hover {
+    background: #f97434;
+    box-shadow: 0 10px 22px #f97434bb;
+  }
+  .play-button:active {
+    background: #c85c11;
+    box-shadow: none;
+  }
+
+  /* Version select */
+  .version-select {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 10px 16px;
+    border-radius: 32px;
+    border: none;
+    background: #252d3c;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    min-width: 160px;
+    transition: background 0.3s ease;
+  }
+  .version-select:hover,
+  .version-select:focus {
+    background: #37465a;
+    outline: none;
+  }
+
+  /* Mod profiles panel */
+  .mod-panel {
+    margin-top: 2rem;
+    max-width: 640px;
+    background: var(--color-panel-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 24px var(--color-shadow);
+    user-select: none;
+  }
+  .mod-panel h2 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+    color: var(--color-accent);
+    letter-spacing: 0.5px;
+  }
+  .mod-list {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+    padding: 0;
+    margin: 0;
+  }
+  .mod-list li {
+    flex: 1 1 auto;
+    background: #252d3c;
+    padding: 0.8rem 1.6rem;
+    border-radius: 28px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition), color var(--transition);
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+  .mod-list li:hover {
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+  }
+  .mod-list li.active {
+    background: var(--color-accent);
+    color: #121212;
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  /* News tab content */
+  .news-tab {
+    flex: 1;
+    background: var(--color-panel-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem 3rem;
+    box-shadow: 0 8px 24px var(--color-shadow);
+    overflow-y: auto;
+  }
+  .news-tab h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1.8rem;
+    color: var(--color-accent);
+    letter-spacing: 1px;
+  }
+  .news-item {
+    border-bottom: 1px solid #37465a;
+    padding-bottom: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
+  .news-item:last-child {
+    border-bottom: none;
+  }
+  .news-item h3 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0 0 0.3rem;
+    color: var(--color-text-primary);
+  }
+  .news-item p {
+    margin: 0;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  /* Scrollbar styling for news */
+  .news-tab::-webkit-scrollbar {
+    width: 8px;
+  }
+  .news-tab::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .news-tab::-webkit-scrollbar-thumb {
+    background: var(--color-accent-muted);
+    border-radius: 4px;
+  }
+
+  /* Responsive */
+  @media (max-width: 840px) {
+    section.main {
+      padding: 1.5rem 2rem;
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body, html {
-      height: 100%;
-      font-family: var(--font-family);
-      background: radial-gradient(circle at top left, var(--bg-light), var(--bg-dark));
-      color: var(--text-primary);
-      overflow: hidden;
-      user-select: none;
-    }
-    .launcher {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      backdrop-filter: blur(var(--panel-blur));
-    }
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: var(--panel-bg);
-      backdrop-filter: blur(var(--panel-blur));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 3rem 1rem;
-      border-right: 1px solid var(--border);
-      box-shadow: var(--shadow);
-    }
-    .sidebar .logo {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      margin-bottom: 3rem;
-      box-shadow: 0 0 22px var(--orange);
-      object-fit: cover;
-      user-select: none;
-      transition: transform 0.3s ease;
-    }
-    .sidebar .logo:hover {
-      transform: scale(1.05);
-    }
-    .tab-button {
-      width: 100%;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 1.2rem;
-      padding: 1rem 1.7rem;
-      border-radius: var(--radius);
-      margin-bottom: 1rem;
-      cursor: pointer;
-      text-align: left;
-      transition: background var(--transition), color var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      user-select: none;
-    }
-    .tab-button svg {
-      width: 22px;
-      height: 22px;
-      fill: var(--text-muted);
-      transition: fill var(--transition);
-      flex-shrink: 0;
-    }
-    .tab-button.active,
-    .tab-button:hover {
-      background: var(--orange);
-      color: #121212;
-    }
-    .tab-button.active svg,
-    .tab-button:hover svg {
-      fill: #121212;
-    }
-    /* Main area */
-    .main {
-      flex-grow: 1;
-      padding: 3.2rem 4rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 3.5rem;
-      position: relative;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      user-select: none;
-    }
-    .header h1 {
-      font-weight: 800;
-      font-size: 2.9rem;
-      color: var(--orange);
-      letter-spacing: 0.06em;
-    }
-    #status {
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--text-muted);
-      height: 26px;
-    }
-    /* Minecraft Profile (top-right) with dropdown */
-    .profile {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--panel-bg);
-      backdrop-filter: blur(var(--panel-blur));
-      padding: 0.5rem 1.2rem;
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: var(--shadow);
-      cursor: pointer;
-      z-index: 20;
-      user-select: none;
-      transition: box-shadow 0.3s ease;
-      width: 200px;
-      justify-content: space-between;
-    }
-    .profile:hover {
-      box-shadow: 0 0 25px var(--orange);
-    }
-    .profile-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .profile img {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 0 10px var(--orange);
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-    }
-    .profile img:hover {
-      transform: scale(1.1);
-    }
-    .username {
-      font-weight: 700;
-      font-size: 1.15rem;
-      color: var(--orange);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100px;
-    }
-    .dropdown-arrow {
-      width: 18px;
-      height: 18px;
-      fill: var(--orange);
-      transition: transform 0.3s ease;
-    }
-    .profile.open .dropdown-arrow {
-      transform: rotate(180deg);
-    }
-    /* Dropdown menu */
-    .account-dropdown {
-      position: fixed;
-      top: 74px;
-      right: 20px;
-      background: var(--panel-bg);
-      backdrop-filter: blur(var(--panel-blur));
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      width: 200px;
-      max-height: 220px;
-      overflow-y: auto;
-      padding: 0.8rem 0;
-      z-index: 25;
-      user-select: none;
-    }
-    .account-dropdown::-webkit-scrollbar {
-      width: 8px;
-    }
-    .account-dropdown::-webkit-scrollbar-thumb {
-      background: var(--orange);
-      border-radius: var(--radius);
-    }
-    .account-dropdown li {
-      list-style: none;
-      padding: 0.8rem 1.3rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--transition), color var(--transition);
-      white-space: nowrap;
-      user-select: none;
-    }
-    .account-dropdown li:hover {
-      background: var(--orange);
-      color: #121212;
-    }
-    /* Play tab content */
-    .play-tab {
-      display: flex;
-      gap: 3.5rem;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-    }
-    /* Play panel */
     .play-panel {
-      background: var(--panel-bg);
-      border-radius: var(--radius);
-      padding: 3.2rem 4rem;
-      box-shadow: var(--shadow);
-      flex: 1 1 480px;
-      display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 3rem;
-    }
-    /* Play controls - horizontally aligned with bigger play button */
-    .play-controls {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: nowrap;
-      justify-content: center;
+      gap: 16px;
+      max-width: 100%;
+      padding: 1.6rem 2rem;
     }
     .play-button {
-      background: var(--orange);
-      color: #121212;
-      font-weight: 800;
-      padding: 1.9rem 5rem;
-      font-size: 2.3rem;
-      border-radius: var(--radius);
-      border: none;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: background var(--transition), transform 0.2s ease;
-      flex-shrink: 0;
-      user-select: none;
+      width: 100%;
+      padding: 16px 0;
+      font-size: 1.8rem;
+      border-radius: 32px;
     }
-    .play-button:hover {
-      background: var(--orange-dark);
-      transform: scale(1.1);
-    }
-    /* Version select to the right */
     .version-select {
-      padding: 1.1rem 1.3rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: #121212;
-      color: var(--text-primary);
-      font-size: 1.25rem;
-      min-width: 160px;
-      cursor: pointer;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      user-select: none;
+      min-width: 100%;
+      text-align: center;
+      border-radius: 32px;
     }
-    .version-select:focus {
-      outline: none;
-      border-color: var(--orange);
-      box-shadow: 0 0 15px var(--orange);
+    nav.sidebar {
+      width: 70px;
+      padding: 0.8rem 0;
+      gap: 18px;
     }
-    /* Right panel - Mod profiles */
-    .mod-panel {
-      background: var(--panel-bg);
-      border-radius: var(--radius);
-      padding: 3rem 3.5rem;
-      flex: 1 1 320px;
-      box-shadow: var(--shadow);
-      max-height: 380px;
-      overflow-y: auto;
-      user-select: none;
+    nav.sidebar .logo-small {
+      width: 40px;
+      height: 40px;
     }
-    .mod-panel h2 {
-      font-weight: 700;
-      font-size: 1.7rem;
-      margin-bottom: 1.8rem;
-      color: var(--orange);
-      user-select: none;
+    nav.sidebar button.tab-button {
+      font-size: 0.65rem;
     }
-    .mod-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    nav.sidebar button.tab-button svg {
+      width: 22px;
+      height: 22px;
+      margin-bottom: 4px;
     }
-    .mod-list li {
-      background: #151515;
-      padding: 1rem 1.2rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      transition: background var(--transition), color var(--transition);
-      user-select: none;
-      border: 2px solid transparent;
-    }
-    .mod-list li:hover {
-      background: var(--orange);
-      color: #121212;
-    }
-    .mod-list li.active {
-      background: var(--orange);
-      color: #121212;
-      border-color: #fff;
-      box-shadow: 0 0 8px #fff;
-    }
-    /* News tab content */
-    .news-tab {
-      flex-grow: 1;
-      background: var(--panel-bg);
-      border-radius: var(--radius);
-      padding: 3rem 4rem;
-      overflow-y: auto;
-      box-shadow: var(--shadow);
-      user-select: none;
-      color: var(--text-primary);
-    }
-    .news-tab h2 {
-      font-weight: 700;
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      color: var(--orange);
-    }
-    .news-item {
-      margin-bottom: 1.8rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      user-select: none;
-    }
-    .news-item:last-child {
-      border-bottom: none;
-    }
-    .news-item h3 {
-      font-weight: 600;
-      font-size: 1.3rem;
-      margin-bottom: 0.2rem;
-    }
-    .news-item p {
-      font-size: 1rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--orange);
-      border-radius: var(--radius);
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    /* Responsive adjustments */
-    @media (max-width: 850px) {
-      .launcher {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        height: 90px;
-        flex-direction: row;
-        padding: 0 2rem;
-        align-items: center;
-        justify-content: space-around;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        box-shadow: none;
-      }
-      .sidebar .logo {
-        width: 60px;
-        height: 60px;
-        margin: 0;
-      }
-      .tab-button {
-        font-size: 1rem;
-        padding: 0.8rem 1rem;
-        margin-bottom: 0;
-        border-radius: 14px;
-      }
-      .main {
-        padding: 2rem 2rem;
-      }
-      .play-panel {
-        flex: 1 1 100%;
-        padding: 2rem;
-        margin-bottom: 2rem;
-      }
-      .mod-panel {
-        flex: 1 1 100%;
-        max-height: 300px;
-        padding: 2rem;
-      }
-      .play-controls {
-        justify-content: space-between;
-      }
-      .play-button {
-        padding: 1.4rem 3.8rem;
-        font-size: 1.8rem;
-      }
-      .version-select {
-        min-width: 120px;
-        font-size: 1rem;
-      }
-      .profile {
-        top: 10px;
-        right: 10px;
-        width: 170px;
-      }
-      .account-dropdown {
-        width: 170px;
-        top: 60px;
-        right: 10px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="launcher" role="main" aria-label="Minecraft Launcher Application">
-    <nav class="sidebar" aria-label="Main Navigation">
-      <img src="https://crafatar.com/avatars/0" alt="Launcher Logo" class="logo" />
-      <button class="tab-button active" id="playTab" onclick="switchTab('play')" aria-current="page" aria-label="Play Tab">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        Play
-      </button>
-      <button class="tab-button" id="newsTab" onclick="switchTab('news')" aria-label="News Tab">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h12v2H3zm0 6h18v2H3z"/></svg>
-        News
-      </button>
-    </nav>
-    <section class="main">
-      <header class="header" role="banner">
-        <h1>Event Alerts Launcher</h1>
-        <div id="status" aria-live="polite" aria-atomic="true"></div>
-      </header>
-      <article class="play-tab" id="playTabContent" role="tabpanel" aria-labelledby="playTab">
-        <div class="play-panel" aria-label="Game Controls">
-          <div class="play-controls">
-            <button class="play-button" onclick="launchGame()" aria-label="Play Minecraft">PLAY</button>
-            <select class="version-select" id="version" aria-label="Select Minecraft Version" title="Select Minecraft Version">
-              <option value="1.20.4">1.20.4 (Latest)</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.18.2">1.18.2</option>
-              <option value="1.17.1">1.17.1</option>
-              <option value="1.16.5">1.16.5</option>
-            </select>
-          </div>
-          <div class="mod-panel" aria-label="Mod Profiles">
-            <h2>Mod Profiles</h2>
-            <ul class="mod-list" role="list">
-              <li class="active" tabindex="0" onclick="selectMod(this)" aria-selected="true">Vanilla</li>
-              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">Forge Mods</li>
-              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">Fabric Mods</li>
-              <li tabindex="0" onclick="selectMod(this)" aria-selected="false">LiteLoader</li>
-            </ul>
-          </div>
-        </div>
-      </article>
-      <article class="news-tab" id="newsTabContent" role="tabpanel" aria-labelledby="newsTab" hidden>
-        <h2>Latest News</h2>
-        <div class="news-item">
-          <h3>New Event Alerts Feature</h3>
-          <p>We've added dynamic server status alerts to keep you updated during gameplay.</p>
-        </div>
-        <div class="news-item">
-          <h3>Launcher Update 1.2.0</h3>
-          <p>Performance improvements and bug fixes to enhance your experience.</p>
-        </div>
-        <div class="news-item">
-          <h3>Community Mod Packs</h3>
-          <p>Explore curated mod packs shared by our vibrant community.</p>
-        </div>
-      </article>
-    </section>
-    <!-- Profile dropdown -->
-    <div class="profile" id="profileDropdown" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Minecraft Profile Selector" onclick="toggleProfileDropdown()" onkeydown="if(event.key==='Enter' || event.key===' ') toggleProfileDropdown()">
-      <div class="profile-info" aria-live="polite" aria-atomic="true">
-        <img id="profileAvatar" src="https://crafatar.com/avatars/0" alt="Minecraft avatar of User" />
-        <span class="username" id="profileUsername">User</span>
-      </div>
-      <svg class="dropdown-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
-    </div>
-    <ul class="account-dropdown" id="accountDropdown" role="listbox" tabindex="-1" hidden aria-label="Available Minecraft Accounts">
-      <!-- Example accounts -->
-      <li role="option" tabindex="0" onclick="selectAccount('User')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('User')">User</li>
-      <li role="option" tabindex="0" onclick="selectAccount('Gamer123')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('Gamer123')">Gamer123</li>
-      <li role="option" tabindex="0" onclick="selectAccount('BuilderXYZ')" onkeydown="if(event.key==='Enter' || event.key===' ') selectAccount('BuilderXYZ')">BuilderXYZ</li>
-    </ul>
 
+<header>
+  <div style="display:flex; align-items:center;">
+    <div class="logo" title="Event Alerts Launcher"></div>
+    <h1>Event Alerts</h1>
   </div>
 
-  <script>
-    // Dummy user data
-    const accounts = {
-      User: "https://crafatar.com/avatars/0",
-      Gamer123: "https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7", // Example UUID for Notch
-      BuilderXYZ: "https://crafatar.com/avatars/853c80ef3c3749fdaa49938b674adae6" // Example UUID for jeb_
-    };
+  <div class="profile" tabindex="0" aria-haspopup="true" aria-expanded="false" id="profileButton">
+    <img src="https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7?size=64&overlay" alt="Minecraft Profile" />
+    <span class="username">Steve</span>
+    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path d="M7 10l5 5 5-5z" />
+    </svg>
 
-    let currentAccount = "User";
+    <ul class="account-dropdown" role="menu" aria-label="Account options" hidden id="accountDropdown">
+      <li role="menuitem" tabindex="0">Switch Account</li>
+      <li role="menuitem" tabindex="0">Logout</li>
+    </ul>
+  </div>
+</header>
 
-    function updateProfile() {
-      const userName = currentAccount;
-      const avatarUrl = accounts[currentAccount] || "https://crafatar.com/avatars/0";
-      const avatar = document.getElementById('profileAvatar');
-      const username = document.getElementById('profileUsername');
-      avatar.src = avatarUrl;
-      avatar.alt = `Minecraft avatar of ${userName}`;
-      username.textContent = userName;
+<div class="launcher">
+  <nav class="sidebar" aria-label="Launcher navigation">
+    <div class="logo-small" title="Event Alerts"></div>
+    <button class="tab-button active" aria-pressed="true" aria-controls="playTab" id="playTabBtn" title="Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+      Play
+    </button>
+    <button class="tab-button" aria-pressed="false" aria-controls="newsTab" id="newsTabBtn" title="News">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">
+        <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"></path>
+      </svg>
+      News
+    </button>
+  </nav>
+
+  <section class="main">
+    <section class="play-tab" id="playTab" role="tabpanel" aria-labelledby="playTabBtn">
+      <div class="play-panel" role="region" aria-label="Game controls">
+        <button class="play-button" id="playButton">PLAY</button>
+        <select class="version-select" id="versionSelect" aria-label="Select Minecraft version">
+          <option value="1.20.1">Minecraft 1.20.1</option>
+          <option value="1.19.4">Minecraft 1.19.4</option>
+          <option value="1.18.2">Minecraft 1.18.2</option>
+          <option value="1.17.1">Minecraft 1.17.1</option>
+        </select>
+      </div>
+
+      <div class="mod-panel" aria-label="Mod profiles">
+        <h2>Mod Profiles</h2>
+        <ul class="mod-list" role="listbox" aria-multiselectable="false" tabindex="0">
+          <li class="active" role="option" tabindex="0" aria-selected="true">Vanilla</li>
+          <li role="option" tabindex="0">Event Alerts</li>
+          <li role="option" tabindex="0">Optifine</li>
+          <li role="option" tabindex="0">Fabric</li>
+          <li role="option" tabindex="0">Forge</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="news-tab" id="newsTab" role="tabpanel" aria-labelledby="newsTabBtn" hidden>
+      <h2>Latest News</h2>
+      <article class="news-item">
+        <h3>Event Alerts 1.3 Released</h3>
+        <p>New mod profiles and performance improvements. Get ready for an improved experience!</p>
+      </article>
+      <article class="news-item">
+        <h3>Server Maintenance Scheduled</h3>
+        <p>Servers will be down on Sunday from 2 AM to 4 AM UTC for maintenance and upgrades.</p>
+      </article>
+      <article class="news-item">
+        <h3>Join Our Discord!</h3>
+        <p>Connect with the community, get support, and share your feedback on our Discord server.</p>
+      </article>
+    </section>
+  </section>
+</div>
+
+<script>
+  // Tab switching
+  const playBtn = document.getElementById('playTabBtn');
+  const newsBtn = document.getElementById('newsTabBtn');
+  const playTab = document.getElementById('playTab');
+  const newsTab = document.getElementById('newsTab');
+
+  function setActiveTab(tab) {
+    if(tab === 'play') {
+      playBtn.classList.add('active');
+      playBtn.setAttribute('aria-pressed', 'true');
+      newsBtn.classList.remove('active');
+      newsBtn.setAttribute('aria-pressed', 'false');
+      playTab.hidden = false;
+      newsTab.hidden = true;
+    } else {
+      newsBtn.classList.add('active');
+      newsBtn.setAttribute('aria-pressed', 'true');
+      playBtn.classList.remove('active');
+      playBtn.setAttribute('aria-pressed', 'false');
+      newsTab.hidden = false;
+      playTab.hidden = true;
     }
+  }
+  playBtn.addEventListener('click', () => setActiveTab('play'));
+  newsBtn.addEventListener('click', () => setActiveTab('news'));
 
-    function toggleProfileDropdown() {
-      const dropdown = document.getElementById('accountDropdown');
-      const profile = document.getElementById('profileDropdown');
-      if (dropdown.hasAttribute('hidden')) {
-        dropdown.removeAttribute('hidden');
-        profile.classList.add('open');
-        profile.setAttribute('aria-expanded', 'true');
-        dropdown.focus();
-      } else {
-        dropdown.setAttribute('hidden', '');
-        profile.classList.remove('open');
-        profile.setAttribute('aria-expanded', 'false');
-      }
+  // Profile dropdown
+  const profile = document.getElementById('profileButton');
+  const dropdown = document.getElementById('accountDropdown');
+
+  profile.addEventListener('click', () => {
+    const isOpen = dropdown.hasAttribute('hidden') === false;
+    if (isOpen) {
+      dropdown.setAttribute('hidden', '');
+      profile.setAttribute('aria-expanded', 'false');
+      profile.classList.remove('open');
+    } else {
+      dropdown.removeAttribute('hidden');
+      profile.setAttribute('aria-expanded', 'true');
+      profile.classList.add('open');
     }
+  });
 
-    function selectAccount(name) {
-      currentAccount = name;
-      updateProfile();
-      toggleProfileDropdown();
+  // Close dropdown if clicked outside
+  document.addEventListener('click', (e) => {
+    if (!profile.contains(e.target)) {
+      dropdown.setAttribute('hidden', '');
+      profile.setAttribute('aria-expanded', 'false');
+      profile.classList.remove('open');
     }
+  });
 
-    // Close dropdown if clicking outside
-    window.addEventListener('click', e => {
-      const profile = document.getElementById('profileDropdown');
-      const dropdown = document.getElementById('accountDropdown');
-      if (!profile.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.setAttribute('hidden', '');
-        profile.classList.remove('open');
-        profile.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    // Keyboard navigation for account list
-    const accountDropdown = document.getElementById('accountDropdown');
-    accountDropdown.addEventListener('keydown', e => {
-      const options = Array.from(accountDropdown.querySelectorAll('li'));
-      const index = options.findIndex(opt => opt === document.activeElement);
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const nextIndex = (index + 1) % options.length;
-        options[nextIndex].focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prevIndex = (index - 1 + options.length) % options.length;
-        options[prevIndex].focus();
-      } else if (e.key === 'Escape') {
-        toggleProfileDropdown();
-        document.getElementById('profileDropdown').focus();
-      }
-    });
-
-    // Tab switching logic
-    function switchTab(tab) {
-      const tabs = ['play', 'news'];
-      tabs.forEach(t => {
-        document.getElementById(t + 'Tab').classList.remove('active');
-        document.getElementById(t + 'TabContent').hidden = true;
+  // Mod profile selection logic
+  const mods = document.querySelectorAll('.mod-list li');
+  mods.forEach(mod => {
+    mod.addEventListener('click', () => {
+      mods.forEach(m => {
+        m.classList.remove('active');
+        m.setAttribute('aria-selected', 'false');
       });
-      document.getElementById(tab + 'Tab').classList.add('active');
-      document.getElementById(tab + 'TabContent').hidden = false;
-    }
+      mod.classList.add('active');
+      mod.setAttribute('aria-selected', 'true');
+    });
+  });
+</script>
 
-    // Mod profile selection
-    function selectMod(el) {
-      document.querySelectorAll('.mod-list li').forEach(li => {
-        li.classList.remove('active');
-        li.setAttribute('aria-selected', 'false');
-      });
-      el.classList.add('active');
-      el.setAttribute('aria-selected', 'true');
-    }
-
-    // Placeholder launch
-    function launchGame() {
-      const version = document.getElementById('version').value;
-      const modProfile = document.querySelector('.mod-list li.active').textContent;
-      alert(`Launching Minecraft ${version} with profile: ${modProfile} as ${currentAccount}`);
-    }
-
-    updateProfile();
-  </script>
 </body>
 </html>
