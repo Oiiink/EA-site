@@ -93,26 +93,46 @@
       margin-bottom: 2rem;
     }
 
+    .play-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .play-config {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
     h1 {
       color: var(--orange);
       margin-bottom: 1rem;
     }
 
-    input, select, button {
+    input, select {
       padding: 0.75rem 1rem;
       border-radius: 0.5rem;
       border: none;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      width: 100%;
       background: #111;
       color: var(--text);
     }
 
-    button {
+    .play-button {
+      padding: 1.25rem 2rem;
       background-color: var(--orange);
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .play-button:hover {
+      background-color: #e36b00;
     }
 
     #newsPanel .news-item {
@@ -121,6 +141,11 @@
 
     #newsPanel .news-item h3 {
       color: var(--orange);
+    }
+
+    #status {
+      margin-top: 1rem;
+      color: var(--muted);
     }
   </style>
 </head>
@@ -135,18 +160,18 @@
     </div>
     <div class="main">
       <div class="panel" id="playPanel">
-        <h1>Launch Minecraft</h1>
-        <label>Username</label>
-        <input type="text" id="username" placeholder="Enter your username">
-
-        <label>Version</label>
-        <select id="version">
-          <option value="1.20.1">1.20.1</option>
-          <option value="1.19.4">1.19.4</option>
-          <option value="1.8.9">1.8.9</option>
-        </select>
-
-        <button onclick="launchGame()">Launch Game</button>
+        <h1>Ready to Play?</h1>
+        <div class="play-section">
+          <div class="play-config">
+            <input type="text" id="username" placeholder="Username">
+            <select id="version">
+              <option value="1.20.1">1.20.1</option>
+              <option value="1.19.4">1.19.4</option>
+              <option value="1.8.9">1.8.9</option>
+            </select>
+          </div>
+          <button class="play-button" onclick="launchGame()">PLAY</button>
+        </div>
         <p id="status"></p>
       </div>
 
