@@ -8,33 +8,27 @@
   <style>
     :root {
       --orange: #ff7a00;
-      --bg: #0d0d0d;
-      --panel-bg: rgba(30, 30, 30, 0.75);
+      --bg-dark: #0d0d0d;
+      --bg-light: #1a1a1a;
+      --panel: #202020;
       --text: #ffffff;
-      --muted: #999;
-      --border: #222;
+      --muted: #aaa;
+      --border: #333;
+      --radius: 0.75rem;
     }
 
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
 
-    body, html {
+    html, body {
       height: 100%;
-      background: linear-gradient(135deg, #0e0e0e, #1a1a1a);
       font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
       color: var(--text);
       overflow: hidden;
-    }
-
-    .background {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(145deg, #111 25%, #0a0a0a 75%);
-      z-index: -1;
     }
 
     .launcher {
@@ -43,104 +37,108 @@
     }
 
     .sidebar {
-      width: 220px;
-      background-color: #111;
-      border-right: 1px solid var(--border);
+      width: 250px;
+      background-color: var(--panel);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 2rem;
+      padding: 2rem 1rem;
+      border-right: 1px solid var(--border);
     }
 
     .sidebar img {
-      height: 60px;
+      width: 80px;
       border-radius: 50%;
       margin-bottom: 2rem;
     }
 
-    .tab-button {
-      width: 100%;
-      padding: 1rem;
-      color: var(--muted);
+    .sidebar button {
       background: none;
       border: none;
+      color: var(--muted);
+      padding: 1rem;
+      width: 100%;
       text-align: left;
-      padding-left: 2rem;
-      font-size: 1rem;
+      border-radius: var(--radius);
       cursor: pointer;
       transition: 0.3s;
     }
 
-    .tab-button:hover, .tab-button.active {
+    .sidebar button.active,
+    .sidebar button:hover {
+      background: var(--bg-dark);
       color: var(--orange);
-      background-color: #1a1a1a;
     }
 
     .main {
       flex: 1;
-      padding: 2rem;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-    }
-
-    .panel {
-      background: var(--panel-bg);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
       padding: 2rem;
-      margin-bottom: 2rem;
+      overflow-y: auto;
     }
 
-    .play-section {
+    .header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      color: var(--orange);
+    }
+
+    .play-panel, .news-panel {
+      background: var(--panel);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      display: none;
+    }
+
+    .play-panel.active, .news-panel.active {
+      display: block;
+    }
+
+    .play-controls {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
-    .play-config {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      flex: 1;
-    }
-
-    h1 {
-      color: var(--orange);
-      margin-bottom: 1rem;
-    }
-
-    input, select {
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      background: #111;
+    .play-controls input,
+    .play-controls select {
+      background: var(--bg-dark);
       color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
     }
 
     .play-button {
-      padding: 1.25rem 2rem;
-      background-color: var(--orange);
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 1.2rem;
+      padding: 1rem 2rem;
+      background: var(--orange);
+      color: #fff;
       font-weight: bold;
+      border: none;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
     .play-button:hover {
-      background-color: #e36b00;
+      background: #e06900;
     }
 
-    #newsPanel .news-item {
+    .news-item {
       margin-bottom: 1.5rem;
     }
 
-    #newsPanel .news-item h3 {
+    .news-item h3 {
       color: var(--orange);
+      margin-bottom: 0.5rem;
     }
 
     #status {
@@ -150,33 +148,30 @@
   </style>
 </head>
 <body>
-  <div class="background"></div>
   <div class="launcher">
     <div class="sidebar">
       <img src="https://cdn.discordapp.com/avatars/1142603508827299883/8115d0ff74451c2450da1f58733cf22d.webp?size=4096" alt="Logo">
-      <button class="tab-button active" onclick="showTab('playPanel', this)">Play</button>
-      <button class="tab-button" onclick="showTab('newsPanel', this)">News</button>
+      <button class="tab-button active" onclick="switchTab('play')">Play</button>
+      <button class="tab-button" onclick="switchTab('news')">News</button>
       <button class="tab-button" onclick="checkUpdate()">Check for Updates</button>
     </div>
     <div class="main">
-      <div class="panel" id="playPanel">
-        <h1>Ready to Play?</h1>
-        <div class="play-section">
-          <div class="play-config">
-            <input type="text" id="username" placeholder="Username">
-            <select id="version">
-              <option value="1.20.1">1.20.1</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.8.9">1.8.9</option>
-            </select>
-          </div>
+      <div class="header">
+        <h1>Event Alerts Launcher</h1>
+        <span id="status"></span>
+      </div>
+      <div class="play-panel active" id="playTab">
+        <div class="play-controls">
+          <input type="text" id="username" placeholder="Username">
+          <select id="version">
+            <option value="1.20.1">1.20.1</option>
+            <option value="1.19.4">1.19.4</option>
+            <option value="1.8.9">1.8.9</option>
+          </select>
           <button class="play-button" onclick="launchGame()">PLAY</button>
         </div>
-        <p id="status"></p>
       </div>
-
-      <div class="panel" id="newsPanel" style="display: none;">
-        <h1>Launcher News</h1>
+      <div class="news-panel" id="newsTab">
         <div class="news-item">
           <h3>1.20.1 Released</h3>
           <p>New features, better performance, and more supported mods!</p>
@@ -190,11 +185,12 @@
   </div>
 
   <script>
-    function showTab(id, btn) {
-      document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('playPanel').style.display = id === 'playPanel' ? 'block' : 'none';
-      document.getElementById('newsPanel').style.display = id === 'newsPanel' ? 'block' : 'none';
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('playTab').classList.remove('active');
+      document.getElementById('newsTab').classList.remove('active');
+      document.getElementById(tab + 'Tab').classList.add('active');
     }
 
     function checkUpdate() {
@@ -202,14 +198,14 @@
     }
 
     function launchGame() {
-      const user = document.getElementById("username").value;
+      const username = document.getElementById("username").value;
       const version = document.getElementById("version").value;
       const status = document.getElementById("status");
-      if (!user) {
+      if (!username) {
         status.innerText = "Please enter a username.";
         return;
       }
-      status.innerText = `Launching Minecraft ${version} for ${user}...`;
+      status.innerText = `Launching Minecraft ${version} for ${username}...`;
     }
   </script>
 </body>
