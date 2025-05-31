@@ -5,274 +5,285 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Minecraft Client Launcher</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-    /* Reset & base */
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+    /* Reset */
     * {
-      box-sizing: border-box;
+      margin: 0; padding: 0; box-sizing: border-box;
+      user-select: none;
     }
     body, html {
-      margin: 0; padding: 0;
       height: 100%;
-      background: linear-gradient(135deg, #0f1115 0%, #1b1d23 100%);
-      color: #c0c0c0;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, #121216 0%, #1c1e26 100%);
       display: flex;
       justify-content: center;
       align-items: center;
-      user-select: none;
+      color: #ddd;
     }
 
     /* Container */
     #launcher {
-      width: 850px;
-      height: 580px;
-      background: #181b22;
+      width: 900px;
+      height: 600px;
+      background: #18191f;
       border-radius: 16px;
       box-shadow:
-        0 0 20px #0ff,
-        inset 0 0 40px #0ff33;
+        0 10px 30px rgba(0,255,255,0.2),
+        inset 0 0 40px #00faff33;
       display: flex;
       overflow: hidden;
-      border: 2px solid #00fff7;
+      border: 2px solid #00faff;
+      font-size: 14px;
     }
 
     /* Sidebar */
     .sidebar {
-      width: 210px;
-      background: #0e1014;
+      width: 240px;
+      background: #0f1116;
       display: flex;
       flex-direction: column;
-      padding: 30px 20px;
-      border-right: 2px solid #00fff7;
+      padding: 40px 28px;
+      border-right: 2px solid #00faff;
     }
-    .sidebar .logo {
-      font-size: 2.8rem;
+    .logo {
+      font-size: 3rem;
       font-weight: 900;
-      color: #00fff7;
-      margin-bottom: 50px;
+      color: #00faff;
       text-align: center;
-      letter-spacing: 0.2em;
-      text-shadow: 0 0 12px #00fff7aa;
-      user-select: none;
+      margin-bottom: 70px;
+      letter-spacing: 0.15em;
+      text-shadow: 0 0 14px #00faffaa;
       font-style: italic;
+      user-select: none;
     }
     .nav-btn {
       font-weight: 700;
-      font-size: 1.15rem;
-      padding: 14px 22px;
-      margin-bottom: 18px;
+      font-size: 1.1rem;
+      padding: 18px 22px;
+      margin-bottom: 20px;
       background: transparent;
       border: none;
-      color: #3bc4d5;
+      color: #33dfff;
       cursor: pointer;
+      border-radius: 12px;
       text-align: left;
-      border-radius: 8px;
-      box-shadow: inset 0 0 0 2px transparent;
-      transition:
-        box-shadow 0.25s ease,
-        color 0.25s ease,
-        background-color 0.25s ease;
+      box-shadow: inset 0 0 0 3px transparent;
+      transition: all 0.3s ease;
+      letter-spacing: 0.05em;
       user-select: none;
     }
     .nav-btn:hover:not(:disabled) {
-      color: #00fff7;
-      box-shadow: inset 0 0 10px #00fff7;
-      background-color: #002f3b;
+      background-color: #00495b;
+      box-shadow: inset 0 0 12px #00faff;
+      color: #00faff;
     }
     .nav-btn.active {
-      background-color: #004c5a;
-      box-shadow: inset 0 0 16px #00fff7;
-      color: #00fff7;
+      background-color: #00718f;
+      box-shadow: inset 0 0 18px #00faff;
+      color: #00faff;
     }
     .nav-btn:disabled {
-      color: #1b1b1b;
+      color: #1a1c21;
       cursor: default;
       box-shadow: none;
     }
 
-    /* Main content */
+    /* Content Area */
     .content {
       flex-grow: 1;
-      padding: 48px 64px;
+      padding: 60px 70px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       color: #cbd5e1;
       position: relative;
+      background: linear-gradient(135deg, #121216 0%, #1a1b20 100%);
+      border-radius: 0 14px 14px 0;
+      box-shadow: inset 0 0 35px #00faff44;
     }
 
     /* Login panel */
     .login-panel {
-      max-width: 360px;
-      margin: auto;
-      background: #12141a;
-      border-radius: 20px;
-      padding: 48px 40px;
+      max-width: 400px;
+      margin: 0 auto;
+      background: #0e1217;
+      border-radius: 24px;
+      padding: 50px 50px 54px 50px;
       box-shadow:
-        0 0 12px #00fff7aa,
-        inset 0 0 20px #00fff7aa;
+        0 0 18px #00faffaa,
+        inset 0 0 45px #00faff66;
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: 44px;
     }
 
     .login-panel h2 {
-      font-weight: 700;
-      font-size: 2rem;
+      font-weight: 800;
+      font-size: 2.5rem;
       margin: 0;
       text-align: center;
-      color: #00fff7;
-      letter-spacing: 0.1em;
+      color: #00faff;
+      letter-spacing: 0.12em;
       user-select: none;
     }
 
-    /* Input groups with floating labels */
+    /* Floating label inputs */
     .input-group {
       position: relative;
+      width: 100%;
     }
     .input-group input {
       width: 100%;
-      background: #12141a;
-      border: 2px solid #00525c;
-      padding: 16px 16px;
-      border-radius: 14px;
-      color: #cbd5e1;
-      font-size: 1.1rem;
-      font-weight: 600;
+      background: #0e1217;
+      border: 2.5px solid #004e65;
+      padding: 18px 20px;
+      border-radius: 16px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #aee8ff;
       outline: none;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .input-group input:focus {
-      border-color: #00fff7;
-      box-shadow: 0 0 6px #00fff7;
+      border-color: #00faff;
+      box-shadow: 0 0 14px #00faffaa;
     }
     .input-group label {
       position: absolute;
-      left: 18px;
-      top: 16px;
-      color: #4a5568;
-      font-weight: 500;
-      font-size: 1rem;
+      left: 22px;
+      top: 18px;
+      color: #508ca4;
+      font-weight: 600;
+      font-size: 1.1rem;
       pointer-events: none;
-      user-select: none;
-      background: #12141a;
-      padding: 0 6px;
+      background: #0e1217;
+      padding: 0 8px;
       transition:
         transform 0.3s ease,
         font-size 0.3s ease,
         color 0.3s ease;
+      user-select: none;
     }
     .input-group input:focus + label,
     .input-group input:not(:placeholder-shown) + label {
-      transform: translateY(-32px);
+      transform: translateY(-38px);
       font-size: 0.85rem;
-      color: #00fff7;
+      color: #00faff;
     }
 
     /* Buttons */
     .btn {
-      font-weight: 700;
-      font-size: 1.3rem;
-      border-radius: 16px;
-      padding: 16px 0;
+      font-weight: 800;
+      font-size: 1.45rem;
+      border-radius: 24px;
+      padding: 18px 0;
       cursor: pointer;
-      background: #00fff7;
+      background: linear-gradient(90deg, #00faff, #00a0cc);
       border: none;
-      color: #0f1115;
-      box-shadow: 0 0 20px #00fff7cc;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      color: #101418;
+      box-shadow: 0 0 32px #00faffcc;
+      transition: background 0.35s ease, box-shadow 0.35s ease;
       user-select: none;
     }
     .btn:hover:not(:disabled) {
-      background: #00d7cb;
-      box-shadow: 0 0 30px #00d7cbcc;
+      background: linear-gradient(90deg, #00d4ff, #007799);
+      box-shadow: 0 0 45px #00d4ffcc;
     }
     .btn:disabled {
-      background: #004c56;
+      background: #00414d;
       box-shadow: none;
       cursor: default;
-      color: #112d31;
+      color: #003a4a;
     }
 
     /* Dashboard */
     .dashboard {
-      max-width: 700px;
-      margin: auto;
+      max-width: 720px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 40px;
+      gap: 44px;
       user-select: none;
     }
 
     .profile-info {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #00fff7;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #00faff;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 36px;
+      letter-spacing: 0.1em;
+      user-select: none;
     }
 
     .card {
-      background: #12141a;
-      border-radius: 20px;
-      padding: 32px 40px;
+      background: #0e1217;
+      border-radius: 24px;
+      padding: 38px 48px;
       box-shadow:
-        0 0 14px #00fff7aa,
-        inset 0 0 30px #004c56;
+        0 0 20px #00faffcc,
+        inset 0 0 48px #005870bb;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 32px;
     }
     .card h3 {
       margin: 0;
-      color: #00fff7;
-      font-weight: 700;
-      font-size: 1.7rem;
+      color: #00faff;
+      font-weight: 800;
+      font-size: 1.9rem;
+      letter-spacing: 0.1em;
+      user-select: none;
     }
     .card ul {
-      padding-left: 20px;
-      color: #a0aec0;
-      font-weight: 600;
-      max-height: 180px;
+      padding-left: 28px;
+      color: #89d0ff;
+      font-weight: 700;
+      max-height: 200px;
       overflow-y: auto;
-      font-size: 1rem;
-      line-height: 1.4;
+      font-size: 1.1rem;
+      line-height: 1.5;
     }
     .card ul::-webkit-scrollbar {
-      width: 6px;
+      width: 7px;
     }
     .card ul::-webkit-scrollbar-thumb {
-      background: #00fff7cc;
-      border-radius: 12px;
+      background: #00faffcc;
+      border-radius: 14px;
     }
 
     /* Version selector */
     .version-select-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
     }
     label {
-      color: #00fff7;
-      font-weight: 600;
+      color: #00faff;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      user-select: none;
     }
     select {
-      background: #0f1115;
+      background: #121418;
       border: 2px solid #00525c;
-      border-radius: 16px;
-      padding: 14px 18px;
-      color: #cbd5e1;
-      font-size: 1.15rem;
-      font-weight: 600;
+      border-radius: 20px;
+      padding: 16px 22px;
+      color: #aee8ff;
+      font-size: 1.2rem;
+      font-weight: 700;
       cursor: pointer;
       appearance: none;
-      outline-offset: 3px;
+      outline-offset: 4px;
       outline-color: transparent;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
     }
     select:focus {
-      border-color: #00fff7;
-      box-shadow: 0 0 10px #00fff7cc;
+      border-color: #00faff;
+      box-shadow: 0 0 18px #00faffcc;
     }
 
   </style>
@@ -328,7 +339,7 @@
             </select>
             <small id="versionDesc" style="color:#555; margin-top:6px;">Choose the version you want to play</small>
           </div>
-          <button class="btn" id="launchBtn" style="margin-top: 20px;">Launch Minecraft</button>
+          <button class="btn" id="launchBtn" style="margin-top: 24px;">Launch Minecraft</button>
         </div>
       </div>
     </section>
