@@ -1,403 +1,202 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MineX Client</title>
+  <title>Minecraft Launcher UI</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-    /* Reset */
+    /* Basic Reset */
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    body, html {
-      height: 100%;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #121214, #1f1f21);
-      color: #e1e1e1;
+
+    body {
+      background: #121212;
+      color: #eee;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       user-select: none;
     }
 
-    /* Container */
-    .container {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      box-shadow: inset 0 0 100px #0009;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: #17171a;
-      border-right: 1px solid #333;
-      display: flex;
-      flex-direction: column;
-      padding-top: 30px;
-      align-items: center;
-      box-shadow: inset -2px 0 8px #ff6f0040;
-    }
-    .sidebar-logo {
-      width: 120px;
-      margin-bottom: 40px;
-      filter: drop-shadow(0 0 6px #ff6f00);
-    }
-    .sidebar-nav {
-      width: 100%;
-      list-style: none;
-      padding-left: 0;
-    }
-    .sidebar-nav li {
-      padding: 18px 30px;
-      color: #bbb;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      border-left: 4px solid transparent;
-      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-    }
-    .sidebar-nav li svg {
-      fill: #bbb;
-      width: 20px;
-      height: 20px;
-    }
-    .sidebar-nav li:hover {
-      background: #ff6f00;
-      color: #121214;
-      border-left-color: #121214;
-    }
-    .sidebar-nav li.active {
-      background: #ff6f00;
-      color: #121214;
-      border-left-color: #121214;
-    }
-    .sidebar-nav li.active svg {
-      fill: #121214;
-    }
-
-    /* Main content */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 40px 50px;
-      overflow-y: auto;
-    }
-    .header {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 30px;
-      color: #ff6f00;
-      text-shadow: 0 0 10px #ff6f00bb;
-      user-select: text;
-    }
-
-    /* Cards */
-    .card {
-      background: #222224;
+    .launcher {
+      background: #1e1e1e;
       border-radius: 12px;
-      box-shadow: 0 4px 30px #ff6f0040;
-      padding: 25px 30px;
-      margin-bottom: 30px;
-    }
-    .card h2 {
-      font-weight: 700;
-      margin-bottom: 15px;
-      color: #ff6f00;
-    }
-    .card p {
-      color: #ccc;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-
-    /* Mods list */
-    .mods-list {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-    .mod-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #1e1e21;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      padding: 15px 20px;
-      box-shadow: 0 0 10px #ff6f0020;
-      transition: background 0.3s ease;
-      cursor: default;
-    }
-    .mod-item:hover {
-      background: #ff6f00;
-      color: #121214;
-    }
-    .mod-info {
+      width: 360px;
+      padding: 30px 40px;
+      box-shadow:
+        0 4px 20px rgba(0,0,0,0.6),
+        inset 0 0 40px #00aaff33;
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
-    .mod-name {
+
+    .launcher h1 {
       font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 4px;
-    }
-    .mod-desc {
-      font-size: 0.9rem;
-      color: #ddd;
-    }
-
-    /* Toggle Switch */
-    .toggle-switch {
-      position: relative;
-      width: 42px;
-      height: 22px;
-    }
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #444;
-      border-radius: 22px;
-      transition: 0.4s;
-      box-shadow: inset 0 2px 4px #0008;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 3px;
-      bottom: 3px;
-      background-color: #eee;
-      border-radius: 50%;
-      transition: 0.4s;
-      box-shadow: 0 1px 3px #0005;
-    }
-    input:checked + .slider {
-      background-color: #ff6f00;
-      box-shadow: 0 0 8px #ff6f00;
-    }
-    input:checked + .slider:before {
-      transform: translateX(20px);
-      box-shadow: 0 1px 3px #0009;
-    }
-
-    /* Settings inputs */
-    .setting {
+      font-size: 28px;
       margin-bottom: 25px;
+      color: #00aaff;
+      text-shadow: 0 0 8px #00aaff88;
     }
-    .setting label {
+
+    label {
+      align-self: flex-start;
+      margin-bottom: 6px;
       font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-      color: #ff6f00;
-    }
-    input[type=range] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 4px;
-      background: #333;
-      outline: none;
-      box-shadow: inset 0 0 5px #000;
-      transition: background 0.3s ease;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      background: #ff6f00;
-      cursor: pointer;
-      border-radius: 50%;
-      box-shadow: 0 0 5px #ff6f00;
-      transition: background 0.3s ease;
-    }
-    input[type=range]:hover::-webkit-slider-thumb {
-      background: #ffa040;
+      font-size: 13px;
+      color: #00aaffcc;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    select {
+    input[type="text"], input[type="password"] {
       width: 100%;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 12px 15px;
+      margin-bottom: 20px;
       border: none;
-      background: #333;
+      border-radius: 8px;
+      background: #292929;
       color: #eee;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: inset 0 0 6px #000;
+      font-size: 15px;
       transition: background 0.3s ease;
     }
-    select:hover {
-      background: #444;
+    input[type="text"]:focus, input[type="password"]:focus {
+      background: #383838;
+      outline: none;
     }
 
-    /* Event Alerts List */
-    .alerts-list {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-    .alert-item {
-      background: #1e1e21;
-      border-radius: 10px;
-      padding: 15px 20px;
-      color: #ff6f00;
+    button {
+      width: 100%;
+      padding: 14px 0;
+      margin-bottom: 20px;
+      font-size: 16px;
       font-weight: 700;
-      font-size: 1.05rem;
-      margin-bottom: 15px;
-      box-shadow: 0 0 10px #ff6f0040;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #00aaff;
+      color: white;
+      box-shadow: 0 0 12px #00aaffcc;
       transition: background 0.3s ease;
     }
-    .alert-item:hover {
-      background: #ff6f00;
-      color: #121214;
+    button:disabled {
+      background: #004466;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button:hover:not(:disabled) {
+      background: #0099dd;
     }
 
-    /* Scrollbar for main content */
-    .main::-webkit-scrollbar {
-      width: 10px;
-    }
-    .main::-webkit-scrollbar-track {
-      background: #17171a;
-    }
-    .main::-webkit-scrollbar-thumb {
-      background: #ff6f00;
-      border-radius: 10px;
+    .progress-bar-container {
+      width: 100%;
+      height: 18px;
+      background: #292929;
+      border-radius: 9px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      display: none;
     }
 
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #00aaff;
+      transition: width 0.3s ease;
+    }
+
+    .status {
+      font-size: 14px;
+      min-height: 20px;
+      color: #00aaffcc;
+      font-weight: 600;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <nav class="sidebar" aria-label="Main navigation">
-      <img src="https://i.imgur.com/7okKHZd.png" alt="MineX Logo" class="sidebar-logo" />
-      <ul class="sidebar-nav" role="menu">
-        <li class="active" role="menuitem" data-tab="mainTab" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h2v-2H3v2zm0-4h2V7H3v2zm4 4h2v-2H7v2zm0-4h2V7H7v2zm4 4h2v-2h-2v2zm0-4h2V7h-2v2zm4 4h2v-2h-2v2zm0-4h2V7h-2v2z" fill="currentColor"/></svg> Main
-        </li>
-        <li role="menuitem" data-tab="modsTab" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6h12v2H6V6zm0 5h12v2H6v-2zm0 5h12v2H6v-2z" fill="currentColor"/></svg> Mods
-        </li>
-        <li role="menuitem" data-tab="settingsTab" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm8 4a8.09 8.09 0 0 0-.54-3l2.1-1.6-2-3.46-2.48 1.32a8.034 8.034 0 0 0-2.72-1.57L13 3h-2l-.86 3.69a8.035 8.035 0 0 0-2.72 1.57L5 5.94l-2 3.46 2.1 1.6a8.08 8.08 0 0 0-.54 3c0 1.02.25 2 .7 2.87L3 17.41l2 3.46 2.48-1.32a8.033 8.033 0 0 0 2.72 1.57L11 21h2l.86-3.69a8.033 8.033 0 0 0 2.72-1.57l2.48 1.32 2-3.46-2.1-1.6c.45-.87.7-1.85.7-2.87z" fill="currentColor"/></svg> Settings
-        </li>
-        <li role="menuitem" data-tab="alertsTab" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/></svg> Alerts
-        </li>
-      </ul>
-    </nav>
+  <div class="launcher" role="main" aria-label="Minecraft Launcher UI">
+    <h1>Minecraft Launcher</h1>
 
-    <main class="main">
-      <section id="mainTab" class="tab-content" aria-label="Main">
-        <h1 class="header">Welcome to MineX Client</h1>
-        <div class="card">
-          <h2>About MineX</h2>
-          <p>MineX is a powerful Minecraft client mod with features like mods management, event alerts, and customizable settings designed to enhance your gameplay experience.</p>
-        </div>
-      </section>
+    <label for="username">Username</label>
+    <input id="username" type="text" autocomplete="username" placeholder="Enter username" />
 
-      <section id="modsTab" class="tab-content" aria-label="Mods" hidden>
-        <h1 class="header">Installed Mods</h1>
-        <ul class="mods-list">
-          <li class="mod-item" tabindex="0">
-            <div class="mod-info">
-              <div class="mod-name">AutoSprint</div>
-              <div class="mod-desc">Automatically toggles sprinting for you.</div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked />
-              <span class="slider"></span>
-            </label>
-          </li>
-          <li class="mod-item" tabindex="0">
-            <div class="mod-info">
-              <div class="mod-name">XRay</div>
-              <div class="mod-desc">Highlights ores through blocks.</div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </li>
-          <li class="mod-item" tabindex="0">
-            <div class="mod-info">
-              <div class="mod-name">MiniMap</div>
-              <div class="mod-desc">Shows a mini map on the screen.</div>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" checked />
-              <span class="slider"></span>
-            </label>
-          </li>
-        </ul>
-      </section>
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" />
 
-      <section id="settingsTab" class="tab-content" aria-label="Settings" hidden>
-        <h1 class="header">Settings</h1>
-        <div class="card setting">
-          <label for="volume">Volume</label>
-          <input type="range" id="volume" min="0" max="100" value="70" />
-        </div>
-        <div class="card setting">
-          <label for="language">Language</label>
-          <select id="language">
-            <option>English</option>
-            <option>Spanish</option>
-            <option>French</option>
-            <option>German</option>
-          </select>
-        </div>
-      </section>
+    <button id="login-btn">Login</button>
+    <button id="launch-btn" disabled>Launch Minecraft</button>
 
-      <section id="alertsTab" class="tab-content" aria-label="Event Alerts" hidden>
-        <h1 class="header">Event Alerts</h1>
-        <ul class="alerts-list">
-          <li class="alert-item">Server Restart in 10 minutes</li>
-          <li class="alert-item">New Update Available: Version 1.2.5</li>
-          <li class="alert-item">Double XP Weekend Starting Soon</li>
-        </ul>
-      </section>
-    </main>
+    <div class="progress-bar-container" id="progress-container" aria-hidden="true">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="status" id="status"></div>
   </div>
 
   <script>
-    const tabs = document.querySelectorAll('.sidebar-nav li');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const loginBtn = document.getElementById('login-btn');
+    const launchBtn = document.getElementById('launch-btn');
+    const status = document.getElementById('status');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+    let loggedIn = false;
 
-        const target = tab.getAttribute('data-tab');
-        tabContents.forEach(content => {
-          if (content.id === target) content.hidden = false;
-          else content.hidden = true;
-        });
-      });
+    loginBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-      tab.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          tab.click();
+      if (!username || !password) {
+        status.textContent = "Please enter username and password.";
+        return;
+      }
+
+      status.textContent = "Logging in...";
+      loginBtn.disabled = true;
+
+      // Simulate login delay
+      setTimeout(() => {
+        // Mock successful login
+        loggedIn = true;
+        status.textContent = `Logged in as ${username}`;
+        launchBtn.disabled = false;
+        loginBtn.style.display = 'none';
+        document.getElementById('username').disabled = true;
+        document.getElementById('password').disabled = true;
+      }, 1500);
+    });
+
+    launchBtn.addEventListener('click', () => {
+      if (!loggedIn) {
+        status.textContent = "You must login first.";
+        return;
+      }
+
+      launchBtn.disabled = true;
+      status.textContent = "Preparing to launch...";
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+
+      // Simulate download progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 1;
+        progressBar.style.width = progress + '%';
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          status.textContent = "Minecraft launched! (simulated)";
+          progressContainer.style.display = 'none';
+          launchBtn.disabled = false;
         }
-      });
+      }, 30);
     });
   </script>
 
