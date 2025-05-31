@@ -1,72 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Client - Event Alerts</title>
-  <link rel="stylesheet" href="css/styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Event Alerts - Clients UI Concept</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    background: #fff;
+    color: #222;
+    line-height: 1.5;
+  }
+  a {
+    text-decoration: none;
+    color: #FF6600;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Navbar */
+  nav.navbar {
+    background-color: #222;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  nav.navbar .nav-logo {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: white;
+  }
+  nav.navbar .nav-logo img {
+    height: 36px;
+    margin-right: 8px;
+  }
+  nav.navbar ul.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0; padding: 0;
+  }
+  nav.navbar ul.nav-menu li a {
+    color: white;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  nav.navbar ul.nav-menu li a.active,
+  nav.navbar ul.nav-menu li a:hover {
+    background-color: #FF6600;
+    color: white;
+  }
+
+  /* Hero Section */
+  section.hero {
+    text-align: center;
+    padding: 3rem 1rem 4rem;
+    background: #fff6f0;
+  }
+  section.hero .logo-wrapper img {
+    height: 96px;
+    margin-bottom: 1rem;
+  }
+  section.hero h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem;
+    color: #FF6600;
+  }
+  section.hero p {
+    font-size: 1.2rem;
+    color: #444;
+    margin: 0;
+  }
+
+  /* Main content grid */
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 1.5rem;
+  }
+
+  /* Client Card */
+  .feature-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgb(0 0 0 / 0.08);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .feature-card:hover {
+    box-shadow: 0 10px 20px rgb(255 102 0 / 0.3);
+    transform: translateY(-6px);
+  }
+  .feature-card img.client-logo {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+  }
+  .feature-card h3 {
+    margin: 0 0 0.5rem;
+    color: #FF6600;
+    font-size: 1.5rem;
+  }
+  .feature-card p {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  /* Footer */
+  footer.footer {
+    background: #222;
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  footer.footer .social-links {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  footer.footer .social-links a {
+    color: white;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+  footer.footer .social-links a:hover {
+    color: #FF6600;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    nav.navbar {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    nav.navbar ul.nav-menu {
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
-      <ul class="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="servers.html">Server Hosting</a></li>
-        <li><a href="client.html" class="active">Client</a></li>
-      </ul>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="assets/images/logo.png" alt="Event Alerts Logo" /> Event Alerts
+  </a>
+  <ul class="nav-menu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="servers.html">Server Hosting</a></li>
+    <li><a href="client.html" class="active">Clients</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="logo-wrapper">
+    <img src="assets/images/logo.png" alt="Event Alerts Logo" />
+  </div>
+  <h1>Supported Minecraft Clients</h1>
+  <p>Event Alerts works seamlessly with a variety of popular Minecraft clients to provide you the best experience.</p>
+</section>
+
+<div class="container">
+  <div class="features-grid" id="clients">
+    <div class="feature-card">
+      <img src="assets/images/lunarclient.png" alt="Lunar Client" class="client-logo" />
+      <h3>Lunar Client</h3>
+      <p>Fully compatible with Lunar Client. Enjoy all notifications and features without interruptions.</p>
     </div>
-  </nav>
-
-  <section class="hero">
-    <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+    <div class="feature-card">
+      <img src="assets/images/lilypad.png" alt="Lilypad Client" class="client-logo" />
+      <h3>Lilypad</h3>
+      <p>Optimized support for Lilypad client users to make event tracking smooth and reliable.</p>
     </div>
-    <h1>Event Client</h1>
-    <p>The official client UI experience for competitive Minecraft events.</p>
-    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=24,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
-      Download via Modrinth
-    </a>
-  </section>
-
-  <div class="container client-ui">
-    <div class="client-window">
-      <div class="client-tabs">
-        <button class="tab active">Main Menu</button>
-        <button class="tab">Mods</button>
-        <button class="tab">Settings</button>
-      </div>
-
-      <div class="client-content">
-        <h3>Welcome to the Event Client</h3>
-        <p>Optimized for visibility and performance in Minecraft events.</p>
-        <ul class="compatibility">
-          <li><strong>Supported Clients:</strong> Vanilla, Forge, Fabric, Quilt</li>
-          <li><strong>Latest Version:</strong> 2.2.0</li>
-          <li><strong>Status:</strong> ✅ Loaded Successfully</li>
-        </ul>
-
-        <div class="badge-group">
-          <span class="badge">🎯 PvP Optimized</span>
-          <span class="badge">👁️ Minimal UI</span>
-          <span class="badge">🧪 1.20.x Support</span>
-        </div>
-      </div>
+    <div class="feature-card">
+      <img src="assets/images/fabric.png" alt="Fabric" class="client-logo" />
+      <h3>Fabric</h3>
+      <p>Compatible with Fabric mod loader for flexible mod combinations and performance.</p>
+    </div>
+    <div class="feature-card">
+      <img src="assets/images/forge.png" alt="Forge" class="client-logo" />
+      <h3>Forge</h3>
+      <p>Supports Forge, making Event Alerts easy to integrate with many popular Forge mods.</p>
+    </div>
+    <div class="feature-card">
+      <img src="assets/images/quilt.png" alt="Quilt" class="client-logo" />
+      <h3>Quilt</h3>
+      <p>Quilt client support included for the latest modding experience with Event Alerts.</p>
     </div>
   </div>
+</div>
 
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
-      </div>
-    </div>
-  </footer>
+<footer class="footer">
+  <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+  <div class="social-links">
+    <a href="#">Twitter</a>
+    <a href="#">Discord</a>
+    <a href="#">GitHub</a>
+  </div>
+</footer>
 </body>
 </html>
