@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyCraft Launcher</title>
+  <title>Minecraft Launcher</title>
   <style>
     /* Reset & base */
     *, *::before, *::after {
@@ -12,304 +12,296 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #121212;
-      color: #eee;
+      background: #f0f0f0;
+      color: #333;
       line-height: 1.6;
     }
     a {
-      color: #ff6f3c;
       text-decoration: none;
-      transition: color 0.3s ease;
+      color: inherit;
     }
-    a:hover {
-      color: #ffa25c;
+    img {
+      max-width: 100%;
+      display: block;
+      border-radius: 8px;
     }
 
     /* Container */
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
 
     /* Header */
     header {
-      padding: 20px 0;
+      background: #2d2d2d;
+      color: white;
+      padding: 15px 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #333;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     header .logo {
       font-weight: 700;
-      font-size: 1.8rem;
-      letter-spacing: 2px;
-      color: #ff6f3c;
+      font-size: 1.5rem;
+      letter-spacing: 1.5px;
+    }
+    header nav a {
+      color: #ddd;
+      margin-left: 25px;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    header nav a:hover {
+      color: #0e7e00;
     }
 
-    /* Hero Section */
+    /* Hero */
     .hero {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      padding: 60px 0;
+      background: linear-gradient(135deg, #0e7e00 0%, #4caf50 100%);
+      color: white;
+      padding: 100px 20px 80px;
+      text-align: center;
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 10px 30px rgba(14,126,0,0.4);
     }
-    .hero-text {
-      flex: 1 1 450px;
-      max-width: 600px;
-    }
-    .hero-text h1 {
-      font-size: 3rem;
+    .hero h1 {
+      font-size: 3.5rem;
       margin-bottom: 20px;
-      color: #ff6f3c;
+      font-weight: 900;
       letter-spacing: 2px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
-    .hero-text p {
-      font-size: 1.25rem;
-      margin-bottom: 30px;
-      color: #ccc;
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 40px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
     .btn-download {
-      display: inline-block;
-      background-color: #ff6f3c;
-      color: #fff;
-      padding: 15px 40px;
-      font-size: 1.2rem;
+      background: white;
+      color: #0e7e00;
       font-weight: 700;
-      border-radius: 50px;
-      box-shadow: 0 4px 15px rgba(255,111,60,0.4);
-      transition: background-color 0.3s ease;
+      font-size: 1.3rem;
+      padding: 18px 50px;
+      border-radius: 35px;
+      box-shadow: 0 5px 15px rgba(0, 126, 0, 0.4);
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     .btn-download:hover {
-      background-color: #ffa25c;
-    }
-    .hero-image {
-      flex: 1 1 400px;
-      max-width: 450px;
-      text-align: center;
-    }
-    .hero-image img {
-      max-width: 100%;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(255,111,60,0.3);
+      background: #0e7e00;
+      color: white;
+      box-shadow: 0 8px 25px rgba(14, 126, 0, 0.8);
     }
 
-    /* Features Section */
+    /* Features */
     .features {
-      background-color: #1e1e1e;
-      padding: 50px 20px;
-      border-radius: 15px;
-      margin-bottom: 60px;
+      padding: 80px 20px;
+      background: white;
+      text-align: center;
+    }
+    .features h2 {
+      font-size: 2.8rem;
+      margin-bottom: 50px;
+      font-weight: 800;
+      color: #0e7e00;
+    }
+    .feature-grid {
       display: flex;
-      justify-content: space-between;
-      gap: 30px;
+      justify-content: space-around;
       flex-wrap: wrap;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
     .feature {
-      flex: 1 1 250px;
-      background: #292929;
-      padding: 25px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 3px 10px rgba(255,111,60,0.15);
-      transition: transform 0.3s ease;
-    }
-    .feature:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 20px rgba(255,111,60,0.3);
+      max-width: 300px;
+      padding: 10px;
     }
     .feature-icon {
-      font-size: 48px;
+      font-size: 64px;
+      color: #4caf50;
+      margin-bottom: 20px;
+    }
+    .feature h3 {
+      font-size: 1.5rem;
       margin-bottom: 15px;
-      color: #ff6f3c;
-    }
-    .feature-title {
       font-weight: 700;
-      font-size: 1.25rem;
-      margin-bottom: 10px;
+      color: #2d2d2d;
     }
-    .feature-desc {
-      font-size: 1rem;
-      color: #ccc;
+    .feature p {
+      font-size: 1.1rem;
+      color: #555;
+      line-height: 1.4;
     }
 
-    /* Gallery Section */
+    /* Gallery */
     .gallery {
-      margin-bottom: 60px;
+      padding: 60px 20px;
+      background: #f9f9f9;
+      text-align: center;
     }
     .gallery h2 {
-      font-size: 2rem;
-      margin-bottom: 25px;
-      color: #ff6f3c;
-      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #0e7e00;
+      font-weight: 700;
     }
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-    .gallery-grid img {
-      width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(255,111,60,0.2);
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-    .gallery-grid img:hover {
-      transform: scale(1.05);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    /* System Requirements */
+    /* System requirements */
     .requirements {
-      background-color: #1e1e1e;
-      padding: 40px 20px;
-      border-radius: 15px;
-      text-align: center;
+      background: white;
+      padding: 60px 20px;
       max-width: 800px;
-      margin: 0 auto 60px auto;
-      box-shadow: 0 3px 15px rgba(255,111,60,0.15);
+      margin: 0 auto 100px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgb(0 0 0 / 0.1);
+      text-align: center;
     }
     .requirements h2 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       margin-bottom: 25px;
-      color: #ff6f3c;
+      color: #0e7e00;
+      font-weight: 700;
     }
     .requirements ul {
       list-style: none;
       padding: 0;
-      font-size: 1.1rem;
-      color: #ccc;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
+      font-size: 1.2rem;
+      color: #444;
+      display: inline-block;
+      text-align: left;
     }
-    .requirements li {
-      min-width: 150px;
-      padding-left: 30px;
-      position: relative;
-    }
-    .requirements li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: #ff6f3c;
-      font-weight: 700;
+    .requirements ul li {
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
     }
 
     /* Footer */
     footer {
-      background-color: #121212;
-      padding: 20px 0;
-      border-top: 1px solid #333;
+      background: #2d2d2d;
+      color: #bbb;
       text-align: center;
+      padding: 20px;
       font-size: 0.9rem;
-      color: #777;
     }
-    footer .social-links {
-      margin: 15px 0;
+    footer a {
+      color: #4caf50;
+      margin: 0 12px;
+      font-weight: 600;
     }
-    footer .social-links a {
-      margin: 0 10px;
-      color: #ff6f3c;
-      font-size: 1.3rem;
-      transition: color 0.3s ease;
-    }
-    footer .social-links a:hover {
-      color: #ffa25c;
+    footer a:hover {
+      text-decoration: underline;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .hero {
-        flex-direction: column-reverse;
-        text-align: center;
-      }
-      .hero-text, .hero-image {
-        max-width: 100%;
-      }
-      .features {
+      .feature-grid {
         flex-direction: column;
+        align-items: center;
       }
     }
   </style>
-  <!-- Optional: add a webfont for icons or use SVG for feature icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <!-- FontAwesome for icons -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
 </head>
 <body>
+
   <header class="container">
-    <div class="logo">MyCraft Launcher</div>
+    <div class="logo">Minecraft Launcher</div>
     <nav>
-      <a href="#features">Features</a> |
-      <a href="#gallery">Gallery</a> |
-      <a href="#requirements">Requirements</a> |
-      <a href="#download" class="btn-download">Download</a>
+      <a href="#features">Features</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#requirements">Requirements</a>
+      <a href="#download" class="btn-download" style="padding: 10px 25px; font-size: 1rem;">Download</a>
     </nav>
   </header>
 
-  <section class="hero container">
-    <div class="hero-text">
-      <h1>Play Minecraft Your Way</h1>
-      <p>Fast, lightweight, and packed with features. Get the ultimate Minecraft launcher experience with MyCraft Launcher.</p>
-      <a href="#download" class="btn-download">Download Now</a>
-    </div>
-    <div class="hero-image">
-      <img src="https://i.imgur.com/MTwWQbE.png" alt="MyCraft Launcher Screenshot" />
+  <section class="hero">
+    <div class="container">
+      <h1>Play Minecraft with the Official Launcher</h1>
+      <p>Simple, secure, and easy to use. Access all Minecraft versions, switch accounts, and manage mods effortlessly.</p>
+      <button class="btn-download" id="download-btn">Download for Windows</button>
     </div>
   </section>
 
-  <section id="features" class="features container">
-    <div class="feature">
-      <div class="feature-icon"><i class="fas fa-rocket"></i></div>
-      <h3 class="feature-title">Fast & Lightweight</h3>
-      <p class="feature-desc">Launch Minecraft quickly with minimal system impact.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon"><i class="fas fa-cogs"></i></div>
-      <h3 class="feature-title">Custom Mods Support</h3>
-      <p class="feature-desc">Easily manage mods and customize your gameplay.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon"><i class="fas fa-cloud-download-alt"></i></div>
-      <h3 class="feature-title">Auto Updates</h3>
-      <p class="feature-desc">Stay up-to-date with the latest versions effortlessly.</p>
+  <section id="features" class="features">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-user"></i></div>
+        <h3>Account Management</h3>
+        <p>Switch easily between Microsoft and Mojang accounts.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-cubes"></i></div>
+        <h3>Mod Support</h3>
+        <p>Manage mods and resource packs effortlessly in one place.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-history"></i></div>
+        <h3>Multiple Versions</h3>
+        <p>Launch any Minecraft version from legacy to snapshots.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-cloud-download-alt"></i></div>
+        <h3>Automatic Updates</h3>
+        <p>Keep your launcher and game up to date seamlessly.</p>
+      </div>
     </div>
   </section>
 
-  <section id="gallery" class="gallery container">
-    <h2>Launcher Screenshots</h2>
+  <section id="gallery" class="gallery">
+    <h2>Screenshots</h2>
     <div class="gallery-grid">
-      <img src="https://i.imgur.com/MTwWQbE.png" alt="Screenshot 1" />
-      <img src="https://i.imgur.com/D8p6xy9.png" alt="Screenshot 2" />
-      <img src="https://i.imgur.com/3Jc4xh7.png" alt="Screenshot 3" />
-      <img src="https://i.imgur.com/x9n3J9b.png" alt="Screenshot 4" />
+      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher1.png" alt="Launcher Screenshot 1" />
+      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher2.png" alt="Launcher Screenshot 2" />
+      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher3.png" alt="Launcher Screenshot 3" />
+      <img src="https://media.minecraft.net/wp-content/uploads/2021/11/launcher4.png" alt="Launcher Screenshot 4" />
     </div>
   </section>
 
-  <section id="requirements" class="requirements container">
+  <section id="requirements" class="requirements">
     <h2>System Requirements</h2>
     <ul>
-      <li>Windows 10 or higher / macOS 10.14+</li>
-      <li>4 GB RAM minimum</li>
-      <li>2 GHz Dual Core Processor</li>
-      <li>OpenGL 2.0 compatible GPU</li>
-      <li>Internet connection for updates</li>
+      <li>Windows 10 or higher, macOS 10.14+ supported</li>
+      <li>4 GB RAM minimum (8 GB recommended)</li>
+      <li>2 GHz dual-core processor or better</li>
+      <li>Graphics card with OpenGL 2.0 support</li>
+      <li>Internet connection required for account login and updates</li>
     </ul>
   </section>
 
-  <section id="download" class="container" style="text-align:center; margin-bottom: 60px;">
-    <a href="#" class="btn-download" style="font-size:1.5rem; padding: 20px 60px;">Download MyCraft Launcher</a>
-    <p style="margin-top: 15px; color: #888;">Available for Windows and macOS</p>
+  <section class="container" style="text-align: center; margin-bottom: 100px;">
+    <a href="#" class="btn-download" style="font-size:1.5rem; padding: 20px 60px;" id="download-section-btn">Download Minecraft Launcher</a>
+    <p style="margin-top: 15px; color: #666;">Available for Windows and macOS</p>
   </section>
 
   <footer>
-    <div>© 2025 MyCraft Launcher. All rights reserved.</div>
-    <div class="social-links">
-      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-      <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
-      <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-    </div>
+    <p>© 2025 Mojang Studios / Microsoft. Minecraft and the Minecraft Launcher are trademarks of Mojang AB.</p>
+    <p>
+      <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Help</a>
+    </p>
   </footer>
+
 </body>
 </html>
