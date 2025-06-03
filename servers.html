@@ -3,228 +3,227 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Server Hosting - Event Alerts</title>
   <meta name="description" content="Fast and reliable Minecraft server hosting plans optimized for event performance." />
+  <title>Event Server Hosting - Event Alerts</title>
+  <link rel="stylesheet" href="css/styles.css" />
   <style>
-    :root {
-      --accent: #ff6f00;
-      --bg: #0d0d0d;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --border: rgba(255, 111, 0, 0.2);
-      --text: #eeeeee;
-      --subtle: #bbbbbb;
-    }
-
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      background-color: #0e0e0e;
+      color: #eee;
     }
 
     a {
-      color: var(--accent);
       text-decoration: none;
+      color: inherit;
     }
 
-    header {
-      background: #111;
+    .navbar {
+      background-color: #1a1a1a;
       padding: 1rem 2rem;
-      border-bottom: 1px solid #222;
     }
 
     .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 1200px;
-      margin: auto;
     }
 
     .nav-logo {
       display: flex;
       align-items: center;
       font-weight: bold;
-      color: var(--text);
+      font-size: 1.4rem;
+      color: #ff6f00;
     }
 
     .nav-logo-img {
-      height: 40px;
-      margin-right: 10px;
+      height: 36px;
+      margin-right: 0.5rem;
     }
 
     .nav-menu {
-      list-style: none;
       display: flex;
       gap: 1.5rem;
+      list-style: none;
     }
 
     .nav-menu a {
+      color: #eee;
       font-weight: 500;
     }
 
-    .nav-menu a.active {
-      border-bottom: 2px solid var(--accent);
+    .nav-menu a.active,
+    .nav-menu a:hover {
+      color: #ff6f00;
     }
 
     .hero {
       text-align: center;
-      padding: 4rem 1rem 2rem;
+      padding: 4rem 2rem 3rem;
+      background: linear-gradient(to bottom, #1a1a1a, #121212);
+    }
+
+    .hero-logo {
+      height: 80px;
+      margin-bottom: 1rem;
     }
 
     .hero h1 {
-      font-size: 3rem;
-      color: var(--accent);
+      font-size: 2.8rem;
+      color: #fff;
     }
 
     .hero p {
-      color: var(--subtle);
-      font-size: 1.25rem;
-      max-width: 600px;
-      margin: 0 auto;
+      font-size: 1.2rem;
+      color: #ccc;
     }
 
     .server-hosting {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 2rem;
-      border-radius: 16px;
-      max-width: 900px;
+      background: rgba(255, 111, 0, 0.08);
+      padding: 2.5rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgb(255 111 0 / 0.25);
       margin: 3rem auto;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      max-width: 960px;
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
 
     .server-hosting h2 {
-      color: var(--accent);
-      font-size: 2rem;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ff6f00;
       margin-bottom: 1rem;
       text-align: center;
     }
 
     .server-hosting p {
-      color: var(--subtle);
-      text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
+      color: #ccc;
     }
 
     .server-hosting ul {
+      list-style-type: disc;
       padding-left: 1.5rem;
-      color: var(--text);
+      margin-bottom: 2rem;
+    }
+
+    .server-hosting ul li {
+      margin-bottom: 0.6rem;
     }
 
     .plans-section {
-      padding: 4rem 1rem;
-      background: #111;
+      padding: 2rem 2rem 4rem;
       text-align: center;
     }
 
     .plans-section h2 {
       font-size: 2.4rem;
-      color: var(--accent);
       margin-bottom: 2rem;
+      color: #fff;
     }
 
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
-      margin: auto;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
     .plan-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background-color: #1e1e1e;
+      border: 2px solid transparent;
       padding: 2rem;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      box-shadow: 0 0 20px rgba(255, 111, 0, 0.05);
+      border-radius: 12px;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
     .plan-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 0 30px rgba(255, 111, 0, 0.3);
-      border-color: var(--accent);
-    }
-
-    .plan-card.featured {
-      border: 2px solid var(--accent);
-      background: linear-gradient(135deg, rgba(255,111,0,0.1), rgba(0,0,0,0.1));
+      border-color: #ff6f00;
+      box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
     }
 
     .plan-card h3 {
-      color: var(--accent);
-      font-size: 1.5rem;
-    }
-
-    .plan-card .price {
-      font-size: 2rem;
-      margin: 0.5rem 0 1rem;
-    }
-
-    .plan-card .price span {
-      font-size: 0.9rem;
-      color: var(--subtle);
-    }
-
-    .plan-card ul {
-      padding: 0;
-      list-style: none;
-      color: var(--text);
-    }
-
-    .plan-card ul li {
+      font-size: 1.6rem;
+      color: #ff6f00;
       margin-bottom: 0.5rem;
     }
 
+    .plan-card .price {
+      font-size: 1.4rem;
+      margin: 1rem 0;
+      color: #eee;
+    }
+
+    .plan-card .price span {
+      font-size: 1rem;
+      color: #888;
+    }
+
+    .plan-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .plan-card ul li {
+      margin: 0.5rem 0;
+      color: #ccc;
+    }
+
     .btn-primary {
+      background-color: #ff6f00;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
       display: inline-block;
       margin-top: 1rem;
-      background: var(--accent);
-      color: #fff;
-      padding: 0.7rem 1.2rem;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: background 0.3s ease;
     }
 
     .btn-primary:hover {
-      background: #e65c00;
+      background-color: #e65c00;
     }
 
-    footer {
-      background: #111;
-      color: var(--subtle);
-      padding: 2rem 1rem;
+    .footer {
+      background-color: #1a1a1a;
+      color: #888;
       text-align: center;
-      border-top: 1px solid #222;
+      padding: 2rem 1rem;
+      margin-top: 3rem;
     }
 
     .social-links a {
       margin: 0 0.5rem;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
+      color: #ccc;
+      transition: color 0.3s;
     }
 
     .social-links a:hover {
-      text-decoration: underline;
+      color: #ff6f00;
     }
   </style>
 </head>
 <body>
   <header>
-    <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <nav class="navbar" role="navigation">
       <div class="nav-container">
-        <a href="index.html" class="nav-logo" aria-label="Event Alerts Home">
-          <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" />
+          Event Alerts
         </a>
         <ul class="nav-menu">
           <li><a href="index.html">Home</a></li>
-          <li><a href="servers.html" class="active" aria-current="page">Server Hosting</a></li>
+          <li><a href="servers.html" class="active">Server Hosting</a></li>
         </ul>
       </div>
     </nav>
@@ -232,14 +231,14 @@
 
   <main>
     <section class="hero">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" style="height: 80px;" />
+      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
       <h1>Event Server Hosting</h1>
       <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
     </section>
 
     <section class="server-hosting">
       <h2>Why Choose Our Server Hosting?</h2>
-      <p>We're designed primarily for events, so we understand what you need:</p>
+      <p>We're designed primarily for events, so we understand what you need.</p>
       <ul>
         <li>Advertising</li>
         <li>Cheap Servers</li>
@@ -252,8 +251,8 @@
     <section class="plans-section">
       <h2>Choose Your Plan</h2>
       <div class="plans-grid">
-        <article class="plan-card" role="region" aria-labelledby="plan-basic">
-          <h3 id="plan-basic">Basic</h3>
+        <article class="plan-card">
+          <h3>Basic</h3>
           <div class="price">$0<span>/month</span></div>
           <ul>
             <li>2 GB RAM</li>
@@ -263,8 +262,8 @@
           <a href="#" class="btn-primary">Select Plan</a>
         </article>
 
-        <article class="plan-card" role="region" aria-labelledby="plan-standard">
-          <h3 id="plan-standard">Standard</h3>
+        <article class="plan-card">
+          <h3>Standard</h3>
           <div class="price">$5.00<span>/month</span></div>
           <ul>
             <li>4 GB RAM</li>
@@ -274,8 +273,8 @@
           <a href="#" class="btn-primary">Select Plan</a>
         </article>
 
-        <article class="plan-card featured" role="region" aria-labelledby="plan-premium">
-          <h3 id="plan-premium">Premium</h3>
+        <article class="plan-card">
+          <h3>Premium</h3>
           <div class="price">$12.50<span>/month</span></div>
           <ul>
             <li>6 GB RAM</li>
@@ -288,12 +287,14 @@
     </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-    <div class="social-links">
-      <a href="#" aria-label="Twitter">Twitter</a>
-      <a href="#" aria-label="Discord">Discord</a>
-      <a href="#" aria-label="GitHub">GitHub</a>
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#">Twitter</a>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
+      </div>
     </div>
   </footer>
 </body>
