@@ -4,12 +4,247 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Server Hosting - Event Alerts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* --- Your CSS begins here --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+      background-color: transparent;
+      text-decoration: none;
+    }
+
+    body {
+      background-color: #121214;
+      background-image: radial-gradient(rgba(255, 111, 0, 0.05) 1px, transparent 1px),
+                        radial-gradient(rgba(255, 111, 0, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background-color: #1f1f21;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgb(255 111 0 / 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      color: #ff6f00;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: 32px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-menu li a {
+      color: #eee;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .nav-menu li a:hover,
+    .nav-menu li a.active {
+      color: #ff6f00;
+      background-color: rgba(255, 111, 0, 0.15);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 1rem 3rem;
+      max-width: 720px;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgb(255 111 0 / 0.15);
+    }
+
+    .logo-wrapper {
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: #ff6f00;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .plans-section {
+      margin-top: 3rem;
+      text-align: center;
+    }
+
+    .plans-section h2 {
+      color: #ff6f00;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      font-size: 2rem;
+    }
+
+    .plans-grid {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .plan-card {
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      width: 280px;
+      box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
+      color: #eee;
+      transition: box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .plan-card:hover {
+      box-shadow: 0 0 25px rgb(255 167 38 / 0.5);
+    }
+
+    .plan-card.featured {
+      background: linear-gradient(135deg, #ff6f00, #ffa726);
+      color: #121214;
+      box-shadow: 0 0 30px rgb(255 167 38 / 0.8);
+    }
+
+    .plan-card.featured:hover {
+      box-shadow: 0 0 40px rgb(255 195 65 / 0.9);
+    }
+
+    .plan-card h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-weight: 800;
+      font-size: 1.6rem;
+    }
+
+    .price {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin: 0.3rem 0 1rem 0;
+    }
+
+    .price span {
+      font-size: 1rem;
+      color: #ffa726;
+    }
+
+    .plan-card ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 2rem;
+      width: 100%;
+      text-align: left;
+      color: #ccc;
+    }
+
+    .plan-card ul li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid rgba(255, 111, 0, 0.2);
+    }
+
+    .plan-card ul li:last-child {
+      border-bottom: none;
+    }
+
+    .btn-primary {
+      padding: 0.8rem 2.5rem;
+      border-radius: 25px;
+      background: linear-gradient(90deg, #ff6f00 0%, #ffa726 100%);
+      color: #121214;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgb(255 111 0 / 0.7);
+      text-decoration: none;
+      border: none;
+      transition: box-shadow 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgb(255 167 38 / 0.9);
+    }
+
+    .footer {
+      background-color: #1f1f21;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      box-shadow: inset 0 1px 3px rgb(255 111 0 / 0.2);
+      margin-top: 5rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      color: #ccc;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .social-links a {
+      color: #ff6f00;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: #ffa726;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Navbar Header with logo and menu -->
+  <!-- Navbar Header -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#" class="nav-logo">
