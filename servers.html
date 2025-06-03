@@ -7,16 +7,37 @@
   <title>Event Server Hosting - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
-    /* Server Hosting Section (Moved from styles.css) */
+    body {
+      background-color: #0e0e0e;
+      color: #f5f5f5;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(to bottom, #1a1a1a, #111);
+      border-bottom: 2px solid #ff6f00;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: #ff6f00;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #ccc;
+    }
+
     .server-hosting {
       background: rgba(255, 111, 0, 0.08);
       padding: 2.5rem 3rem;
       border-radius: 12px;
       box-shadow: 0 0 25px rgb(255 111 0 / 0.25);
-      margin: 3rem 0;
+      margin: 3rem auto;
       max-width: 960px;
-      margin-left: auto;
-      margin-right: auto;
       color: #eee;
       font-size: 1.1rem;
       line-height: 1.6;
@@ -45,13 +66,104 @@
       margin-bottom: 0.6rem;
     }
 
-    /* Server Hosting Button */
-    .server-hosting .btn-primary {
-      display: block;
-      max-width: 300px;
+    .plans-section {
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 2rem 1rem;
+      max-width: 960px;
       margin: 0 auto;
-      font-weight: 700;
+    }
+
+    .plan-card {
+      background: #1c1c1c;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 111, 0, 0.1);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: #ff6f00;
+      box-shadow: 0 0 30px rgba(255, 111, 0, 0.3);
+    }
+
+    .plan-card h3 {
+      font-size: 1.5rem;
+      color: #ff6f00;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-card .price {
+      font-size: 1.8rem;
+      color: #fff;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .plan-card .price span {
+      font-size: 1rem;
+      color: #aaa;
+    }
+
+    .plan-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+      color: #ddd;
+    }
+
+    .plan-card ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-card.featured {
+      background: linear-gradient(145deg, #2b1a00, #3a1c00);
+      border: 2px solid #ff6f00;
+      box-shadow: 0 0 30px rgba(255, 111, 0, 0.5);
+    }
+
+    .btn-primary {
+      background-color: #ff6f00;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
       font-size: 1.1rem;
+      transition: background 0.3s ease;
+      text-align: center;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #e65c00;
+    }
+
+    .footer {
+      padding: 2rem 1rem;
+      text-align: center;
+      background: #111;
+      color: #777;
+      border-top: 1px solid #333;
+    }
+
+    .footer .social-links a {
+      margin: 0 0.5rem;
+      color: #ff6f00;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer .social-links a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -85,7 +197,7 @@
       <ul>
         <li>Advertising</li>
         <li>Cheap Servers</li>
-        <li>Event Plugins & Premade Templates i</li>
+        <li>Event Plugins & Premade Templates</li>
         <li>Premade Event Maps</li>
         <li>Bedrock & Tebex Support</li>
       </ul>
