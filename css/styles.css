@@ -125,7 +125,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 420px; /* wider sidebar */
+  width: 480px; /* Increased sidebar width to allow wider changelog */
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgb(255 111 0 / 0.15);
@@ -140,8 +140,12 @@ body {
 
 .changelog-card {
   margin-bottom: 1.5rem;
-  width: 100%;  /* full width inside sidebar */
-  max-width: 420px; /* increased max width */
+  width: 100%;  /* Take full width of sidebar */
+  max-width: 480px; /* wider changelog cards */
+  background: rgba(255, 111, 0, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgb(255 111 0 / 0.12);
 }
 
 .changelog-image {
@@ -158,6 +162,7 @@ body {
 .changelog-title {
   font-weight: 700;
   margin-top: 0.3rem;
+  font-size: 1.1rem;
 }
 
 .changelog-description {
@@ -174,6 +179,7 @@ body {
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.3s ease;
+  display: inline-block;
 }
 
 .view-full:hover {
@@ -198,20 +204,22 @@ body {
   flex: 1 1 calc(33.333% - 2rem);
   background: rgba(255, 111, 0, 0.05);
   border-radius: 12px;
-  padding: 0.5rem 1rem; /* much smaller padding */
+  padding: 0.5rem 0.75rem; /* smaller padding to reduce height */
   box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
   text-align: center;
   color: #eee;
   backdrop-filter: blur(4px);
-  min-height: 60px; /* decreased height */
+  min-height: 45px; /* reduced min-height */
+  max-height: 70px; /* restrict max height */
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.8rem;
+  font-size: 2rem; /* smaller icon size */
+  margin-bottom: 0.4rem; /* smaller margin */
   color: #ff6f00;
 }
 
