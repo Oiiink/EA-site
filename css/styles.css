@@ -140,6 +140,7 @@ body {
 
 .changelog-card {
   margin-bottom: 1.5rem;
+  width: 100%; /* Make changelog cards take full sidebar width */
 }
 
 .changelog-image {
@@ -196,12 +197,12 @@ body {
   flex: 1 1 calc(33.333% - 2rem);
   background: rgba(255, 111, 0, 0.05);
   border-radius: 12px;
-  padding: 1.2rem 1.5rem; /* Reduced padding for shorter height */
+  padding: 0.8rem 1.2rem; /* Reduced padding for shorter height */
   box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
   text-align: center;
   color: #eee;
   backdrop-filter: blur(4px);
-  min-height: unset; /* Ensure no fixed min height */
+  min-height: 120px; /* Smaller fixed min height */
 }
 
 .feature-icon {
@@ -403,37 +404,31 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .nav-container {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav-menu {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-  }
-
   .container {
     flex-direction: column;
-  }
-
-  .plans-grid,
-  .features-grid {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .footer-content {
-    flex-direction: column;
+    padding: 1rem;
   }
 
   .sidebar {
     width: 100%;
+    border-left: none;
+    border-top: 2px solid #333;
+    margin-top: 2rem;
   }
 
-  .client-panel {
+  .features-grid {
     flex-direction: column;
-    align-items: center;
+  }
+
+  .feature-card {
+    flex: 1 1 100%;
+  }
+
+  .plans-grid {
+    flex-direction: column;
+  }
+
+  .plan-card {
+    width: 100%;
   }
 }
