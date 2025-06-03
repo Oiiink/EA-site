@@ -13,7 +13,6 @@
       color: #ffffff;
     }
 
-    /* Navbar */
     .navbar {
       background-color: #1f1f21;
       padding: 1rem 2rem;
@@ -66,7 +65,6 @@
       background-color: rgba(255, 111, 0, 0.15);
     }
 
-    /* Hero */
     .hero {
       background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
       padding: 100px 20px;
@@ -84,7 +82,6 @@
       color: #cccccc;
     }
 
-    /* Plans */
     .plans-section {
       padding: 60px 20px;
       background-color: #1a1a1a;
@@ -148,7 +145,6 @@
       font-weight: 600;
       transition: background 0.3s, transform 0.3s;
       cursor: pointer;
-      text-align: center;
     }
 
     .btn-primary:hover {
@@ -173,58 +169,59 @@
       text-decoration: underline;
     }
 
-    /* Modal */
-    .modal-overlay {
+    .popup {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: none;
-      align-items: center;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
-      z-index: 200;
+      align-items: center;
+      z-index: 1000;
     }
 
-    .modal {
-      background-color: #1e1e1e;
+    .popup-content {
+      background: #1f1f21;
       padding: 2rem;
       border-radius: 12px;
       max-width: 400px;
       width: 90%;
       text-align: center;
-      position: relative;
+      color: #fff;
     }
 
-    .modal h3 {
+    .popup-content h3 {
       color: #ff6f00;
-      margin-top: 0;
+      margin-bottom: 1rem;
     }
 
-    .modal p {
-      color: #ccc;
-    }
-
-    .modal .close-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 1.2rem;
-      background: none;
+    .popup-content select,
+    .popup-content input {
+      width: 100%;
+      margin: 1rem 0;
+      padding: 0.6rem;
+      border-radius: 6px;
       border: none;
-      color: #aaa;
+    }
+
+    .popup-content button {
+      padding: 0.8rem 1.5rem;
+      background-color: #ff6f00;
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    .modal .close-btn:hover {
-      color: #fff;
+    .popup-content button:hover {
+      background-color: #ffa726;
     }
   </style>
 </head>
 <body>
-
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="nav-logo">
@@ -238,59 +235,46 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <header class="hero">
     <h1>Event Server Hosting</h1>
     <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
   </header>
 
-  <!-- Plans Section -->
   <section class="plans-section">
     <h2>Choose Your Plan</h2>
     <div class="plans-grid">
       <div class="plan-card">
-        <h3>Basic</h3>
-        <div class="price">$0<span>/month</span></div>
+        <h3>Custom</h3>
+        <div class="price">Flexible</div>
         <ul>
-          <li>2 GB RAM</li>
-          <li>20 Player Slots</li>
-          <li>150x150 World</li>
+          <li>Choose RAM</li>
+          <li>Estimate Player Count</li>
+          <li>Get Custom Quote</li>
         </ul>
-        <div class="btn-primary" onclick="openModal('Basic')">Select Plan</div>
-      </div>
-      <div class="plan-card">
-        <h3>Standard</h3>
-        <div class="price">$5.00<span>/month</span></div>
-        <ul>
-          <li>4 GB RAM</li>
-          <li>50 Player Slots</li>
-          <li>250x250 World</li>
-        </ul>
-        <div class="btn-primary" onclick="openModal('Standard')">Select Plan</div>
-      </div>
-      <div class="plan-card">
-        <h3>Premium</h3>
-        <div class="price">$12.50<span>/month</span></div>
-        <ul>
-          <li>6 GB RAM</li>
-          <li>200+ Player Slots</li>
-          <li>500x500 World</li>
-        </ul>
-        <div class="btn-primary" onclick="openModal('Premium')">Select Plan</div>
+        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
       </div>
     </div>
   </section>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <button class="close-btn" onclick="closeModal()">&times;</button>
-      <h3 id="modalPlanTitle">Selected Plan</h3>
-      <p>Thanks for choosing a plan! We'll contact you shortly.</p>
+  <div class="popup" id="popup">
+    <div class="popup-content" id="step1">
+      <h3>Select RAM Amount</h3>
+      <select id="ram">
+        <option value="2">2 GB</option>
+        <option value="4">4 GB</option>
+        <option value="6">6 GB</option>
+        <option value="8">8 GB</option>
+        <option value="12">12 GB</option>
+      </select>
+      <button onclick="nextStep()">Next</button>
+    </div>
+    <div class="popup-content" id="step2" style="display:none">
+      <h3>Expected Player Count</h3>
+      <input type="number" id="players" placeholder="e.g., 50">
+      <button onclick="submitPlan()">Submit</button>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 Event Alerts. All rights reserved.</p>
     <div>
@@ -301,24 +285,30 @@
   </footer>
 
   <script>
-    const overlay = document.getElementById('modalOverlay');
-    const title = document.getElementById('modalPlanTitle');
-
-    function openModal(plan) {
-      title.textContent = plan + " Plan Selected";
-      overlay.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+    function openPopup() {
+      document.getElementById('popup').style.display = 'flex';
+      document.getElementById('step1').style.display = 'block';
+      document.getElementById('step2').style.display = 'none';
     }
 
-    function closeModal() {
-      overlay.style.display = 'none';
-      document.body.style.overflow = 'auto';
+    function nextStep() {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
     }
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
+    function submitPlan() {
+      const ram = document.getElementById('ram').value;
+      const players = document.getElementById('players').value;
+      alert(`You selected ${ram} GB RAM for ${players} players.`);
+      document.getElementById('popup').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const popup = document.getElementById('popup');
+      if (event.target == popup) {
+        popup.style.display = 'none';
+      }
+    }
   </script>
-
 </body>
 </html>
