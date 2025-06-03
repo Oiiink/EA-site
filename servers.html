@@ -4,173 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Server Hosting - Event Alerts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Base Reset */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: #0f0f0f;
-      color: #ffffff;
-    }
-
-    /* Navbar */
-    .navbar {
-      background-color: #1f1f21;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgb(0 255 204 / 0.15);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-logo {
-      color: #00ffcc;
-      font-weight: 700;
-      font-size: 1.5rem;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .nav-logo-img {
-      height: 32px;
-      width: 32px;
-    }
-
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
-      padding: 100px 20px 60px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      color: #cccccc;
-    }
-
-    /* Plans */
-    .plans-section {
-      padding: 60px 20px;
-      background-color: #1a1a1a;
-    }
-
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .plan-card {
-      background-color: #2a2a2a;
-      border-radius: 12px;
-      padding: 30px;
-      transition: transform 0.3s, border 0.3s;
-      border: 2px solid transparent;
-    }
-
-    .plan-card:hover {
-      transform: translateY(-10px);
-      border-color: #00ffcc;
-    }
-
-    .plan-card h3 {
-      margin-top: 0;
-      color: #00ffcc;
-    }
-
-    .plan-card .price {
-      font-size: 1.5rem;
-      margin: 20px 0;
-    }
-
-    .plan-card ul {
-      list-style: none;
-      padding: 0;
-      color: #cccccc;
-    }
-
-    .plan-card ul li {
-      margin-bottom: 10px;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #00ffcc, #00ccff);
-      color: #000000;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.3s;
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #00ccff, #00ffcc);
-      transform: scale(1.05);
-    }
-
-    footer {
-      background-color: #0f0f0f;
-      text-align: center;
-      padding: 40px 20px;
-      color: #666666;
-    }
-
-    footer a {
-      color: #00ffcc;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- Navbar -->
+  <!-- Navbar Header with logo and menu -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#" class="nav-logo">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/512px-Placeholder_view_vector.svg.png" alt="Logo" class="nav-logo-img">
+        <img src="logo.png" alt="Logo" class="nav-logo-img" />
         Event Alerts
       </a>
+      <ul class="nav-menu">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Servers</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <header class="hero">
+  <section class="hero">
+    <div class="logo-wrapper">
+      <img src="logo.png" alt="Event Alerts Logo" class="hero-logo" />
+    </div>
     <h1>Event Server Hosting</h1>
     <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
-  </header>
+  </section>
 
   <!-- Plans Section -->
   <section class="plans-section">
-    <h2 style="text-align: center; margin-bottom: 40px;">Choose Your Plan</h2>
+    <h2>Choose Your Plan</h2>
     <div class="plans-grid">
       <div class="plan-card">
         <h3>Basic</h3>
@@ -182,7 +48,7 @@
         </ul>
         <a href="#" class="btn-primary">Select Plan</a>
       </div>
-      <div class="plan-card">
+      <div class="plan-card featured">
         <h3>Standard</h3>
         <div class="price">$5.00<span>/month</span></div>
         <ul>
@@ -206,12 +72,14 @@
   </section>
 
   <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-    <div>
-      <a href="#">Twitter</a>
-      <a href="#">Discord</a>
-      <a href="#">GitHub</a>
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#">Twitter</a>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
+      </div>
     </div>
   </footer>
 
