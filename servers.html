@@ -3,299 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Fast and reliable Minecraft server hosting plans optimized for event performance." />
   <title>Event Server Hosting - Event Alerts</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0e0e0e;
-      color: #eee;
+      font-family: 'Inter', sans-serif;
+      background-color: #0f0f0f;
+      color: #ffffff;
     }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .navbar {
-      background-color: #1a1a1a;
-      padding: 1rem 2rem;
-    }
-
-    .nav-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      font-weight: bold;
-      font-size: 1.4rem;
-      color: #ff6f00;
-    }
-
-    .nav-logo-img {
-      height: 36px;
-      margin-right: 0.5rem;
-    }
-
-    .nav-menu {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    .nav-menu a {
-      color: #eee;
-      font-weight: 500;
-    }
-
-    .nav-menu a.active,
-    .nav-menu a:hover {
-      color: #ff6f00;
-    }
-
     .hero {
+      background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+      padding: 100px 20px;
       text-align: center;
-      padding: 4rem 2rem 3rem;
-      background: linear-gradient(to bottom, #1a1a1a, #121212);
     }
-
-    .hero-logo {
-      height: 80px;
-      margin-bottom: 1rem;
-    }
-
     .hero h1 {
-      font-size: 2.8rem;
-      color: #fff;
+      font-size: 3rem;
+      margin-bottom: 20px;
     }
-
     .hero p {
       font-size: 1.2rem;
-      color: #ccc;
+      color: #cccccc;
     }
-
-    .server-hosting {
-      background: rgba(255, 111, 0, 0.08);
-      padding: 2.5rem 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgb(255 111 0 / 0.25);
-      margin: 3rem auto;
-      max-width: 960px;
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
-
-    .server-hosting h2 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #ff6f00;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .server-hosting p {
-      margin-bottom: 1.2rem;
-      color: #ccc;
-    }
-
-    .server-hosting ul {
-      list-style-type: disc;
-      padding-left: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .server-hosting ul li {
-      margin-bottom: 0.6rem;
-    }
-
     .plans-section {
-      padding: 2rem 2rem 4rem;
-      text-align: center;
+      padding: 60px 20px;
+      background-color: #1a1a1a;
     }
-
-    .plans-section h2 {
-      font-size: 2.4rem;
-      margin-bottom: 2rem;
-      color: #fff;
-    }
-
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      max-width: 1100px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
       margin: 0 auto;
     }
-
     .plan-card {
-      background-color: #1e1e1e;
-      border: 2px solid transparent;
-      padding: 2rem;
+      background-color: #2a2a2a;
       border-radius: 12px;
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 30px;
+      transition: transform 0.3s, border 0.3s;
+      border: 2px solid transparent;
     }
-
     .plan-card:hover {
-      transform: translateY(-8px);
-      border-color: #ff6f00;
-      box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
+      transform: translateY(-10px);
+      border-color: #00ffcc;
     }
-
     .plan-card h3 {
-      font-size: 1.6rem;
-      color: #ff6f00;
-      margin-bottom: 0.5rem;
+      margin-top: 0;
+      color: #00ffcc;
     }
-
     .plan-card .price {
-      font-size: 1.4rem;
-      margin: 1rem 0;
-      color: #eee;
+      font-size: 1.5rem;
+      margin: 20px 0;
     }
-
-    .plan-card .price span {
-      font-size: 1rem;
-      color: #888;
-    }
-
     .plan-card ul {
       list-style: none;
       padding: 0;
-      margin: 1rem 0;
+      color: #cccccc;
     }
-
     .plan-card ul li {
-      margin: 0.5rem 0;
-      color: #ccc;
+      margin-bottom: 10px;
     }
-
     .btn-primary {
-      background-color: #ff6f00;
-      color: #fff;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00ffcc, #00ccff);
+      color: #000000;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.3s;
     }
-
     .btn-primary:hover {
-      background-color: #e65c00;
+      background: linear-gradient(135deg, #00ccff, #00ffcc);
+      transform: scale(1.05);
     }
-
-    .footer {
-      background-color: #1a1a1a;
-      color: #888;
+    footer {
+      background-color: #0f0f0f;
       text-align: center;
-      padding: 2rem 1rem;
-      margin-top: 3rem;
+      padding: 40px 20px;
+      color: #666666;
     }
-
-    .social-links a {
-      margin: 0 0.5rem;
-      color: #ccc;
-      transition: color 0.3s;
+    footer a {
+      color: #00ffcc;
+      margin: 0 10px;
+      text-decoration: none;
     }
-
-    .social-links a:hover {
-      color: #ff6f00;
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav class="navbar" role="navigation">
-      <div class="nav-container">
-        <a href="index.html" class="nav-logo">
-          <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" />
-          Event Alerts
-        </a>
-        <ul class="nav-menu">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="servers.html" class="active">Server Hosting</a></li>
-        </ul>
-      </div>
-    </nav>
+
+  <header class="hero">
+    <h1>Event Server Hosting</h1>
+    <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
   </header>
 
-  <main>
-    <section class="hero">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
-      <h1>Event Server Hosting</h1>
-      <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
-    </section>
-
-    <section class="server-hosting">
-      <h2>Why Choose Our Server Hosting?</h2>
-      <p>We're designed primarily for events, so we understand what you need.</p>
-      <ul>
-        <li>Advertising</li>
-        <li>Cheap Servers</li>
-        <li>Event Plugins & Premade Templates</li>
-        <li>Premade Event Maps</li>
-        <li>Bedrock & Tebex Support</li>
-      </ul>
-    </section>
-
-    <section class="plans-section">
-      <h2>Choose Your Plan</h2>
-      <div class="plans-grid">
-        <article class="plan-card">
-          <h3>Basic</h3>
-          <div class="price">$0<span>/month</span></div>
-          <ul>
-            <li>2 GB RAM</li>
-            <li>20 Player Slots</li>
-            <li>150x150 World</li>
-          </ul>
-          <a href="#" class="btn-primary">Select Plan</a>
-        </article>
-
-        <article class="plan-card">
-          <h3>Standard</h3>
-          <div class="price">$5.00<span>/month</span></div>
-          <ul>
-            <li>4 GB RAM</li>
-            <li>50 Player Slots</li>
-            <li>250x250 World</li>
-          </ul>
-          <a href="#" class="btn-primary">Select Plan</a>
-        </article>
-
-        <article class="plan-card">
-          <h3>Premium</h3>
-          <div class="price">$12.50<span>/month</span></div>
-          <ul>
-            <li>6 GB RAM</li>
-            <li>200+ Player Slots</li>
-            <li>500x500 World</li>
-          </ul>
-          <a href="#" class="btn-primary">Select Plan</a>
-        </article>
+  <section class="plans-section">
+    <h2 style="text-align: center; margin-bottom: 40px;">Choose Your Plan</h2>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <h3>Basic</h3>
+        <div class="price">$0<span>/month</span></div>
+        <ul>
+          <li>2 GB RAM</li>
+          <li>20 Player Slots</li>
+          <li>150x150 World</li>
+        </ul>
+        <a href="#" class="btn-primary">Select Plan</a>
       </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
+      <div class="plan-card">
+        <h3>Standard</h3>
+        <div class="price">$5.00<span>/month</span></div>
+        <ul>
+          <li>4 GB RAM</li>
+          <li>50 Player Slots</li>
+          <li>250x250 World</li>
+        </ul>
+        <a href="#" class="btn-primary">Select Plan</a>
+      </div>
+      <div class="plan-card">
+        <h3>Premium</h3>
+        <div class="price">$12.50<span>/month</span></div>
+        <ul>
+          <li>6 GB RAM</li>
+          <li>200+ Player Slots</li>
+          <li>500x500 World</li>
+        </ul>
+        <a href="#" class="btn-primary">Select Plan</a>
       </div>
     </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+    <div>
+      <a href="#">Twitter</a>
+      <a href="#">Discord</a>
+      <a href="#">GitHub</a>
+    </div>
   </footer>
+
 </body>
 </html>
