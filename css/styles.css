@@ -196,12 +196,14 @@ body {
   flex: 1 1 calc(33.333% - 2rem);
   background: rgba(255, 111, 0, 0.05);
   border-radius: 12px;
-  padding: 1.8rem 2rem;
+  padding: 1.2rem 1.5rem; /* Reduced padding */
   box-shadow: 0 0 15px rgb(255 111 0 / 0.15);
   text-align: center;
   color: #eee;
   backdrop-filter: blur(4px);
+  min-height: unset; /* Remove if previously set */
 }
+
 
 .feature-icon {
   font-size: 2.5rem;
@@ -427,9 +429,14 @@ body {
     flex-direction: column;
   }
 
-  .sidebar {
-    width: 100%;
-  }
+.sidebar {
+  width: 400px; /* Increased from 300px */
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgb(255 111 0 / 0.15);
+  border-left: 2px solid #333;
+}
+
 
   .client-panel {
     flex-direction: column;
