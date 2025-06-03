@@ -7,81 +7,59 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Navbar -->
   <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
-      <ul class="nav-menu">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="servers.html">Event Hosting</a></li>
-      </ul>
+    <div class="nav-left">
+      <a href="#" style="font-weight: bold; font-size: 1.2rem;">EventAlerts</a>
+    </div>
+    <div class="nav-right">
+      <a href="#">Home</a>
+      <a href="#">Servers</a>
+      <a href="#">Pricing</a>
+      <a href="#">Discord</a>
     </div>
   </nav>
 
+  <!-- Hero Section -->
   <section class="hero">
-    <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
-    </div>
-    <h1>Stay ahead with EventUtils</h1>
-    <p>Meant for events. Made for events.</p>
-    <a class="btn-primary" href="https://modrinth.com/mod/eventutils" target="_blank" rel="noopener noreferrer">
-      <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,width=24,format=auto,onerror=redirect,quality=80/uploads/publication/logo/a49f8e1b-3835-4ea1-a85b-118c6425ebc3/thumb_Modrinth_Dark_Logo.png" alt="Modrinth" class="modrinth-icon" />
-      Get it on Modrinth
-    </a>
+    <h1>Host Minecraft Events, Instantly</h1>
+    <p>Set up lag-free temporary servers in seconds, perfect for UHCs, SMPs, and more. No config files, no hassle.</p>
+    <button class="btn">Get Started</button>
   </section>
 
-  <div class="container main-content">
-    <div class="features-grid" id="features">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Higher FPS</h3>
-        <p>Seeing players/entities actually decreases your FPS significantly, using EventUtils you can hide players.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛠️</div>
-        <h3>Event Notifications</h3>
-        <p>Receive event notifications in-game without worrying about being tabbed into discord.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Made for every client</h3>
-        <p>We custom configurated everything to support different clients.</p>
-      </div>
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="card">
+      <h2>Fast Deployment</h2>
+      <p>Spin up your event server in seconds with our one-click setup system.</p>
     </div>
-
-    <aside class="sidebar" id="changelog">
-      <h2>Changelog</h2>
-      <div class="changelog-card">
-        <img src="assets/images/sounds.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">Jan 21, 2025</div>
-        <div class="changelog-title">v2.2.0 Release</div>
-        <div class="changelog-description">
-          Customizable notification sounds via config, notifications in the main menu, less crashes, etc
-        </div>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-      <div class="changelog-card">
-        <img src="assets/images/EventUtils-2.1.2.png" alt="Update Screenshot" class="changelog-image" />
-        <div class="changelog-date">Jan 13, 2025</div>
-        <div class="changelog-title">v2.1.2 Patch</div>
-        <div class="changelog-description">
-          Fixed update checker, fixed event info, etc
-        </div>
-        <button class="view-full">View Full Changelog</button>
-      </div>
-    </aside>
-  </div>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
-        <a href="https://x.com/Event_Alerts" target="_blank" rel="noopener noreferrer">Twitter</a>
-        <a href="https://discord.gg/skeppy" target="_blank" rel="noopener noreferrer">Discord</a>
-        <a href="https://github.com/Event-Alerts" target="_blank" rel="noopener noreferrer">GitHub</a>
-      </div>
+    <div class="card">
+      <h2>DDOS Protected</h2>
+      <p>All servers come with enterprise-grade protection to keep your event safe.</p>
     </div>
+    <div class="card">
+      <h2>Simple Configuration</h2>
+      <p>Skip the setup — RAM, slots, and plugins are configured automatically based on your needs.</p>
+    </div>
+    <div class="card">
+      <h2>Real-Time Metrics</h2>
+      <p>View server performance, player counts, and logs in real time with our dashboard.</p>
+    </div>
+  </section>
+
+  <!-- Changelog Section -->
+  <section class="changelog">
+    <h3>Changelog</h3>
+    <ul>
+      <li>[6/3/2025] Improved UI layout and added new pricing tier options</li>
+      <li>[6/1/2025] Fixed server startup bug and improved dashboard load time</li>
+      <li>[5/29/2025] Added Discord webhook integration for server events</li>
+    </ul>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 EventAlerts. Not affiliated with Mojang or Minecraft. All rights reserved.
   </footer>
 </body>
 </html>
