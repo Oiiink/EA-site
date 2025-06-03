@@ -2,82 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Fast and reliable Minecraft server hosting plans optimized for event performance." />
   <title>Server Hosting - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
-      </a>
-      <ul class="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="servers.html" class="active">Server Hosting</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <section class="hero">
-    <div class="logo-wrapper">
-      <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
-    </div>
-    <h1>Server Hosting</h1>
-    <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
-  </section>
-
-  <div class="plans-section">
-    <h2>Choose Your Plan</h2>
-    <div class="plans-grid">
-      <div class="plan-card">
-        <h3>Basic</h3>
-        <div class="price">$5<span>/month</span></div>
-        <ul>
-          <li>2 GB RAM</li>
-          <li>10 Player Slots</li>
-          <li>Basic Support</li>
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="index.html" class="nav-logo" aria-label="Event Alerts Home">
+          <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
+        </a>
+        <ul class="nav-menu">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="servers.html" class="active" aria-current="page">Server Hosting</a></li>
         </ul>
-        <a href="#" class="btn-primary">Select Plan</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Server hosting overview">
+      <div class="logo-wrapper">
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="hero-logo" />
+      </div>
+      <h1>Server Hosting</h1>
+      <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
+    </section>
+
+    <section class="plans-section" aria-label="Hosting plans">
+      <h2>Choose Your Plan</h2>
+      <div class="plans-grid">
+        <article class="plan-card" role="region" aria-labelledby="plan-basic">
+          <h3 id="plan-basic">Basic</h3>
+          <div class="price">$5<span>/month</span></div>
+          <ul>
+            <li>2 GB RAM</li>
+            <li>10 Player Slots</li>
+            <li>Basic Support</li>
+          </ul>
+          <a href="#" class="btn-primary">Select Plan</a>
+        </article>
+
+        <article class="plan-card featured" role="region" aria-labelledby="plan-pro">
+          <h3 id="plan-pro">Pro</h3>
+          <div class="price">$10<span>/month</span></div>
+          <ul>
+            <li>4 GB RAM</li>
+            <li>25 Player Slots</li>
+            <li>Priority Support</li>
+          </ul>
+          <a href="#" class="btn-primary">Select Plan</a>
+        </article>
+
+        <article class="plan-card" role="region" aria-labelledby="plan-elite">
+          <h3 id="plan-elite">Elite</h3>
+          <div class="price">$20<span>/month</span></div>
+          <ul>
+            <li>8 GB RAM</li>
+            <li>Unlimited Slots</li>
+            <li>24/7 Support</li>
+          </ul>
+          <a href="#" class="btn-primary">Select Plan</a>
+        </article>
       </div>
 
-      <div class="plan-card featured">
-        <h3>Pro</h3>
-        <div class="price">$10<span>/month</span></div>
-        <ul>
-          <li>4 GB RAM</li>
-          <li>25 Player Slots</li>
-          <li>Priority Support</li>
-        </ul>
-        <a href="#" class="btn-primary">Select Plan</a>
+      <div class="lilypad-credit">
+        <p>Servers provided by</p>
+        <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo" class="lilypad-logo" />
       </div>
+    </section>
+  </main>
 
-      <div class="plan-card">
-        <h3>Elite</h3>
-        <div class="price">$20<span>/month</span></div>
-        <ul>
-          <li>8 GB RAM</li>
-          <li>Unlimited Slots</li>
-          <li>24/7 Support</li>
-        </ul>
-        <a href="#" class="btn-primary">Select Plan</a>
-      </div>
-    </div>
-
-    <div class="lilypad-credit">
-      <p>Servers provided by</p>
-      <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo" class="lilypad-logo" />
-    </div>
-  </div>
-
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="footer-content">
       <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <div class="social-links">
+      <nav aria-label="Social media links" class="social-links">
         <a href="#">Twitter</a>
         <a href="#">Discord</a>
         <a href="#">GitHub</a>
-      </div>
+      </nav>
     </div>
   </footer>
 </body>
