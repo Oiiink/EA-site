@@ -6,6 +6,54 @@
   <meta name="description" content="Fast and reliable Minecraft server hosting plans optimized for event performance." />
   <title>Server Hosting - Event Alerts</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Server Hosting Section (Moved from styles.css) */
+    .server-hosting {
+      background: rgba(255, 111, 0, 0.08);
+      padding: 2.5rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgb(255 111 0 / 0.25);
+      margin: 3rem 0;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #eee;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .server-hosting h2 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ff6f00;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .server-hosting p {
+      margin-bottom: 1.2rem;
+      color: #ccc;
+    }
+
+    .server-hosting ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .server-hosting ul li {
+      margin-bottom: 0.6rem;
+    }
+
+    /* Server Hosting Button */
+    .server-hosting .btn-primary {
+      display: block;
+      max-width: 300px;
+      margin: 0 auto;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -31,6 +79,18 @@
       <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
     </section>
 
+    <section class="server-hosting" aria-label="Server hosting details">
+      <h2>Why Choose Our Server Hosting?</h2>
+      <p>Our Minecraft server hosting plans are designed to provide the best performance for your event needs with optimized hardware and 24/7 support.</p>
+      <ul>
+        <li>High-performance SSD storage for fast world loading</li>
+        <li>Instant setup and easy control panel</li>
+        <li>99.9% uptime guaranteed</li>
+        <li>24/7 customer support</li>
+        <li>Custom mod and plugin support</li>
+      </ul>
+    </section>
+
     <section class="plans-section" aria-label="Hosting plans">
       <h2>Choose Your Plan</h2>
       <div class="plans-grid">
@@ -45,44 +105,40 @@
           <a href="#" class="btn-primary">Select Plan</a>
         </article>
 
-        <article class="plan-card featured" role="region" aria-labelledby="plan-pro">
-          <h3 id="plan-pro">Pro</h3>
-          <div class="price">$10<span>/month</span></div>
+        <article class="plan-card" role="region" aria-labelledby="plan-standard">
+          <h3 id="plan-standard">Standard</h3>
+          <div class="price">$15<span>/month</span></div>
           <ul>
-            <li>4 GB RAM</li>
-            <li>25 Player Slots</li>
+            <li>8 GB RAM</li>
+            <li>50 Player Slots</li>
             <li>Priority Support</li>
           </ul>
           <a href="#" class="btn-primary">Select Plan</a>
         </article>
 
-        <article class="plan-card" role="region" aria-labelledby="plan-elite">
-          <h3 id="plan-elite">Elite</h3>
-          <div class="price">$20<span>/month</span></div>
+        <article class="plan-card featured" role="region" aria-labelledby="plan-premium">
+          <h3 id="plan-premium">Premium</h3>
+          <div class="price">$30<span>/month</span></div>
           <ul>
-            <li>8 GB RAM</li>
-            <li>Unlimited Slots</li>
-            <li>24/7 Support</li>
+            <li>16 GB RAM</li>
+            <li>100 Player Slots</li>
+            <li>24/7 Dedicated Support</li>
+            <li>Custom Mod Support</li>
           </ul>
           <a href="#" class="btn-primary">Select Plan</a>
         </article>
       </div>
-
-      <div class="lilypad-credit">
-        <p>Servers provided by</p>
-        <img src="https://lilypad.gg/logos/light_logo.svg" alt="Lilypad Logo" class="lilypad-logo" />
-      </div>
     </section>
   </main>
 
-  <footer class="footer" role="contentinfo">
+  <footer class="footer">
     <div class="footer-content">
       <p>&copy; 2025 Event Alerts. All rights reserved.</p>
-      <nav aria-label="Social media links" class="social-links">
-        <a href="#">Twitter</a>
-        <a href="#">Discord</a>
-        <a href="#">GitHub</a>
-      </nav>
+      <div class="social-links">
+        <a href="#" aria-label="Twitter">Twitter</a>
+        <a href="#" aria-label="Discord">Discord</a>
+        <a href="#" aria-label="GitHub">GitHub</a>
+      </div>
     </div>
   </footer>
 </body>
