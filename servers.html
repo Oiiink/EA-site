@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Server Hosting - Event Alerts</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -16,7 +16,7 @@
     .navbar {
       background-color: #1f1f21;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgba(255, 111, 0, 0.2);
+      box-shadow: 0 2px 5px rgb(255 111 0 / 0.2);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -144,6 +144,8 @@
       border-radius: 8px;
       font-weight: 600;
       transition: background 0.3s, transform 0.3s;
+      text-decoration: none;
+      text-align: center;
     }
 
     .btn-primary:hover {
@@ -167,68 +169,6 @@
     footer a:hover {
       text-decoration: underline;
     }
-
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .popup {
-      background: #1f1f21;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .popup h3 {
-      color: #ff6f00;
-    }
-
-    .ram-options button {
-      background-color: #2a2a2a;
-      color: #fff;
-      border: 2px solid transparent;
-      padding: 10px 16px;
-      margin: 10px 5px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .ram-options button:hover,
-    .ram-options button.active {
-      border-color: #ff6f00;
-      background-color: #ff6f00;
-      color: #000;
-    }
-
-    .popup input[type="number"] {
-      width: 80%;
-      padding: 10px;
-      margin-top: 15px;
-      border-radius: 6px;
-      border: none;
-    }
-
-    .popup .close-btn {
-      margin-top: 20px;
-      background-color: #ff6f00;
-      color: #000;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -237,14 +177,11 @@
   <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Logo" class="nav-logo-img" />
-        Event Alerts
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" /> Event Alerts
       </a>
       <ul class="nav-menu">
         <li><a href="index.html">Home</a></li>
-        <li><a href="#" class="active">Servers</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="servers.html" class="active">Event Hosting</a></li>
       </ul>
     </div>
   </nav>
@@ -267,7 +204,7 @@
           <li>20 Player Slots</li>
           <li>150x150 World</li>
         </ul>
-        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
+        <a href="signup.html" class="btn-primary">Select Plan</a>
       </div>
       <div class="plan-card">
         <h3>Standard</h3>
@@ -277,7 +214,7 @@
           <li>50 Player Slots</li>
           <li>250x250 World</li>
         </ul>
-        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
+        <a href="signup.html" class="btn-primary">Select Plan</a>
       </div>
       <div class="plan-card">
         <h3>Premium</h3>
@@ -287,29 +224,10 @@
           <li>200+ Player Slots</li>
           <li>500x500 World</li>
         </ul>
-        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
+        <a href="signup.html" class="btn-primary">Select Plan</a>
       </div>
     </div>
   </section>
-
-  <!-- Popup Configurator -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup">
-      <h3>Select RAM</h3>
-      <div class="ram-options">
-        <button onclick="selectRam(2)">2 GB</button>
-        <button onclick="selectRam(4)">4 GB</button>
-        <button onclick="selectRam(6)">6 GB</button>
-        <button onclick="selectRam(8)">8 GB</button>
-        <button onclick="selectRam(12)">12 GB</button>
-      </div>
-      <div id="player-input" style="display:none;">
-        <h3>Expected Players?</h3>
-        <input type="number" placeholder="e.g. 50 players" />
-        <button class="close-btn" onclick="closePopup()">Submit</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Footer -->
   <footer>
@@ -320,24 +238,6 @@
       <a href="#">GitHub</a>
     </div>
   </footer>
-
-  <script>
-    function openPopup() {
-      document.getElementById('popup').style.display = 'flex';
-    }
-
-    function selectRam(gb) {
-      document.querySelectorAll('.ram-options button').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('player-input').style.display = 'block';
-    }
-
-    function closePopup() {
-      document.getElementById('popup').style.display = 'none';
-      document.getElementById('player-input').style.display = 'none';
-      document.querySelectorAll('.ram-options button').forEach(btn => btn.classList.remove('active'));
-    }
-  </script>
 
 </body>
 </html>
