@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up - Event Alerts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0f0f0f;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #1f1f21;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgb(255 111 0 / 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      color: #ff6f00;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-logo-img {
+      height: 32px;
+      width: 32px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-menu li a {
+      color: #eee;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .nav-menu li a:hover,
+    .nav-menu li a.active {
+      color: #ff6f00;
+      background-color: rgba(255, 111, 0, 0.15);
+    }
+
+    main {
+      flex: 1;
+      max-width: 400px;
+      margin: 60px auto 40px;
+      background-color: #1a1a1a;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 111, 0, 0.4);
+    }
+
+    h1 {
+      color: #ff6f00;
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: #ccc;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background-color: #2a2a2a;
+      color: #eee;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      box-shadow: 0 0 8px #ff6f00;
+      background-color: #333333;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff6f00, #ffa726);
+      color: #000000;
+      font-weight: 700;
+      padding: 14px 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #ffa726, #ff6f00);
+      transform: scale(1.05);
+    }
+
+    .login-link {
+      margin-top: 15px;
+      text-align: center;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    .login-link a {
+      color: #ff6f00;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      background-color: #0f0f0f;
+      text-align: center;
+      padding: 20px;
+      color: #666666;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" />
+        Event Alerts
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="servers.html">Event Hosting</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Signup Form -->
+  <main>
+    <h1>Create an Account</h1>
+    <form action="#" method="POST">
+      <div>
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" placeholder="Your username" required />
+      </div>
+      <div>
+        <label for="email">Email Address</label>
+        <input id="email" name="email" type="email" placeholder="you@example.com" required />
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="Enter a strong password" required />
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Log in</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Event Alerts. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
