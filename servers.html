@@ -16,7 +16,7 @@
     .navbar {
       background-color: #1f1f21;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgb(255 111 0 / 0.2);
+      box-shadow: 0 2px 5px rgba(255, 111, 0, 0.2);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -144,7 +144,6 @@
       border-radius: 8px;
       font-weight: 600;
       transition: background 0.3s, transform 0.3s;
-      cursor: pointer;
     }
 
     .btn-primary:hover {
@@ -169,112 +168,150 @@
       text-decoration: underline;
     }
 
-    .popup {
-      display: none;
+    .popup-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
       align-items: center;
-      z-index: 1000;
+      justify-content: center;
+      z-index: 9999;
     }
 
-    .popup-content {
+    .popup {
       background: #1f1f21;
-      padding: 2rem;
+      padding: 30px;
       border-radius: 12px;
       max-width: 400px;
-      width: 90%;
       text-align: center;
-      color: #fff;
     }
 
-    .popup-content h3 {
+    .popup h3 {
       color: #ff6f00;
-      margin-bottom: 1rem;
     }
 
-    .popup-content select,
-    .popup-content input {
-      width: 100%;
-      margin: 1rem 0;
-      padding: 0.6rem;
+    .ram-options button {
+      background-color: #2a2a2a;
+      color: #fff;
+      border: 2px solid transparent;
+      padding: 10px 16px;
+      margin: 10px 5px;
       border-radius: 6px;
-      border: none;
-    }
-
-    .popup-content button {
-      padding: 0.8rem 1.5rem;
-      background-color: #ff6f00;
-      border: none;
-      border-radius: 6px;
-      color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .popup-content button:hover {
-      background-color: #ffa726;
+    .ram-options button:hover,
+    .ram-options button.active {
+      border-color: #ff6f00;
+      background-color: #ff6f00;
+      color: #000;
+    }
+
+    .popup input[type="number"] {
+      width: 80%;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .popup .close-btn {
+      margin-top: 20px;
+      background-color: #ff6f00;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="nav-logo">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="nav-logo-img" />
+        <img src="assets/images/logo.png" alt="Logo" class="nav-logo-img" />
         Event Alerts
       </a>
       <ul class="nav-menu">
         <li><a href="index.html">Home</a></li>
-        <li><a href="servers.html" class="active">Event Hosting</a></li>
+        <li><a href="#" class="active">Servers</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Contact</a></li>
       </ul>
     </div>
   </nav>
 
+  <!-- Hero Section -->
   <header class="hero">
     <h1>Event Server Hosting</h1>
     <p>Fast, reliable, and event-optimized Minecraft server hosting.</p>
   </header>
 
+  <!-- Plans Section -->
   <section class="plans-section">
     <h2>Choose Your Plan</h2>
     <div class="plans-grid">
       <div class="plan-card">
-        <h3>Custom</h3>
-        <div class="price">Flexible</div>
+        <h3>Basic</h3>
+        <div class="price">$0<span>/month</span></div>
         <ul>
-          <li>Choose RAM</li>
-          <li>Estimate Player Count</li>
-          <li>Get Custom Quote</li>
+          <li>2 GB RAM</li>
+          <li>20 Player Slots</li>
+          <li>150x150 World</li>
+        </ul>
+        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
+      </div>
+      <div class="plan-card">
+        <h3>Standard</h3>
+        <div class="price">$5.00<span>/month</span></div>
+        <ul>
+          <li>4 GB RAM</li>
+          <li>50 Player Slots</li>
+          <li>250x250 World</li>
+        </ul>
+        <button class="btn-primary" onclick="openPopup()">Select Plan</button>
+      </div>
+      <div class="plan-card">
+        <h3>Premium</h3>
+        <div class="price">$12.50<span>/month</span></div>
+        <ul>
+          <li>6 GB RAM</li>
+          <li>200+ Player Slots</li>
+          <li>500x500 World</li>
         </ul>
         <button class="btn-primary" onclick="openPopup()">Select Plan</button>
       </div>
     </div>
   </section>
 
-  <div class="popup" id="popup">
-    <div class="popup-content" id="step1">
-      <h3>Select RAM Amount</h3>
-      <select id="ram">
-        <option value="2">2 GB</option>
-        <option value="4">4 GB</option>
-        <option value="6">6 GB</option>
-        <option value="8">8 GB</option>
-        <option value="12">12 GB</option>
-      </select>
-      <button onclick="nextStep()">Next</button>
-    </div>
-    <div class="popup-content" id="step2" style="display:none">
-      <h3>Expected Player Count</h3>
-      <input type="number" id="players" placeholder="e.g., 50">
-      <button onclick="submitPlan()">Submit</button>
+  <!-- Popup Configurator -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <h3>Select RAM</h3>
+      <div class="ram-options">
+        <button onclick="selectRam(2)">2 GB</button>
+        <button onclick="selectRam(4)">4 GB</button>
+        <button onclick="selectRam(6)">6 GB</button>
+        <button onclick="selectRam(8)">8 GB</button>
+        <button onclick="selectRam(12)">12 GB</button>
+      </div>
+      <div id="player-input" style="display:none;">
+        <h3>Expected Players?</h3>
+        <input type="number" placeholder="e.g. 50 players" />
+        <button class="close-btn" onclick="closePopup()">Submit</button>
+      </div>
     </div>
   </div>
 
+  <!-- Footer -->
   <footer>
     <p>&copy; 2025 Event Alerts. All rights reserved.</p>
     <div>
@@ -287,28 +324,20 @@
   <script>
     function openPopup() {
       document.getElementById('popup').style.display = 'flex';
-      document.getElementById('step1').style.display = 'block';
-      document.getElementById('step2').style.display = 'none';
     }
 
-    function nextStep() {
-      document.getElementById('step1').style.display = 'none';
-      document.getElementById('step2').style.display = 'block';
+    function selectRam(gb) {
+      document.querySelectorAll('.ram-options button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('player-input').style.display = 'block';
     }
 
-    function submitPlan() {
-      const ram = document.getElementById('ram').value;
-      const players = document.getElementById('players').value;
-      alert(`You selected ${ram} GB RAM for ${players} players.`);
+    function closePopup() {
       document.getElementById('popup').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-      const popup = document.getElementById('popup');
-      if (event.target == popup) {
-        popup.style.display = 'none';
-      }
+      document.getElementById('player-input').style.display = 'none';
+      document.querySelectorAll('.ram-options button').forEach(btn => btn.classList.remove('active'));
     }
   </script>
+
 </body>
 </html>
