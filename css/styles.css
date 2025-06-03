@@ -1,161 +1,158 @@
-/* Reset & base */
+/* styles.css */
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #fff;
-  background-color: transparent;
-  text-decoration: none;
+  color: #eee;
 }
 
 body {
-  background: #1a1a1a;
+  background-color: #121212;
+  line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 2rem;
+  justify-content: space-between;
 }
 
 /* Navbar */
+
 .navbar {
-  width: 100%;
-  max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: rgba(255 165 0 / 0.15); /* translucent orange */
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(255 165 0 / 0.4);
-  margin-bottom: 3rem;
-  backdrop-filter: blur(12px);
+  padding: 1rem 3rem;
+  background-color: #1f1f1f;
+  border-bottom: 3px solid #ff6a00;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .nav-left img {
   height: 40px;
+  cursor: pointer;
 }
 
 .nav-right a {
-  margin-left: 1.8rem;
+  color: #ff6a00;
+  text-decoration: none;
   font-weight: 600;
-  color: #ff9500;
+  margin-left: 2rem;
   transition: color 0.3s ease;
 }
 
 .nav-right a:hover {
-  color: #ffbf47;
+  color: #ffa040;
 }
 
 /* Hero Section */
+
 .hero {
-  max-width: 800px;
   text-align: center;
-  margin-bottom: 4rem;
+  padding: 6rem 1.5rem 4rem;
 }
 
 .hero h1 {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #ff9500;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
-  text-shadow: 0 0 8px #ff9500aa;
+  color: #ff6a00;
+  font-weight: 700;
 }
 
 .hero p {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-  color: #ffc87c;
+  font-size: 1.25rem;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  color: #ddd;
 }
 
 .btn {
-  background: #ff9500;
-  color: #1a1a1a;
-  padding: 0.8rem 2rem;
-  font-weight: 700;
+  background-color: #ff6a00;
+  color: #121212;
   border: none;
-  border-radius: 9999px;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 6px 14px #ff9500aa;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-  background: #ffbf47;
-  box-shadow: 0 8px 20px #ffbf4788;
+  background-color: #e55a00;
 }
 
 /* Features Section */
+
 .features-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
+  justify-content: center;
   gap: 2rem;
-  width: 100%;
-  max-width: 1200px;
-  margin-bottom: 4rem;
+  padding: 2rem 1rem 4rem;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .card {
-  background: rgba(255 165 0 / 0.1);
-  border-radius: 14px;
-  padding: 1.8rem 2rem;
-  box-shadow: 0 0 20px rgba(255 165 0 / 0.15);
-  backdrop-filter: blur(12px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #1f1f1f;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 106, 0, 0.3);
+  width: 320px;
+  transition: transform 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 0 28px rgba(255 165 0 / 0.3);
+  transform: translateY(-10px);
 }
 
 .card h2 {
-  font-size: 1.5rem;
+  color: #ff6a00;
+  margin-bottom: 1rem;
   font-weight: 700;
-  margin-bottom: 0.8rem;
-  color: #ffac33;
 }
 
 .card p {
+  color: #ccc;
   font-size: 1rem;
-  color: #ffd68c;
-  line-height: 1.4;
 }
 
 /* Changelog Section */
+
 .changelog {
-  max-width: 800px;
-  background: rgba(255 165 0 / 0.08);
-  border-radius: 12px;
-  padding: 1.6rem 2rem;
-  box-shadow: 0 0 14px rgba(255 165 0 / 0.12);
-  margin-bottom: 3rem;
-  color: #ffc87c;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  padding: 0 1rem;
 }
 
 .changelog h3 {
-  font-weight: 700;
+  color: #ff6a00;
   margin-bottom: 1rem;
-  color: #ff9500;
-  text-shadow: 0 0 6px #ff9500aa;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-align: center;
 }
 
 .changelog ul {
-  list-style: inside disc;
-}
-
-.changelog li {
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  color: #ddd;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 /* Footer */
+
 footer {
-  font-size: 0.85rem;
-  color: #ffb347;
   text-align: center;
-  padding: 1rem;
-  width: 100%;
-  max-width: 1200px;
+  padding: 2rem 1rem;
+  background-color: #1f1f1f;
+  color: #666;
+  font-size: 0.9rem;
+  border-top: 3px solid #ff6a00;
+  margin-top: auto;
 }
