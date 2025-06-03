@@ -141,7 +141,7 @@ body {
 .changelog-card {
   margin-bottom: 1.5rem;
   width: 100%;  /* full width inside sidebar */
-  max-width: 400px; /* limit max width for neatness */
+  max-width: 420px; /* increased max width */
 }
 
 .changelog-image {
@@ -203,7 +203,7 @@ body {
   text-align: center;
   color: #eee;
   backdrop-filter: blur(4px);
-  min-height: 80px; /* shorter height */
+  min-height: 60px; /* decreased height */
   display: flex;
   flex-direction: column;
   justify-content: center;
