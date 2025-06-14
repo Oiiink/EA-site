@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Alerts - No Code Event Server</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Event Alerts</h1>
+    <p>Create your own event server without any coding knowledge</p>
+  </header>
+
+  <main>
+    <section class="event-settings">
+      <h2>Event Server Info</h2>
+      <label>Event Server Name:
+        <input type="text" placeholder="ReviveZone" id="eventName">
+      </label>
+      <label>Event Type:
+        <input type="text" placeholder="PvP | Last to Leave | Raid" id="eventType">
+      </label>
+    </section>
+
+    <section class="event-features">
+      <h2>Server Features</h2>
+      <label><input type="checkbox"> All essential event commands pre-set</label>
+      <label><input type="checkbox"> Tebex integration (sell revives, boosts)</label>
+      <label><input type="checkbox"> Advertise your server to real players</label>
+      <label><input type="checkbox"> Affordable and reliable hosting</label>
+      <label><input type="checkbox"> Moderation & anti-cheat presets</label>
+    </section>
+
+    <section class="event-preview">
+      <h2>Event Server Preview</h2>
+      <div id="previewBox">
+        <p><strong>Name:</strong> <span id="previewName">ReviveZone</span></p>
+        <p><strong>Type:</strong> <span id="previewType">PvP</span></p>
+        <p><strong>Features:</strong> <span id="previewFeatures">None selected</span></p>
+      </div>
+      <button onclick="generatePreview()">Generate Preview</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Event Alerts. Built for GitHub Pages.</p>
+  </footer>
+
+  <script>
+    function generatePreview() {
+      document.getElementById("previewName").textContent = document.getElementById("eventName").value || "ReviveZone";
+      document.getElementById("previewType").textContent = document.getElementById("eventType").value || "PvP";
+      const features = Array.from(document.querySelectorAll(".event-features input[type=checkbox]"))
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.parentNode.textContent.trim());
+      document.getElementById("previewFeatures").textContent = features.length ? features.join(", ") : "None selected";
+    }
+  </script>
+</body>
+</html>
