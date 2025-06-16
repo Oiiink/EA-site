@@ -4,37 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Website</title>
-  <style>
-    header {
-      background-color: #1a1a1a;
-      padding: 1rem;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
 
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      margin-left: 1rem;
-      font-weight: bold;
-    }
+  <!-- ✅ Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    .nav-links a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-900">
 
-<header>
-  <div class="logo">Event Alerts</div>
-  <nav class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="privacy.html">Privacy Policy</a>
-  </nav>
-</header>
+  <!-- ✅ Header -->
+  <header class="bg-gray-900 text-white p-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="text-2xl font-bold">My Website</div>
+      <nav class="space-x-6">
+        <a href="index.html" class="hover:underline">Home</a>
+        <a href="privacy.html" class="hover:underline">Privacy Policy</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ✅ Page content -->
+  <main class="p-6">
+    <h1 class="text-3xl font-semibold mb-4">Welcome!</h1>
+    <p>This is your main page content.</p>
+  </main>
 
 </body>
 </html>
