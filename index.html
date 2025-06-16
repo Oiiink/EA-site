@@ -1,81 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EventUtils</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lunar: '#1e1e1e',
+            glass: 'rgba(255, 255, 255, 0.05)',
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        }
+      }
+    }
+  </script>
   <style>
     body {
       background: url('https://i.imgur.com/dWqHlJG.jpeg') no-repeat center center fixed;
       background-size: cover;
     }
     .nav-shadow {
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
     }
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.6);
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+    .btn-animated {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-animated:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+    .mobile-menu {
+      transition: max-height 0.3s ease;
     }
   </style>
 </head>
 <body class="text-white font-sans relative min-h-screen flex flex-col">
 
-  <!-- Background dark overlay -->
-  <div class="overlay"></div>
+  <!-- Background overlay -->
+  <div class="overlay fixed inset-0 bg-black bg-opacity-60 z-[-1]"></div>
 
   <!-- Navbar -->
-  <header class="w-full fixed top-0 z-50 bg-black nav-shadow">
+  <header class="w-full fixed top-0 z-50 bg-glass nav-shadow backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <!-- Left: Logo -->
+      <!-- Logo -->
       <div class="flex items-center space-x-3">
         <img src="assets/images/logo.png" alt="EventUtils Logo" class="h-8 w-auto" />
-        <span class="font-bold text-white uppercase tracking-wide text-lg select-none">EventUtils</span>
+        <span class="font-bold uppercase tracking-widest text-white text-lg">EventUtils</span>
       </div>
 
-      <!-- Center: Navigation Links -->
-      <nav class="hidden md:flex space-x-8 text-xs font-semibold uppercase tracking-wider">
+      <!-- Links (Desktop) -->
+      <nav class="hidden md:flex space-x-8 text-sm font-semibold uppercase tracking-wide">
         <a href="#" class="hover:text-cyan-400">News</a>
         <a href="#" class="hover:text-cyan-400">Changelog</a>
         <a href="#" class="hover:text-cyan-400">Features</a>
         <a href="#" class="hover:text-cyan-400">Support</a>
-        <a href="#" class="hover:text-cyan-400">Jobs</a>
-        <a href="#" class="hover:text-cyan-400">Socials</a>
         <a href="#" class="hover:text-cyan-400">Store</a>
       </nav>
 
-      <!-- Right: Download and Hamburger -->
-      <div class="flex items-center space-x-6">
+      <!-- Right -->
+      <div class="flex items-center space-x-4">
         <a href="https://modrinth.com/mod/alerts" target="_blank"
-           class="bg-rose-600 hover:bg-rose-700 px-5 py-2 font-extrabold uppercase rounded tracking-widest text-sm select-none">
+           class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-4 py-2 rounded uppercase text-sm btn-animated select-none">
           Download
         </a>
-        <button class="md:hidden" aria-label="Menu">
+        <!-- Hamburger (Mobile) -->
+        <button id="hamburger" class="md:hidden focus:outline-none" aria-label="Menu">
           <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
     </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobileMenu" class="md:hidden max-h-0 overflow-hidden bg-black bg-opacity-90 backdrop-blur-sm mobile-menu">
+      <div class="flex flex-col px-6 py-4 space-y-3 text-sm font-semibold uppercase tracking-wide">
+        <a href="#" class="hover:text-cyan-400">News</a>
+        <a href="#" class="hover:text-cyan-400">Changelog</a>
+        <a href="#" class="hover:text-cyan-400">Features</a>
+        <a href="#" class="hover:text-cyan-400">Support</a>
+        <a href="#" class="hover:text-cyan-400">Store</a>
+        <a href="#" class="hover:text-cyan-400">Socials</a>
+      </div>
+    </div>
   </header>
 
-  <!-- Hero Section -->
-  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-20 md:pt-32 max-w-4xl mx-auto">
-    <img src="assets/images/logo.png" alt="EventUtils Logo" class="w-28 mb-6" />
-    <h1 class="text-5xl font-extrabold drop-shadow-lg mb-4 select-none tracking-tight">EventUtils</h1>
-    <p class="text-gray-300 mb-8 text-lg max-w-md select-none">
+  <!-- Hero -->
+  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto">
+    <img src="assets/images/logo.png" alt="EventUtils Logo" class="w-28 mb-6 drop-shadow-lg" />
+    <h1 class="text-5xl font-extrabold tracking-tight drop-shadow-xl select-none">EventUtils</h1>
+    <p class="text-gray-300 mt-4 mb-8 text-lg max-w-md select-none">
       A mod designed to power your Minecraft events with real-time alerts, controls, and tools.
     </p>
     <div class="flex flex-wrap justify-center gap-4">
       <a href="https://modrinth.com/mod/alerts" target="_blank"
-         class="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider select-none">
+         class="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider btn-animated select-none">
         Download on Modrinth
       </a>
       <a href="#" 
-         class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider select-none">
+         class="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider btn-animated select-none">
         Store
       </a>
     </div>
@@ -86,6 +115,17 @@
     <p class="select-none">&copy; 2025 EventUtils. All rights reserved.</p>
     <a href="privacy.html" class="underline hover:text-white mt-2 inline-block select-none">Privacy Policy</a>
   </footer>
+
+  <!-- Mobile Menu Script -->
+  <script>
+    const btn = document.getElementById('hamburger');
+    const menu = document.getElementById('mobileMenu');
+    let open = false;
+    btn.addEventListener('click', () => {
+      open = !open;
+      menu.style.maxHeight = open ? '400px' : '0px';
+    });
+  </script>
 
 </body>
 </html>
