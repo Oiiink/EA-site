@@ -1,91 +1,97 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EventUtils</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body {
-      background: url('https://i.imgur.com/dWqHlJG.jpeg') no-repeat center center fixed;
-      background-size: cover;
+    html {
+      -webkit-font-smoothing: antialiased;
     }
-    .nav-shadow {
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+
+    .btn-primary {
+      background-color: #e04e5c;
+      color: white;
+      font-weight: 800;
+      padding: 0.75rem 2rem;
+      border-radius: 0.375rem;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 20px rgba(224, 78, 92, 0.6);
+      transition: background 0.3s ease, transform 0.2s ease;
     }
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.6);
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+
+    .btn-primary:hover {
+      background-color: #d23c4b;
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 6px 25px rgba(224, 78, 92, 0.9);
+    }
+
+    .btn-secondary {
+      background-color: #2d2f33;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #40444b;
+      transform: translateY(-4px) scale(1.03);
     }
   </style>
 </head>
-<body class="text-white font-sans relative min-h-screen flex flex-col">
 
-  <!-- Background dark overlay -->
-  <div class="overlay"></div>
-
+<body class="bg-gray-900 text-white font-sans">
   <!-- Navbar -->
-  <header class="w-full fixed top-0 z-50 bg-black nav-shadow">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <!-- Left: Logo -->
-      <div class="flex items-center space-x-3">
-        <img src="assets/images/logo.png" alt="EventUtils Logo" class="h-8 w-auto" />
-        <span class="font-bold text-white uppercase tracking-wide text-lg select-none">EventUtils</span>
-      </div>
-
-      <!-- Center: Navigation Links -->
-      <nav class="hidden md:flex space-x-8 text-xs font-semibold uppercase tracking-wider">
-        <a href="#" class="hover:text-cyan-400">News</a>
-        <a href="#" class="hover:text-cyan-400">Changelog</a>
-        <a href="#" class="hover:text-cyan-400">Features</a>
-        <a href="#" class="hover:text-cyan-400">Support</a>
-        <a href="#" class="hover:text-cyan-400">Jobs</a>
-        <a href="#" class="hover:text-cyan-400">Socials</a>
-        <a href="#" class="hover:text-cyan-400">Store</a>
-      </nav>
-
-      <!-- Right: Download and Hamburger -->
-      <div class="flex items-center space-x-6">
-        <a href="https://modrinth.com/mod/alerts" target="_blank"
-           class="bg-rose-600 hover:bg-rose-700 px-5 py-2 font-extrabold uppercase rounded tracking-widest text-sm select-none">
-          Download
-        </a>
-        <button class="md:hidden" aria-label="Menu">
-          <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <path d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-      </div>
+  <nav class="flex justify-between items-center px-6 py-4 bg-gray-800 shadow-lg">
+    <div class="text-2xl font-bold">EventUtils</div>
+    <div class="hidden md:flex items-center space-x-6">
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">Download</a>
     </div>
-  </header>
+    <div class="md:hidden">
+      <button id="hamburger" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hamburger Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-gray-800 px-6 py-4">
+    <ul class="space-y-4">
+      <li><a href="https://modrinth.com/mod/alerts" target="_blank" class="block text-white hover:underline">Modrinth</a></li>
+      <li><a href="#" class="block text-white hover:underline">Twitter</a></li>
+      <li><a href="#" class="block text-white hover:underline">Discord</a></li>
+    </ul>
+  </div>
 
   <!-- Hero Section -->
-  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-20 md:pt-32 max-w-4xl mx-auto">
-    <img src="assets/images/logo.png" alt="EventUtils Logo" class="w-28 mb-6" />
-    <h1 class="text-5xl font-extrabold drop-shadow-lg mb-4 select-none tracking-tight">EventUtils</h1>
-    <p class="text-gray-300 mb-8 text-lg max-w-md select-none">
-      A mod designed to power your Minecraft events with real-time alerts, controls, and tools.
-    </p>
+  <section class="text-center py-20 px-6">
+    <h1 class="text-5xl font-extrabold mb-6">Elevate Your Events</h1>
+    <p class="text-lg text-gray-300 max-w-xl mx-auto mb-10">EventUtils brings you the best Minecraft event mod tools, optimized for performance and reliability.</p>
     <div class="flex flex-wrap justify-center gap-4">
-      <a href="https://modrinth.com/mod/alerts" target="_blank"
-         class="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider select-none">
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="btn-primary">
         Download on Modrinth
       </a>
-      <a href="#" 
-         class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-md text-sm uppercase tracking-wider select-none">
+      <a href="#" class="btn-secondary">
         Store
       </a>
     </div>
-  </main>
+  </section>
 
-  <!-- Footer -->
-  <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
-    <p class="select-none">&copy; 2025 EventUtils. All rights reserved.</p>
-    <a href="privacy.html" class="underline hover:text-white mt-2 inline-block select-none">Privacy Policy</a>
-  </footer>
-
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function () {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+  </script>
 </body>
+
 </html>
