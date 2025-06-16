@@ -3,30 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Website</title>
+  <title>My Client</title>
 
-  <!-- ✅ Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-</head>
-<body class="bg-gray-100 text-gray-900">
+  <!-- Optional: Custom fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
-  <!-- ✅ Header -->
-  <header class="bg-gray-900 text-white p-4 shadow-md">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
-      <div class="text-2xl font-bold">My Website</div>
-      <nav class="space-x-6">
-        <a href="index.html" class="hover:underline">Home</a>
-        <a href="privacy.html" class="hover:underline">Privacy Policy</a>
-      </nav>
-    </div>
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #111827, #0a0a0a);
+    }
+
+    .glow-text {
+      text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+    }
+
+    .glow-button {
+      box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+    }
+  </style>
+</head>
+<body class="text-white">
+
+  <!-- HEADER -->
+  <header class="flex justify-between items-center px-6 py-4 bg-black bg-opacity-70 backdrop-blur-md fixed top-0 w-full z-10 shadow-lg">
+    <div class="text-2xl font-bold glow-text">My Client</div>
+    <nav class="space-x-6 text-lg">
+      <a href="index.html" class="hover:underline">Home</a>
+      <a href="privacy.html" class="hover:underline">Privacy Policy</a>
+    </nav>
   </header>
 
-  <!-- ✅ Page content -->
-  <main class="p-6">
-    <h1 class="text-3xl font-semibold mb-4">Welcome!</h1>
-    <p>This is your main page content.</p>
-  </main>
+  <!-- HERO SECTION -->
+  <section class="flex items-center justify-center min-h-screen text-center px-4 pt-24">
+    <div>
+      <h1 class="text-5xl md:text-6xl font-extrabold glow-text mb-6">Performance. Aesthetics. Power.</h1>
+      <p class="text-xl text-gray-300 max-w-xl mx-auto mb-10">Experience next-level performance and style with My Client – the future of gameplay starts here.</p>
+      <a href="#" class="bg-cyan-400 text-black px-8 py-3 text-xl font-bold rounded-full glow-button hover:bg-cyan-300 transition">
+        Download Now
+      </a>
+    </div>
+  </section>
 
 </body>
 </html>
