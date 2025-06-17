@@ -19,6 +19,24 @@
     .nav-shadow {
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
+    .fade-slide-enter {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease-out;
+    }
+    .fade-slide-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-slide-exit {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.2s ease-in;
+    }
+    .fade-slide-exit-active {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
   </style>
 </head>
 <body class="text-white font-sans relative min-h-screen flex flex-col">
@@ -59,14 +77,14 @@
           Download
         </a>
 
-        <!-- Hamburger Menu -->
-        <div class="relative md:hidden group">
-          <button class="focus:outline-none" aria-label="Menu">
+        <!-- Hamburger Toggle -->
+        <div class="relative md:hidden">
+          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu">
             <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
               <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <div class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 hidden group-hover:block text-sm">
+          <div id="mobileMenu" class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50 transition-all duration-200 origin-top fade-slide-enter">
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">News</a>
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">Features</a>
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">Support</a>
@@ -111,6 +129,29 @@
       <a href="terms.html" class="underline hover:text-white select-none">Terms of Service</a>
     </div>
   </footer>
+
+  <!-- JavaScript to toggle hamburger -->
+  <script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    document.addEventListener('click', (e) => {
+      if (hamburgerBtn.contains(e.target)) {
+        mobileMenu.classList.toggle('hidden');
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('fade-slide-enter-active');
+          mobileMenu.classList.remove('fade-slide-exit-active');
+        } else {
+          mobileMenu.classList.add('fade-slide-exit-active');
+          mobileMenu.classList.remove('fade-slide-enter-active');
+        }
+      } else if (!mobileMenu.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('fade-slide-enter-active');
+        mobileMenu.classList.remove('fade-slide-exit-active');
+      }
+    });
+  </script>
 
 </body>
 </html>
