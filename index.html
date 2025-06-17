@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EventUtils</title>
+  <title>Event Alerts</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -31,41 +31,62 @@
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <!-- Logo -->
       <div class="flex items-center space-x-3">
-        <img src="assets/images/logo.png" alt="EventUtils Logo" class="h-8 w-auto" />
-        <span class="text-white font-bold text-lg uppercase tracking-wide">EventUtils</span>
+        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="h-8 w-auto" />
+        <span class="text-white font-bold text-lg uppercase tracking-wide">Event Alerts</span>
       </div>
 
       <!-- Navigation -->
       <nav class="hidden md:flex items-center space-x-8 text-xs font-semibold uppercase tracking-widest">
         <a href="#" class="hover:text-cyan-400">News</a>
-        <a href="#" class="hover:text-cyan-400">Changelog</a>
         <a href="#" class="hover:text-cyan-400">Features</a>
         <a href="#" class="hover:text-cyan-400">Support</a>
-        <a href="#" class="hover:text-cyan-400">Jobs</a>
-        <a href="#" class="hover:text-cyan-400">Socials</a>
+        <!-- <a href="#" class="hover:text-cyan-400">Jobs</a> -->
+        <div class="relative group">
+          <button class="hover:text-cyan-400">Socials</button>
+          <div class="absolute hidden group-hover:block bg-black bg-opacity-90 mt-2 rounded shadow-lg p-2 space-y-1 text-xs text-white">
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">Discord</a>
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">Twitter</a>
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">YouTube</a>
+          </div>
+        </div>
         <a href="#" class="hover:text-cyan-400">Store</a>
       </nav>
 
       <!-- Download button & Hamburger -->
-      <div class="flex items-center space-x-6">
+      <div class="flex items-center space-x-6 relative">
         <a href="https://modrinth.com/mod/alerts" target="_blank"
            class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg">
           Download
         </a>
-        <button class="md:hidden" aria-label="Menu">
-          <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
+
+        <!-- Hamburger Menu -->
+        <div class="relative md:hidden group">
+          <button class="focus:outline-none" aria-label="Menu">
+            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <div class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 hidden group-hover:block text-sm">
+            <a href="#" class="block px-4 py-2 hover:text-cyan-400">News</a>
+            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Features</a>
+            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Support</a>
+            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Store</a>
+            <div class="border-t border-gray-700 my-2"></div>
+            <span class="block px-4 py-1 text-gray-400 uppercase text-xs">Socials</span>
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">Discord</a>
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">Twitter</a>
+            <a href="#" class="block px-4 py-1 hover:text-cyan-400">YouTube</a>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
   <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto">
-    <img src="assets/images/logo.png" alt="EventUtils Logo" class="w-24 md:w-28 mb-6 drop-shadow-2xl" />
+    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="w-24 md:w-28 mb-6 drop-shadow-2xl" />
     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-4">
-      EventUtils
+      Event Alerts
     </h1>
     <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">
       A modpack designed to power your Minecraft events with real-time alerts, controls, and tools.
@@ -84,8 +105,11 @@
 
   <!-- Footer -->
   <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
-    <p class="select-none">&copy; 2025 EventUtils. All rights reserved.</p>
-    <a href="privacy.html" class="underline hover:text-white mt-2 inline-block select-none">Privacy Policy</a>
+    <p class="select-none">&copy; 2025 Event Alerts. All rights reserved.</p>
+    <div class="mt-2 space-x-4">
+      <a href="privacy.html" class="underline hover:text-white select-none">Privacy Policy</a>
+      <a href="terms.html" class="underline hover:text-white select-none">Terms of Service</a>
+    </div>
   </footer>
 
 </body>
