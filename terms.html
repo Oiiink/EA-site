@@ -6,76 +6,95 @@
   <title>Terms of Service - Event Alerts</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: url('https://i.imgur.com/dWqHlJG.jpeg') no-repeat center center fixed;
-      background-size: cover;
+    html {
+      scroll-behavior: smooth;
     }
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: -1;
+    body {
+      background-color: #111827;
+    }
+    .banner {
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url('https://cdn.discordapp.com/attachments/1015724913165865110/1384683534236516443/banner_bees.png?ex=68535288&is=68520108&hm=12c0f609d99e27b857a71122703e327823b5c24f025a44af537951368937c4c6&');
+      background-size: cover;
+      background-position: center;
     }
   </style>
 </head>
-<body class="text-white font-sans relative min-h-screen flex flex-col">
-  <div class="overlay"></div>
+<body class="font-sans text-white">
 
-  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-90 z-50 shadow-md">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="h-8 w-auto" />
-        <span class="text-white font-bold text-lg uppercase tracking-wide">Event Alerts</span>
-      </div>
-      <a href="index.html" class="text-sm text-cyan-400 hover:underline">← Back to Home</a>
+  <!-- Banner Section -->
+  <section class="banner h-64 w-full flex flex-col justify-center items-center text-center px-4">
+    <h1 class="text-5xl font-extrabold uppercase">Terms of Service</h1>
+    <p class="mt-2 text-lg text-gray-300">Please read these Terms <span class="font-semibold text-white">carefully</span> before using Event Alerts services.</p>
+  </section>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-6 py-12">
+    <div class="flex justify-between items-center mb-6">
+      <a href="index.html" class="text-sm text-blue-400 hover:text-blue-200 underline">&larr; Back to Home</a>
+      <span class="bg-gray-800 text-gray-300 text-sm px-4 py-1 rounded-full">
+        🕒 Last Updated: April 13, 2025
+      </span>
     </div>
-  </header>
 
-  <main class="pt-24 px-6 max-w-4xl mx-auto text-gray-200">
-    <h1 class="text-4xl font-extrabold mb-4">Terms of Service</h1>
-    <p class="text-sm text-gray-400 mb-10">Last updated on April 13, 2025</p>
+    <!-- Navigation Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+      <a href="#about" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">About</a>
+      <a href="#rules" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Rules</a>
+      <a href="#ip" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Intellectual Property</a>
+      <a href="#premium" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Paid Services</a>
+      <a href="#termination" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Termination</a>
+      <a href="#contact" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Contact</a>
+    </div>
 
-    <div class="space-y-6">
-      <p><strong>“We”, “Us”, “Our”</strong> in this policy refers to us, the team behind Event Alerts and not any other services or websites linked in our services. <strong>“Service”, “Services”</strong> refers to all services provided by us, including but not limited to Event Alerts (our Discord Bot), Website, Minecraft add-ons. <strong>“Agreement”</strong> collectively refers to our Terms and our Privacy Policy.</p>
+    <!-- Terms Sections -->
+    <div class="bg-gray-900 rounded-xl p-6 text-gray-200 shadow-lg space-y-10">
 
-      <p>By accessing, browsing or using our services, you agree to all the terms and conditions mentioned in this agreement.</p>
+      <section id="about">
+        <h2 class="text-3xl font-bold text-white mb-4">About Our Services</h2>
+        <p><strong>"We", "Us", "Our"</strong> refers to the team behind Event Alerts. <strong>"Service", "Services"</strong> includes the Event Alerts Discord Bot, Website, and Minecraft add-ons.</p>
+        <p>By using our services, you agree to these Terms and our Privacy Policy. Our services are provided “As is.”</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">About our Services</h2>
-      <p>Event Alerts is an advanced Discord bot with a lot of features. Our services are mainly based on our Discord bot. It handles posting events and we offer much more through our services within your Discord server, using our bot and our website.</p>
+      <section id="rules">
+        <h2 class="text-3xl font-bold text-white mb-4">Rules of Conduct</h2>
+        <p>You may not use our services to break Discord’s Terms or any applicable laws. You must meet Discord’s age requirements. Exploiting our services or terms in harmful ways is forbidden and may result in termination.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">Rules of Conduct</h2>
-      <p>Our services are provided “As is” and are to be used only for their intended purposes. You may not use them to violate Discord’s Terms or Policies. You must meet Discord's age requirements. You may not exploit loopholes in our Terms or services to cause harm. You must comply with these terms, laws, and regulations. Failure to comply may result in service termination.</p>
+      <section id="ip">
+        <h2 class="text-3xl font-bold text-white mb-4">Intellectual Property</h2>
+        <p>All content used or created by Event Alerts is protected. You may not reuse or redistribute it without our permission.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">Intellectual Property</h2>
-      <p>All materials owned by us and used in our services are protected and must not be used without authorization.</p>
+      <section id="premium">
+        <h2 class="text-3xl font-bold text-white mb-4">Paid Services</h2>
+        <p>We offer paid tiers (Premium, Bee, Wasp, Hornet) in our Discord server. Reselling or buying access outside of official channels is not allowed.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">Paid Services</h2>
-      <p>We offer paid tiers called “Premium”, “Bee”, “Wasp”, or “Hornet” in our Discord server shop. You may not resell or buy these services outside of official channels.</p>
+      <section id="termination">
+        <h2 class="text-3xl font-bold text-white mb-4">Termination of Service</h2>
+        <p>We may suspend or terminate your access if you violate our Terms. Refunds must be handled through Discord. We reserve the right to end services at any time, with or without notice.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">Termination of Service</h2>
-      <p>We may terminate your access to our services for violations of our Terms. You will be notified if possible. We also reserve the right to terminate all services entirely with or without notice. Refunds for active subscriptions must be handled via Discord.</p>
+      <section id="contact">
+        <h2 class="text-3xl font-bold text-white mb-4">Contact Us</h2>
+        <ul class="list-disc list-inside">
+          <li>In our Discord Server</li>
+          <li>Directly message an admin: @srnyx, @oiiink, @ramezsushi, or @reecetd</li>
+          <li>Email us</li>
+        </ul>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-8">Limitation of Liability</h2>
-      <p>Our services are “As is”. We are not liable for any legal violations or damages resulting from use. We are also not responsible for prizes or claims from events we don’t host.</p>
-
-      <h2 class="text-2xl font-bold mt-8">Changes to Our Terms</h2>
-      <p>We may update our Terms at any time, with or without notice. Please check back regularly for updates.</p>
-
-      <h2 class="text-2xl font-bold mt-8">Contact Us</h2>
-      <ul class="list-disc list-inside">
-        <li>In our Discord Server</li>
-        <li>Directly message an admin (@srnyx, @oiiink, @ramezsushi, or @reecetd) on Discord</li>
-        <li>Email us</li>
-      </ul>
     </div>
   </main>
 
-  <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
+  <!-- Footer -->
+  <footer class="text-center text-gray-400 py-6 bg-black mt-12">
     <p class="select-none">&copy; 2025 Event Alerts. All rights reserved.</p>
-    <div class="space-x-4">
+    <div class="space-x-4 mt-2">
       <a href="privacy.html" class="underline hover:text-white">Privacy Policy</a>
       <a href="terms.html" class="underline hover:text-white">Terms of Service</a>
     </div>
   </footer>
+
 </body>
 </html>
