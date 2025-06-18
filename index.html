@@ -19,60 +19,52 @@
     .nav-shadow {
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
+    img {
+      background-color: transparent;
+    }
   </style>
 </head>
 <body class="text-white font-sans relative min-h-screen flex flex-col">
 
-  <!-- Dark overlay -->
   <div class="overlay"></div>
 
-  <!-- Navbar -->
   <header class="fixed top-0 left-0 w-full bg-black bg-opacity-95 z-50 nav-shadow">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <!-- Logo -->
       <div class="flex items-center space-x-3">
         <img src="assets/images/logo.png" alt="Event Alerts Logo" class="h-8 w-auto" />
         <span class="text-white font-bold text-lg uppercase tracking-wide">Event Alerts</span>
       </div>
 
-      <!-- Navigation -->
       <nav class="hidden md:flex items-center space-x-8 text-xs font-semibold uppercase tracking-widest">
         <a href="#" class="hover:text-cyan-400">News</a>
         <a href="#" class="hover:text-cyan-400">Features</a>
         <a href="#" class="hover:text-cyan-400">Support</a>
         <a href="#" class="hover:text-cyan-400">Store</a>
-        <!-- Socials dropdown -->
         <div class="relative group">
           <a href="#" class="hover:text-cyan-400 inline-block">Socials</a>
           <div class="absolute hidden group-hover:block bg-black bg-opacity-90 mt-2 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap">
             <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/discord.png" alt="Discord" class="w-4 h-4 mr-2" />
-              Discord
+              <img src="assets/images/discord.png" alt="Discord" class="w-4 h-4 mr-2" /> Discord
             </a>
             <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/twitter.png" alt="Twitter" class="w-4 h-4 mr-2" />
-              Twitter
+              <img src="assets/images/twitter.png" alt="Twitter" class="w-4 h-4 mr-2" /> Twitter
             </a>
             <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/youtube.png" alt="YouTube" class="w-4 h-4 mr-2" />
-              YouTube
+              <img src="assets/images/youtube.png" alt="YouTube" class="w-4 h-4 mr-2" /> YouTube
             </a>
           </div>
         </div>
       </nav>
 
-      <!-- Download + Hamburger -->
       <div class="flex items-center space-x-6 relative">
-        <a href="https://modrinth.com/mod/alerts" target="_blank"
-           class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg">
+        <a href="https://modrinth.com/mod/alerts" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg">
           Download
         </a>
 
-        <!-- Hamburger Button -->
         <div class="relative md:hidden">
           <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu">
             <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M4 6h16M4 12h16M4 18h16"/>
+              <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div id="mobileMenu" class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50">
@@ -91,28 +83,16 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
   <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto">
     <img src="assets/images/logo.png" alt="Event Alerts Logo" class="w-24 md:w-28 mb-6 drop-shadow-2xl" />
-    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-4">
-      EventUtils
-    </h1>
-    <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">
-      A mod designed to help players in events
-    </p>
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-4">EventUtils</h1>
+    <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">A mod designed to help players in events</p>
     <div class="flex flex-wrap justify-center gap-4">
-      <a href="https://modrinth.com/mod/alerts" target="_blank"
-         class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">
-        Download on Modrinth
-      </a>
-      <a href="#" 
-         class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">
-        Store
-      </a>
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">Download on Modrinth</a>
+      <a href="#" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">Store</a>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
     <p class="select-none">&copy; 2025 Event Alerts. All rights reserved.</p>
     <div class="mt-2 space-x-4">
@@ -121,7 +101,6 @@
     </div>
   </footer>
 
-  <!-- Hamburger Script Fix -->
   <script>
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobileMenu');
@@ -131,19 +110,11 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-    mobileMenu.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    // Prevent closing if a link inside mobile menu is clicked
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent document click handler
-      });
-    });
-
-    document.addEventListener('click', () => {
-      mobileMenu.classList.add('hidden');
+    document.addEventListener('click', (e) => {
+      const isClickInside = mobileMenu.contains(e.target) || hamburgerBtn.contains(e.target);
+      if (!isClickInside) {
+        mobileMenu.classList.add('hidden');
+      }
     });
   </script>
 </body>
