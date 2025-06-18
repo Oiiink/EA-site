@@ -18,13 +18,9 @@
     .nav-shadow {
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
-    img {
-      background-color: transparent;
-    }
-    /* Icon sizing */
     .social-icon {
       width: 1rem;
-      height: auto;
+      height: 1rem;
       margin-right: 0.5rem;
       flex-shrink: 0;
       fill: currentColor;
@@ -51,32 +47,31 @@
 
         <div class="relative group">
           <a href="#" class="hover:text-cyan-400 select-none">Socials</a>
-          <div class="absolute hidden group-hover:block bg-black bg-opacity-90 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap top-full left-0" style="min-width: 8rem;">
-            <!-- Discord SVG icon from FontAwesome (transparent) :contentReference[oaicite:1]{index=1} -->
+          <div class="absolute hidden group-hover:block bg-black bg-opacity-90 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap top-full left-0 mt-1 z-50 min-w-[8rem]">
             <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400" target="_blank" rel="noopener noreferrer">
-              <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M524.5 69.8..."/></svg>
+              <svg class="social-icon" viewBox="0 0 640 512"><path d="M524.5 69.8..."/></svg>
               Discord
             </a>
-            <!-- Twitter SVG icon (transparent) :contentReference[oaicite:2]{index=2} -->
-            <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400" target="_blank" rel="noopener noreferrer">
-              <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.954 4.569..."/></svg>
+            <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400" target="_blank">
+              <svg class="social-icon" viewBox="0 0 24 24"><path d="M22.46 6c-..."/></svg>
               Twitter
             </a>
-            <!-- YouTube SVG icon (transparent) -->
-            <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400" target="_blank" rel="noopener noreferrer">
-              <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6zm12-3c0-1.1..."/></svg>
+            <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400" target="_blank">
+              <svg class="social-icon" viewBox="0 0 576 512"><path d="M549.7 124.1c..."/></svg>
               YouTube
             </a>
           </div>
         </div>
       </nav>
 
-      <!-- Download & Mobile menu -->
+      <!-- Mobile: Download & Hamburger -->
       <div class="flex items-center space-x-6 relative">
         <a href="https://modrinth.com/mod/alerts" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest shadow-lg">Download</a>
         <div class="relative md:hidden">
           <button id="hamburgerBtn" aria-label="Menu" class="focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
           </button>
           <div id="mobileMenu" class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50" style="min-width:10rem;">
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">News</a>
@@ -94,7 +89,20 @@
     </div>
   </header>
 
-  <!-- ...rest of your page... -->
+  <!-- Hero Content -->
+  <main class="flex-grow flex items-center justify-center px-6 pt-40 pb-16 text-center">
+    <div class="max-w-3xl">
+      <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight drop-shadow-lg">
+        <span class="text-white">Event Alerts</span> for Minecraft
+      </h1>
+      <p class="text-lg md:text-xl text-white/80 mb-8 drop-shadow-md">
+        Get in-game notifications when your favorite content creators go live, upload, or post.
+      </p>
+      <a href="https://modrinth.com/mod/alerts" target="_blank" class="inline-block bg-rose-600 hover:bg-rose-700 text-white px-8 py-3 font-bold uppercase rounded-lg text-sm tracking-widest shadow-lg transition">
+        Download Now
+      </a>
+    </div>
+  </main>
 
   <script>
     const btn = document.getElementById('hamburgerBtn');
