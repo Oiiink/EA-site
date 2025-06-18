@@ -9,107 +9,92 @@
     html {
       scroll-behavior: smooth;
     }
-    body {
-      background-color: #111827;
-    }
     .banner {
-      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url('https://cdn.discordapp.com/attachments/1015724913165865110/1384683534236516443/banner_bees.png?ex=68535288&is=68520108&hm=12c0f609d99e27b857a71122703e327823b5c24f025a44af537951368937c4c6&');
-      background-size: cover;
-      background-position: center;
+      background: url('https://cdn.discordapp.com/attachments/1015724913165865110/1384683534236516443/banner_bees.png?ex=68535288&is=68520108&hm=12c0f609d99e27b857a71122703e327823b5c24f025a44af537951368937c4c6&') center/cover no-repeat;
     }
   </style>
 </head>
-<body class="font-sans text-white">
-
-  <!-- Banner Section -->
-  <section class="banner h-64 w-full flex flex-col justify-center items-center text-center px-4">
-    <h1 class="text-5xl font-extrabold uppercase">Privacy Policy</h1>
-    <p class="mt-2 text-lg text-gray-300">Please read this Privacy Policy <span class="font-semibold text-white">carefully</span> before using Event Alerts services.</p>
+<body class="bg-black text-white font-sans">
+  <!-- Banner Header -->
+  <section class="banner h-64 flex flex-col justify-center items-center text-center px-4">
+    <h1 class="text-4xl font-extrabold drop-shadow-md">PRIVACY POLICY</h1>
+    <p class="text-gray-200 mt-2 max-w-xl text-sm">Please read this Privacy Policy <span class="font-semibold">carefully</span> before using Event Alerts services.</p>
   </section>
 
+  <!-- Category Navigation -->
+  <nav class="bg-gray-900 shadow-lg py-4 px-6 flex flex-wrap justify-center gap-4 sticky top-0 z-50">
+    <a href="#info" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Information We Collect</a>
+    <a href="#share" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Information We Share</a>
+    <a href="#use" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Where We Use the Data</a>
+    <a href="#access" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Who Has Access</a>
+    <a href="#retention" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Data Retention</a>
+    <a href="#changes" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Changes</a>
+    <a href="#contact" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-4 rounded-xl">Contact</a>
+  </nav>
+
   <!-- Main Content -->
-  <main class="max-w-5xl mx-auto px-6 py-12">
-    <div class="flex justify-end mb-6">
-      <span class="bg-gray-800 text-gray-300 text-sm px-4 py-1 rounded-full">
-        🕒 Last Updated: June 17, 2025
-      </span>
-    </div>
+  <main class="max-w-5xl mx-auto py-12 px-6 space-y-12">
+    <section id="info" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Information We Collect</h2>
+      <ul class="list-disc list-inside text-gray-300">
+        <li>Discord Channel, Message, Role, Server, and User IDs</li>
+        <li>Your Discord Username</li>
+        <li>Your Minecraft: Java Edition UUID and Username</li>
+        <li>Parts of message content from certain commands</li>
+        <li>Data for analytics purposes</li>
+      </ul>
+    </section>
 
-    <!-- Navigation Buttons -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-      <a href="#personal-info" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Personal Information</a>
-      <a href="#data-management" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Data Management</a>
-      <a href="#third-parties" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Third Parties</a>
-      <a href="#user-rights" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">User Rights</a>
-      <a href="#security" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Security</a>
-      <a href="#contact" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Contact</a>
-    </div>
+    <section id="share" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Information We Share</h2>
+      <p class="text-gray-300">We may share some information with third parties that support our infrastructure:</p>
+      <ul class="list-disc list-inside text-gray-300">
+        <li>Your Discord ID, Username, and certain roles</li>
+        <li>Your Minecraft UUID and Username</li>
+      </ul>
+    </section>
 
-    <!-- Policy Sections -->
-    <div class="bg-gray-900 rounded-xl p-6 text-gray-200 shadow-lg space-y-10">
+    <section id="use" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Where We Use the Data</h2>
+      <p class="text-gray-300">We use this data only to provide services and for analytics. We do not sell any data.</p>
+    </section>
 
-      <section id="personal-info">
-        <h2 class="text-3xl font-bold text-white mb-4">Personal Information</h2>
-        <p><strong>"We", "Us", "Our"</strong> refers to the team behind Event Alerts. <strong>"Service", "Services"</strong> means all services we provide including Event Alerts Discord Bot, Website, and Minecraft add-ons.</p>
-        <p>By using our services, you agree that we may store information necessary to provide those services.</p>
-      </section>
+    <section id="access" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Who Has Access</h2>
+      <p class="text-gray-300">Only our services and administrators have access to the data. No outside parties have direct access to our database. Please secure your own devices, as access may expose account-related information.</p>
+    </section>
 
-      <section id="data-management">
-        <h2 class="text-3xl font-bold text-white mb-4">Data Management</h2>
-        <ul class="list-disc list-inside">
-          <li>Discord Channel, Message, Role, Server, and User IDs</li>
-          <li>Your Discord Username</li>
-          <li>Your Minecraft: Java Edition UUID and Username</li>
-          <li>Parts of message content from certain commands</li>
-          <li>Data for analytics purposes</li>
-        </ul>
-      </section>
+    <section id="retention" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Data Retention</h2>
+      <p class="text-gray-300">We retain data only as long as necessary. You may request deletion via our Discord:</p>
+      <ul class="list-disc list-inside text-gray-300">
+        <li>Open a support ticket in the <code class="bg-gray-700 px-1 py-0.5 rounded">#open-a-ticket</code> channel</li>
+        <li>Direct message @srnyx, @oiiink, @ramezsushi, or @reecetd</li>
+      </ul>
+    </section>
 
-      <section id="third-parties">
-        <h2 class="text-3xl font-bold text-white mb-4">Third Parties</h2>
-        <p>We may share some information with third parties that support our infrastructure, such as:</p>
-        <ul class="list-disc list-inside">
-          <li>Your Discord ID, Username, and certain roles</li>
-          <li>Your Minecraft UUID and Username</li>
-        </ul>
-      </section>
+    <section id="changes" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Changes to the Policy</h2>
+      <p class="text-gray-300">We may update this Privacy Policy at any time. Please check back regularly for changes.</p>
+    </section>
 
-      <section id="user-rights">
-        <h2 class="text-3xl font-bold text-white mb-4">User Rights</h2>
-        <p>We use this data only to provide services and for analytics. We do not sell any data.</p>
-        <p>You may request deletion via our Discord:</p>
-        <ul class="list-disc list-inside">
-          <li>Open a support ticket in the <code>#open-a-ticket</code> channel</li>
-          <li>Direct message an admin: @srnyx, @oiiink, @ramezsushi, or @reecetd</li>
-        </ul>
-      </section>
-
-      <section id="security">
-        <h2 class="text-3xl font-bold text-white mb-4">Security</h2>
-        <p>Only our services and administrators have access to the data we collect. No outside parties have direct access to our database.</p>
-        <p>Please ensure your own device is secure, as others with access may view certain information about your account.</p>
-      </section>
-
-      <section id="contact">
-        <h2 class="text-3xl font-bold text-white mb-4">Contact</h2>
-        <ul class="list-disc list-inside">
-          <li>In our Discord Server</li>
-          <li>Directly message an admin (@srnyx, @oiiink, @ramezsushi, @reecetd)</li>
-          <li>Email us</li>
-        </ul>
-      </section>
-
-    </div>
+    <section id="contact" class="bg-gray-800 rounded-2xl p-6">
+      <h2 class="text-3xl font-bold border-b border-gray-700 pb-2 mb-4">Contact Us</h2>
+      <ul class="list-disc list-inside text-gray-300">
+        <li>Join our Discord Server</li>
+        <li>Message an admin (@srnyx, @oiiink, @ramezsushi, @reecetd)</li>
+        <li>Email us</li>
+      </ul>
+    </section>
   </main>
 
   <!-- Footer -->
-  <footer class="text-center text-gray-400 py-6 bg-black mt-12">
+  <footer class="text-center text-gray-400 py-6 bg-gray-900">
     <p class="select-none">&copy; 2025 Event Alerts. All rights reserved.</p>
-    <div class="space-x-4 mt-2">
+    <div class="space-x-4">
       <a href="privacy.html" class="underline hover:text-white">Privacy Policy</a>
       <a href="terms.html" class="underline hover:text-white">Terms of Service</a>
     </div>
   </footer>
-
 </body>
 </html>
