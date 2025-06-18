@@ -6,11 +6,14 @@
   <title>Privacy Policy - Event Alerts</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
     body {
       background-color: #111827;
     }
     .banner {
-      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url('https://i.imgur.com/dWqHlJG.jpeg');
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url('https://cdn.discordapp.com/attachments/1015724913165865110/1384683534236516443/banner_bees.png?ex=68535288&is=68520108&hm=12c0f609d99e27b857a71122703e327823b5c24f025a44af537951368937c4c6&');
       background-size: cover;
       background-position: center;
     }
@@ -24,9 +27,8 @@
     <p class="mt-2 text-lg text-gray-300">Please read this Privacy Policy <span class="font-semibold text-white">carefully</span> before using Event Alerts services.</p>
   </section>
 
-  <!-- Content Section -->
+  <!-- Main Content -->
   <main class="max-w-5xl mx-auto px-6 py-12">
-    <!-- Last Updated -->
     <div class="flex justify-end mb-6">
       <span class="bg-gray-800 text-gray-300 text-sm px-4 py-1 rounded-full">
         🕒 Last Updated: June 17, 2025
@@ -35,58 +37,68 @@
 
     <!-- Navigation Buttons -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">Personal Information</button>
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">Data Management</button>
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">Third Parties</button>
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">User Rights</button>
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">Security</button>
-      <button class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">Contact</button>
+      <a href="#personal-info" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Personal Information</a>
+      <a href="#data-management" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Data Management</a>
+      <a href="#third-parties" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Third Parties</a>
+      <a href="#user-rights" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">User Rights</a>
+      <a href="#security" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Security</a>
+      <a href="#contact" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-center">Contact</a>
     </div>
 
-    <!-- Policy Card -->
-    <div class="bg-gray-900 rounded-xl p-6 text-gray-200 shadow-lg space-y-6">
-      <p><strong>“We”, “Us”, “Our”</strong> refers to the team behind Event Alerts. <strong>“Service”, “Services”</strong> means all services we provide including Event Alerts Discord Bot, Website, and Minecraft add-ons. <strong>“Agreement”</strong> refers to our Terms of Service and this Privacy Policy.</p>
+    <!-- Policy Sections -->
+    <div class="bg-gray-900 rounded-xl p-6 text-gray-200 shadow-lg space-y-10">
 
-      <p>By using our services, you agree that we may store information necessary to provide those services.</p>
+      <section id="personal-info">
+        <h2 class="text-3xl font-bold text-white mb-4">Personal Information</h2>
+        <p><strong>"We", "Us", "Our"</strong> refers to the team behind Event Alerts. <strong>"Service", "Services"</strong> means all services we provide including Event Alerts Discord Bot, Website, and Minecraft add-ons.</p>
+        <p>By using our services, you agree that we may store information necessary to provide those services.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Information We Collect</h2>
-      <ul class="list-disc list-inside">
-        <li>Discord Channel, Message, Role, Server, and User IDs</li>
-        <li>Your Discord Username</li>
-        <li>Your Minecraft: Java Edition UUID and Username</li>
-        <li>Parts of message content from certain commands</li>
-        <li>Data for analytics purposes</li>
-      </ul>
+      <section id="data-management">
+        <h2 class="text-3xl font-bold text-white mb-4">Data Management</h2>
+        <ul class="list-disc list-inside">
+          <li>Discord Channel, Message, Role, Server, and User IDs</li>
+          <li>Your Discord Username</li>
+          <li>Your Minecraft: Java Edition UUID and Username</li>
+          <li>Parts of message content from certain commands</li>
+          <li>Data for analytics purposes</li>
+        </ul>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Information We Share</h2>
-      <p>We may share some information with third parties that support our infrastructure, such as:</p>
-      <ul class="list-disc list-inside">
-        <li>Your Discord ID, Username, and certain roles</li>
-        <li>Your Minecraft UUID and Username</li>
-      </ul>
+      <section id="third-parties">
+        <h2 class="text-3xl font-bold text-white mb-4">Third Parties</h2>
+        <p>We may share some information with third parties that support our infrastructure, such as:</p>
+        <ul class="list-disc list-inside">
+          <li>Your Discord ID, Username, and certain roles</li>
+          <li>Your Minecraft UUID and Username</li>
+        </ul>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Where We Use the Data</h2>
-      <p>We use this data only to provide services and for analytics. We do not sell any data.</p>
+      <section id="user-rights">
+        <h2 class="text-3xl font-bold text-white mb-4">User Rights</h2>
+        <p>We use this data only to provide services and for analytics. We do not sell any data.</p>
+        <p>You may request deletion via our Discord:</p>
+        <ul class="list-disc list-inside">
+          <li>Open a support ticket in the <code>#open-a-ticket</code> channel</li>
+          <li>Direct message an admin: @srnyx, @oiiink, @ramezsushi, or @reecetd</li>
+        </ul>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Who Has Access</h2>
-      <p>Only our services and administrators have access to the data we collect. No outside parties have direct access to our database.</p>
+      <section id="security">
+        <h2 class="text-3xl font-bold text-white mb-4">Security</h2>
+        <p>Only our services and administrators have access to the data we collect. No outside parties have direct access to our database.</p>
+        <p>Please ensure your own device is secure, as others with access may view certain information about your account.</p>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Data Retention</h2>
-      <p>We keep data as long as needed to serve its purpose. You may request deletion via our Discord:</p>
-      <ul class="list-disc list-inside">
-        <li>Open a support ticket in the <code>#open-a-ticket</code> channel</li>
-        <li>Direct message an admin: @srnyx, @oiiink, @ramezsushi, or @reecetd</li>
-      </ul>
+      <section id="contact">
+        <h2 class="text-3xl font-bold text-white mb-4">Contact</h2>
+        <ul class="list-disc list-inside">
+          <li>In our Discord Server</li>
+          <li>Directly message an admin (@srnyx, @oiiink, @ramezsushi, @reecetd)</li>
+          <li>Email us</li>
+        </ul>
+      </section>
 
-      <h2 class="text-2xl font-bold mt-6 text-white">Changes to the Policy</h2>
-      <p>We may update this Privacy Policy at any time. Check back regularly for changes.</p>
-
-      <h2 class="text-2xl font-bold mt-6 text-white">Contact Us</h2>
-      <ul class="list-disc list-inside">
-        <li>In our Discord Server</li>
-        <li>Directly message an admin (@srnyx, @oiiink, @ramezsushi, @reecetd)</li>
-        <li>Email us</li>
-      </ul>
     </div>
   </main>
 
