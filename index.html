@@ -22,12 +22,11 @@
     img {
       background-color: transparent;
     }
-    /* Small tweak to svg icons so they scale nicely */
-    svg.social-icon {
-      width: 1rem; /* 16px */
+    /* Fix Discord icon aspect ratio */
+    .social-icon.discord {
       height: 1rem;
+      width: auto;
       margin-right: 0.5rem;
-      fill: currentColor;
       flex-shrink: 0;
     }
   </style>
@@ -43,57 +42,64 @@
         <span class="text-white font-bold text-lg uppercase tracking-wide">Event Alerts</span>
       </div>
 
+      <!-- Desktop Navigation -->
       <nav class="hidden md:flex items-center space-x-8 text-xs font-semibold uppercase tracking-widest">
         <a href="#" class="hover:text-cyan-400">News</a>
         <a href="#" class="hover:text-cyan-400">Features</a>
         <a href="#" class="hover:text-cyan-400">Support</a>
         <a href="#" class="hover:text-cyan-400">Store</a>
+
+        <!-- Socials dropdown with no gap on hover -->
         <div class="relative group">
-          <a href="#" class="hover:text-cyan-400 inline-block">Socials</a>
-          <div class="absolute hidden group-hover:block bg-black bg-opacity-90 mt-2 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap">
+          <a href="#" class="hover:text-cyan-400 inline-block select-none">Socials</a>
+          <div
+            class="absolute hidden group-hover:block bg-black bg-opacity-90 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap top-full left-0"
+            style="min-width: 8rem;"
+          >
             <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <!-- Discord SVG icon inline -->
-              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M20.317 4.3698A19.7913 19.7913 0 0016.179 3c-.251.423-.523.98-.715 1.414a17.3848 17.3848 0 00-5.929 0A12.2121 12.2121 0 009.82 3a19.7363 19.7363 0 00-4.138.369C2.833 9.68 2.108 15.822 2.58 21.921a22.7735 22.7735 0 006.201 1.965c.516-.71.974-1.455 1.372-2.234a13.1567 13.1567 0 01-2.128-.997c.178-.125.355-.254.53-.386a11.9696 11.9696 0 005.995 0c.175.132.352.261.53.386a13.0279 13.0279 0 01-2.128.997 14.7446 14.7446 0 001.372 2.234 22.7557 22.7557 0 006.202-1.965c.5-6.155-.259-12.285-3.662-17.552zM8.02 15.331c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.954 2.424-2.15 2.424zm7.974 0c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.95 2.424-2.15 2.424z"/>
+              <svg class="social-icon discord" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M20.317 4.3698A19.7913 19.7913 0 0016.179 3c-.251.423-.523.98-.715 1.414a17.3848 17.3848 0 00-5.929 0A12.2121 12.2121 0 009.82 3a19.7363 19.7363 0 00-4.138.369C2.833 9.68 2.108 15.822 2.58 21.921a22.7735 22.7735 0 006.201 1.965c.516-.71.974-1.455 1.372-2.234a13.1567 13.1567 0 01-2.128-.997c.178-.125.355-.254.53-.386a11.9696 11.9696 0 005.995 0c.175.132.352.261.53.386a13.0279 13.0279 0 01-2.128.997 14.7446 14.7446 0 001.372 2.234 22.7557 22.7557 0 006.202-1.965c.5-6.155-.259-12.285-3.662-17.552zM8.02 15.331c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.954 2.424-2.15 2.424zm7.974 0c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.95 2.424-2.15 2.424z" />
               </svg>
               Discord
             </a>
             <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <!-- X (Twitter) SVG icon inline -->
-              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M23.954 4.569a10.015 10.015 0 01-2.825.775 4.935 4.935 0 002.163-2.724 9.865 9.865 0 01-3.127 1.195 4.916 4.916 0 00-8.38 4.482A13.945 13.945 0 011.67 3.15 4.902 4.902 0 003.195 9.86a4.904 4.904 0 01-2.224-.616v.06a4.918 4.918 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.926 4.926 0 004.6 3.417A9.867 9.867 0 010 21.54 13.906 13.906 0 007.548 24c9.057 0 14.01-7.514 14.01-14.04 0-.213-.005-.425-.014-.636A10.012 10.012 0 0024 4.59z"/>
-              </svg>
+              <img src="assets/images/twitter.png" alt="Twitter" class="w-4 h-4 mr-2" />
               Twitter
             </a>
             <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <!-- YouTube SVG icon inline -->
-              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M19.615 3.184c-1.727-.124-8.62-.124-8.62-.124s-6.893 0-8.62.124A3.248 3.248 0 001 6.422v11.156a3.248 3.248 0 001.375 3.238c1.727.124 8.62.124 8.62.124s6.893 0 8.62-.124a3.248 3.248 0 001.375-3.238V6.422a3.248 3.248 0 00-1.375-3.238zM9.55 15.568V8.436l6.178 3.566-6.178 3.566z"/>
-              </svg>
+              <img src="assets/images/youtube.png" alt="YouTube" class="w-4 h-4 mr-2" />
               YouTube
             </a>
           </div>
         </div>
       </nav>
 
+      <!-- Right side - Download & Mobile hamburger -->
       <div class="flex items-center space-x-6 relative">
-        <a href="https://modrinth.com/mod/alerts" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg">
-          Download
-        </a>
+        <a
+          href="https://modrinth.com/mod/alerts"
+          target="_blank"
+          class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg"
+          >Download</a
+        >
 
         <div class="relative md:hidden">
-          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu" type="button">
-            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu">
+            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div id="mobileMenu" class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50">
+          <div
+            id="mobileMenu"
+            class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50"
+            style="min-width: 10rem;"
+          >
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">News</a>
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">Features</a>
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">Support</a>
             <a href="#" class="block px-4 py-2 hover:text-cyan-400">Store</a>
             <div class="border-t border-gray-700 my-2"></div>
-            <span class="block px-4 py-1 text-gray-400 uppercase text-xs">Socials</span>
+            <span class="block px-4 py-1 text-gray-400 uppercase text-xs select-none">Socials</span>
             <a href="https://discord.gg/skeppy" class="block px-4 py-1 hover:text-cyan-400">Discord</a>
             <a href="https://x.com/Event_Alerts" class="block px-4 py-1 hover:text-cyan-400">Twitter</a>
             <a href="https://www.youtube.com/@EventAlerts" class="block px-4 py-1 hover:text-cyan-400">YouTube</a>
@@ -103,13 +109,24 @@
     </div>
   </header>
 
-  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto">
+  <main
+    class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto"
+  >
     <img src="assets/images/logo.png" alt="Event Alerts Logo" class="w-24 md:w-28 mb-6 drop-shadow-2xl" />
     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-4">EventUtils</h1>
-    <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">A mod designed to help players in events</p>
+    <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">
+      A mod designed to help players in events
+    </p>
     <div class="flex flex-wrap justify-center gap-4">
-      <a href="https://modrinth.com/mod/alerts" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">Download on Modrinth</a>
-      <a href="#" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md">Store</a>
+      <a
+        href="https://modrinth.com/mod/alerts"
+        target="_blank"
+        class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md"
+        >Download on Modrinth</a
+      >
+      <a href="#" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md"
+        >Store</a
+      >
     </div>
   </main>
 
@@ -130,22 +147,13 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-    // Close menu only if click outside or on a menu link
+    // Only close mobile menu when clicking outside of hamburger or menu
     document.addEventListener('click', (e) => {
-      const clickInsideMenu = mobileMenu.contains(e.target);
-      const clickOnBtn = hamburgerBtn.contains(e.target);
-      const clickOnLink = e.target.closest('#mobileMenu a');
-
-      if (!clickInsideMenu && !clickOnBtn) {
-        mobileMenu.classList.add('hidden');
-      }
-
-      // Also close if user clicks a menu link
-      if (clickOnLink) {
+      const isClickInside = mobileMenu.contains(e.target) || hamburgerBtn.contains(e.target);
+      if (!isClickInside) {
         mobileMenu.classList.add('hidden');
       }
     });
   </script>
-
 </body>
 </html>
