@@ -22,6 +22,14 @@
     img {
       background-color: transparent;
     }
+    /* Small tweak to svg icons so they scale nicely */
+    svg.social-icon {
+      width: 1rem; /* 16px */
+      height: 1rem;
+      margin-right: 0.5rem;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body class="text-white font-sans relative min-h-screen flex flex-col">
@@ -44,13 +52,25 @@
           <a href="#" class="hover:text-cyan-400 inline-block">Socials</a>
           <div class="absolute hidden group-hover:block bg-black bg-opacity-90 mt-2 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap">
             <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" class="w-4 h-4 mr-2" /> Discord
+              <!-- Discord SVG icon inline -->
+              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M20.317 4.3698A19.7913 19.7913 0 0016.179 3c-.251.423-.523.98-.715 1.414a17.3848 17.3848 0 00-5.929 0A12.2121 12.2121 0 009.82 3a19.7363 19.7363 0 00-4.138.369C2.833 9.68 2.108 15.822 2.58 21.921a22.7735 22.7735 0 006.201 1.965c.516-.71.974-1.455 1.372-2.234a13.1567 13.1567 0 01-2.128-.997c.178-.125.355-.254.53-.386a11.9696 11.9696 0 005.995 0c.175.132.352.261.53.386a13.0279 13.0279 0 01-2.128.997 14.7446 14.7446 0 001.372 2.234 22.7557 22.7557 0 006.202-1.965c.5-6.155-.259-12.285-3.662-17.552zM8.02 15.331c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.954 2.424-2.15 2.424zm7.974 0c-1.183 0-2.15-1.086-2.15-2.424 0-1.338.954-2.424 2.15-2.424 1.2 0 2.167 1.1 2.15 2.424 0 1.338-.95 2.424-2.15 2.424z"/>
+              </svg>
+              Discord
             </a>
             <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" class="w-4 h-4 mr-2" /> Twitter
+              <!-- X (Twitter) SVG icon inline -->
+              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M23.954 4.569a10.015 10.015 0 01-2.825.775 4.935 4.935 0 002.163-2.724 9.865 9.865 0 01-3.127 1.195 4.916 4.916 0 00-8.38 4.482A13.945 13.945 0 011.67 3.15 4.902 4.902 0 003.195 9.86a4.904 4.904 0 01-2.224-.616v.06a4.918 4.918 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.926 4.926 0 004.6 3.417A9.867 9.867 0 010 21.54 13.906 13.906 0 007.548 24c9.057 0 14.01-7.514 14.01-14.04 0-.213-.005-.425-.014-.636A10.012 10.012 0 0024 4.59z"/>
+              </svg>
+              Twitter
             </a>
             <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" class="w-4 h-4 mr-2" /> YouTube
+              <!-- YouTube SVG icon inline -->
+              <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M19.615 3.184c-1.727-.124-8.62-.124-8.62-.124s-6.893 0-8.62.124A3.248 3.248 0 001 6.422v11.156a3.248 3.248 0 001.375 3.238c1.727.124 8.62.124 8.62.124s6.893 0 8.62-.124a3.248 3.248 0 001.375-3.238V6.422a3.248 3.248 0 00-1.375-3.238zM9.55 15.568V8.436l6.178 3.566-6.178 3.566z"/>
+              </svg>
+              YouTube
             </a>
           </div>
         </div>
@@ -62,8 +82,8 @@
         </a>
 
         <div class="relative md:hidden">
-          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu">
-            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu" type="button">
+            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -110,13 +130,18 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-    let isHoveringMenu = false;
-    mobileMenu.addEventListener('mouseenter', () => isHoveringMenu = true);
-    mobileMenu.addEventListener('mouseleave', () => isHoveringMenu = false);
-
+    // Close menu only if click outside or on a menu link
     document.addEventListener('click', (e) => {
-      const isClickInside = mobileMenu.contains(e.target) || hamburgerBtn.contains(e.target);
-      if (!isClickInside && !isHoveringMenu) {
+      const clickInsideMenu = mobileMenu.contains(e.target);
+      const clickOnBtn = hamburgerBtn.contains(e.target);
+      const clickOnLink = e.target.closest('#mobileMenu a');
+
+      if (!clickInsideMenu && !clickOnBtn) {
+        mobileMenu.classList.add('hidden');
+      }
+
+      // Also close if user clicks a menu link
+      if (clickOnLink) {
         mobileMenu.classList.add('hidden');
       }
     });
