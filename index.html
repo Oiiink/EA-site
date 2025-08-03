@@ -47,7 +47,7 @@
     }
 
     button {
-      padding: 10px 20px;
+      padding: 10px 15px;
       background-color: #ffb300;
       border: none;
       border-radius: 8px;
@@ -77,10 +77,22 @@
       transition: width 0.2s;
     }
 
-    .levelInfo {
+    .levelInfo, .goldInfo, .upgradeSection {
       font-weight: bold;
       margin-bottom: 10px;
       color: #444;
+    }
+
+    .upgradeSection {
+      background: #fff3cd;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: 2px dashed #ffb300;
+    }
+
+    .upgradeButton {
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -88,13 +100,22 @@
   <h1>🐝 Bee Clicker Heroes</h1>
   <div id="game">
     <div class="levelInfo">Level <span id="level">1</span></div>
-    <img id="enemy" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png" width="150" />
+    <img id="enemy" src="" width="150" />
     <div id="hpBarContainer"><div id="hpBar"></div></div>
     <p>Enemy HP: <span id="enemyHp"></span> / <span id="enemyMaxHp"></span></p>
     <p>Total Clicks: <span id="clicks">0</span></p>
+    <p class="goldInfo">💰 Gold: <span id="gold">0</span></p>
     <div id="controls">
       <button onclick="prevLevel()">⬅️ Back</button>
       <button onclick="nextLevel()">➡️ Next</button>
+    </div>
+
+    <div class="upgradeSection">
+      <div>🔧 Upgrades</div>
+      <button class="upgradeButton" onclick="upgradeClick()">💪 Click Damage (+1) - 50 Gold</button><br>
+      <button class="upgradeButton" onclick="upgradeAuto()">🤖 Auto Clicker (+1/sec) - 100 Gold</button><br>
+      <p>Click Damage: <span id="clickDamageDisplay">1</span></p>
+      <p>Auto Clickers: <span id="autoClickers">0</span></p>
     </div>
   </div>
 
@@ -104,11 +125,23 @@
     const enemyHpDisplay = document.getElementById("enemyHp");
     const enemyMaxHpDisplay = document.getElementById("enemyMaxHp");
     const clicksDisplay = document.getElementById("clicks");
+    const goldDisplay = document.getElementById("gold");
     const levelDisplay = document.getElementById("level");
+    const clickDamageDisplay = document.getElementById("clickDamageDisplay");
+    const autoClickerDisplay = document.getElementById("autoClickers");
+
+    const beeEnemies = [
+      "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png",
+      "https://upload.wikimedia.org/wikipedia/commons/3/36/Cartoon_bee_2.png",
+      "https://upload.wikimedia.org/wikipedia/commons/0/0b/Cartoon_bee_cute.png"
+    ];
 
     let level = 1;
     let maxLevel = 1;
     let clicks = 0;
+    let gold = 0;
+    let clickDamage = 1;
+    let autoClickers = 0;
 
     let hp = 10;
     let maxHp = 10;
@@ -117,24 +150,34 @@
       return 10 + Math.floor(Math.pow(level, 1.5) * 5);
     }
 
+    function calculateGold(level) {
+      return 5 + Math.floor(level * 1.5);
+    }
+
     function updateUI() {
       enemyHpDisplay.textContent = Math.max(0, Math.floor(hp));
       enemyMaxHpDisplay.textContent = maxHp;
       levelDisplay.textContent = level;
-      hpBar.style.width = (hp / maxHp * 100) + "%";
       clicksDisplay.textContent = clicks;
+      goldDisplay.textContent = gold;
+      clickDamageDisplay.textContent = clickDamage;
+      autoClickerDisplay.textContent = autoClickers;
+      hpBar.style.width = (hp / maxHp * 100) + "%";
     }
 
     function resetEnemy() {
       maxHp = calculateHp(level);
       hp = maxHp;
+      enemy.src = beeEnemies[Math.floor(Math.random() * beeEnemies.length)];
       updateUI();
     }
 
     enemy.addEventListener("click", () => {
-      hp -= 1;
+      hp -= clickDamage;
       clicks++;
       if (hp <= 0) {
+        const goldEarned = calculateGold(level);
+        gold += goldEarned;
         level++;
         maxLevel = Math.max(maxLevel, level);
         resetEnemy();
@@ -156,7 +199,39 @@
       }
     }
 
-    // Start the game
+    function upgradeClick() {
+      if (gold >= 50) {
+        gold -= 50;
+        clickDamage += 1;
+        updateUI();
+      }
+    }
+
+    function upgradeAuto() {
+      if (gold >= 100) {
+        gold -= 100;
+        autoClickers += 1;
+        updateUI();
+      }
+    }
+
+    // Auto clicker loop
+    setInterval(() => {
+      if (autoClickers > 0 && hp > 0) {
+        hp -= autoClickers;
+        clicks += autoClickers;
+        if (hp <= 0) {
+          const goldEarned = calculateGold(level);
+          gold += goldEarned;
+          level++;
+          maxLevel = Math.max(maxLevel, level);
+          resetEnemy();
+        }
+        updateUI();
+      }
+    }, 1000);
+
+    // Start game
     resetEnemy();
   </script>
 </body>
