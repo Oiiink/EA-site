@@ -521,57 +521,46 @@
 
   // Game loop
   function gameLoop() {
-    // Clear
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Calculate camera offset to center player on screen
     const offsetX = player.x - canvas.width / 2;
     const offsetY = player.y - canvas.height / 2;
 
-    // Clamp offset so we don't see outside world edges
     const maxOffsetX = WORLD_WIDTH - canvas.width;
     const maxOffsetY = WORLD_HEIGHT - canvas.height;
 
     const camX = Math.min(Math.max(0, offsetX), maxOffsetX);
     const camY = Math.min(Math.max(0, offsetY), maxOffsetY);
 
-    // Spawn food/powerups if needed
+    // Move player toward mouse position (convert mouse to world coords)
+    const targetX = camX + mouse.x;
+    const targetY = camY + mouse.y;
+    player.moveToward(targetX, targetY);
+
     spawnFood();
     spawnPowerUps();
     spawnAIBlobs();
 
-    // Update AI blobs movement
     blobs.forEach(blob => {
       if (!blob.isPlayer) aiLogic(blob);
     });
 
-    // Update blobs
     blobs.forEach(blob => {
       blob.update();
     });
 
-    // Update ejected masses
     ejectedMasses.forEach(em => em.update());
 
-    // Handle collisions
     handleCollisions();
 
-    // Draw food
     foods.forEach(f => f.draw(ctx, camX, camY));
-
-    // Draw powerups
     powerups.forEach(p => p.draw(ctx, camX, camY));
-
-    // Draw ejected mass
     ejectedMasses.forEach(em => em.draw(ctx, camX, camY));
-
-    // Draw blobs
     blobs.forEach(blob => blob.draw(ctx, camX, camY));
 
-    // Update UI score
     document.getElementById('scoreBoard').textContent = 'Score: ' + Math.floor(player.mass);
 
-    // Update leaderboard
     drawLeaderboard();
 
     requestAnimationFrame(gameLoop);
