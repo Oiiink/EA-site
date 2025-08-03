@@ -327,7 +327,6 @@
     currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
     currentSeason = seasons[currentSeasonIndex];
     seasonEl.textContent = `Season: ${currentSeason}`;
-    // Update grow timers speed?
   }
 
   function createFarmPlots() {
@@ -405,7 +404,6 @@
     // Determine rarity with mutation chance
     const baseRarity = rarities[0]; // Start Common
     let mutationChance = 0.1; // Base mutation chance (10%)
-    // Fertilizer and season could affect mutation, omitted for simplicity here
     if (Math.random() < mutationChance) {
       // Upgrade rarity by one level if possible
       const baseIndex = rarities.indexOf(baseRarity);
@@ -425,7 +423,7 @@
     if (fertilizerCount > 0) {
       plot.totalGrowTime *= 0.85; // 15% faster growth
       fertilizerCount--;
-      alert("Fertilizer used! Growth speed increased.");
+      // Fertilizer used! Growth speed increased (no popup)
       updateStats();
     }
 
@@ -503,10 +501,7 @@
 
   function harvestCrop(plotIndex) {
     const plot = farmPlots[plotIndex];
-    if (!plot.planted) {
-      alert("Plot is empty.");
-      return;
-    }
+    if (!plot.planted) return;
     if (plot.growthStage < plot.crop.growthStages - 1) {
       alert("Crop not fully grown yet!");
       return;
@@ -519,7 +514,6 @@
     price = Math.round(price * seasonEffects[currentSeason].sellPriceMultiplier);
 
     gold += price;
-    alert(`Harvested ${plot.crop.name} (${plot.rarity.label}) - Large size for ${price} gold!`);
 
     plot.planted = false;
     plot.crop = null;
@@ -569,8 +563,6 @@
           seedsInventory[item.name] = (seedsInventory[item.name] || 0) + 1;
           updateStats();
           renderSeedInventory();
-        } else {
-          alert("Not enough gold!");
         }
       });
       marketGridEl.appendChild(div);
@@ -605,16 +597,12 @@
       gold -= 30;
       fertilizerCount++;
       updateStats();
-      alert("Fertilizer bought!");
-    } else {
-      alert("Not enough gold for fertilizer.");
     }
   });
 
   // Buy seed button (random seed in market)
   document.getElementById('buySeedBtn').addEventListener('click', () => {
     if (marketStock.length === 0) {
-      alert("Market is empty! Wait for restock.");
       return;
     }
     const seed = marketStock[Math.floor(Math.random() * marketStock.length)];
@@ -623,9 +611,6 @@
       seedsInventory[seed.name] = (seedsInventory[seed.name] || 0) + 1;
       updateStats();
       renderSeedInventory();
-      alert(`Bought 1 ${seed.name} seed for 50g.`);
-    } else {
-      alert("Not enough gold to buy seed.");
     }
   });
 
@@ -650,5 +635,6 @@
 
   init();
 </script>
+
 </body>
 </html>
