@@ -54,7 +54,8 @@
         { cost: 40, damage: 15, range: 140, fireRate: 900 },
         { cost: 80, damage: 20, range: 160, fireRate: 800 },
         { cost: 120, damage: 25, range: 180, fireRate: 700 }
-      ]
+      ],
+      // No special ability
     },
     rapid: {
       name: "Rapid Fire",
@@ -66,7 +67,9 @@
         { cost: 50, damage: 8, range: 120, fireRate: 350 },
         { cost: 90, damage: 10, range: 130, fireRate: 300 },
         { cost: 130, damage: 12, range: 150, fireRate: 250 }
-      ]
+      ],
+      specialCooldown: 15000, // 15 sec cooldown
+      specialDuration: 5000, // 5 sec rapid burst
     },
     slow: {
       name: "Slowdown",
@@ -80,7 +83,9 @@
         { cost: 150, damage: 10, range: 160, fireRate: 1000 }
       ],
       slowEffect: 0.5,
-      slowDuration: 2000
+      slowDuration: 2000,
+      specialCooldown: 20000, // 20 sec cooldown
+      specialDuration: 4000, // 4 sec all slow in range
     }
   };
 
@@ -91,28 +96,32 @@
       maxHealth: 30,
       speed: 1.8,
       reward: 8,
-      color: "#ffdd57"
+      color: "#ffdd57",
+      dodgeChance: 0.2 // 20% chance to dodge projectiles
     },
     tank: {
       name: "Bee Tank",
       maxHealth: 120,
       speed: 0.8,
       reward: 20,
-      color: "#b88723"
+      color: "#b88723",
+      dodgeChance: 0.05
     },
     bomber: {
       name: "Bee Bomber",
       maxHealth: 50,
       speed: 1.3,
       reward: 15,
-      color: "#de354c"
+      color: "#de354c",
+      dodgeChance: 0.1
     },
     worker: {
       name: "Bee Worker",
       maxHealth: 70,
       speed: 1.2,
       reward: 12,
-      color: "#34a853"
+      color: "#34a853",
+      dodgeChance: 0.15
     }
   };
 
@@ -231,7 +240,10 @@
 
   function generateTowerTooltip(type) {
     const t = towerTypes[type];
-    return `${t.name}\nDamage: ${t.damage}\nRange: ${t.range}\nFire Rate: ${(t.fireRate/1000).toFixed(2)}s\nCost: $${t.baseCost}`;
+    let specialText = "";
+    if(type === "rapid") specialText = "Special: Burst Mode (5s every 15s)";
+    else if(type === "slow") specialText = "Special: Area Slow (4s every 20s)";
+    return `${t.name}\nDamage: ${t.damage}\nRange: ${t.range}\nFire Rate: ${(t.fireRate/1000).toFixed(2)}s\nCost: $${t.baseCost}\n${specialText}`;
   }
 
   // Tower info UI update
@@ -246,16 +258,27 @@
       <p><strong>${typeData.name}</strong> (Level ${tower.level + 1})</p>
       <p>Damage: ${tower.damage}</p>
       <p>Range: ${tower.range}</p>
-      <p>Fire Rate: ${(tower.fireRate/1000).toFixed(2)}s</p>
+      <p>Fire Rate: ${(tower.fireRate / 1000).toFixed(2)}s</p>
     `;
+
+    // Show special ability cooldown if any
+    if(typeData.specialCooldown) {
+      const now = Date.now();
+      const cdLeft = tower.specialCooldownEnd ? Math.max(0, tower.specialCooldownEnd - now) : 0;
+      html += `<p>Special Ability: ${cdLeft > 0 ? `Ready in ${(cdLeft/1000).toFixed(1)}s` : 'Ready!'}</p>`;
+    }
+
+    towerInfoDiv.innerHTML = html;
+
+    // Upgrade buttons
     upgradeButtonsDiv.innerHTML = '';
-    const nextUpgrade = typeData.upgrades[tower.level];
-    if(nextUpgrade) {
+    if (tower.level < typeData.upgrades.length) {
+      const nextUpgrade = typeData.upgrades[tower.level];
+      const cost = Math.floor(nextUpgrade.cost * upgradeCostMultiplier);
+
       const btn = document.createElement('button');
+      btn.textContent = `Upgrade - $${cost}`;
       btn.className = 'upgrade-btn';
-      // Upgrade cost multiplied by challenge modifier
-      const cost = Math.ceil(nextUpgrade.cost * upgradeCostMultiplier);
-      btn.textContent = `Upgrade ($${cost})`;
       btn.disabled = money < cost;
       btn.onclick = () => {
         if(money >= cost) {
@@ -264,21 +287,72 @@
           tower.damage = nextUpgrade.damage;
           tower.range = nextUpgrade.range;
           tower.fireRate = nextUpgrade.fireRate;
+          updateUI();
           updateTowerInfo(tower);
           messageDiv.textContent = `${typeData.name} upgraded!`;
-          updateUI();
+          placeAbilityEffect(tower.x, tower.y);
         } else {
-          messageDiv.textContent = 'Not enough money to upgrade!';
+          messageDiv.textContent = "Not enough money to upgrade!";
         }
       };
       upgradeButtonsDiv.appendChild(btn);
     } else {
-      upgradeButtonsDiv.textContent = 'Max level reached.';
+      upgradeButtonsDiv.innerHTML = '<p><em>Max level reached</em></p>';
     }
-    towerInfoDiv.innerHTML = html;
+
+    // Special ability button if available and ready
+    if (typeData.specialCooldown) {
+      const specialBtn = document.createElement('button');
+      specialBtn.textContent = "Activate Special Ability";
+      specialBtn.className = 'upgrade-btn';
+      const now = Date.now();
+      const cdLeft = tower.specialCooldownEnd ? tower.specialCooldownEnd - now : 0;
+      specialBtn.disabled = cdLeft > 0;
+      specialBtn.onclick = () => {
+        if (cdLeft <= 0) {
+          activateSpecialAbility(tower);
+          tower.specialCooldownEnd = Date.now() + typeData.specialCooldown;
+          updateTowerInfo(tower);
+        }
+      };
+      upgradeButtonsDiv.appendChild(specialBtn);
+    }
   }
 
-  // Check if tower can be placed on given tile (not obstacle, no tower, not path)
+  // Visual effect for tower special ability activation
+  function placeAbilityEffect(x, y) {
+    const effect = document.createElement('div');
+    effect.className = 'ability-effect';
+    effect.style.left = `${x - 25}px`;
+    effect.style.top = `${y - 25}px`;
+    effect.style.width = '50px';
+    effect.style.height = '50px';
+    effect.style.border = '3px solid #f8b500';
+    effect.style.boxShadow = '0 0 15px #f8b500aa';
+    document.getElementById('game-container').appendChild(effect);
+    setTimeout(() => {
+      effect.remove();
+    }, 1200);
+  }
+
+  // Activate special ability depending on tower type
+  function activateSpecialAbility(tower) {
+    const typeData = towerTypes[tower.type];
+    if(tower.type === 'rapid') {
+      tower.isBurstMode = true;
+      tower.burstModeEnd = Date.now() + typeData.specialDuration;
+      messageDiv.textContent = `${typeData.name} activated Burst Mode!`;
+      placeAbilityEffect(tower.x, tower.y);
+    }
+    if(tower.type === 'slow') {
+      tower.isAreaSlow = true;
+      tower.areaSlowEnd = Date.now() + typeData.specialDuration;
+      messageDiv.textContent = `${typeData.name} activated Area Slow!`;
+      placeAbilityEffect(tower.x, tower.y);
+    }
+  }
+
+  // Check if tile can have a tower placed
   function canPlaceTower(col, row) {
     if(col < 0 || col >= MAP_COLS || row < 0 || row >= MAP_ROWS) return false;
     if(towerGrid[row][col]) return false;
@@ -306,6 +380,11 @@
       this.lastShot = 0;
       this.slowEffect = data.slowEffect || 0;
       this.slowDuration = data.slowDuration || 0;
+      this.isBurstMode = false;
+      this.burstModeEnd = 0;
+      this.isAreaSlow = false;
+      this.areaSlowEnd = 0;
+      this.specialCooldownEnd = 0;
     }
   }
 
@@ -323,17 +402,45 @@
       this.y = path[0].y * TILE_SIZE + TILE_SIZE/2;
       this.currentPathIndex = 0;
       this.slowedUntil = 0;
+      this.dodgeChance = data.dodgeChance || 0;
+      this.isDodging = false;
+      this.dodgeEndTime = 0;
+      this.speedBoostEnd = 0;
     }
 
     update(dt, currentTime) {
       if(this.health <= 0) return false;
 
-      // Apply slow effect
+      // Handle dodge logic (enemy tries to dodge projectiles)
+      if(this.isDodging) {
+        if(currentTime > this.dodgeEndTime) {
+          this.isDodging = false;
+        } else {
+          // Move faster temporarily in dodge direction
+          this.speedBoostEnd = currentTime + 300; // small boost after dodge ends
+        }
+      } else {
+        // Random chance to dodge projectiles if any nearby
+        if(this.canSeeProjectile() && Math.random() < this.dodgeChance * dt * 2) {
+          this.isDodging = true;
+          this.dodgeEndTime = currentTime + 700;
+          messageDiv.textContent = `${enemyTypes[this.type].name} dodged a projectile!`;
+        }
+      }
+
       let currentSpeed = this.speed;
+
+      // Apply speed boost if dodging or boosted
+      if(this.isDodging || currentTime < this.speedBoostEnd) {
+        currentSpeed *= 2.5;
+      }
+
+      // Apply slow effect if any
       if(currentTime < this.slowedUntil) {
         currentSpeed *= 0.5;
       }
 
+      // Move along path
       const targetIndex = this.currentPathIndex + 1;
       if(targetIndex >= path.length) return true; // reached base
 
@@ -356,6 +463,16 @@
       return false;
     }
 
+    // Check if enemy sees projectile nearby (simple proximity)
+    canSeeProjectile() {
+      for(const p of projectiles) {
+        if(!p.active) continue;
+        const dist = Math.hypot(p.x - this.x, p.y - this.y);
+        if(dist < 70) return true;
+      }
+      return false;
+    }
+
     draw(ctx) {
       ctx.fillStyle = this.color;
       ctx.beginPath();
@@ -370,6 +487,16 @@
       ctx.fillRect(this.x - healthBarWidth/2, this.y - 22, healthBarWidth, healthBarHeight);
       ctx.fillStyle = '#2ecc71';
       ctx.fillRect(this.x - healthBarWidth/2, this.y - 22, healthBarWidth * healthPercent, healthBarHeight);
+
+      // If dodging, show a little swirl
+      if(this.isDodging) {
+        ctx.strokeStyle = '#f1c40f';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 20, 0, Math.PI * 1.5);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
     }
   }
 
@@ -389,6 +516,12 @@
 
     update(dt) {
       if(!this.active || !this.target) return false;
+
+      // Check if target is dodging; 70% chance to miss if dodging active
+      if(this.target.isDodging && Math.random() < 0.7) {
+        this.active = false; // projectile missed due to dodge
+        return true;
+      }
 
       const dx = this.target.x - this.x;
       const dy = this.target.y - this.y;
@@ -468,6 +601,24 @@
       ctx.beginPath();
       ctx.arc(t.x, t.y, 10, 0, Math.PI * 2);
       ctx.fill();
+
+      // Show special ability active glow
+      if(t.isBurstMode) {
+        ctx.strokeStyle = '#f1c40f';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+      if(t.isAreaSlow) {
+        ctx.strokeStyle = '#3498db';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
     });
   }
 
@@ -483,7 +634,7 @@
 
   // Update UI
   function updateUI() {
-    baseHealthDisplay.textContent = `Base Health: ${baseHealth + baseHealthModifier}`;
+    baseHealthDisplay.textContent = `Base Health: ${Math.floor(baseHealth + baseHealthModifier)}`;
     moneyDisplay.textContent = `Money: ${money}`;
     waveInfoDisplay.textContent = `Wave: ${waveNumber}`;
   }
@@ -515,11 +666,7 @@
     // Calculate enemies to spawn
     enemiesToSpawn = Math.floor(5 + waveNumber * 2 * enemyCountMultiplier);
 
-    // Spawn enemies of random types weighted by wave number
-    // (Simple: increase tougher enemies chance over time)
-    // We'll spawn mostly scout early waves, then more tanks/bombers/workers later
-
-    // Reset path, towers etc? No, keep as is.
+    updateUI();
   }
 
   // Show challenge popup
@@ -548,7 +695,6 @@
 
   // Get random enemy type based on wave
   function getRandomEnemyType() {
-    // Weighted by wave to introduce tougher enemies
     const rand = Math.random();
     if(waveNumber < 3) return 'scout';
     if(waveNumber < 6) {
@@ -556,7 +702,6 @@
       if(rand < 0.85) return 'worker';
       return 'bomber';
     }
-    // wave 6+
     if(rand < 0.4) return 'scout';
     if(rand < 0.7) return 'worker';
     if(rand < 0.85) return 'bomber';
@@ -616,19 +761,47 @@
 
     // Update towers (target and shoot)
     towers.forEach(tower => {
-      if(time - tower.lastShot > tower.fireRate) {
-        // Find target in range
+      // Handle special abilities duration
+      const now = Date.now();
+      if(tower.isBurstMode && now > tower.burstModeEnd) {
+        tower.isBurstMode = false;
+      }
+      if(tower.isAreaSlow && now > tower.areaSlowEnd) {
+        tower.isAreaSlow = false;
+      }
+
+      // Fire rate modifier if burst mode active
+      const fireRateMod = tower.isBurstMode ? 0.3 : 1;
+      if(time - tower.lastShot > tower.fireRate * fireRateMod) {
+        // Find nearest enemy in range
         let target = null;
-        let closestDist = 9999;
-        for(let enemy of enemies) {
+        let minDist = Infinity;
+        for(const enemy of enemies) {
           const dist = pointDistance(tower.x, tower.y, enemy.x, enemy.y);
-          if(dist <= tower.range && dist < closestDist) {
-            closestDist = dist;
+          if(dist <= tower.range && enemy.health > 0 && dist < minDist) {
             target = enemy;
+            minDist = dist;
           }
         }
         if(target) {
-          projectiles.push(new Projectile(tower.x, tower.y, target, tower.damage, tower.slowEffect, tower.slowDuration));
+          // Shoot projectile
+          let slowEff = 0, slowDur = 0;
+          if(tower.isAreaSlow) {
+            // Apply slow to all enemies in range instantly
+            enemies.forEach(e => {
+              const dist = pointDistance(tower.x, tower.y, e.x, e.y);
+              if(dist <= tower.range) {
+                e.slowedUntil = Date.now() + tower.slowDuration;
+              }
+            });
+            slowEff = tower.slowEffect;
+            slowDur = tower.slowDuration;
+            messageDiv.textContent = `Slowdown tower slowed nearby enemies!`;
+            placeAbilityEffect(tower.x, tower.y);
+            tower.isAreaSlow = false; // reset after applying
+          }
+          const proj = new Projectile(tower.x, tower.y, target, tower.damage, slowEff, slowDur);
+          projectiles.push(proj);
           tower.lastShot = time;
         }
       }
@@ -636,11 +809,9 @@
 
     // Update projectiles
     for(let i = projectiles.length - 1; i >= 0; i--) {
-      const p = projectiles[i];
-      const hit = p.update(dt);
-      if(!p.active) {
-        projectiles.splice(i, 1);
-      }
+      const proj = projectiles[i];
+      const hit = proj.update(dt);
+      if(hit) projectiles.splice(i, 1);
     }
 
     drawTowers();
@@ -650,93 +821,67 @@
     requestAnimationFrame(update);
   }
 
-  // Handle mouse clicks on canvas to place/select towers
-  canvas.addEventListener('click', (e) => {
+  // Handle mouse clicks for tower placement and selecting towers
+  canvas.addEventListener('click', e => {
     if(gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+
     const col = Math.floor(mouseX / TILE_SIZE);
     const row = Math.floor(mouseY / TILE_SIZE);
 
     if(placingTower && selectedTowerType) {
       if(canPlaceTower(col, row)) {
-        // Place tower centered in tile
-        const x = col * TILE_SIZE + TILE_SIZE / 2;
-        const y = row * TILE_SIZE + TILE_SIZE / 2;
-
-        // Check cost
         const cost = towerTypes[selectedTowerType].baseCost;
         if(money >= cost) {
           money -= cost;
-          const newTower = new Tower(x, y, selectedTowerType);
-          towers.push(newTower);
+          const towerX = col * TILE_SIZE + TILE_SIZE / 2;
+          const towerY = row * TILE_SIZE + TILE_SIZE / 2;
+          const tower = new Tower(towerX, towerY, selectedTowerType);
+          towers.push(tower);
           towerGrid[row][col] = true;
-          messageDiv.textContent = `${towerTypes[selectedTowerType].name} placed!`;
-          updateUI();
           placingTower = false;
           selectedTowerType = null;
           towerOptions.forEach(opt => opt.classList.remove('selected'));
-          updateTowerInfo(null);
+          updateUI();
+          messageDiv.textContent = 'Tower placed!';
         } else {
           messageDiv.textContent = 'Not enough money to place tower!';
         }
       } else {
-        messageDiv.textContent = 'Cannot place tower here!';
+        messageDiv.textContent = 'Invalid tower placement!';
       }
     } else {
-      // Select tower if clicked on one
+      // Check if clicked on a tower to select it
       let foundTower = null;
-      for(let t of towers) {
-        const dist = Math.hypot(mouseX - t.x, mouseY - t.y);
-        if(dist < 20) {
+      for(const t of towers) {
+        if(pointDistance(mouseX, mouseY, t.x, t.y) < 20) {
           foundTower = t;
           break;
         }
       }
-      if(foundTower) {
-        selectedTower = foundTower;
-        updateTowerInfo(foundTower);
-        messageDiv.textContent = `${towerTypes[foundTower.type].name} selected. Upgrade or place new towers.`;
-      } else {
-        selectedTower = null;
-        updateTowerInfo(null);
-        messageDiv.textContent = '';
-      }
+      selectedTower = foundTower;
+      updateTowerInfo(selectedTower);
+      placingTower = false;
+      selectedTowerType = null;
+      towerOptions.forEach(opt => opt.classList.remove('selected'));
+      if(!foundTower) messageDiv.textContent = 'No tower selected';
+      else messageDiv.textContent = `Selected ${towerTypes[foundTower.type].name}`;
     }
   });
 
-  // Wave progression: new wave starts automatically after all enemies dead
-  function checkWaveProgress() {
-    if(!gameOver && enemies.length === 0 && enemiesToSpawn === 0 && challengePopup.style.display === 'none') {
-      messageDiv.textContent = `Wave ${waveNumber} complete! Next wave in 3 seconds.`;
-      setTimeout(() => {
-        if(!gameOver) {
-          spawnWave();
-        }
-      }, 3000);
+  // Start first wave automatically after challenge popup closes
+  challengeCloseBtn.addEventListener('click', () => {
+    if(!gameOver && enemies.length === 0 && enemiesToSpawn === 0) {
+      spawnWave();
     }
-  }
-  setInterval(checkWaveProgress, 1000);
+  });
 
-  // Start first wave and initialize UI
-  function startGame() {
-    baseHealth = BASE_HEALTH_START;
-    money = INITIAL_MONEY;
-    waveNumber = 0;
-    enemies = [];
-    towers = [];
-    projectiles = [];
-    gameOver = false;
-    towerGrid = new Array(MAP_ROWS).fill(null).map(() => new Array(MAP_COLS).fill(false));
-    selectedTowerType = null;
-    selectedTower = null;
-    placingTower = false;
-    messageDiv.textContent = 'Select a tower to place.';
-    updateUI();
-    spawnWave();
-    requestAnimationFrame(update);
-  }
+  // Start initial wave with challenge popup
+  spawnWave();
 
-  startGame();
+  updateUI();
+  requestAnimationFrame(update);
 })();
+
