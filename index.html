@@ -20,7 +20,6 @@
 
     .tile {
       transition: all 0.3s ease;
-      transform: scale(1);
     }
 
     .tile.revealed {
@@ -28,28 +27,44 @@
     }
 
     @keyframes flip {
-      0% {
-        transform: rotateX(0);
-      }
+      0% { transform: rotateX(0); }
       50% {
         transform: rotateX(90deg);
         background-color: #1f2937;
         color: white;
       }
-      100% {
-        transform: rotateX(0);
-      }
+      100% { transform: rotateX(0); }
     }
   </style>
 </head>
 <body class="text-white font-sans relative min-h-screen flex flex-col">
-
   <div class="overlay"></div>
 
   <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 max-w-3xl mx-auto">
     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-6">Event Alerts Wordle</h1>
     <p class="text-gray-300 mb-6">Guess the 5-letter word! New word every refresh.</p>
-    <div id="wordle-game" class="space-y-2"></div>
+
+    <div id="wordle-game" class="space-y-2 mb-8"></div>
+
+    <div id="keyboard" class="grid gap-2 text-black font-bold select-none">
+      <div class="flex justify-center gap-1">
+        "QWERTYUIOP".split("").forEach(letter => {
+          document.write(`<button class="key bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded w-10" data-key="${letter}">${letter}</button>`);
+        });
+      </div>
+      <div class="flex justify-center gap-1">
+        "ASDFGHJKL".split("").forEach(letter => {
+          document.write(`<button class="key bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded w-10" data-key="${letter}">${letter}</button>`);
+        });
+      </div>
+      <div class="flex justify-center gap-1">
+        document.write(`<button class="key bg-yellow-400 px-2 py-2 rounded w-14" data-key="ENTER">Enter</button>`);
+        "ZXCVBNM".split("").forEach(letter => {
+          document.write(`<button class="key bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded w-10" data-key="${letter}">${letter}</button>`);
+        });
+        document.write(`<button class="key bg-red-400 px-2 py-2 rounded w-14" data-key="BACKSPACE">Del</button>`);
+      </div>
+    </div>
   </main>
 
   <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
@@ -61,7 +76,9 @@
   </footer>
 
   <script>
-    const WORDS = ["apple", "event", "modem", "skepp", "utils", "alert", "track", "fight", "games", "party"];
+    // Encode the word list so it's not visible in plain text
+    const encoded = "YXBwbGUsZXZlbnQsbW9kZW0sc2tlcHAsdXRpbHMsYWxlcnQsdHJhY2ssZmlnaHQsZ2FtZXMscGFydHk=";
+    const WORDS = atob(encoded).split(",");
     const targetWord = WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
     const MAX_GUESSES = 6;
 
@@ -80,21 +97,6 @@
       }
       game.appendChild(row);
     }
-
-    document.addEventListener("keydown", (e) => {
-      const key = e.key.toUpperCase();
-      if (currentRow >= MAX_GUESSES) return;
-
-      if (key === "BACKSPACE") {
-        currentGuess = currentGuess.slice(0, -1);
-        updateRow();
-      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
-        currentGuess += key;
-        updateRow();
-      } else if (key === "ENTER" && currentGuess.length === 5) {
-        revealGuess();
-      }
-    });
 
     function updateRow() {
       const row = game.children[currentRow];
@@ -120,14 +122,14 @@
           cell.classList.add("revealed");
 
           if (letter === targetWord[i]) {
-            cell.style.backgroundColor = "#16a34a"; // green
+            cell.style.backgroundColor = "#16a34a";
             cell.style.borderColor = "#16a34a";
           } else if (used.includes(letter)) {
-            cell.style.backgroundColor = "#eab308"; // yellow
+            cell.style.backgroundColor = "#eab308";
             cell.style.borderColor = "#eab308";
             used[used.indexOf(letter)] = null;
           } else {
-            cell.style.backgroundColor = "#374151"; // gray
+            cell.style.backgroundColor = "#374151";
             cell.style.borderColor = "#374151";
           }
         }, i * 300);
@@ -135,19 +137,49 @@
 
       if (guess === targetWord) {
         setTimeout(() => alert("You got it!"), 1600);
-        document.removeEventListener("keydown", handleKeyPress);
+        disableInput();
       } else {
         currentRow++;
         currentGuess = "";
         if (currentRow >= MAX_GUESSES) {
           setTimeout(() => alert(`Out of guesses! The word was ${targetWord}`), 1600);
+          disableInput();
         }
       }
     }
 
-    function handleKeyPress(e) {
-      // unused now (for removeEventListener reference)
+    function handleInput(key) {
+      if (currentRow >= MAX_GUESSES) return;
+
+      if (key === "BACKSPACE") {
+        currentGuess = currentGuess.slice(0, -1);
+        updateRow();
+      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
+        currentGuess += key;
+        updateRow();
+      } else if (key === "ENTER" && currentGuess.length === 5) {
+        revealGuess();
+      }
     }
+
+    function disableInput() {
+      document.removeEventListener("keydown", keyListener);
+      document.querySelectorAll(".key").forEach(k => k.disabled = true);
+    }
+
+    function keyListener(e) {
+      handleInput(e.key.toUpperCase());
+    }
+
+    document.addEventListener("keydown", keyListener);
+
+    // Keyboard button clicks
+    document.querySelectorAll(".key").forEach(button => {
+      button.addEventListener("click", () => {
+        const key = button.getAttribute("data-key");
+        handleInput(key);
+      });
+    });
   </script>
 </body>
 </html>
