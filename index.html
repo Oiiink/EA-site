@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Stock Market Simulator with Charts</title>
+<title>Stock Market Simulator with Candlestick Charts</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,7 +21,7 @@
     text-align: center;
   }
   #stocks {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto 20px auto;
     border-collapse: collapse;
     width: 100%;
@@ -57,7 +57,7 @@
     text-align: center;
   }
   #log {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
     background: white;
     padding: 10px;
@@ -72,8 +72,8 @@
   canvas.priceChart {
     display: block;
     margin: 8px auto 4px auto;
-    width: 260px;
-    height: 80px;
+    width: 300px;
+    height: 100px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background: #fff;
@@ -81,7 +81,7 @@
 </style>
 </head>
 <body>
-  <h1>Stock Market Simulator with Charts</h1>
+  <h1>Stock Market Simulator with Candlestick Charts</h1>
   <div id="balance">Cash: $1000.00 | Portfolio Value: $0.00 | Total: $1000.00</div>
   <table id="stocks">
     <thead>
@@ -99,10 +99,9 @@
   <div id="log"></div>
 
 <script>
-  // Initial player money
   let cash = 1000;
 
-  // Stocks data - symbol, name, current price, owned shares, price history
+  // Each candle contains open, high, low, close, volume
   const stocks = [
     { symbol: "APL", name: "Apple", price: 150, owned: 0, history: [] },
     { symbol: "GGL", name: "Google", price: 2800, owned: 0, history: [] },
@@ -133,7 +132,6 @@
     log.textContent = `[${time}] ${text}\n` + log.textContent;
   }
 
-  // Create row for each stock
   function createStockRow(stock) {
     const tr = document.createElement("tr");
     tr.id = `row-${stock.symbol}`;
@@ -145,20 +143,18 @@
     tdPrice.id = `price-${stock.symbol}`;
     tdPrice.textContent = formatMoney(stock.price);
 
-    // Price chart canvas
     const tdChart = document.createElement("td");
     const canvas = document.createElement("canvas");
     canvas.className = "priceChart";
     canvas.id = `chart-${stock.symbol}`;
-    canvas.width = 260;
-    canvas.height = 80;
+    canvas.width = 300;
+    canvas.height = 100;
     tdChart.appendChild(canvas);
 
     const tdOwned = document.createElement("td");
     tdOwned.id = `owned-${stock.symbol}`;
     tdOwned.textContent = stock.owned;
 
-    // Buy controls
     const tdBuy = document.createElement("td");
     const buyInput = document.createElement("input");
     buyInput.type = "number";
@@ -172,7 +168,6 @@
     tdBuy.appendChild(buyInput);
     tdBuy.appendChild(buyBtn);
 
-    // Sell controls
     const tdSell = document.createElement("td");
     const sellInput = document.createElement("input");
     sellInput.type = "number";
@@ -196,7 +191,6 @@
     return tr;
   }
 
-  // Render all stocks
   function renderStocks() {
     stockBody.innerHTML = "";
     stocks.forEach(stock => {
@@ -204,7 +198,6 @@
     });
   }
 
-  // Buy stock function
   function buyStock(symbol, amountStr) {
     const amount = parseInt(amountStr);
     if (isNaN(amount) || amount < 1) {
@@ -224,7 +217,6 @@
     logEvent(`Bought ${amount} shares of ${stock.symbol} for $${formatMoney(cost)}`);
   }
 
-  // Sell stock function
   function sellStock(symbol, amountStr) {
     const amount = parseInt(amountStr);
     if (isNaN(amount) || amount < 1) {
@@ -244,29 +236,27 @@
     logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
   }
 
-  // Draw price history chart for a stock
-  function drawChart(stock) {
+  // Draw candlestick chart for a stock
+  function drawCandlestickChart(stock) {
     const canvas = document.getElementById(`chart-${stock.symbol}`);
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const history = stock.history;
-    if (history.length < 2) return;
+    const candles = stock.history;
+    if (candles.length < 2) return;
 
     const w = canvas.width;
     const h = canvas.height;
-    const padding = 5;
+    const padding = 20;
+    const candleWidth = (w - 2 * padding) / candles.length * 0.7;
 
-    // Find min and max price in history for scaling
-    let minPrice = Math.min(...history);
-    let maxPrice = Math.max(...history);
-    if (minPrice === maxPrice) maxPrice = minPrice + 1; // avoid div by zero
+    // Find min and max prices in history for scaling
+    let minPrice = Math.min(...candles.map(c => c.low));
+    let maxPrice = Math.max(...candles.map(c => c.high));
+    if (minPrice === maxPrice) maxPrice = minPrice + 1;
 
-    // Scale helper
-    function scaleX(i) {
-      return padding + (i / (history.length - 1)) * (w - 2 * padding);
-    }
+    // Helpers to scale prices to canvas y
     function scaleY(price) {
       return h - padding - ((price - minPrice) / (maxPrice - minPrice)) * (h - 2 * padding);
     }
@@ -274,63 +264,107 @@
     // Draw grid lines horizontally
     ctx.strokeStyle = "#eee";
     ctx.lineWidth = 1;
-    ctx.beginPath();
+    ctx.font = "10px monospace";
+    ctx.fillStyle = "#666";
+    ctx.textAlign = "right";
     for(let i=0; i<=4; i++) {
-      const y = padding + i * ( (h - 2 * padding) / 4);
+      let price = minPrice + (maxPrice - minPrice) * i / 4;
+      let y = scaleY(price);
+      ctx.beginPath();
       ctx.moveTo(padding, y);
       ctx.lineTo(w - padding, y);
-    }
-    ctx.stroke();
-
-    // Draw line segments colored green if price up, red if down
-    ctx.lineWidth = 2;
-    for(let i=1; i<history.length; i++) {
-      const x1 = scaleX(i-1);
-      const y1 = scaleY(history[i-1]);
-      const x2 = scaleX(i);
-      const y2 = scaleY(history[i]);
-      ctx.strokeStyle = history[i] >= history[i-1] ? "green" : "red";
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
       ctx.stroke();
+      ctx.fillText(price.toFixed(2), padding - 5, y + 3);
     }
+
+    // Draw candles
+    candles.forEach((candle, i) => {
+      const x = padding + i * ((w - 2 * padding) / candles.length) + ((w - 2 * padding) / candles.length - candleWidth) / 2;
+      const openY = scaleY(candle.open);
+      const closeY = scaleY(candle.close);
+      const highY = scaleY(candle.high);
+      const lowY = scaleY(candle.low);
+
+      const candleColor = candle.close >= candle.open ? "green" : "red";
+
+      // Wick
+      ctx.strokeStyle = candleColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + candleWidth/2, highY);
+      ctx.lineTo(x + candleWidth/2, lowY);
+      ctx.stroke();
+
+      // Body
+      ctx.fillStyle = candleColor;
+      const bodyY = Math.min(openY, closeY);
+      const bodyHeight = Math.max(1, Math.abs(closeY - openY));
+      ctx.fillRect(x, bodyY, candleWidth, bodyHeight);
+    });
   }
 
-  // Randomly fluctuate stock prices every 5 seconds and update history
+  // Generate new candle from last price - simulate OHLC & volume
+  function generateNextCandle(stock) {
+    const lastCandle = stock.history.length ? stock.history[stock.history.length - 1] : null;
+    let open = lastCandle ? lastCandle.close : stock.price;
+    let high = open;
+    let low = open;
+    let close = open;
+
+    // Simulate price movement for OHLC
+    const volatility = open * 0.05; // ~5% max move
+
+    // Random open-close move
+    close = open + (Math.random() * 2 - 1) * volatility;
+
+    // High and low within open and close plus some noise
+    high = Math.max(open, close) + Math.random() * volatility * 0.5;
+    low = Math.min(open, close) - Math.random() * volatility * 0.5;
+
+    // Clamp prices so none go below 1
+    low = Math.max(1, low);
+    close = Math.max(1, close);
+    high = Math.max(high, low, close);
+
+    return { open, high, low, close };
+  }
+
   function fluctuatePrices() {
     stocks.forEach(stock => {
-      // Store previous price
-      if (stock.history.length >= 50) stock.history.shift(); // keep history max 50 points
-      stock.history.push(stock.price);
+      // Add new candle
+      const newCandle = generateNextCandle(stock);
+      stock.history.push(newCandle);
 
-      // Change price between -5% and +5%
-      const changePercent = (Math.random() * 10 - 5);
-      const changeAmount = stock.price * (changePercent / 100);
-      stock.price += changeAmount;
+      // Limit history size
+      if (stock.history.length > 50) stock.history.shift();
 
-      // Clamp minimum price to 1
-      if (stock.price < 1) stock.price = 1;
+      // Update current price to latest candle close
+      stock.price = newCandle.close;
 
       // Update price UI
       const priceTd = document.getElementById(`price-${stock.symbol}`);
       if (priceTd) {
         priceTd.textContent = formatMoney(stock.price);
-        priceTd.style.color = changePercent > 0 ? "green" : (changePercent < 0 ? "red" : "#222");
+        priceTd.style.color = (newCandle.close >= newCandle.open) ? "green" : "red";
       }
 
-      drawChart(stock);
+      drawCandlestickChart(stock);
     });
     updateBalance();
   }
 
   // Initial setup
-  stocks.forEach(s => s.history.push(s.price)); // initialize history with starting price
+  stocks.forEach(stock => {
+    // Seed initial history with stable candles
+    for(let i=0; i<20; i++) {
+      stock.history.push({ open: stock.price, high: stock.price, low: stock.price, close: stock.price });
+    }
+  });
   renderStocks();
   updateBalance();
-  stocks.forEach(drawChart);
+  stocks.forEach(drawCandlestickChart);
 
-  // Start price fluctuations every 5 seconds
+  // Update every 5 seconds
   setInterval(fluctuatePrices, 5000);
 </script>
 </body>
