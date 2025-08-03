@@ -3,165 +3,583 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mini Agar.io</title>
+<title>Advanced Agar.io Clone</title>
 <style>
   html, body {
     margin: 0; padding: 0; overflow: hidden;
-    background: #222;
+    background: #1b1b1b;
     height: 100vh;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
-  }
-  #gameCanvas {
-    display: block;
-    background: #1e1e1e;
-    margin: 0 auto;
-    cursor: crosshair;
-    border: 2px solid #eee;
   }
   #scoreBoard {
     position: absolute;
     top: 10px; left: 50%;
     transform: translateX(-50%);
-    color: #ffd600;
+    color: #f3da0b;
     font-size: 24px;
-    font-weight: bold;
-    text-shadow: 0 0 10px #ffd600aa;
+    font-weight: 700;
+    text-shadow: 0 0 8px #f3da0bbb;
+    z-index: 10;
     user-select: none;
+  }
+  #leaderboard {
+    position: absolute;
+    top: 50px; right: 10px;
+    background: rgba(20,20,20,0.8);
+    border: 1px solid #f3da0b;
+    border-radius: 8px;
+    padding: 10px;
+    color: #f3da0b;
+    font-weight: 600;
+    width: 160px;
+    max-height: 400px;
+    overflow-y: auto;
+    user-select: none;
+    z-index: 10;
+  }
+  #leaderboard h3 {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+  }
+  canvas {
+    display: block;
+    background: linear-gradient(135deg, #222, #111);
+    margin: 0 auto;
+    border: 3px solid #f3da0b;
+    box-shadow: 0 0 20px #f3da0baa inset;
   }
 </style>
 </head>
 <body>
-
 <div id="scoreBoard">Score: 0</div>
+<div id="leaderboard">
+  <h3>Leaderboard</h3>
+  <ol id="leaders"></ol>
+</div>
 <canvas id="gameCanvas"></canvas>
 
 <script>
+(() => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
-  let width, height;
 
+  // Resize canvas to window
   function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
   window.addEventListener('resize', resize);
   resize();
 
-  // Player properties
-  const player = {
-    x: width / 2,
-    y: height / 2,
-    radius: 20,
-    color: '#ffd600',
-    speed: 3,
-    vx: 0,
-    vy: 0,
-  };
+  // Game world size (larger than viewport)
+  const WORLD_WIDTH = 4000;
+  const WORLD_HEIGHT = 4000;
 
-  // Mouse position tracking
-  const mouse = { x: player.x, y: player.y };
+  // Utility functions
+  function distance(x1, y1, x2, y2) {
+    return Math.hypot(x2 - x1, y2 - y1);
+  }
 
-  canvas.addEventListener('mousemove', (e) => {
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  // Player object
+  class Blob {
+    constructor(id, x, y, radius, color, isPlayer = false) {
+      this.id = id;
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
+      this.mass = radius * radius;
+      this.color = color;
+      this.isPlayer = isPlayer;
+      this.speed = 3 + 50 / this.radius; // smaller blobs move faster
+      this.vx = 0;
+      this.vy = 0;
+      this.splitCooldown = 0;
+      this.ejectCooldown = 0;
+      this.target = null; // For AI: target food or blobs
+      this.massEjected = 0; // track mass lost on eject
+      this.cells = [this]; // For split blobs
+    }
+
+    updateSpeed() {
+      this.speed = 3 + 50 / this.radius;
+    }
+
+    moveToward(targetX, targetY) {
+      const dx = targetX - this.x;
+      const dy = targetY - this.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 1) {
+        const moveDist = Math.min(this.speed, dist);
+        this.x += (dx / dist) * moveDist;
+        this.y += (dy / dist) * moveDist;
+      }
+    }
+
+    update() {
+      if (this.splitCooldown > 0) this.splitCooldown -= 1;
+      if (this.ejectCooldown > 0) this.ejectCooldown -= 1;
+      this.updateSpeed();
+      // Clamp inside world
+      this.x = Math.min(Math.max(this.radius, this.x), WORLD_WIDTH - this.radius);
+      this.y = Math.min(Math.max(this.radius, this.y), WORLD_HEIGHT - this.radius);
+    }
+
+    grow(mass) {
+      this.mass += mass;
+      this.radius = Math.sqrt(this.mass);
+      this.updateSpeed();
+    }
+
+    shrink(mass) {
+      this.mass = Math.max(this.mass - mass, 20);
+      this.radius = Math.sqrt(this.mass);
+      this.updateSpeed();
+    }
+
+    canSplit() {
+      return this.mass > 100 && this.splitCooldown <= 0;
+    }
+
+    split() {
+      if (!this.canSplit()) return null;
+      const newMass = this.mass / 2;
+      this.mass /= 2;
+      this.radius = Math.sqrt(this.mass);
+      this.updateSpeed();
+      this.splitCooldown = 120; // cooldown in frames (~2s)
+      // New blob created at offset
+      const angle = Math.random() * Math.PI * 2;
+      const dist = this.radius * 2;
+      const newX = Math.min(Math.max(this.radius, this.x + Math.cos(angle) * dist), WORLD_WIDTH - this.radius);
+      const newY = Math.min(Math.max(this.radius, this.y + Math.sin(angle) * dist), WORLD_HEIGHT - this.radius);
+      const newBlob = new Blob(
+        Date.now() + Math.random(),
+        newX,
+        newY,
+        Math.sqrt(newMass),
+        this.color,
+        this.isPlayer
+      );
+      // Give new blob a speed boost in split direction
+      newBlob.vx = Math.cos(angle) * 15;
+      newBlob.vy = Math.sin(angle) * 15;
+      return newBlob;
+    }
+
+    canEject() {
+      return this.mass > 50 && this.ejectCooldown <= 0;
+    }
+
+    eject() {
+      if (!this.canEject()) return null;
+      const massEjected = 10;
+      this.mass -= massEjected;
+      this.radius = Math.sqrt(this.mass);
+      this.updateSpeed();
+      this.ejectCooldown = 30;
+      // Eject a small mass blob in front
+      const angle = Math.random() * Math.PI * 2;
+      const dist = this.radius + 10;
+      const ejectX = Math.min(Math.max(10, this.x + Math.cos(angle) * dist), WORLD_WIDTH - 10);
+      const ejectY = Math.min(Math.max(10, this.y + Math.sin(angle) * dist), WORLD_HEIGHT - 10);
+      const ejectBlob = {
+        x: ejectX,
+        y: ejectY,
+        radius: 5,
+        mass: 25,
+        color: this.color,
+        vx: Math.cos(angle) * 8,
+        vy: Math.sin(angle) * 8,
+      };
+      return ejectBlob;
+    }
+
+    draw(ctx, offsetX, offsetY) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 20;
+      ctx.arc(this.x - offsetX, this.y - offsetY, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw eyes for player
+      if (this.isPlayer) {
+        ctx.fillStyle = '#222';
+        const eyeOffsetX = this.radius * 0.4 * Math.cos(Math.atan2(mouse.y - canvas.height/2, mouse.x - canvas.width/2));
+        const eyeOffsetY = this.radius * 0.4 * Math.sin(Math.atan2(mouse.y - canvas.height/2, mouse.x - canvas.width/2));
+        ctx.beginPath();
+        ctx.arc(this.x - offsetX + eyeOffsetX, this.y - offsetY + eyeOffsetY, this.radius * 0.15, 0, Math.PI * 2);
+        ctx.arc(this.x - offsetX + eyeOffsetX * 0.7, this.y - offsetY + eyeOffsetY * 0.7, this.radius * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  // Food pellets
+  class Food {
+    constructor(x, y, radius = 6) {
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
+      this.color = '#69d659';
+    }
+    draw(ctx, offsetX, offsetY) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = '#69d659';
+      ctx.shadowBlur = 10;
+      ctx.arc(this.x - offsetX, this.y - offsetY, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Powerups
+  class PowerUp {
+    constructor(x, y, type) {
+      this.x = x;
+      this.y = y;
+      this.radius = 12;
+      this.type = type; // e.g. 'speed', 'shield', etc.
+      this.color = {
+        speed: '#00ffff',
+        shield: '#ffcc00',
+        magnet: '#ff00ff',
+      }[type] || '#fff';
+      this.duration = 600; // frames ~10s
+      this.active = false;
+      this.activationTime = 0;
+    }
+
+    draw(ctx, offsetX, offsetY) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 20;
+      ctx.arc(this.x - offsetX, this.y - offsetY, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#111';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const symbols = {
+        speed: '⚡',
+        shield: '🛡️',
+        magnet: '🧲',
+      };
+      ctx.fillText(symbols[this.type] || '?', this.x - offsetX, this.y - offsetY);
+      ctx.restore();
+    }
+  }
+
+  // Ejected mass blobs
+  class EjectedMass {
+    constructor(x, y, vx, vy, color) {
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.radius = 5;
+      this.mass = 25;
+      this.color = color;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Slow down over time
+      this.vx *= 0.95;
+      this.vy *= 0.95;
+
+      // Clamp in world
+      this.x = Math.min(Math.max(this.radius, this.x), WORLD_WIDTH - this.radius);
+      this.y = Math.min(Math.max(this.radius, this.y), WORLD_HEIGHT - this.radius);
+    }
+    draw(ctx, offsetX, offsetY) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 12;
+      ctx.arc(this.x - offsetX, this.y - offsetY, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Game state
+  const player = new Blob('player', WORLD_WIDTH/2, WORLD_HEIGHT/2, 25, '#f3da0b', true);
+  let blobs = [player]; // AI blobs included here
+  const foods = [];
+  const powerups = [];
+  const ejectedMasses = [];
+
+  const maxFood = 700;
+  const maxBlobs = 15;
+  const maxPowerups = 3;
+
+  // Mouse tracking for player movement
+  const mouse = { x: canvas.width/2, y: canvas.height/2 };
+  window.addEventListener('mousemove', e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
   });
 
-  // Food properties
-  const foodCount = 150;
-  const food = [];
+  // Keyboard input for split and eject
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space') {
+      // Split player blobs
+      const newBlob = player.split();
+      if (newBlob) blobs.push(newBlob);
+    } else if (e.code === 'KeyW') {
+      // Eject mass
+      const eject = player.eject();
+      if (eject) ejectedMasses.push(new EjectedMass(eject.x, eject.y, eject.vx, eject.vy, eject.color));
+    }
+  });
 
-  function randomColor() {
-    const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffbb33', '#33ffbb', '#bb33ff'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  function createFood() {
-    for (let i = 0; i < foodCount; i++) {
-      food.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: 5 + Math.random() * 5,
-        color: randomColor(),
-      });
+  // Spawn food randomly
+  function spawnFood() {
+    if (foods.length >= maxFood) return;
+    for (let i = 0; i < 50; i++) {
+      foods.push(new Food(
+        Math.random() * WORLD_WIDTH,
+        Math.random() * WORLD_HEIGHT,
+        5 + Math.random() * 3
+      ));
     }
   }
 
-  createFood();
-
-  // Game loop
-  function gameLoop() {
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Move player towards mouse with smooth easing
-    const dx = mouse.x - player.x;
-    const dy = mouse.y - player.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist > 1) {
-      const moveX = (dx / dist) * player.speed;
-      const moveY = (dy / dist) * player.speed;
-      player.x += moveX;
-      player.y += moveY;
+  // Spawn AI blobs
+  function spawnAIBlobs() {
+    while (blobs.length < maxBlobs + 1) {
+      const radius = 20 + Math.random() * 30;
+      const x = Math.random() * WORLD_WIDTH;
+      const y = Math.random() * WORLD_HEIGHT;
+      const color = `hsl(${Math.random()*360}, 70%, 60%)`;
+      blobs.push(new Blob('ai_' + Date.now() + Math.random(), x, y, radius, color, false));
     }
+  }
 
-    // Draw and check collision with food
-    for (let i = food.length - 1; i >= 0; i--) {
-      const f = food[i];
-      // Draw food
-      ctx.beginPath();
-      ctx.fillStyle = f.color;
-      ctx.shadowColor = f.color;
-      ctx.shadowBlur = 8;
-      ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
+  // Spawn powerups randomly
+  function spawnPowerUps() {
+    if (powerups.length >= maxPowerups) return;
+    const types = ['speed', 'shield', 'magnet'];
+    if (Math.random() < 0.002) { // low chance per frame
+      powerups.push(new PowerUp(
+        Math.random() * WORLD_WIDTH,
+        Math.random() * WORLD_HEIGHT,
+        types[Math.floor(Math.random() * types.length)]
+      ));
+    }
+  }
 
-      // Check collision with player
-      const distToPlayer = Math.hypot(f.x - player.x, f.y - player.y);
-      if (distToPlayer < player.radius + f.radius) {
-        // Eat food, grow player
-        player.radius += f.radius * 0.2;
-        food.splice(i, 1);
-        spawnFood();
+  // AI logic for blobs (seek food, avoid bigger blobs, chase smaller blobs)
+  function aiLogic(blob) {
+    if (blob.isPlayer) return;
+
+    // Find nearest food or blob target
+    let nearestFood = null;
+    let nearestFoodDist = Infinity;
+    for (const f of foods) {
+      const dist = distance(blob.x, blob.y, f.x, f.y);
+      if (dist < nearestFoodDist) {
+        nearestFoodDist = dist;
+        nearestFood = f;
       }
     }
 
-    // Draw player
-    ctx.beginPath();
-    ctx.fillStyle = player.color;
-    ctx.shadowColor = player.color;
-    ctx.shadowBlur = 20;
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    // Find blobs smaller to eat
+    let prey = null;
+    let preyDist = Infinity;
+    for (const other of blobs) {
+      if (other === blob) continue;
+      if (other.mass < blob.mass * 0.9 && distance(blob.x, blob.y, other.x, other.y) < preyDist) {
+        preyDist = distance(blob.x, blob.y, other.x, other.y);
+        prey = other;
+      }
+    }
 
-    // Clamp player to canvas bounds
-    player.x = Math.min(Math.max(player.radius, player.x), width - player.radius);
-    player.y = Math.min(Math.max(player.radius, player.y), height - player.radius);
+    // Find biggest threat to run from
+    let threat = null;
+    let threatDist = Infinity;
+    for (const other of blobs) {
+      if (other === blob) continue;
+      if (other.mass > blob.mass * 1.1 && distance(blob.x, blob.y, other.x, other.y) < threatDist) {
+        threatDist = distance(blob.x, blob.y, other.x, other.y);
+        threat = other;
+      }
+    }
 
-    // Update score display
-    const scoreBoard = document.getElementById('scoreBoard');
-    scoreBoard.textContent = `Score: ${Math.floor(player.radius * player.radius)}`;
+    if (threat && threatDist < 400) {
+      // Run away from threat
+      const dx = blob.x - threat.x;
+      const dy = blob.y - threat.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      blob.moveToward(blob.x + dx / dist * blob.speed * 2, blob.y + dy / dist * blob.speed * 2);
+      return;
+    }
+
+    if (prey && preyDist < 400) {
+      // Chase prey
+      blob.moveToward(prey.x, prey.y);
+      return;
+    }
+
+    if (nearestFood) {
+      // Move toward food
+      blob.moveToward(nearestFood.x, nearestFood.y);
+      return;
+    }
+
+    // Wander randomly
+    if (!blob.wanderTarget || distance(blob.x, blob.y, blob.wanderTarget.x, blob.wanderTarget.y) < 20) {
+      blob.wanderTarget = {
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * WORLD_HEIGHT,
+      };
+    }
+    blob.moveToward(blob.wanderTarget.x, blob.wanderTarget.y);
+  }
+
+  // Collision detection and eating logic
+  function handleCollisions() {
+    // Food eaten by blobs
+    for (let i = foods.length - 1; i >= 0; i--) {
+      const f = foods[i];
+      for (const blob of blobs) {
+        if (distance(blob.x, blob.y, f.x, f.y) < blob.radius) {
+          blob.grow(f.radius * f.radius);
+          foods.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    // Ejected mass eaten by blobs
+    for (let i = ejectedMasses.length - 1; i >= 0; i--) {
+      const em = ejectedMasses[i];
+      for (const blob of blobs) {
+        if (distance(blob.x, blob.y, em.x, em.y) < blob.radius) {
+          blob.grow(em.radius * em.radius);
+          ejectedMasses.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    // Blobs eating each other
+    for (let i = blobs.length - 1; i >= 0; i--) {
+      for (let j = blobs.length - 1; j >= 0; j--) {
+        if (i === j) continue;
+        const a = blobs[i];
+        const b = blobs[j];
+
+        const dist = distance(a.x, a.y, b.x, b.y);
+        if (dist < a.radius) {
+          // a can eat b if a is significantly larger
+          if (a.mass > b.mass * 1.1 && a.radius > b.radius * 1.05) {
+            a.grow(b.mass);
+            blobs.splice(j, 1);
+            if (b === player) {
+              alert("Game Over! You were eaten.");
+              document.location.reload();
+            }
+            if (j < i) i--;
+          }
+        }
+      }
+    }
+  }
+
+  // Draw leaderboard
+  function drawLeaderboard() {
+    const leadersList = document.getElementById('leaders');
+    // Sort by mass descending
+    const sorted = blobs.slice().sort((a,b) => b.mass - a.mass).slice(0, 10);
+    leadersList.innerHTML = '';
+    sorted.forEach((blob, idx) => {
+      const li = document.createElement('li');
+      li.textContent = (blob.isPlayer ? 'You' : 'AI') + ` - ${Math.floor(blob.mass)}`;
+      li.style.color = blob.color;
+      li.style.fontWeight = blob.isPlayer ? 'bold' : 'normal';
+      leadersList.appendChild(li);
+    });
+  }
+
+  // Game loop
+  function gameLoop() {
+    // Clear
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate camera offset to center player on screen
+    const offsetX = player.x - canvas.width / 2;
+    const offsetY = player.y - canvas.height / 2;
+
+    // Clamp offset so we don't see outside world edges
+    const maxOffsetX = WORLD_WIDTH - canvas.width;
+    const maxOffsetY = WORLD_HEIGHT - canvas.height;
+
+    const camX = Math.min(Math.max(0, offsetX), maxOffsetX);
+    const camY = Math.min(Math.max(0, offsetY), maxOffsetY);
+
+    // Spawn food/powerups if needed
+    spawnFood();
+    spawnPowerUps();
+    spawnAIBlobs();
+
+    // Update AI blobs movement
+    blobs.forEach(blob => {
+      if (!blob.isPlayer) aiLogic(blob);
+    });
+
+    // Update blobs
+    blobs.forEach(blob => {
+      blob.update();
+    });
+
+    // Update ejected masses
+    ejectedMasses.forEach(em => em.update());
+
+    // Handle collisions
+    handleCollisions();
+
+    // Draw food
+    foods.forEach(f => f.draw(ctx, camX, camY));
+
+    // Draw powerups
+    powerups.forEach(p => p.draw(ctx, camX, camY));
+
+    // Draw ejected mass
+    ejectedMasses.forEach(em => em.draw(ctx, camX, camY));
+
+    // Draw blobs
+    blobs.forEach(blob => blob.draw(ctx, camX, camY));
+
+    // Update UI score
+    document.getElementById('scoreBoard').textContent = 'Score: ' + Math.floor(player.mass);
+
+    // Update leaderboard
+    drawLeaderboard();
 
     requestAnimationFrame(gameLoop);
   }
 
-  // Spawn one new food
-  function spawnFood() {
-    food.push({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      radius: 5 + Math.random() * 5,
-      color: randomColor(),
-    });
-  }
-
   gameLoop();
-</script>
 
+})();
+</script>
 </body>
 </html>
