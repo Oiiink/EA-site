@@ -3,638 +3,163 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🌼 Grow a Garden</title>
+<title>Talk to Lily - Story Game</title>
 <style>
   body {
-    background: linear-gradient(to bottom, #e6ffe6, #ccffcc);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    user-select: none;
-  }
-  h1 {
-    margin-top: 10px;
-    font-weight: 900;
-    color: #2a5d2a;
-    text-shadow: 0 0 4px #8cff81;
-  }
-  #season {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: #317331;
-    text-shadow: 0 0 2px #a8f3a8;
-  }
-  #farm {
-    display: grid;
-    grid-template-columns: repeat(5, 80px);
-    gap: 12px;
-    justify-content: center;
-    margin: 15px auto 20px;
-  }
-  .plot {
-    width: 80px;
-    height: 80px;
-    background-color: #a0522d;
-    border: 3px solid #654321;
-    position: relative;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: inset 0 0 8px #3a1f07;
-    transition: border-color 0.3s ease;
-  }
-  .plot:hover {
-    border-color: #ffa726;
-  }
-  .growTimer {
-    position: absolute;
-    bottom: 3px;
-    width: 100%;
-    font-size: 12px;
-    color: #fff;
-    text-shadow: 1px 1px 3px #000;
-    font-weight: 700;
-  }
-  #controls {
-    margin-top: 15px;
+    background: linear-gradient(to bottom, #ffe6f2, #ffb3d9);
+    margin: 0; padding: 20px;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
   }
-  button {
-    padding: 10px 16px;
+  #game {
+    max-width: 600px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #d38db1;
+    padding: 25px;
+  }
+  #dialogue {
+    font-size: 18px;
+    margin-bottom: 25px;
+    min-height: 120px;
+  }
+  .option-btn {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    font-size: 16px;
+    background: #f48fb1;
     border: none;
     border-radius: 10px;
-    background-color: #66bb6a;
     color: white;
-    font-weight: 700;
-    font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 6px #459245;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
+    text-align: left;
   }
-  button:hover {
-    background-color: #4caf50;
+  .option-btn:hover {
+    background: #ec407a;
   }
-  #inventory {
-    margin: 20px auto;
-    max-width: 480px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+  h1 {
+    text-align: center;
+    color: #880e4f;
+    margin-bottom: 30px;
   }
-  .seedItem {
-    cursor: pointer;
-    background: #e0ffe0;
-    border: 2px solid #4caf50;
-    border-radius: 12px;
-    padding: 12px 16px;
-    min-width: 90px;
-    user-select: none;
-    box-shadow: 0 0 6px #7bcc7b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-weight: 700;
-    color: #1b3e1b;
-    font-size: 16px;
-    text-shadow: 1px 1px 3px #b3e6b3;
-  }
-  .seedItem.selected {
-    border-color: #ff9800;
-    box-shadow: 0 0 12px #ffa726;
-    background: #fff4e5;
-  }
-  .seedIcon {
-    font-size: 36px;
-    margin-bottom: 6px;
-  }
-  .seedCount {
-    font-size: 16px;
-    color: #1b3e1b;
-    font-weight: 700;
-    text-shadow: 1px 1px 3px #b3e6b3;
-  }
-  #stats {
-    margin-top: 10px;
-    font-weight: 700;
-    font-size: 16px;
-    color: #2f6d2f;
-    text-shadow: 0 0 3px #a7e4a7;
-  }
-  #market {
-    margin-top: 25px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 10px;
-    background: #d9f0d9;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #8cd98caa;
-  }
-  #market h2 {
-    margin-bottom: 8px;
-    font-weight: 900;
-    color: #3c823c;
-    text-shadow: 0 0 2px #b0ffb0;
-  }
-  #marketTimer {
-    font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: #367236;
-  }
-  #marketGrid {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  .marketItem {
-    display: inline-block;
-    margin: 10px;
-    padding: 14px 20px;
-    background-color: #fff;
-    border: 2px solid #4caf50;
-    border-radius: 12px;
-    box-shadow: 0 0 8px #7bcc7b;
-    cursor: pointer;
-    width: 120px;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  .marketItem:hover {
-    background-color: #ccf2cc;
-  }
-  .marketIcon {
-    font-size: 36px;
-    margin-bottom: 6px;
-  }
-  #encyclopedia {
-    max-width: 600px;
-    margin: 30px auto 60px;
-    background: #f5fff5;
-    border-radius: 10px;
-    padding: 15px 20px;
-    box-shadow: 0 0 10px #7bcc7b88;
-  }
-  #encyclopedia h2 {
-    margin-bottom: 15px;
-    font-weight: 900;
-    color: #2a6d2a;
-  }
-  .encyclopediaEntry {
-    margin: 7px auto;
-    padding: 10px 15px;
-    border-radius: 6px;
-    max-width: 480px;
-    font-weight: 700;
-    font-size: 15px;
-    color: #2e6f2e;
-    background: #e4ffe4;
-    box-shadow: inset 0 0 6px #a7f1a7;
-  }
-  .rarityCommon { color: #777; }
-  .rarityUncommon { color: #2e8b57; }
-  .rarityRare { color: #4169e1; }
-  .rarityEpic { color: #a020f0; }
-  .rarityLegendary { color: #daa520; }
 </style>
 </head>
 <body>
-  <h1>🌼 Grow a Garden</h1>
-  <div id="season">Season: Spring</div>
-
-  <div id="farm" title="Click plot to plant or harvest"></div>
-
-  <div id="inventory" aria-label="Seed Inventory"></div>
-
-  <div id="controls">
-    <button id="buySeedBtn">Buy Seed (50g)</button>
-    <button id="buyFertilizerBtn">Buy Fertilizer (30g)</button>
-  </div>
-
-  <div id="stats">
-    Gold: <span id="gold">100</span> &nbsp;&nbsp;
-    Fertilizer: <span id="fertilizer">0</span>
-  </div>
-
-  <div id="market">
-    <h2>🛒 Market</h2>
-    <div id="marketTimer"></div>
-    <div id="marketGrid"></div>
-  </div>
-
-  <div id="encyclopedia">
-    <h2>📘 Crop Encyclopedia</h2>
-    <div id="cropList"></div>
+  <div id="game">
+    <h1>Talk to Lily</h1>
+    <div id="dialogue"></div>
+    <div id="options"></div>
   </div>
 
 <script>
-  // --- Data Definitions ---
+  const dialogueEl = document.getElementById('dialogue');
+  const optionsEl = document.getElementById('options');
 
-  const rarities = [
-    { label: 'Common', className: 'rarityCommon', color: '#777', chance: 0.6 },
-    { label: 'Uncommon', className: 'rarityUncommon', color: '#2e8b57', chance: 0.25 },
-    { label: 'Rare', className: 'rarityRare', color: '#4169e1', chance: 0.1 },
-    { label: 'Epic', className: 'rarityEpic', color: '#a020f0', chance: 0.04 },
-    { label: 'Legendary', className: 'rarityLegendary', color: '#daa520', chance: 0.01 }
-  ];
-
-  const cropsData = [
-    {
-      name: "Carrot",
-      icon: "🥕",
-      baseSellPrice: 10,
-      growTime: 60000,
-      growthStages: 4,
-      sizeMultipliers: [0.5, 0.8, 1.2, 1.5]
+  // Story nodes, each with text and options that lead to other nodes
+  const story = {
+    start: {
+      text: "You see Lily sitting alone on a bench in the park. She looks up and smiles softly. What do you say?",
+      options: [
+        { text: "Hi, I'm new here. Mind if I sit?", next: "sit" },
+        { text: "Lovely day, isn't it?", next: "weather" },
+        { text: "Just passing by.", next: "bye" }
+      ]
     },
-    {
-      name: "Strawberry",
-      icon: "🍓",
-      baseSellPrice: 15,
-      growTime: 90000,
-      growthStages: 4,
-      sizeMultipliers: [0.5, 0.75, 1.1, 1.6]
+    sit: {
+      text: "She nods and pats the bench beside her. \"Of course! I love meeting new people.\"",
+      options: [
+        { text: "So, what brings you here?", next: "meet" },
+        { text: "Do you come here often?", next: "often" },
+        { text: "I have to go now. Bye!", next: "bye" }
+      ]
     },
-    {
-      name: "Corn",
-      icon: "🌽",
-      baseSellPrice: 20,
-      growTime: 105000,
-      growthStages: 4,
-      sizeMultipliers: [0.6, 0.85, 1.15, 1.7]
+    weather: {
+      text: "\"Absolutely! Perfect weather for a stroll,\" Lily says, her eyes twinkling.",
+      options: [
+        { text: "Would you like to join me for a walk?", next: "walk" },
+        { text: "I should get going, take care!", next: "bye" }
+      ]
     },
-    {
-      name: "Pumpkin",
-      icon: "🎃",
-      baseSellPrice: 30,
-      growTime: 135000,
-      growthStages: 4,
-      sizeMultipliers: [0.7, 0.9, 1.3, 2]
+    meet: {
+      text: "\"I'm just enjoying some quiet time after a hectic week,\" she replies.",
+      options: [
+        { text: "I understand. Want to grab a coffee later?", next: "coffee" },
+        { text: "Maybe some other time. See you around!", next: "bye" }
+      ]
+    },
+    often: {
+      text: "\"Yes, this park is my favorite spot to relax and think,\" she smiles.",
+      options: [
+        { text: "Mind if I join you next time?", next: "sit" },
+        { text: "Sounds peaceful. I should come here more.", next: "bye" }
+      ]
+    },
+    walk: {
+      text: "She stands up and offers her hand. \"I'd like that.\" Together, you walk down the sun-dappled path.",
+      options: [
+        { text: "Talk about your hobbies.", next: "hobbies" },
+        { text: "Keep the silence and enjoy the moment.", next: "silence" }
+      ]
+    },
+    coffee: {
+      text: "Lily smiles warmly, \"I'd love to. How about tomorrow afternoon?\"",
+      options: [
+        { text: "Sounds perfect, see you then!", next: "end_good" },
+        { text: "Actually, I might be busy. Let's keep in touch.", next: "end_neutral" }
+      ]
+    },
+    silence: {
+      text: "Sometimes words aren’t needed. You enjoy the peacefulness of the park together.",
+      options: [
+        { text: "End the walk.", next: "end_good" }
+      ]
+    },
+    bye: {
+      text: "Lily nods understandingly. \"Take care! Hope to see you around.\"",
+      options: [
+        { text: "Restart", next: "start" }
+      ]
+    },
+    end_good: {
+      text: "You feel like you made a genuine connection today. A new friendship, or maybe more, has just begun.",
+      options: [
+        { text: "Play again", next: "start" }
+      ]
+    },
+    end_neutral: {
+      text: "Sometimes timing isn’t right. But you leave with hope for future meetings.",
+      options: [
+        { text: "Play again", next: "start" }
+      ]
+    },
+    hobbies: {
+      text: "Lily talks about her love for painting and hiking. You share your own interests too, laughing together.",
+      options: [
+        { text: "Invite her for coffee.", next: "coffee" },
+        { text: "Say goodbye for now.", next: "end_good" }
+      ]
     }
-  ];
-
-  const seasons = ['Spring', 'Summer', 'Fall', 'Winter'];
-  const seasonEffects = {
-    Spring: { growSpeedMultiplier: 1.2, sellPriceMultiplier: 1 },
-    Summer: { growSpeedMultiplier: 1.5, sellPriceMultiplier: 1.1 },
-    Fall:   { growSpeedMultiplier: 1.0, sellPriceMultiplier: 1.2 },
-    Winter: { growSpeedMultiplier: 0.6, sellPriceMultiplier: 0.8 }
   };
-  const SEASON_DURATION_MS = 120000;
 
-  // --- State Variables ---
-  let gold = 100;
-  let fertilizerCount = 0;
-
-  let currentSeasonIndex = 0;
-  let currentSeason = seasons[currentSeasonIndex];
-
-  // Inventory: {seedName: count}
-  let seedsInventory = {
-    "Carrot": 2,
-    "Strawberry": 1
-  };
-
-  let selectedSeedName = null;
-
-  // Farm Plots Array
-  const farmPlots = [];
-
-  // Market
-  let marketStock = [];
-  let marketTimer = 300000;
-
-  // --- DOM Elements ---
-  const farmEl = document.getElementById('farm');
-  const inventoryEl = document.getElementById('inventory');
-  const goldEl = document.getElementById('gold');
-  const fertilizerEl = document.getElementById('fertilizer');
-  const seasonEl = document.getElementById('season');
-  const marketGridEl = document.getElementById('marketGrid');
-  const marketTimerEl = document.getElementById('marketTimer');
-  const cropListEl = document.getElementById('cropList');
-
-  // --- Functions ---
-
-  function updateSeason() {
-    currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
-    currentSeason = seasons[currentSeasonIndex];
-    seasonEl.textContent = `Season: ${currentSeason}`;
-  }
-
-  function createFarmPlots() {
-    for(let i=0; i<20; i++) {
-      const plotEl = document.createElement('div');
-      plotEl.classList.add('plot');
-      plotEl.title = "Empty plot. Click to plant.";
-      farmEl.appendChild(plotEl);
-
-      const plot = {
-        element: plotEl,
-        planted: false,
-        crop: null,
-        rarity: null,
-        growthStage: null,
-        growthStart: null,
-        totalGrowTime: null,
-        mutated: false,
-        growTimerId: null,
-      };
-
-      plotEl.addEventListener('click', () => {
-        if (plot.planted && plot.growthStage === plot.crop.growthStages - 1) {
-          harvestCrop(farmPlots.indexOf(plot));
-        } else if (!plot.planted) {
-          plantCrop(farmPlots.indexOf(plot));
-        } else {
-          alert("Crop not fully grown yet!");
-        }
-      });
-
-      farmPlots.push(plot);
-    }
-  }
-
-  function renderSeedInventory() {
-    inventoryEl.innerHTML = '';
-    const seedNames = Object.keys(seedsInventory).filter(k => seedsInventory[k] > 0);
-    if (seedNames.length === 0) {
-      inventoryEl.textContent = "No seeds. Buy some in market!";
-      return;
-    }
-    seedNames.forEach(name => {
-      const crop = cropsData.find(c => c.name === name);
-      if (!crop) return;
-      const seedDiv = document.createElement('div');
-      seedDiv.classList.add('seedItem');
-      if (selectedSeedName === name) seedDiv.classList.add('selected');
-
-      seedDiv.innerHTML = `
-        <div class="seedIcon">${crop.icon}</div>
-        <div>${crop.name}</div>
-        <div class="seedCount">x${seedsInventory[name]}</div>
-      `;
-      seedDiv.title = `Select ${crop.name} seed to plant`;
-      seedDiv.addEventListener('click', () => {
-        selectedSeedName = name;
-        renderSeedInventory();
-      });
-      inventoryEl.appendChild(seedDiv);
+  function showNode(nodeKey) {
+    const node = story[nodeKey];
+    dialogueEl.textContent = node.text;
+    optionsEl.innerHTML = '';
+    node.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt.text;
+      btn.onclick = () => showNode(opt.next);
+      optionsEl.appendChild(btn);
     });
   }
 
-  function plantCrop(plotIndex) {
-    const plot = farmPlots[plotIndex];
-    if (plot.planted) {
-      alert("Plot already planted!");
-      return;
-    }
-    if (!selectedSeedName || !seedsInventory[selectedSeedName] || seedsInventory[selectedSeedName] <= 0) {
-      alert("You don't have that seed selected or no seeds left!");
-      return;
-    }
-
-    // Determine rarity with mutation chance
-    const baseRarity = rarities[0]; // Start Common
-    let mutationChance = 0.1; // Base mutation chance (10%)
-    if (Math.random() < mutationChance) {
-      // Upgrade rarity by one level if possible
-      const baseIndex = rarities.indexOf(baseRarity);
-      const newIndex = Math.min(rarities.length - 1, baseIndex + 1);
-      plot.rarity = rarities[newIndex];
-    } else {
-      plot.rarity = baseRarity;
-    }
-
-    plot.planted = true;
-    plot.crop = cropsData.find(c => c.name === selectedSeedName);
-    plot.growthStage = 0;
-    plot.growthStart = Date.now();
-
-    // Adjust grow time by season and fertilizer
-    plot.totalGrowTime = plot.crop.growTime / seasonEffects[currentSeason].growSpeedMultiplier;
-    if (fertilizerCount > 0) {
-      plot.totalGrowTime *= 0.85; // 15% faster growth
-      fertilizerCount--;
-      // Fertilizer used! Growth speed increased (no popup)
-      updateStats();
-    }
-
-    seedsInventory[selectedSeedName]--;
-    if (seedsInventory[selectedSeedName] <= 0) {
-      delete seedsInventory[selectedSeedName];
-      selectedSeedName = null;
-    }
-
-    startGrowthTimer(plotIndex);
-    updatePlotVisual(plotIndex);
-    renderSeedInventory();
-  }
-
-  function startGrowthTimer(plotIndex) {
-    const plot = farmPlots[plotIndex];
-    if (plot.growTimerId) clearInterval(plot.growTimerId);
-
-    const totalStages = plot.crop.growthStages;
-    const stageTime = plot.totalGrowTime / (totalStages - 1);
-
-    plot.growTimerId = setInterval(() => {
-      const elapsed = Date.now() - plot.growthStart;
-      let stage = Math.min(totalStages - 1, Math.floor(elapsed / stageTime));
-      if (stage !== plot.growthStage) {
-        plot.growthStage = stage;
-        updatePlotVisual(plotIndex);
-      }
-      if (stage === totalStages - 1) {
-        clearInterval(plot.growTimerId);
-        plot.growTimerId = null;
-        plot.element.title = "Click to harvest!";
-      }
-    }, 500);
-  }
-
-  function updatePlotVisual(plotIndex) {
-    const plot = farmPlots[plotIndex];
-    if (!plot.planted) {
-      plot.element.innerHTML = "";
-      plot.element.style.borderColor = "#654321";
-      plot.element.title = "Empty plot. Click to plant.";
-      return;
-    }
-
-    const sizeLabels = ["Seed", "Small", "Medium", "Large"];
-    const sizeEmojis = ["🌱", "🌿", "🌳", plot.crop.icon];
-
-    const stage = plot.growthStage;
-    const sizeLabel = sizeLabels[stage];
-    const sizeEmoji = sizeEmojis[stage];
-    const rarityClass = plot.rarity.className;
-    const rarityColor = plot.rarity.color;
-
-    if (stage < plot.crop.growthStages - 1) {
-      const stageTime = plot.totalGrowTime / (plot.crop.growthStages - 1);
-      const elapsed = Date.now() - plot.growthStart;
-      const nextStageTime = stageTime * (stage + 1);
-      const timeLeftSec = Math.max(0, Math.ceil((nextStageTime - elapsed) / 1000));
-      plot.element.innerHTML = `
-        <div style="font-size: 36px;">${sizeEmoji}</div>
-        <div class="growTimer ${rarityClass}">${sizeLabel} - ${timeLeftSec}s</div>
-      `;
-      plot.element.title = `Growing: ${plot.crop.name} (${plot.rarity.label}) - ${sizeLabel}`;
-    } else {
-      plot.element.innerHTML = `
-        <div style="font-size: 48px;">${plot.crop.icon}</div>
-        <div class="growTimer ${rarityClass}">Ready to Harvest!</div>
-      `;
-      plot.element.title = `Ready to harvest: ${plot.crop.name} (${plot.rarity.label}) - Large`;
-    }
-
-    plot.element.style.borderColor = rarityColor;
-  }
-
-  function harvestCrop(plotIndex) {
-    const plot = farmPlots[plotIndex];
-    if (!plot.planted) return;
-    if (plot.growthStage < plot.crop.growthStages - 1) {
-      alert("Crop not fully grown yet!");
-      return;
-    }
-
-    const sizeMultiplier = plot.crop.sizeMultipliers[plot.growthStage];
-    let baseIndex = rarities.findIndex(r => r.label === plot.rarity.label);
-    if (baseIndex === -1) baseIndex = 0;
-    let price = Math.round(plot.crop.baseSellPrice * sizeMultiplier * (1 + baseIndex * 0.2));
-    price = Math.round(price * seasonEffects[currentSeason].sellPriceMultiplier);
-
-    gold += price;
-
-    plot.planted = false;
-    plot.crop = null;
-    plot.rarity = null;
-    plot.growthStage = null;
-    plot.growthStart = null;
-    plot.totalGrowTime = null;
-    plot.mutated = false;
-    if (plot.growTimerId) clearInterval(plot.growTimerId);
-    plot.growTimerId = null;
-    updatePlotVisual(plotIndex);
-    updateStats();
-  }
-
-  function updateStats() {
-    goldEl.textContent = gold;
-    fertilizerEl.textContent = fertilizerCount;
-  }
-
-  // Market logic
-  function restockMarket() {
-    marketStock = [];
-    const available = [...cropsData];
-    for(let i=0; i<3; i++) {
-      if (available.length === 0) break;
-      const idx = Math.floor(Math.random() * available.length);
-      const crop = available.splice(idx, 1)[0];
-      marketStock.push({...crop, price: Math.floor(crop.baseSellPrice / 2)});
-    }
-    renderMarket();
-  }
-
-  function renderMarket() {
-    marketGridEl.innerHTML = '';
-    marketStock.forEach(item => {
-      const div = document.createElement('div');
-      div.classList.add('marketItem');
-      div.innerHTML = `
-        <div class="marketIcon">${item.icon}</div>
-        <div>${item.name}</div>
-        <div>${item.price}g</div>
-      `;
-      div.title = `Buy ${item.name} seed for ${item.price} gold`;
-      div.addEventListener('click', () => {
-        if (gold >= item.price) {
-          gold -= item.price;
-          seedsInventory[item.name] = (seedsInventory[item.name] || 0) + 1;
-          updateStats();
-          renderSeedInventory();
-        }
-      });
-      marketGridEl.appendChild(div);
-    });
-  }
-
-  function updateMarketTimer() {
-    marketTimer -= 1000;
-    if (marketTimer <= 0) {
-      restockMarket();
-      marketTimer = 300000;
-    }
-    const min = Math.floor(marketTimer / 60000);
-    const sec = Math.floor((marketTimer % 60000) / 1000);
-    marketTimerEl.textContent = `Next restock in: ${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-  }
-
-  // Crop encyclopedia
-  function renderEncyclopedia() {
-    cropListEl.innerHTML = '';
-    cropsData.forEach(crop => {
-      const div = document.createElement('div');
-      div.classList.add('encyclopediaEntry');
-      div.innerHTML = `${crop.icon} <strong>${crop.name}</strong> — Base Sell: ${crop.baseSellPrice}g — Grow Time: ${(crop.growTime/1000).toFixed(0)}s`;
-      cropListEl.appendChild(div);
-    });
-  }
-
-  // Buy fertilizer button
-  document.getElementById('buyFertilizerBtn').addEventListener('click', () => {
-    if (gold >= 30) {
-      gold -= 30;
-      fertilizerCount++;
-      updateStats();
-    }
-  });
-
-  // Buy seed button (random seed in market)
-  document.getElementById('buySeedBtn').addEventListener('click', () => {
-    if (marketStock.length === 0) {
-      return;
-    }
-    const seed = marketStock[Math.floor(Math.random() * marketStock.length)];
-    if (gold >= 50) {
-      gold -= 50;
-      seedsInventory[seed.name] = (seedsInventory[seed.name] || 0) + 1;
-      updateStats();
-      renderSeedInventory();
-    }
-  });
-
-  // --- Initialize ---
-
-  function init() {
-    createFarmPlots();
-    restockMarket();
-    renderSeedInventory();
-    renderEncyclopedia();
-    updateStats();
-    seasonEl.textContent = `Season: ${currentSeason}`;
-
-    setInterval(() => {
-      updateMarketTimer();
-    }, 1000);
-
-    setInterval(() => {
-      updateSeason();
-    }, SEASON_DURATION_MS);
-  }
-
-  init();
+  // Start the game
+  showNode('start');
 </script>
-
 </body>
 </html>
