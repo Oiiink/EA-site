@@ -1,68 +1,208 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Talk to Lily - Story Game</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to bottom, #ffe6f2, #ffb3d9);
-    margin: 0; padding: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  #game {
-    max-width: 600px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 0 15px #d38db1;
-    padding: 25px;
-  }
-  #dialogue {
-    font-size: 18px;
-    margin-bottom: 25px;
-    min-height: 120px;
-  }
-  .option-btn {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-    padding: 12px;
-    font-size: 16px;
-    background: #f48fb1;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-align: left;
-  }
-  .option-btn:hover {
-    background: #ec407a;
-  }
-  h1 {
-    text-align: center;
-    color: #880e4f;
-    margin-bottom: 30px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Talk to Lily - Story Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #ffe6f2, #ffb3d9);
+      margin: 0; padding: 20px;
+      display: flex;
+      justify-content: center;
+      user-select: none;
+    }
+    #game {
+      max-width: 600px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #d38db1;
+      padding: 25px;
+      position: relative;
+    }
+    #portrait {
+      font-size: 80px;
+      text-align: center;
+      margin-bottom: 15px;
+      user-select: none;
+    }
+    #dialogue {
+      font-size: 18px;
+      min-height: 130px;
+      margin-bottom: 25px;
+      white-space: pre-wrap;
+      min-height: 130px;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      font-size: 16px;
+      background: #f48fb1;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-align: left;
+      user-select: none;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: #ec407a;
+    }
+    .option-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      color: #666;
+    }
+    h1 {
+      text-align: center;
+      color: #880e4f;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+    #relationship {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-weight: bold;
+      color: #880e4f;
+      user-select: none;
+    }
+    #inventory {
+      margin-top: 15px;
+      border-top: 1px solid #f48fb1;
+      padding-top: 15px;
+      text-align: center;
+    }
+    #inventory button {
+      margin: 5px;
+      background: #ba68c8;
+    }
+    #nameInputDiv {
+      max-width: 400px;
+      margin: 50px auto;
+      text-align: center;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 15px #d38db1;
+    }
+    #nameInputDiv input {
+      font-size: 18px;
+      padding: 8px;
+      width: 80%;
+      border: 2px solid #f48fb1;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    #nameInputDiv button {
+      background: #f48fb1;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #nameInputDiv button:hover {
+      background: #ec407a;
+    }
+  </style>
 </head>
 <body>
-  <div id="game">
-    <h1>Talk to Lily</h1>
+  <div id="nameInputDiv">
+    <h1>Enter Your Name</h1>
+    <input id="playerNameInput" type="text" placeholder="Your name..." />
+    <br />
+    <button id="startBtn">Start Talking</button>
+  </div>
+
+  <div id="game" style="display:none;">
+    <div id="relationship">❤️ Lily’s Affection: 0</div>
+    <div id="portrait">😊</div>
     <div id="dialogue"></div>
     <div id="options"></div>
+    <div id="inventory">
+      <strong>Inventory:</strong>
+      <div>
+        <button id="giveFlower" disabled>Give 🌹 Flower</button>
+        <button id="giveChocolate" disabled>Give 🍫 Chocolate</button>
+      </div>
+    </div>
   </div>
 
 <script>
+  const nameInputDiv = document.getElementById('nameInputDiv');
+  const playerNameInput = document.getElementById('playerNameInput');
+  const startBtn = document.getElementById('startBtn');
+
+  const gameDiv = document.getElementById('game');
   const dialogueEl = document.getElementById('dialogue');
   const optionsEl = document.getElementById('options');
+  const portraitEl = document.getElementById('portrait');
+  const relationshipEl = document.getElementById('relationship');
+  const giveFlowerBtn = document.getElementById('giveFlower');
+  const giveChocolateBtn = document.getElementById('giveChocolate');
 
-  // Story nodes, each with text and options that lead to other nodes
+  let playerName = '';
+  let relationship = 0;
+  let inventory = { flower: 1, chocolate: 0 };
+  let currentNodeKey = '';
+
+  // Sound setup
+  const clickSound = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+  clickSound.volume = 0.2;
+  const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_4344cdb9b4.mp3?filename=relaxing-acoustic-guitar-ambient-9189.mp3');
+  bgMusic.volume = 0.15;
+  bgMusic.loop = true;
+
+  // Simple character expressions mapped by node key or custom label
+  const expressions = {
+    default: '😊',
+    happy: '😄',
+    curious: '🤔',
+    shy: '😊',
+    excited: '😍',
+    sad: '😢',
+    surprised: '😮',
+    thankYou: '🙏',
+    angry: '😠'
+  };
+
+  // Helper: typewriter effect for dialogue text
+  function typeText(text, callback) {
+    dialogueEl.textContent = '';
+    let i = 0;
+    const speed = 25;
+    function type() {
+      if (i < text.length) {
+        dialogueEl.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      } else if (callback) callback();
+    }
+    type();
+  }
+
+  function updateRelationship(amount) {
+    relationship = Math.min(Math.max(relationship + amount, 0), 100);
+    relationshipEl.textContent = `❤️ Lily’s Affection: ${relationship}`;
+  }
+
+  function updateInventoryUI() {
+    giveFlowerBtn.disabled = inventory.flower <= 0;
+    giveChocolateBtn.disabled = inventory.chocolate <= 0;
+  }
+
+  // Story nodes
   const story = {
     start: {
-      text: "You see Lily sitting alone on a bench in the park. She looks up and smiles softly. What do you say?",
+      expression: 'default',
+      text: () => `You see Lily sitting alone on a bench in the park. She looks up and smiles softly.\nWhat do you say, ${playerName}?`,
       options: [
         { text: "Hi, I'm new here. Mind if I sit?", next: "sit" },
         { text: "Lovely day, isn't it?", next: "weather" },
@@ -70,7 +210,8 @@
       ]
     },
     sit: {
-      text: "She nods and pats the bench beside her. \"Of course! I love meeting new people.\"",
+      expression: 'happy',
+      text: `"Of course! I love meeting new people," she says, patting the bench beside her.`,
       options: [
         { text: "So, what brings you here?", next: "meet" },
         { text: "Do you come here often?", next: "often" },
@@ -78,88 +219,172 @@
       ]
     },
     weather: {
-      text: "\"Absolutely! Perfect weather for a stroll,\" Lily says, her eyes twinkling.",
+      expression: 'happy',
+      text: `"Absolutely! Perfect weather for a stroll," Lily says, her eyes twinkling.`,
       options: [
         { text: "Would you like to join me for a walk?", next: "walk" },
         { text: "I should get going, take care!", next: "bye" }
       ]
     },
     meet: {
-      text: "\"I'm just enjoying some quiet time after a hectic week,\" she replies.",
+      expression: 'curious',
+      text: `"I'm just enjoying some quiet time after a hectic week," she replies.`,
       options: [
         { text: "I understand. Want to grab a coffee later?", next: "coffee" },
         { text: "Maybe some other time. See you around!", next: "bye" }
       ]
     },
     often: {
-      text: "\"Yes, this park is my favorite spot to relax and think,\" she smiles.",
+      expression: 'happy',
+      text: `"Yes, this park is my favorite spot to relax and think," she smiles.`,
       options: [
         { text: "Mind if I join you next time?", next: "sit" },
         { text: "Sounds peaceful. I should come here more.", next: "bye" }
       ]
     },
     walk: {
-      text: "She stands up and offers her hand. \"I'd like that.\" Together, you walk down the sun-dappled path.",
+      expression: 'excited',
+      text: `She stands up and offers her hand. "I'd like that." Together, you walk down the sun-dappled path.`,
       options: [
         { text: "Talk about your hobbies.", next: "hobbies" },
         { text: "Keep the silence and enjoy the moment.", next: "silence" }
       ]
     },
     coffee: {
-      text: "Lily smiles warmly, \"I'd love to. How about tomorrow afternoon?\"",
+      expression: 'happy',
+      text: `"I'd love to. How about tomorrow afternoon?" Lily smiles warmly.`,
       options: [
         { text: "Sounds perfect, see you then!", next: "end_good" },
         { text: "Actually, I might be busy. Let's keep in touch.", next: "end_neutral" }
       ]
     },
     silence: {
+      expression: 'happy',
       text: "Sometimes words aren’t needed. You enjoy the peacefulness of the park together.",
       options: [
         { text: "End the walk.", next: "end_good" }
       ]
     },
     bye: {
-      text: "Lily nods understandingly. \"Take care! Hope to see you around.\"",
+      expression: 'sad',
+      text: `"Take care! Hope to see you around," Lily says, waving goodbye.`,
       options: [
         { text: "Restart", next: "start" }
       ]
     },
     end_good: {
+      expression: 'happy',
       text: "You feel like you made a genuine connection today. A new friendship, or maybe more, has just begun.",
       options: [
         { text: "Play again", next: "start" }
       ]
     },
     end_neutral: {
+      expression: 'curious',
       text: "Sometimes timing isn’t right. But you leave with hope for future meetings.",
       options: [
         { text: "Play again", next: "start" }
       ]
     },
     hobbies: {
+      expression: 'excited',
       text: "Lily talks about her love for painting and hiking. You share your own interests too, laughing together.",
       options: [
         { text: "Invite her for coffee.", next: "coffee" },
         { text: "Say goodbye for now.", next: "end_good" }
       ]
+    },
+    giveFlower: {
+      expression: 'thankYou',
+      text: `"Oh! A flower, thank you so much, ${playerName}!" Lily blushes.\n\nYou feel your bond grow stronger.`,
+      options: [
+        { text: "You're welcome!", next: "sit" }
+      ],
+      effect: () => updateRelationship(15)
+    },
+    giveChocolate: {
+      expression: 'thankYou',
+      text: `"Chocolate! You really know how to make me smile, ${playerName}!" she giggles.\n\nYour connection deepens.`,
+      options: [
+        { text: "Glad you like it!", next: "sit" }
+      ],
+      effect: () => updateRelationship(20)
     }
   };
 
-  function showNode(nodeKey) {
-    const node = story[nodeKey];
-    dialogueEl.textContent = node.text;
-    optionsEl.innerHTML = '';
-    node.options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.textContent = opt.text;
-      btn.onclick = () => showNode(opt.next);
-      optionsEl.appendChild(btn);
-    });
+  function playClickSound() {
+    clickSound.currentTime = 0;
+    clickSound.play();
   }
 
-  // Start the game
-  showNode('start');
+  function showNode(key) {
+    currentNodeKey = key;
+    giveFlowerBtn.disabled = true;
+    giveChocolateBtn.disabled = true;
+
+    const node = story[key];
+    if (!node) return;
+
+    portraitEl.textContent = expressions[node.expression] || expressions.default;
+
+    // Run effect if exists
+    if (node.effect) node.effect();
+
+    // Disable buttons during typing
+    optionsEl.innerHTML = '';
+    playClickSound();
+
+    // Type text with effect, then show options
+    typeText(typeof node.text === 'function' ? node.text() : node.text, () => {
+      node.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt.text;
+        btn.onclick = () => {
+          playClickSound();
+          showNode(opt.next);
+        };
+        optionsEl.appendChild(btn);
+      });
+
+      // Enable give buttons only in certain nodes
+      if (key === 'sit' || key === 'start') {
+        if (inventory.flower > 0) giveFlowerBtn.disabled = false;
+        if (inventory.chocolate > 0) giveChocolateBtn.disabled = false;
+      }
+    });
+
+    updateRelationship(0); // Refresh display in case updated by effect
+  }
+
+  // Give items handlers
+  giveFlowerBtn.onclick = () => {
+    if (inventory.flower <= 0) return;
+    inventory.flower--;
+    showNode('giveFlower');
+    updateInventoryUI();
+  };
+  giveChocolateBtn.onclick = () => {
+    if (inventory.chocolate <= 0) return;
+    inventory.chocolate--;
+    showNode('giveChocolate');
+    updateInventoryUI();
+  };
+
+  // Start game with name
+  startBtn.onclick = () => {
+    const name = playerNameInput.value.trim();
+    if (!name) {
+      alert("Please enter your name!");
+      return;
+    }
+    playerName = name;
+    nameInputDiv.style.display = 'none';
+    gameDiv.style.display = 'block';
+    bgMusic.play();
+    showNode('start');
+    updateInventoryUI();
+  };
 </script>
 </body>
 </html>
