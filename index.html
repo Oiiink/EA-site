@@ -1,697 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flappy Bee - Tutorial, Progression & Ghost Mode</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-  body, html {
-    margin: 0; padding: 0; overflow: hidden;
-    background: linear-gradient(to bottom, #87ceeb 0%, #8ed0a4 100%);
-    font-family: 'Fredoka One', cursive, sans-serif;
-    color: #065f46;
-    user-select: none;
-  }
-  #game-container {
-    position: relative;
-    margin: 0 auto;
-    width: 480px;
-    height: 640px;
-    background: linear-gradient(to bottom, #87ceeb 0%, #8ed0a4 100%);
-    box-shadow: 0 0 20px #0b3d24;
-    border-radius: 10px;
-  }
-  canvas {
-    display: block;
-    background: transparent;
-    border-radius: 10px;
-  }
-  #start-screen, #tutorial-overlay, #game-over-screen {
-    position: absolute;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(255 255 255 / 0.95);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    border-radius: 10px;
-    padding: 20px;
-  }
-  #start-screen h1, #game-over-screen h1 {
-    margin: 0 0 12px 0;
-    font-size: 3rem;
-    color: #065f46;
-  }
-  button {
-    font-family: 'Fredoka One', cursive, sans-serif;
-    background-color: #10b981;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    padding: 12px 24px;
-    margin: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 6px #047857;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #059669;
-  }
-  button:active {
-    box-shadow: none;
-    transform: translateY(4px);
-  }
-  input[type="text"] {
-    font-family: 'Fredoka One', cursive, sans-serif;
-    font-size: 1.2rem;
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    border: 2px solid #10b981;
-    width: 240px;
-    text-align: center;
-    color: #065f46;
-  }
-  #score-display {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    color: #065f46;
-    text-shadow: 0 0 5px #34d399;
-    user-select: none;
-    z-index: 5;
-  }
-  #powerup-icon {
-    position: absolute;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 48px;
-    height: 48px;
-    filter: drop-shadow(0 0 3px #10b981);
-    transition: opacity 0.5s ease;
-    opacity: 0;
-    z-index: 5;
-  }
-  #powerup-icon.visible {
-    opacity: 1;
-  }
-  #ghost-toggle {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: #059669;
-    font-size: 0.9rem;
-    padding: 6px 10px;
-    border-radius: 6px;
-    color: white;
-    user-select: none;
-    z-index: 5;
-  }
-  #message-overlay {
-    position: absolute;
-    bottom: 140px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #dc2626;
-    text-shadow: 0 0 6px #b91c1c;
-    user-select: none;
-    pointer-events: none;
-    z-index: 5;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flappy Bee</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+    }
+
+    canvas {
+      display: block;
+      background: linear-gradient(to bottom, #a6e1fa, #ffffff);
+    }
+
+    #main-menu {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    #main-menu h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #bee-logo {
+      width: 50px;
+      height: 50px;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .menu-section {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    input, button, label {
+      font-size: 16px;
+      padding: 10px;
+      margin: 5px;
+    }
+
+    .powerups {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .powerup {
+      text-align: center;
+      max-width: 120px;
+    }
+
+    .powerup img {
+      width: 50px;
+      height: 50px;
+    }
+
+    #game-over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      display: none;
+      z-index: 20;
+    }
+
+    #play-again-btn {
+      margin-top: 20px;
+      font-size: 20px;
+      padding: 10px 20px;
+    }
+  </style>
 </head>
 <body>
-<div id="game-container">
-  <canvas id="game-canvas" width="480" height="640" aria-label="Flappy Bee game canvas" role="img" tabindex="0"></canvas>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-  <div id="score-display" aria-live="polite" aria-atomic="true">Score: 0</div>
-  <img id="powerup-icon" src="" alt="Active power-up icon" aria-hidden="true" />
+  <div id="main-menu">
+    <h1>
+      <img src="assets/images/logo.png" alt="Bee Logo" id="bee-logo" />
+      Flappy Bee
+    </h1>
 
-  <button id="ghost-toggle" aria-pressed="true" title="Toggle Ghost Mode">Ghost: On</button>
-
-  <div id="message-overlay" role="alert" aria-live="assertive"></div>
-
-  <!-- Start Screen -->
-  <section id="start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title">
-    <h1 id="start-title">Flappy Bee</h1>
-    <input type="text" id="username-input" aria-label="Enter your player name" placeholder="Enter your name" maxlength="16" />
-    <div>
-      <button id="btn-start">Start Game</button>
-      <button id="btn-tutorial">Tutorial Mode</button>
+    <div class="menu-section">
+      <label for="username">Username:</label>
+      <input type="text" id="username" placeholder="Enter name..." />
     </div>
-  </section>
 
-  <!-- Tutorial Overlay -->
-  <section id="tutorial-overlay" role="dialog" aria-modal="true" aria-labelledby="tutorial-title" hidden>
-    <h2 id="tutorial-title">How to Play</h2>
-    <p>Press <strong>Space</strong> or <strong>Click / Tap</strong> to flap the bee upward.</p>
-    <p>Avoid hitting the pipes and ground.</p>
-    <p>Collect power-ups for special abilities!</p>
-    <button id="btn-skip-tutorial">Skip Tutorial</button>
-  </section>
-
-  <!-- Game Over Screen -->
-  <section id="game-over-screen" role="dialog" aria-modal="true" aria-labelledby="gameover-title" hidden>
-    <h1 id="gameover-title">Game Over!</h1>
-    <p id="final-score">Your score: 0</p>
-    <div>
-      <button id="btn-restart">Play Again</button>
-      <button id="btn-back-to-start">Back to Menu</button>
+    <div class="menu-section">
+      <button onclick="startGame(false)">Start Game</button>
+      <button onclick="startGame(true)">Tutorial Mode</button>
     </div>
-  </section>
-</div>
 
-<script>
-(() => {
-  const canvas = document.getElementById('game-canvas');
-  const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
-
-  // UI Elements
-  const startScreen = document.getElementById('start-screen');
-  const tutorialOverlay = document.getElementById('tutorial-overlay');
-  const gameOverScreen = document.getElementById('game-over-screen');
-  const usernameInput = document.getElementById('username-input');
-  const scoreDisplay = document.getElementById('score-display');
-  const powerupIcon = document.getElementById('powerup-icon');
-  const ghostToggle = document.getElementById('ghost-toggle');
-  const messageOverlay = document.getElementById('message-overlay');
-  const btnStart = document.getElementById('btn-start');
-  const btnTutorial = document.getElementById('btn-tutorial');
-  const btnSkipTutorial = document.getElementById('btn-skip-tutorial');
-  const btnRestart = document.getElementById('btn-restart');
-  const btnBackToStart = document.getElementById('btn-back-to-start');
-
-  // Constants
-  const PIPE_WIDTH = 60;
-  const PIPE_BASE_SPEED = 2;
-  const PIPE_BASE_GAP = 180;
-  const PIPE_MIN_GAP = 120;
-  const PIPE_GAP_DECREASE_RATE = 0.5; // gap shrinks by this every 5 points approx
-  const PIPE_SPEED_INCREASE_RATE = 0.1; // speed increases by this every 5 points approx
-  const PIPE_MIN_SPEED = 3.5;
-
-  const BEE_WIDTH = 48;
-  const BEE_HEIGHT = 48;
-  const GRAVITY = 0.4;
-  const FLAP_STRENGTH = -7;
-
-  const POWERUP_DURATION = 6000; // ms
-
-  // Assets
-  const beeImg = new Image();
-  beeImg.src = 'assets/images/logo.png';
-
-  // Powerup icons (base64 or use asset images if you want)
-  const POWERUP_ICONS = {
-    shield: '🛡️',
-    slow: '🐢',
-    double: '✌️',
-    magnet: '🧲'
-  };
-
-  // Game state variables
-  let username = '';
-  let pipes = [];
-  let powerups = [];
-  let bee = { x: 100, y: height/2, width: BEE_WIDTH, height: BEE_HEIGHT, velocity: 0 };
-  let score = 0;
-  let isRunning = false;
-  let gameOver = false;
-  let paused = false;
-  let activePowerup = null;
-  let powerupExpiresAt = 0;
-  let pipeSpeed = PIPE_BASE_SPEED;
-  let pipeGap = PIPE_BASE_GAP;
-  let lastPipeSpawn = 0;
-  let spawnInterval = 1500;
-  let frameCount = 0;
-
-  // Tutorial mode flag
-  let tutorialMode = false;
-
-  // Replay/Ghost data
-  let runData = []; // stores {x, y, timestamp}
-  let ghostRunData = null; // best run stored in localStorage
-  let ghostVisible = true;
-  let ghostIndex = 0;
-
-  // Particle system for powerup collect effect
-  const particles = [];
-
-  // Sounds (using simple beep placeholders for now)
-  // You can replace with your own sounds or audio files if you want
-  const sounds = {
-    flap: new Audio('https://actions.google.com/sounds/v1/animals/bee_buzz.ogg'),
-    hit: new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'),
-    powerup: new Audio('https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg'),
-    score: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
-  };
-
-  // Utility functions
-  function playSound(name) {
-    const s = sounds[name];
-    if (s) {
-      s.currentTime = 0;
-      s.play().catch(() => {});
-    }
-  }
-
-  function rectsOverlap(r1, r2) {
-    return !(r2.x > r1.x + r1.width ||
-             r2.x + r2.width < r1.x ||
-             r2.y > r1.y + r1.height ||
-             r2.y + r2.height < r1.y);
-  }
-
-  function createParticles(x, y) {
-    for (let i=0; i<20; i++) {
-      particles.push({
-        x,
-        y,
-        radius: Math.random() * 4 + 2,
-        color: `hsl(${Math.random()*40 + 40}, 90%, 60%)`,
-        velocityX: (Math.random()-0.5)*5,
-        velocityY: (Math.random()-0.5)*5,
-        alpha: 1,
-        life: 30
-      });
-    }
-  }
-
-  function updateParticles() {
-    for (let i=particles.length-1; i>=0; i--) {
-      let p = particles[i];
-      p.x += p.velocityX;
-      p.y += p.velocityY;
-      p.alpha -= 0.03;
-      p.life--;
-      if (p.life <= 0 || p.alpha <= 0) particles.splice(i,1);
-    }
-  }
-
-  function drawParticles() {
-    particles.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(255, 223, 0, ${p.alpha})`;
-      ctx.shadowColor = 'rgba(255, 223, 0, 0.7)';
-      ctx.shadowBlur = 8;
-      ctx.fill();
-    });
-  }
-
-  // Pipes generation and update
-  function spawnPipe() {
-    // top pipe height between 50 and 250
-    const topHeight = 50 + Math.random()*200;
-    const bottomY = topHeight + pipeGap;
-    pipes.push({
-      x: width,
-      top: topHeight,
-      bottom: height - bottomY,
-      yOffset: 0,
-      oscillateDir: 1,
-      oscillateSpeed: 0.5 + Math.random() * 0.5,
-    });
-  }
-
-  function updatePipes() {
-    for (let i = pipes.length-1; i >= 0; i--) {
-      let p = pipes[i];
-      p.x -= pipeSpeed;
-
-      // Oscillate pipe up/down gently for life
-      p.yOffset += p.oscillateSpeed * p.oscillateDir;
-      if (p.yOffset > 15) p.oscillateDir = -1;
-      else if (p.yOffset < -15) p.oscillateDir = 1;
-
-      if (p.x + PIPE_WIDTH < 0) pipes.splice(i,1);
-      else if(!gameOver && !paused) {
-        // Score when pipe passes bee
-        if(p.x + PIPE_WIDTH < bee.x && !p.scored) {
-          p.scored = true;
-          score++;
-          playSound('score');
-
-          // Adjust difficulty progressively
-          pipeSpeed = Math.min(PIPE_MIN_SPEED, PIPE_BASE_SPEED + Math.floor(score/5)*PIPE_SPEED_INCREASE_RATE);
-          pipeGap = Math.max(PIPE_MIN_GAP, PIPE_BASE_GAP - Math.floor(score/5)*PIPE_GAP_DECREASE_RATE);
-
-          spawnInterval = Math.max(900, 1500 - score*10);
-        }
-      }
-    }
-  }
-
-  function drawPipe(pipe) {
-    ctx.fillStyle = '#065f46';
-    // top pipe
-    ctx.fillRect(pipe.x, pipe.yOffset, PIPE_WIDTH, pipe.top);
-    // bottom pipe
-    ctx.fillRect(pipe.x, pipe.bottom + pipe.yOffset, PIPE_WIDTH, height - (pipe.bottom + pipe.yOffset));
-    // pipe outlines
-    ctx.strokeStyle = '#0f766e';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(pipe.x, pipe.yOffset, PIPE_WIDTH, pipe.top);
-    ctx.strokeRect(pipe.x, pipe.bottom + pipe.yOffset, PIPE_WIDTH, height - (pipe.bottom + pipe.yOffset));
-  }
-
-  // Power-ups
-  const POWERUP_TYPES = ['shield', 'slow', 'double', 'magnet'];
-  let activePowerupType = null;
-  let powerupEndTime = 0;
-
-  function spawnPowerup() {
-    // spawn randomly near pipes (30% chance every pipe spawn)
-    if(Math.random() > 0.3) return;
-
-    const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
-    // place powerup somewhere between pipe gap
-    if(pipes.length === 0) return;
-    const pipe = pipes[pipes.length - 1];
-    const x = pipe.x + PIPE_WIDTH / 2;
-    const y = pipe.top + (pipeGap / 2) + pipe.yOffset;
-    powerups.push({x, y, type, collected: false, floatY: 0, floatDir: 1});
-  }
-
-  function updatePowerups() {
-    for(let i = powerups.length - 1; i >= 0; i--) {
-      let p = powerups[i];
-      p.x -= pipeSpeed;
-      // float up/down animation
-      p.floatY += 0.5 * p.floatDir;
-      if(p.floatY > 10) p.floatDir = -1;
-      else if(p.floatY < -10) p.floatDir = 1;
-
-      // Collision with bee (simple rect collision)
-      const beeRect = {x: bee.x, y: bee.y, width: bee.width, height: bee.height};
-      const powerupRect = {x: p.x-15, y: p.y + p.floatY - 15, width: 30, height: 30};
-      if(!p.collected && rectsOverlap(beeRect, powerupRect)) {
-        p.collected = true;
-        activatePowerup(p.type);
-        createParticles(p.x, p.y + p.floatY);
-        playSound('powerup');
-        powerups.splice(i, 1);
-      }
-      else if(p.x < -40) {
-        powerups.splice(i, 1);
-      }
-    }
-  }
-
-  function drawPowerups() {
-    for(let p of powerups) {
-      ctx.font = '28px serif';
-      ctx.textAlign = 'center';
-      ctx.shadowColor = '#10b981';
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = {
-        shield: '#fde68a',
-        slow: '#60a5fa',
-        double: '#db2777',
-        magnet: '#f59e0b'
-      }[p.type] || '#10b981';
-      ctx.fillText(POWERUP_ICONS[p.type] || '❓', p.x, p.y + p.floatY);
-      ctx.shadowBlur = 0;
-    }
-  }
-
-  // Powerup activation and effect management
-  function activatePowerup(type) {
-    activePowerupType = type;
-    powerupEndTime = performance.now() + POWERUP_DURATION;
-    powerupIcon.textContent = POWERUP_ICONS[type];
-    powerupIcon.classList.add('visible');
-  }
-
-  function updatePowerupStatus() {
-    if(activePowerupType && performance.now() > powerupEndTime) {
-      activePowerupType = null;
-      powerupIcon.classList.remove('visible');
-    }
-  }
-
-  // Draw bee with glow effect if powerup active
-  function drawBee() {
-    ctx.save();
-    if(activePowerupType) {
-      const glowColors = {
-        shield: 'rgba(253, 230, 138, 0.7)',
-        slow: 'rgba(96, 165, 250, 0.7)',
-        double: 'rgba(219, 39, 119, 0.7)',
-        magnet: 'rgba(245, 158, 11, 0.7)'
-      };
-      ctx.shadowColor = glowColors[activePowerupType] || '#10b981';
-      ctx.shadowBlur = 20;
-    }
-    ctx.drawImage(beeImg, bee.x, bee.y, bee.width, bee.height);
-    ctx.restore();
-  }
-
-  // Bee movement and physics
-  function updateBee() {
-    if(tutorialMode && score === 0) {
-      // slower gravity in tutorial
-      bee.velocity += GRAVITY * 0.5;
-    } else {
-      bee.velocity += GRAVITY * (activePowerupType === 'slow' ? 0.5 : 1);
-    }
-    bee.y += bee.velocity;
-
-    // ground collision
-    if(bee.y + bee.height > height - 20) {
-      bee.y = height - bee.height - 20;
-      bee.velocity = 0;
-      gameOver = true;
-    }
-    // top boundary
-    if(bee.y < 0) {
-      bee.y = 0;
-      bee.velocity = 0;
-    }
-  }
-
-  // Collision detection with pipes
-  function checkCollision() {
-    if(activePowerupType === 'shield') return false; // invincible
-
-    for(let pipe of pipes) {
-      // top pipe rect
-      const topRect = {x: pipe.x, y: pipe.yOffset, width: PIPE_WIDTH, height: pipe.top};
-      // bottom pipe rect
-      const bottomRect = {x: pipe.x, y: pipe.bottom + pipe.yOffset, width: PIPE_WIDTH, height: height - (pipe.bottom + pipe.yOffset)};
-      const beeRect = {x: bee.x, y: bee.y, width: bee.width, height: bee.height};
-      if(rectsOverlap(beeRect, topRect) || rectsOverlap(beeRect, bottomRect)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Replay/Ghost logic
-  function saveRunData(timestamp) {
-    runData.push({x: bee.x, y: bee.y, t: timestamp});
-  }
-
-  function saveBestRun() {
-    try {
-      localStorage.setItem('flappyBeeBestRun', JSON.stringify(runData));
-    } catch(e) {}
-  }
-
-  function loadBestRun() {
-    try {
-      const data = localStorage.getItem('flappyBeeBestRun');
-      if(data) ghostRunData = JSON.parse(data);
-      else ghostRunData = null;
-    } catch(e) {
-      ghostRunData = null;
-    }
-  }
-
-  function drawGhostBee(timestamp) {
-    if(!ghostVisible || !ghostRunData || ghostRunData.length === 0) return;
-
-    // Find ghost position closest to current timestamp
-    while(ghostIndex < ghostRunData.length - 1 && ghostRunData[ghostIndex+1].t <= timestamp) {
-      ghostIndex++;
-    }
-    const g = ghostRunData[ghostIndex];
-    if(!g) return;
-    ctx.save();
-    ctx.globalAlpha = 0.4;
-    ctx.drawImage(beeImg, g.x, g.y, bee.width, bee.height);
-    ctx.restore();
-  }
-
-  // Input handlers
-  function flap() {
-    if(gameOver) return;
-    if(!isRunning) startGame();
-    bee.velocity = FLAP_STRENGTH;
-    playSound('flap');
-  }
-
-  // Game state control
-  function startGame() {
-    pipes = [];
-    powerups = [];
-    bee = { x: 100, y: height/2, width: BEE_WIDTH, height: BEE_HEIGHT, velocity: 0 };
-    score = 0;
-    pipeSpeed = PIPE_BASE_SPEED;
-    pipeGap = PIPE_BASE_GAP;
-    spawnInterval = 1500;
-    lastPipeSpawn = performance.now();
-    frameCount = 0;
-    activePowerupType = null;
-    powerupEndTime = 0;
-    gameOver = false;
-    isRunning = true;
-    paused = false;
-    runData = [];
-    ghostIndex = 0;
-    messageOverlay.textContent = '';
-
-    startScreen.hidden = true;
-    tutorialOverlay.hidden = true;
-    gameOverScreen.hidden = true;
-    powerupIcon.classList.remove('visible');
-
-    // Load best run for ghost
-    loadBestRun();
-
-    if(tutorialMode) {
-      // Slower start for tutorial
-      pipeSpeed = 1.2;
-      pipeGap = 220;
-      spawnInterval = 2500;
-    }
-  }
-
-  function endGame() {
-    isRunning = false;
-    gameOver = true;
-    gameOverScreen.hidden = false;
-    document.getElementById('final-score').textContent = `Your score: ${score}`;
-    saveBestRun();
-  }
-
-  // Main game loop
-  function gameLoop(timestamp) {
-    if(!isRunning) return;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // Spawn pipes on interval
-    if(timestamp - lastPipeSpawn > spawnInterval) {
-      spawnPipe();
-      spawnPowerup();
-      lastPipeSpawn = timestamp;
-    }
-
-    updatePipes();
-    updatePowerups();
-    updatePowerupStatus();
-    updateBee();
-
-    if(!tutorialMode && checkCollision()) {
-      playSound('hit');
-      messageOverlay.textContent = 'You hit a pipe!';
-      endGame();
-    }
-
-    // Store run data (timestamp is relative to game start)
-    runData.push({x: bee.x, y: bee.y, t: timestamp});
-
-    // Draw everything
-    pipes.forEach(drawPipe);
-    drawPowerups();
-    drawBee();
-    drawParticles();
-    updateParticles();
-
-    // Draw ghost bee
-    drawGhostBee(timestamp);
-
-    // Score and UI
-    scoreDisplay.textContent = `Score: ${score}`;
-
-    requestAnimationFrame(gameLoop);
-  }
-
-  // Event listeners
-  document.addEventListener('keydown', e => {
-    if(e.code === 'Space' || e.code === 'ArrowUp') {
-      e.preventDefault();
-      flap();
-    }
-  });
-
-  canvas.addEventListener('click', flap);
-  canvas.addEventListener('touchstart', e => {
-    e.preventDefault();
-    flap();
-  }, {passive: false});
-
-  btnStart.addEventListener('click', () => {
-    username = usernameInput.value.trim() || 'BeePlayer';
-    tutorialMode = false;
-    startGame();
-    animate();
-  });
-
-  btnTutorial.addEventListener('click', () => {
-    username = usernameInput.value.trim() || 'BeePlayer';
-    tutorialMode = true;
-    startGame();
-    tutorialOverlay.hidden = false;
-  });
-
-  btnSkipTutorial.addEventListener('click', () => {
-    tutorialOverlay.hidden = true;
-    isRunning = true;
-    animate();
-  });
-
-  btnRestart.addEventListener('click', () => {
-    gameOverScreen.hidden = true;
-    startGame();
-    animate();
-  });
-
-  btnBackToStart.addEventListener('click', () => {
-    gameOverScreen.hidden = true;
-    startScreen.hidden = false;
-    messageOverlay.textContent = '';
-  });
-
-  ghostToggle.addEventListener('click', () => {
-    ghostVisible = !ghostVisible;
-    ghostToggle.textContent = `Ghost: ${ghostVisible ? 'On' : 'Off'}`;
-    ghostToggle.setAttribute('aria-pressed', ghostVisible.toString());
-  });
-
-  // Animation loop wrapper
-  function animate(timestamp) {
-    if(!isRunning) return;
-    gameLoop(timestamp || performance.now());
-  }
-
-  // Initial focus on username input for accessibility
-  usernameInput.focus();
-
-})();
-</script>
+    <div class="menu-section">
+      <label><input type="checkbox" id="ghostMode" /> Enable Ghost Mode</label>
+    </div>
+
+    <div class="menu-section">
+      <h3>Power-ups</h3>
+      <div class="powerups">
+        <div class="powerup">
+          <img src="assets/images/shield.png" alt="Shield">
+          <p>Shield: Block one obstacle</p>
+        </div>
+        <div class="powerup">
+          <img src="assets/images/slowmo.png" alt="Slow Motion">
+          <p>SlowMo: Slows pipes briefly</p>
+        </div>
+        <div class="powerup">
+          <img src="assets/images/doublescore.png" alt="Double Score">
+          <p>Double: Double score during effect</p>
+        </div>
+        <div class="powerup">
+          <img src="assets/images/boost.png" alt="Boost">
+          <p>Boost: Launches you upward quickly</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="game-over">
+    <div>Game Over</div>
+    <button id="play-again-btn" onclick="resetGame()">Play Again</button>
+  </div>
+
+  <script src="game.js"></script>
 </body>
 </html>
