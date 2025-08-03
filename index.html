@@ -8,148 +8,156 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #fffbe6;
-      color: #333;
+      background: #fff8dc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
     }
 
     h1 {
+      color: #ffb300;
+      text-shadow: 2px 2px #333;
       margin-top: 20px;
-      font-size: 2.5em;
-      color: #ffcc00;
-      text-shadow: 1px 1px 2px #000;
     }
 
-    #nectar {
-      font-size: 2em;
-      margin: 10px;
+    #game {
+      margin-top: 20px;
+      background: #f0e68c;
+      border: 4px solid #ffb300;
+      border-radius: 10px;
+      padding: 20px;
+      width: 400px;
     }
 
-    #bee {
-      width: 200px;
+    #enemy {
       cursor: pointer;
+      margin: 20px auto;
       transition: transform 0.1s;
     }
 
-    #bee:active {
+    #enemy:active {
       transform: scale(0.95);
     }
 
-    .hero-list {
-      margin: 20px auto;
-      max-width: 400px;
-      text-align: left;
-      background: #fff3b0;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .hero {
-      margin-bottom: 15px;
-      border-bottom: 1px solid #f0d264;
-      padding-bottom: 10px;
+    #controls {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
     }
 
     button {
-      padding: 6px 12px;
-      font-size: 0.9em;
-      background: #fcd116;
+      padding: 10px 20px;
+      background-color: #ffb300;
       border: none;
       border-radius: 8px;
+      font-weight: bold;
+      color: #fff;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
-    button:disabled {
+    button:hover {
+      background-color: #ffa000;
+    }
+
+    #hpBarContainer {
       background: #ddd;
-      cursor: not-allowed;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px auto;
+      width: 100%;
+      height: 20px;
+    }
+
+    #hpBar {
+      background: #ff5252;
+      height: 100%;
+      width: 100%;
+      transition: width 0.2s;
+    }
+
+    .levelInfo {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #444;
     }
   </style>
 </head>
 <body>
-
   <h1>🐝 Bee Clicker Heroes</h1>
-  <div id="nectar">Nectar: 0</div>
-
-  <img id="bee" src="https://i.imgur.com/tLx0J8F.png" alt="Bee" />
-
-  <div class="hero-list" id="hero-list">
-    <!-- Hero upgrades go here -->
+  <div id="game">
+    <div class="levelInfo">Level <span id="level">1</span></div>
+    <img id="enemy" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png" width="150" />
+    <div id="hpBarContainer"><div id="hpBar"></div></div>
+    <p>Enemy HP: <span id="enemyHp"></span> / <span id="enemyMaxHp"></span></p>
+    <p>Total Clicks: <span id="clicks">0</span></p>
+    <div id="controls">
+      <button onclick="prevLevel()">⬅️ Back</button>
+      <button onclick="nextLevel()">➡️ Next</button>
+    </div>
   </div>
 
   <script>
-    let nectar = 0;
-    let clickPower = 1;
+    const enemy = document.getElementById("enemy");
+    const hpBar = document.getElementById("hpBar");
+    const enemyHpDisplay = document.getElementById("enemyHp");
+    const enemyMaxHpDisplay = document.getElementById("enemyMaxHp");
+    const clicksDisplay = document.getElementById("clicks");
+    const levelDisplay = document.getElementById("level");
 
-    const nectarDisplay = document.getElementById("nectar");
-    const bee = document.getElementById("bee");
-    const heroList = document.getElementById("hero-list");
+    let level = 1;
+    let maxLevel = 1;
+    let clicks = 0;
 
-    const heroes = [
-      {
-        name: "Worker Bee",
-        baseCost: 10,
-        nectarPerSecond: 1,
-        owned: 0
-      },
-      {
-        name: "Soldier Bee",
-        baseCost: 100,
-        nectarPerSecond: 10,
-        owned: 0
-      },
-      {
-        name: "Queen Bee",
-        baseCost: 1000,
-        nectarPerSecond: 100,
-        owned: 0
-      }
-    ];
+    let hp = 10;
+    let maxHp = 10;
 
-    function updateDisplay() {
-      nectarDisplay.textContent = `Nectar: ${Math.floor(nectar)}`;
-      heroList.innerHTML = "";
-
-      heroes.forEach((hero, index) => {
-        const cost = Math.floor(hero.baseCost * Math.pow(1.15, hero.owned));
-        const heroEl = document.createElement("div");
-        heroEl.className = "hero";
-        heroEl.innerHTML = `
-          <strong>${hero.name}</strong><br/>
-          Owned: ${hero.owned} | +${hero.nectarPerSecond}/s<br/>
-          <button onclick="buyHero(${index})" ${nectar < cost ? "disabled" : ""}>
-            Buy (${cost} nectar)
-          </button>
-        `;
-        heroList.appendChild(heroEl);
-      });
+    function calculateHp(level) {
+      return 10 + Math.floor(Math.pow(level, 1.5) * 5);
     }
 
-    function buyHero(index) {
-      const hero = heroes[index];
-      const cost = Math.floor(hero.baseCost * Math.pow(1.15, hero.owned));
-      if (nectar >= cost) {
-        nectar -= cost;
-        hero.owned++;
-        updateDisplay();
-      }
+    function updateUI() {
+      enemyHpDisplay.textContent = Math.max(0, Math.floor(hp));
+      enemyMaxHpDisplay.textContent = maxHp;
+      levelDisplay.textContent = level;
+      hpBar.style.width = (hp / maxHp * 100) + "%";
+      clicksDisplay.textContent = clicks;
     }
 
-    bee.addEventListener("click", () => {
-      nectar += clickPower;
-      updateDisplay();
+    function resetEnemy() {
+      maxHp = calculateHp(level);
+      hp = maxHp;
+      updateUI();
+    }
+
+    enemy.addEventListener("click", () => {
+      hp -= 1;
+      clicks++;
+      if (hp <= 0) {
+        level++;
+        maxLevel = Math.max(maxLevel, level);
+        resetEnemy();
+      }
+      updateUI();
     });
 
-    // Passive generation loop
-    setInterval(() => {
-      heroes.forEach(hero => {
-        nectar += hero.owned * hero.nectarPerSecond / 10;
-      });
-      updateDisplay();
-    }, 100); // 10 times per second
+    function nextLevel() {
+      if (level < maxLevel) {
+        level++;
+        resetEnemy();
+      }
+    }
 
-    updateDisplay();
+    function prevLevel() {
+      if (level > 1) {
+        level--;
+        resetEnemy();
+      }
+    }
+
+    // Start the game
+    resetEnemy();
   </script>
-
 </body>
 </html>
