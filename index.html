@@ -1,386 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Advanced Dating Sim - Multi-line Dialogue</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f9f6f2, #c6d8d3);
-    margin: 0; padding: 20px; color: #333;
-  }
-  #game {
-    max-width: 720px;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  }
-  #header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  #playerNameInput {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #aaa;
-    font-size: 1em;
-    width: 160px;
-  }
-  #avatarSelect {
-    font-size: 1em;
-    border-radius: 6px;
-    padding: 6px 8px;
-  }
-  #dateTime {
-    font-weight: 600;
-    color: #567a52;
-  }
-  #characterInfo {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  #portrait {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow: 0 0 15px #7b9aa7;
-    margin-right: 15px;
-    flex-shrink: 0;
-  }
-  #portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  #charName {
-    font-size: 2em;
-    font-weight: 700;
-    color: #3a5a40;
-    margin-bottom: 4px;
-  }
-  #stats {
-    font-size: 0.9em;
-    line-height: 1.4;
-    color: #3b5e3b;
-  }
-  #relationshipBars {
-    margin-top: 10px;
-  }
-  .statBar {
-    background: #ddd;
-    border-radius: 12px;
-    margin-bottom: 6px;
-    overflow: hidden;
-    height: 18px;
-  }
-  .statFill {
-    height: 100%;
-    background: #6ab04c;
-    width: 0%;
-    transition: width 0.5s ease;
-  }
-  .statLabel {
-    font-weight: 600;
-    margin-bottom: 2px;
-    color: #2f5a32;
-  }
-  #mood {
-    font-style: italic;
-    margin: 8px 0 15px 0;
-    font-weight: 600;
-    color: #427839;
-    text-align: center;
-  }
-  #dialogue {
-    min-height: 140px;
-    font-size: 1.2em;
-    line-height: 1.4;
-    margin-bottom: 15px;
-    padding: 12px 15px;
-    background: #f0f4f3;
-    border-radius: 8px;
-    white-space: pre-line;
-  }
-  #choices {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-  button.choice {
-    background: #3a5a40;
-    color: #fff;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    min-width: 140px;
-  }
-  button.choice:hover {
-    background-color: #2e4a33;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stick Fighting Game</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #111;
+      font-family: sans-serif;
+    }
+    canvas {
+      display: block;
+      background: url('https://i.imgur.com/Vz3bxrk.jpg') no-repeat center center;
+      background-size: cover;
+    }
+    #ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
-<div id="game">
-  <div id="header">
-    <div>
-      <label for="playerNameInput">Your Name: </label>
-      <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="15" />
-      <select id="avatarSelect" title="Choose your avatar">
-        <option value="🧑">🧑</option>
-        <option value="👩">👩</option>
-        <option value="🧔">🧔</option>
-        <option value="🧑‍🦰">🧑‍🦰</option>
-        <option value="🧑‍🎓">🧑‍🎓</option>
-      </select>
-    </div>
-    <div id="dateTime"></div>
+  <div id="ui">
+    <div>Player Health: <span id="p1hp">100</span></div>
+    <div>AI Health: <span id="p2hp">100</span></div>
   </div>
+  <canvas id="game" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
 
-  <div id="characterInfo">
-    <div id="portrait"><img src="" alt="Character Portrait" /></div>
-    <div>
-      <div id="charName"></div>
-      <div id="stats">
-        <div id="relationshipBars"></div>
-      </div>
-      <div id="mood"></div>
-    </div>
-  </div>
+    class Fighter {
+      constructor(x, color, isAI = false) {
+        this.x = x;
+        this.y = 300;
+        this.vx = 0;
+        this.vy = 0;
+        this.width = 30;
+        this.height = 60;
+        this.color = color;
+        this.health = 100;
+        this.isAI = isAI;
+        this.facing = 1;
+        this.onGround = true;
+        this.energy = 100;
+        this.stunned = 0;
+      }
 
-  <div id="dialogue"></div>
-  <div id="choices"></div>
-</div>
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
+      }
 
-<script>
-(() => {
-  // Player setup (simplified)
-  let player = { name: "Player", avatar: "🧑" };
-  const character = {
-    name: "Sakura",
-    avatarUrl: "https://avatars.dicebear.com/api/female/sakura.svg",
-    stats: { affection: 30, trust: 20, respect: 25, jealousy: 5 },
-    mood: 2,
-    moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
-    memory: { lastQuestion: null, confusionCount: 0 }
-  };
+      update() {
+        if (this.stunned > 0) this.stunned--;
+        this.vy += 0.8; // gravity
+        this.y += this.vy;
+        this.x += this.vx;
 
-  // Dialogue tree supporting multi-line dialogue (array of strings)
-  const dialogueTree = {
-    start: {
-      text: [`Hi ${player.name}! What would you like to talk about with Sakura?`],
-      choices: [
-        { text: "Ask about hobbies", next: "hobbies" },
-        { text: "Give a compliment", next: "compliment" },
-        { text: "Say goodbye", next: "goodbye" }
-      ]
-    },
-    hobbies: {
-      text: [
-        "Well, I love reading fantasy novels.",
-        "Gardening is something I enjoy a lot too — it helps me relax after a long day.",
-        "Sometimes I even grow rare herbs for tea!"
-      ],
-      choices: [
-        { text: "That sounds wonderful!", next: "hobbies_positive" },
-        { text: "I don't like gardening...", next: "hobbies_negative" },
-        { text: "Back to main", next: "start" }
-      ]
-    },
-    hobbies_positive: {
-      text: [
-        "Thank you! Maybe I can show you my garden sometime.",
-        "Would you like to come over this weekend?"
-      ],
-      choices: [
-        { text: "I'd love to!", next: "invite_accept" },
-        { text: "Maybe another time.", next: "invite_decline" }
-      ]
-    },
-    hobbies_negative: {
-      text: [
-        "Oh... that's a shame.",
-        "Gardening is really calming, but I understand it's not for everyone."
-      ],
-      choices: [
-        { text: "Sorry if I offended you.", next: "start" },
-        { text: "Let's talk about something else.", next: "start" }
-      ]
-    },
-    invite_accept: {
-      text: [
-        "Yay! I'm so excited to show you.",
-        "I hope you'll like it."
-      ],
-      choices: [{ text: "Back to main", next: "start" }]
-    },
-    invite_decline: {
-      text: [
-        "That's okay. Maybe another time then.",
-        "I look forward to seeing you whenever you're ready."
-      ],
-      choices: [{ text: "Back to main", next: "start" }]
-    },
-    compliment: {
-      text: [
-        "You're so sweet to say that.",
-        "It really means a lot to me."
-      ],
-      choices: [{ text: "Back to main", next: "start" }]
-    },
-    goodbye: {
-      text: ["Goodbye! Hope to see you again soon."],
-      choices: []
-    }
-  };
+        // ground
+        if (this.y > 300) {
+          this.y = 300;
+          this.vy = 0;
+          this.onGround = true;
+        } else {
+          this.onGround = false;
+        }
 
-  // State for tracking multi-line text in current node
-  let currentNodeId = "start";
-  let currentLineIndex = 0;
+        // screen bounds
+        this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
+      }
 
-  // Elements
-  const playerNameInput = document.getElementById("playerNameInput");
-  const avatarSelect = document.getElementById("avatarSelect");
-  const dialogueEl = document.getElementById("dialogue");
-  const choicesEl = document.getElementById("choices");
-  const portraitImg = document.querySelector("#portrait img");
-  const charNameEl = document.getElementById("charName");
-  const moodEl = document.getElementById("mood");
-  const relationshipBarsEl = document.getElementById("relationshipBars");
-  const dateTimeEl = document.getElementById("dateTime");
+      punch(target) {
+        if (this.stunned > 0) return;
+        if (Math.abs(this.x - target.x) < 40 && Math.abs(this.y - target.y) < 60) {
+          target.health -= 10;
+          target.vx = 5 * this.facing;
+          target.stunned = 20;
+        }
+      }
 
-  // Render functions
-  function renderCharacterInfo() {
-    portraitImg.src = character.avatarUrl;
-    portraitImg.alt = character.name;
-    charNameEl.textContent = character.name;
+      powerMove(target) {
+        if (this.energy >= 50) {
+          this.energy -= 50;
+          if (Math.abs(this.x - target.x) < 60) {
+            target.health -= 25;
+            target.vx = 10 * this.facing;
+            target.stunned = 40;
+          }
+        }
+      }
 
-    // Render stats bars
-    relationshipBarsEl.innerHTML = "";
-    for (const stat in character.stats) {
-      const label = document.createElement("div");
-      label.className = "statLabel";
-      label.textContent = `${capitalize(stat)}:`;
-
-      const barWrapper = document.createElement("div");
-      barWrapper.className = "statBar";
-
-      const fill = document.createElement("div");
-      fill.className = "statFill";
-      fill.style.width = `${character.stats[stat]}%`;
-      fill.style.backgroundColor = stat === "jealousy" ? "#d9534f" : "#6ab04c";
-
-      barWrapper.appendChild(fill);
-      relationshipBarsEl.appendChild(label);
-      relationshipBarsEl.appendChild(barWrapper);
-    }
-
-    // Mood
-    moodEl.textContent = `Mood: ${character.moodLevels[character.mood]}`;
-    const moodColors = ["#aa4444", "#999999", "#4caf50", "#a3d977"];
-    moodEl.style.color = moodColors[character.mood];
-  }
-
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  // Dialogue rendering supports multi-line with "Next" button
-  function renderDialogue() {
-    const node = dialogueTree[currentNodeId];
-    if (!node) {
-      dialogueEl.textContent = "Dialogue not found.";
-      choicesEl.innerHTML = "";
-      return;
-    }
-
-    // If the current line index is less than total lines, show that line and "Next"
-    if (Array.isArray(node.text) && currentLineIndex < node.text.length - 1) {
-      dialogueEl.textContent = node.text[currentLineIndex];
-      choicesEl.innerHTML = "";
-      const nextBtn = document.createElement("button");
-      nextBtn.className = "choice";
-      nextBtn.textContent = "Next";
-      nextBtn.onclick = () => {
-        currentLineIndex++;
-        renderDialogue();
-      };
-      choicesEl.appendChild(nextBtn);
-    } else {
-      // Show last line or single line
-      dialogueEl.textContent = Array.isArray(node.text) ? node.text[currentLineIndex] : node.text;
-      choicesEl.innerHTML = "";
-
-      if (node.choices && node.choices.length > 0) {
-        node.choices.forEach(choice => {
-          const btn = document.createElement("button");
-          btn.className = "choice";
-          btn.textContent = choice.text;
-          btn.onclick = () => {
-            currentNodeId = choice.next;
-            currentLineIndex = 0;
-            renderDialogue();
-          };
-          choicesEl.appendChild(btn);
-        });
-      } else {
-        // No choices = end of dialogue
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.textContent = "Restart Conversation";
-        btn.onclick = () => {
-          currentNodeId = "start";
-          currentLineIndex = 0;
-          renderDialogue();
-        };
-        choicesEl.appendChild(btn);
+      dash() {
+        if (this.energy >= 20) {
+          this.energy -= 20;
+          this.vx += 10 * this.facing;
+        }
       }
     }
-  }
 
-  // Initialize UI
-  function renderUI() {
-    playerNameInput.value = player.name;
-    avatarSelect.value = player.avatar;
-    renderCharacterInfo();
-    renderDialogue();
-    updateDateTime();
-  }
+    const player = new Fighter(100, "cyan");
+    const ai = new Fighter(600, "red", true);
 
-  // Date/time display (simple for now)
-  function updateDateTime() {
-    const now = new Date();
-    dateTimeEl.textContent = now.toLocaleString();
-  }
+    const keys = {};
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
 
-  // Event listeners for player name and avatar changes
-  playerNameInput.addEventListener("input", e => {
-    player.name = e.target.value.trim() || "Player";
-    renderUI();
-  });
+    function aiLogic() {
+      if (ai.stunned > 0) return;
+      const dx = player.x - ai.x;
+      ai.facing = dx > 0 ? 1 : -1;
 
-  avatarSelect.addEventListener("change", e => {
-    player.avatar = e.target.value;
-  });
+      if (Math.abs(dx) > 60) {
+        ai.vx = 2 * ai.facing;
+      } else {
+        ai.vx = 0;
+        if (Math.random() < 0.02) ai.punch(player);
+        if (Math.random() < 0.01) ai.powerMove(player);
+      }
 
-  // Start
-  renderUI();
+      if (ai.onGround && Math.random() < 0.01) {
+        ai.vy = -12;
+      }
+    }
 
-  // Capitalize utility reused
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-})();
-</script>
+    function update() {
+      if (player.stunned <= 0) {
+        player.vx = 0;
+        if (keys["a"]) player.vx = -4;
+        if (keys["d"]) player.vx = 4;
+        if (keys["w"] && player.onGround) player.vy = -12;
+        if (keys["j"]) player.punch(ai);
+        if (keys["k"]) player.powerMove(ai);
+        if (keys["l"]) player.dash();
+      }
+
+      player.energy = Math.min(100, player.energy + 0.5);
+      ai.energy = Math.min(100, ai.energy + 0.5);
+
+      player.update();
+      ai.update();
+      if (ai.isAI) aiLogic();
+
+      document.getElementById("p1hp").textContent = Math.max(0, Math.floor(player.health));
+      document.getElementById("p2hp").textContent = Math.max(0, Math.floor(ai.health));
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      player.draw();
+      ai.draw();
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+    loop();
+  </script>
 </body>
 </html>
