@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Alerts Wordle</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -10,16 +10,39 @@
       transition: background-color 0.3s, border-color 0.3s;
     }
     .key {
-      @apply bg-gray-700 text-white px-2 py-2 rounded-md font-bold text-sm m-1 w-8 h-10 flex items-center justify-center select-none shadow;
+      background-color: #374151; /* gray-700 */
+      color: white;
+      padding: 0.5rem 0.5rem;
+      border-radius: 0.375rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      margin: 0.25rem 0.125rem;
+      width: 2rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+      cursor: pointer;
+      border: none;
+      text-transform: uppercase;
+      transition: background-color 0.3s, color 0.3s;
     }
     .key-row {
-      @apply flex justify-center;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.5rem;
     }
-    .key-row:nth-child(2) .key {
-      margin-left: 6px;
+    .key-row.second-row .key {
+      margin-left: 0.375rem; /* ~6px */
     }
-    .keyboard {
-      @apply mt-6;
+    .key.wide {
+      width: 4.5rem;
+    }
+    .key.disabled {
+      cursor: default;
+      opacity: 0.5;
     }
   </style>
 </head>
@@ -28,24 +51,17 @@
     <h1 class="text-3xl font-bold mb-6">Event Alerts Wordle</h1>
     <div id="wordle-game" class="space-y-2 mb-4"></div>
 
-    <div class="keyboard">
-      <div class="key-row">
-        "QWERTYUIOP".split("").forEach(k => document.write(`<button class='key' data-key='${k}'>${k}</button>`));
-      </div>
-      <div class="key-row">
-        "ASDFGHJKL".split("").forEach(k => document.write(`<button class='key' data-key='${k}'>${k}</button>`));
-      </div>
-      <div class="key-row">
-        <button class="key w-16" data-key="ENTER">↵</button>
-        "ZXCVBNM".split("").forEach(k => document.write(`<button class='key' data-key='${k}'>${k}</button>`));
-        <button class="key w-16" data-key="BACKSPACE">⌫</button>
-      </div>
+    <div class="keyboard" aria-label="On-screen keyboard">
+      <div class="key-row first-row"></div>
+      <div class="key-row second-row"></div>
+      <div class="key-row third-row"></div>
     </div>
 
     <div id="stats" class="mt-6 text-center text-sm"></div>
   </main>
 
   <script>
+    // Words encoded (you can expand this list if you want)
     const encoded = "YXBwbGUsZXZlbnQsbW9kZW0sc2tlcHAsdXRpbHMsYWxlcnQsdHJhY2ssZmlnaHQsZ2FtZXMscGFydHk=";
     const WORDS = atob(encoded).split(",");
     const targetWord = WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
@@ -56,8 +72,12 @@
     let guessHistory = [];
     const date = new Date().toISOString().slice(0, 10);
 
+    // Keyboard letter states: 'correct' (green), 'present' (yellow), 'absent' (gray)
+    const keyboardState = {};
+
     const game = document.getElementById("wordle-game");
 
+    // Create board rows and tiles
     for (let r = 0; r < MAX_GUESSES; r++) {
       const row = document.createElement("div");
       row.className = "flex justify-center gap-2";
@@ -69,14 +89,59 @@
       game.appendChild(row);
     }
 
+    // Create keyboard buttons properly
+    const keyboardLayout = [
+      "QWERTYUIOP",
+      "ASDFGHJKL",
+      "ZXCVBNM"
+    ];
+
+    function createKeyboard() {
+      const rows = document.querySelectorAll(".key-row");
+      rows[0].innerHTML = "";
+      rows[1].innerHTML = "";
+      rows[2].innerHTML = "";
+
+      keyboardLayout.forEach((rowLetters, idx) => {
+        const rowEl = rows[idx];
+        if (idx === 2) {
+          // Add ENTER at start
+          const enterKey = document.createElement("button");
+          enterKey.textContent = "↵";
+          enterKey.setAttribute("data-key", "ENTER");
+          enterKey.className = "key wide";
+          rowEl.appendChild(enterKey);
+        }
+
+        for (const letter of rowLetters) {
+          const btn = document.createElement("button");
+          btn.textContent = letter;
+          btn.setAttribute("data-key", letter);
+          btn.className = "key";
+          rowEl.appendChild(btn);
+        }
+
+        if (idx === 2) {
+          // Add BACKSPACE at end
+          const backspaceKey = document.createElement("button");
+          backspaceKey.textContent = "⌫";
+          backspaceKey.setAttribute("data-key", "BACKSPACE");
+          backspaceKey.className = "key wide";
+          rowEl.appendChild(backspaceKey);
+        }
+      });
+    }
+
+    createKeyboard();
+
     function updateRow() {
       const row = game.children[currentRow];
       for (let i = 0; i < 5; i++) {
         const cell = row.children[i];
         cell.textContent = currentGuess[i] || "";
         cell.classList.remove("revealed");
-        cell.style.backgroundColor = "#1f2937";
-        cell.style.borderColor = "#4b5563";
+        cell.style.backgroundColor = "#1f2937"; // bg-gray-800
+        cell.style.borderColor = "#4b5563"; // border-gray-600
       }
     }
 
@@ -101,7 +166,7 @@
     function revealGuess() {
       const row = game.children[currentRow];
       const guess = currentGuess.toUpperCase();
-      const used = targetWord.split("");
+      let used = targetWord.split("");
       const emojiRow = getEmojiRow(guess);
 
       guessHistory.push(emojiRow);
@@ -114,16 +179,20 @@
           cell.classList.add("revealed");
 
           if (letter === targetWord[i]) {
-            cell.style.backgroundColor = "#16a34a";
+            cell.style.backgroundColor = "#16a34a"; // green-600
             cell.style.borderColor = "#16a34a";
+            keyboardState[letter] = "correct";
           } else if (used.includes(letter)) {
-            cell.style.backgroundColor = "#eab308";
+            cell.style.backgroundColor = "#eab308"; // yellow-400
             cell.style.borderColor = "#eab308";
+            if (keyboardState[letter] !== "correct") keyboardState[letter] = "present";
             used[used.indexOf(letter)] = null;
           } else {
-            cell.style.backgroundColor = "#374151";
+            cell.style.backgroundColor = "#374151"; // gray-700
             cell.style.borderColor = "#374151";
+            if (!keyboardState[letter]) keyboardState[letter] = "absent";
           }
+          updateKeyboardColors();
         }, i * 300);
       }
 
@@ -146,6 +215,27 @@
           disableInput();
         }
       }
+    }
+
+    function updateKeyboardColors() {
+      const keys = document.querySelectorAll(".key");
+      keys.forEach(key => {
+        const k = key.getAttribute("data-key");
+        if (keyboardState[k] === "correct") {
+          key.style.backgroundColor = "#16a34a"; // green-600
+          key.style.color = "white";
+        } else if (keyboardState[k] === "present") {
+          key.style.backgroundColor = "#eab308"; // yellow-400
+          key.style.color = "black";
+        } else if (keyboardState[k] === "absent") {
+          key.style.backgroundColor = "#374151"; // gray-700
+          key.style.color = "white";
+        } else {
+          // Default
+          key.style.backgroundColor = "#374151"; // gray-700
+          key.style.color = "white";
+        }
+      });
     }
 
     function handleInput(key) {
@@ -175,14 +265,19 @@
 
     document.querySelectorAll(".key").forEach(button => {
       button.addEventListener("click", () => {
+        if (button.disabled) return;
         const key = button.getAttribute("data-key");
         handleInput(key);
       });
     });
 
     function showShareButton(failed = false) {
+      // Remove old share box if any
+      const oldBox = document.querySelector(".share-box");
+      if (oldBox) oldBox.remove();
+
       const shareBox = document.createElement("div");
-      shareBox.className = "mt-6 text-center";
+      shareBox.className = "share-box mt-6 text-center";
 
       const emojiBlock = guessHistory.join("\n");
       const header = `Event Alerts Wordle — ${date}`;
