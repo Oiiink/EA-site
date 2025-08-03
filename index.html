@@ -1,371 +1,747 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Stock Market Simulator with Candlestick Charts</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
-    margin: 0; padding: 20px;
-    color: #222;
-  }
-  h1 {
-    text-align: center;
-    color: #2c3e50;
-  }
-  #balance {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  #stocks {
-    max-width: 1000px;
-    margin: 0 auto 20px auto;
-    border-collapse: collapse;
-    width: 100%;
-  }
-  #stocks th, #stocks td {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    text-align: center;
-    vertical-align: middle;
-  }
-  #stocks th {
-    background-color: #2980b9;
-    color: white;
-  }
-  button {
-    background-color: #27ae60;
-    border: none;
-    padding: 6px 12px;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-  }
-  button:hover {
-    background-color: #1e8449;
-  }
-  input[type=number] {
-    width: 60px;
-    padding: 4px;
-    border-radius: 4px;
-    border: 1px solid #aaa;
-    text-align: center;
-  }
-  #log {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    height: 140px;
-    overflow-y: auto;
-    font-family: monospace;
-    font-size: 14px;
-    color: #34495e;
-  }
-  canvas.priceChart {
-    display: block;
-    margin: 8px auto 4px auto;
-    width: 300px;
-    height: 100px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #fff;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stock Market Simulator - Advanced Candlestick Chart</title>
+  <style>
+    /* Reset & basics */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #1e1e1e;
+      color: #eee;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0 10px 0;
+      font-weight: 600;
+      color: #f5f5f5;
+    }
+    #balance {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #ddd;
+    }
+    #container {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      background: #252526;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow:
+        0 0 10px rgba(0,0,0,0.7);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+    th, td {
+      text-align: center;
+      padding: 10px 8px;
+      border-bottom: 1px solid #444;
+      vertical-align: middle;
+    }
+    th {
+      background: #3c3c3c;
+      font-weight: 700;
+      font-size: 14px;
+      color: #ccc;
+      user-select: none;
+    }
+    td {
+      font-size: 13px;
+      color: #bbb;
+    }
+    .price-up {
+      color: #4caf50;
+      font-weight: 600;
+    }
+    .price-down {
+      color: #f44336;
+      font-weight: 600;
+    }
+    input[type=number] {
+      width: 60px;
+      padding: 6px;
+      border-radius: 4px;
+      border: none;
+      background: #333;
+      color: #eee;
+      font-weight: 600;
+      font-size: 13px;
+      text-align: center;
+      outline: none;
+      transition: background-color 0.2s ease;
+    }
+    input[type=number]:focus {
+      background: #444;
+    }
+    button {
+      background-color: #0a84ff;
+      border: none;
+      padding: 6px 12px;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #006edc;
+    }
+    #log {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #181818;
+      padding: 10px 15px;
+      border-radius: 6px;
+      box-shadow: inset 0 0 15px rgba(255,255,255,0.05);
+      height: 160px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+      color: #bbb;
+      user-select: text;
+    }
+    canvas.chartCanvas {
+      display: block;
+      margin: 10px auto 8px auto;
+      background: #121212;
+      border: 1px solid #333;
+      border-radius: 6px;
+      cursor: grab;
+    }
+    #chartContainer {
+      user-select: none;
+      position: relative;
+    }
+    #tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(30, 30, 30, 0.9);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: monospace;
+      color: #eee;
+      display: none;
+      white-space: nowrap;
+      box-shadow: 0 0 6px rgba(0,0,0,0.8);
+      z-index: 10;
+      border: 1px solid #444;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Stock Market Simulator with Candlestick Charts</h1>
+  <h1>Stock Market Simulator</h1>
   <div id="balance">Cash: $1000.00 | Portfolio Value: $0.00 | Total: $1000.00</div>
-  <table id="stocks">
-    <thead>
-      <tr>
-        <th>Stock</th>
-        <th>Price ($)</th>
-        <th>Price Chart</th>
-        <th>Your Shares</th>
-        <th>Buy</th>
-        <th>Sell</th>
-      </tr>
-    </thead>
-    <tbody id="stockBody"></tbody>
-  </table>
+  <div id="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th>Price ($)</th>
+          <th>Chart & Volume</th>
+          <th>Your Shares</th>
+          <th>Buy</th>
+          <th>Sell</th>
+        </tr>
+      </thead>
+      <tbody id="stockBody"></tbody>
+    </table>
+  </div>
   <div id="log"></div>
 
-<script>
-  let cash = 1000;
+  <script>
+    // -- DATA SETUP --
 
-  // Each candle contains open, high, low, close, volume
-  const stocks = [
-    { symbol: "APL", name: "Apple", price: 150, owned: 0, history: [] },
-    { symbol: "GGL", name: "Google", price: 2800, owned: 0, history: [] },
-    { symbol: "TSL", name: "Tesla", price: 720, owned: 0, history: [] },
-    { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0, history: [] },
-    { symbol: "MSF", name: "Microsoft", price: 300, owned: 0, history: [] },
-  ];
+    let cash = 1000;
 
-  const balanceEl = document.getElementById("balance");
-  const stockBody = document.getElementById("stockBody");
-  const log = document.getElementById("log");
+    const stocks = [
+      { symbol: "APL", name: "Apple", price: 150, owned: 0, history: [] },
+      { symbol: "GGL", name: "Google", price: 2800, owned: 0, history: [] },
+      { symbol: "TSL", name: "Tesla", price: 720, owned: 0, history: [] },
+      { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0, history: [] },
+      { symbol: "MSF", name: "Microsoft", price: 300, owned: 0, history: [] },
+    ];
 
-  // Format number as currency string
-  function formatMoney(num) {
-    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
+    const balanceEl = document.getElementById("balance");
+    const stockBody = document.getElementById("stockBody");
+    const log = document.getElementById("log");
 
-  // Update UI balance
-  function updateBalance() {
-    let portfolioValue = stocks.reduce((sum, s) => sum + s.price * s.owned, 0);
-    let total = cash + portfolioValue;
-    balanceEl.textContent = `Cash: $${formatMoney(cash)} | Portfolio Value: $${formatMoney(portfolioValue)} | Total: $${formatMoney(total)}`;
-  }
+    // -- UTILS --
 
-  // Log event
-  function logEvent(text) {
-    const time = new Date().toLocaleTimeString();
-    log.textContent = `[${time}] ${text}\n` + log.textContent;
-  }
-
-  function createStockRow(stock) {
-    const tr = document.createElement("tr");
-    tr.id = `row-${stock.symbol}`;
-
-    const tdSymbol = document.createElement("td");
-    tdSymbol.textContent = `${stock.name} (${stock.symbol})`;
-
-    const tdPrice = document.createElement("td");
-    tdPrice.id = `price-${stock.symbol}`;
-    tdPrice.textContent = formatMoney(stock.price);
-
-    const tdChart = document.createElement("td");
-    const canvas = document.createElement("canvas");
-    canvas.className = "priceChart";
-    canvas.id = `chart-${stock.symbol}`;
-    canvas.width = 300;
-    canvas.height = 100;
-    tdChart.appendChild(canvas);
-
-    const tdOwned = document.createElement("td");
-    tdOwned.id = `owned-${stock.symbol}`;
-    tdOwned.textContent = stock.owned;
-
-    const tdBuy = document.createElement("td");
-    const buyInput = document.createElement("input");
-    buyInput.type = "number";
-    buyInput.min = "1";
-    buyInput.value = "1";
-    buyInput.id = `buy-input-${stock.symbol}`;
-    buyInput.style.marginRight = "6px";
-    const buyBtn = document.createElement("button");
-    buyBtn.textContent = "Buy";
-    buyBtn.onclick = () => buyStock(stock.symbol, buyInput.value);
-    tdBuy.appendChild(buyInput);
-    tdBuy.appendChild(buyBtn);
-
-    const tdSell = document.createElement("td");
-    const sellInput = document.createElement("input");
-    sellInput.type = "number";
-    sellInput.min = "1";
-    sellInput.value = "1";
-    sellInput.id = `sell-input-${stock.symbol}`;
-    sellInput.style.marginRight = "6px";
-    const sellBtn = document.createElement("button");
-    sellBtn.textContent = "Sell";
-    sellBtn.onclick = () => sellStock(stock.symbol, sellInput.value);
-    tdSell.appendChild(sellInput);
-    tdSell.appendChild(sellBtn);
-
-    tr.appendChild(tdSymbol);
-    tr.appendChild(tdPrice);
-    tr.appendChild(tdChart);
-    tr.appendChild(tdOwned);
-    tr.appendChild(tdBuy);
-    tr.appendChild(tdSell);
-
-    return tr;
-  }
-
-  function renderStocks() {
-    stockBody.innerHTML = "";
-    stocks.forEach(stock => {
-      stockBody.appendChild(createStockRow(stock));
-    });
-  }
-
-  function buyStock(symbol, amountStr) {
-    const amount = parseInt(amountStr);
-    if (isNaN(amount) || amount < 1) {
-      alert("Enter a valid buy amount");
-      return;
-    }
-    const stock = stocks.find(s => s.symbol === symbol);
-    const cost = stock.price * amount;
-    if (cost > cash) {
-      alert(`Not enough cash to buy ${amount} shares of ${stock.symbol}`);
-      return;
-    }
-    stock.owned += amount;
-    cash -= cost;
-    document.getElementById(`owned-${symbol}`).textContent = stock.owned;
-    updateBalance();
-    logEvent(`Bought ${amount} shares of ${stock.symbol} for $${formatMoney(cost)}`);
-  }
-
-  function sellStock(symbol, amountStr) {
-    const amount = parseInt(amountStr);
-    if (isNaN(amount) || amount < 1) {
-      alert("Enter a valid sell amount");
-      return;
-    }
-    const stock = stocks.find(s => s.symbol === symbol);
-    if (amount > stock.owned) {
-      alert(`You don't own ${amount} shares of ${stock.symbol}`);
-      return;
-    }
-    const gain = stock.price * amount;
-    stock.owned -= amount;
-    cash += gain;
-    document.getElementById(`owned-${symbol}`).textContent = stock.owned;
-    updateBalance();
-    logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
-  }
-
-  // Draw candlestick chart for a stock
-  function drawCandlestickChart(stock) {
-    const canvas = document.getElementById(`chart-${stock.symbol}`);
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const candles = stock.history;
-    if (candles.length < 2) return;
-
-    const w = canvas.width;
-    const h = canvas.height;
-    const padding = 20;
-    const candleWidth = (w - 2 * padding) / candles.length * 0.7;
-
-    // Find min and max prices in history for scaling
-    let minPrice = Math.min(...candles.map(c => c.low));
-    let maxPrice = Math.max(...candles.map(c => c.high));
-    if (minPrice === maxPrice) maxPrice = minPrice + 1;
-
-    // Helpers to scale prices to canvas y
-    function scaleY(price) {
-      return h - padding - ((price - minPrice) / (maxPrice - minPrice)) * (h - 2 * padding);
+    function formatMoney(num) {
+      return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // Draw grid lines horizontally
-    ctx.strokeStyle = "#eee";
-    ctx.lineWidth = 1;
-    ctx.font = "10px monospace";
-    ctx.fillStyle = "#666";
-    ctx.textAlign = "right";
-    for(let i=0; i<=4; i++) {
-      let price = minPrice + (maxPrice - minPrice) * i / 4;
-      let y = scaleY(price);
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(w - padding, y);
-      ctx.stroke();
-      ctx.fillText(price.toFixed(2), padding - 5, y + 3);
+    function logEvent(text) {
+      const time = new Date().toLocaleTimeString();
+      log.textContent = `[${time}] ${text}\n` + log.textContent;
     }
 
-    // Draw candles
-    candles.forEach((candle, i) => {
-      const x = padding + i * ((w - 2 * padding) / candles.length) + ((w - 2 * padding) / candles.length - candleWidth) / 2;
-      const openY = scaleY(candle.open);
-      const closeY = scaleY(candle.close);
-      const highY = scaleY(candle.high);
-      const lowY = scaleY(candle.low);
+    // -- CHART CONSTANTS --
 
-      const candleColor = candle.close >= candle.open ? "green" : "red";
+    const CHART_WIDTH = 300;
+    const CHART_HEIGHT = 150;
+    const VOLUME_HEIGHT = 40;
+    const PADDING = 30;
 
-      // Wick
-      ctx.strokeStyle = candleColor;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x + candleWidth/2, highY);
-      ctx.lineTo(x + candleWidth/2, lowY);
-      ctx.stroke();
+    // -- STOCK ROW + CANVAS CREATION --
 
-      // Body
-      ctx.fillStyle = candleColor;
-      const bodyY = Math.min(openY, closeY);
-      const bodyHeight = Math.max(1, Math.abs(closeY - openY));
-      ctx.fillRect(x, bodyY, candleWidth, bodyHeight);
-    });
-  }
+    function createStockRow(stock) {
+      const tr = document.createElement("tr");
+      tr.id = `row-${stock.symbol}`;
 
-  // Generate new candle from last price - simulate OHLC & volume
-  function generateNextCandle(stock) {
-    const lastCandle = stock.history.length ? stock.history[stock.history.length - 1] : null;
-    let open = lastCandle ? lastCandle.close : stock.price;
-    let high = open;
-    let low = open;
-    let close = open;
+      const tdSymbol = document.createElement("td");
+      tdSymbol.textContent = `${stock.name} (${stock.symbol})`;
 
-    // Simulate price movement for OHLC
-    const volatility = open * 0.05; // ~5% max move
+      const tdPrice = document.createElement("td");
+      tdPrice.id = `price-${stock.symbol}`;
+      tdPrice.textContent = formatMoney(stock.price);
 
-    // Random open-close move
-    close = open + (Math.random() * 2 - 1) * volatility;
+      const tdChart = document.createElement("td");
+      tdChart.style.minWidth = CHART_WIDTH + "px";
+      tdChart.style.userSelect = "none";
+      tdChart.style.position = "relative";
 
-    // High and low within open and close plus some noise
-    high = Math.max(open, close) + Math.random() * volatility * 0.5;
-    low = Math.min(open, close) - Math.random() * volatility * 0.5;
+      // Create a container for canvas + tooltip
+      const chartContainer = document.createElement("div");
+      chartContainer.style.position = "relative";
+      chartContainer.id = `chartContainer-${stock.symbol}`;
 
-    // Clamp prices so none go below 1
-    low = Math.max(1, low);
-    close = Math.max(1, close);
-    high = Math.max(high, low, close);
+      // Create main chart canvas
+      const canvas = document.createElement("canvas");
+      canvas.className = "chartCanvas";
+      canvas.width = CHART_WIDTH;
+      canvas.height = CHART_HEIGHT + VOLUME_HEIGHT;
+      canvas.id = `chart-${stock.symbol}`;
+      canvas.style.userSelect = "none";
 
-    return { open, high, low, close };
-  }
+      // Tooltip
+      const tooltip = document.createElement("div");
+      tooltip.id = `tooltip-${stock.symbol}`;
+      tooltip.className = "tooltip";
+      tooltip.style.position = "absolute";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.display = "none";
+      tooltip.style.background = "rgba(30,30,30,0.9)";
+      tooltip.style.color = "#eee";
+      tooltip.style.padding = "6px 10px";
+      tooltip.style.fontSize = "12px";
+      tooltip.style.borderRadius = "6px";
+      tooltip.style.border = "1px solid #444";
+      tooltip.style.whiteSpace = "nowrap";
+      tooltip.style.userSelect = "none";
 
-  function fluctuatePrices() {
-    stocks.forEach(stock => {
-      // Add new candle
-      const newCandle = generateNextCandle(stock);
-      stock.history.push(newCandle);
+      chartContainer.appendChild(canvas);
+      chartContainer.appendChild(tooltip);
+      tdChart.appendChild(chartContainer);
 
-      // Limit history size
-      if (stock.history.length > 50) stock.history.shift();
+      const tdOwned = document.createElement("td");
+      tdOwned.id = `owned-${stock.symbol}`;
+      tdOwned.textContent = stock.owned;
 
-      // Update current price to latest candle close
-      stock.price = newCandle.close;
+      // Buy input & button
+      const tdBuy = document.createElement("td");
+      const buyInput = document.createElement("input");
+      buyInput.type = "number";
+      buyInput.min = "1";
+      buyInput.value = "1";
+      buyInput.id = `buy-input-${stock.symbol}`;
+      buyInput.style.marginRight = "6px";
+      const buyBtn = document.createElement("button");
+      buyBtn.textContent = "Buy";
+      buyBtn.onclick = () => buyStock(stock.symbol, buyInput.value);
+      tdBuy.appendChild(buyInput);
+      tdBuy.appendChild(buyBtn);
 
-      // Update price UI
-      const priceTd = document.getElementById(`price-${stock.symbol}`);
-      if (priceTd) {
-        priceTd.textContent = formatMoney(stock.price);
-        priceTd.style.color = (newCandle.close >= newCandle.open) ? "green" : "red";
+      // Sell input & button
+      const tdSell = document.createElement("td");
+      const sellInput = document.createElement("input");
+      sellInput.type = "number";
+      sellInput.min = "1";
+      sellInput.value = "1";
+      sellInput.id = `sell-input-${stock.symbol}`;
+      sellInput.style.marginRight = "6px";
+      const sellBtn = document.createElement("button");
+      sellBtn.textContent = "Sell";
+      sellBtn.onclick = () => sellStock(stock.symbol, sellInput.value);
+      tdSell.appendChild(sellInput);
+      tdSell.appendChild(sellBtn);
+
+      tr.appendChild(tdSymbol);
+      tr.appendChild(tdPrice);
+      tr.appendChild(tdChart);
+      tr.appendChild(tdOwned);
+      tr.appendChild(tdBuy);
+      tr.appendChild(tdSell);
+
+      return tr;
+    }
+
+    // -- RENDER STOCKS --
+
+    function renderStocks() {
+      stockBody.innerHTML = "";
+      stocks.forEach(stock => {
+        stockBody.appendChild(createStockRow(stock));
+      });
+    }
+
+    // -- BUY & SELL LOGIC --
+
+    function buyStock(symbol, amountStr) {
+      const amount = parseInt(amountStr);
+      if (isNaN(amount) || amount < 1) {
+        alert("Enter a valid buy amount");
+        return;
+      }
+      const stock = stocks.find(s => s.symbol === symbol);
+      const cost = stock.price * amount;
+      if (cost > cash) {
+        alert(`Not enough cash to buy ${amount} shares of ${stock.symbol}`);
+        return;
+      }
+      stock.owned += amount;
+      cash -= cost;
+      document.getElementById(`owned-${symbol}`).textContent = stock.owned;
+      updateBalance();
+      logEvent(`Bought ${amount} shares of ${stock.symbol} for $${formatMoney(cost)}`);
+    }
+
+    function sellStock(symbol, amountStr) {
+      const amount = parseInt(amountStr);
+      if (isNaN(amount) || amount < 1) {
+        alert("Enter a valid sell amount");
+        return;
+      }
+      const stock = stocks.find(s => s.symbol === symbol);
+      if (amount > stock.owned) {
+        alert(`You don't own ${amount} shares of ${stock.symbol}`);
+        return;
+      }
+      const gain = stock.price * amount;
+      stock.owned -= amount;
+      cash += gain;
+      document.getElementById(`owned-${symbol}`).textContent = stock.owned;
+      updateBalance();
+      logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
+    }
+
+    // -- BALANCE UPDATE --
+
+    function updateBalance() {
+      let portfolioValue = stocks.reduce((sum, s) => sum + s.price * s.owned, 0);
+      let total = cash + portfolioValue;
+      balanceEl.textContent = `Cash: $${formatMoney(cash)} | Portfolio Value: $${formatMoney(portfolioValue)} | Total: $${formatMoney(total)}`;
+    }
+
+    // -- CANDLESTICK & VOLUME CHART DRAWING --
+
+    function drawChart(stock) {
+      const canvas = document.getElementById(`chart-${stock.symbol}`);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const candles = stock.history;
+      if (candles.length < 2) return;
+
+      const priceHeight = CHART_HEIGHT - PADDING;
+      const volumeHeight = VOLUME_HEIGHT;
+      const totalHeight = priceHeight + volumeHeight;
+      const padding = PADDING;
+      const candleCount = candles.length;
+      const candleWidth = (width - 2 * padding) / candleCount * 0.7;
+      const candleStep = (width - 2 * padding) / candleCount;
+
+      // Price scale
+      let minPrice = Math.min(...candles.map(c => c.low));
+      let maxPrice = Math.max(...candles.map(c => c.high));
+      if (minPrice === maxPrice) maxPrice += 1;
+
+      // Volume scale (assume max volume for scaling)
+      let maxVolume = Math.max(...candles.map(c => c.volume || 0));
+      if (maxVolume === 0) maxVolume = 1;
+
+      function scalePrice(y) {
+        return priceHeight - ((y - minPrice) / (maxPrice - minPrice)) * priceHeight + padding;
+      }
+      function scaleVolume(v) {
+        return volumeHeight * (v / maxVolume);
       }
 
-      drawCandlestickChart(stock);
+      // Draw background grid lines for price
+      ctx.strokeStyle = "#444";
+      ctx.lineWidth = 1;
+      ctx.font = "10px monospace";
+      ctx.fillStyle = "#888";
+      ctx.textAlign = "right";
+
+      for (let i = 0; i <= 4; i++) {
+        let p = minPrice + (maxPrice - minPrice) * i / 4;
+        let y = scalePrice(p);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        ctx.fillText(p.toFixed(2), padding - 5, y + 3);
+      }
+
+      // Draw volume grid lines
+      ctx.fillStyle = "#555";
+      ctx.textAlign = "left";
+      ctx.font = "9px monospace";
+      ctx.fillText("Vol", padding, priceHeight + padding + 12);
+
+      // Draw candles & volume bars
+      candles.forEach((candle, i) => {
+        const x = padding + i * candleStep + (candleStep - candleWidth) / 2;
+
+        // Candle color
+        const up = candle.close >= candle.open;
+        const color = up ? "#4caf50" : "#f44336";
+
+        // Candle wick (high-low)
+        const yHigh = scalePrice(candle.high);
+        const yLow = scalePrice(candle.low);
+        const yOpen = scalePrice(candle.open);
+        const yClose = scalePrice(candle.close);
+        const bodyTop = Math.min(yOpen, yClose);
+        const bodyHeight = Math.max(1, Math.abs(yClose - yOpen));
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth / 2, yHigh);
+        ctx.lineTo(x + candleWidth / 2, yLow);
+        ctx.stroke();
+
+        // Candle body
+        ctx.fillStyle = color;
+        ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
+
+        // Volume bar
+        if (candle.volume) {
+          const volHeight = scaleVolume(candle.volume);
+          ctx.fillStyle = color + "aa";
+          ctx.fillRect(x, priceHeight + padding + volumeHeight - volHeight, candleWidth, volHeight);
+        }
+      });
+    }
+
+    // -- CANDLE GENERATION --
+
+    function generateNextCandle(stock) {
+      const lastCandle = stock.history.length ? stock.history[stock.history.length - 1] : null;
+      let open = lastCandle ? lastCandle.close : stock.price;
+      let high = open;
+      let low = open;
+      let close = open;
+
+      const volatility = open * 0.03; // ~3% max move
+
+      close = open + (Math.random() * 2 - 1) * volatility;
+
+      high = Math.max(open, close) + Math.random() * volatility * 0.5;
+      low = Math.min(open, close) - Math.random() * volatility * 0.5;
+
+      // Clamp prices >= 1
+      low = Math.max(1, low);
+      close = Math.max(1, close);
+      high = Math.max(high, low, close);
+
+      // Volume: simulate random but correlated with candle size
+      const baseVol = 100 + Math.random() * 900;
+      const candleSize = Math.abs(close - open);
+      let volume = baseVol * (1 + candleSize / open);
+
+      return { open, high, low, close, volume: Math.round(volume) };
+    }
+
+    // -- UPDATE PRICES & CHARTS --
+
+    function fluctuatePrices() {
+      stocks.forEach(stock => {
+        const newCandle = generateNextCandle(stock);
+        stock.history.push(newCandle);
+
+        if (stock.history.length > 50) stock.history.shift();
+
+        stock.price = newCandle.close;
+
+        const priceTd = document.getElementById(`price-${stock.symbol}`);
+        if (priceTd) {
+          priceTd.textContent = formatMoney(stock.price);
+          priceTd.className = newCandle.close >= newCandle.open ? "price-up" : "price-down";
+        }
+
+        drawChart(stock);
+      });
+      updateBalance();
+    }
+
+    // -- INTERACTIVE CHART: ZOOM & PAN --
+
+    const zoomSettings = {};
+    // Initialize zoom settings per stock
+    function initZoom(stock) {
+      zoomSettings[stock.symbol] = {
+        offset: 0,
+        scale: 1,
+        isDragging: false,
+        dragStartX: 0,
+        dragStartOffset: 0
+      };
+    }
+
+    function applyZoomPan(stock, deltaScale, deltaOffset) {
+      const zs = zoomSettings[stock.symbol];
+      if (!zs) return;
+
+      zs.scale = Math.min(Math.max(0.5, zs.scale * deltaScale), 5);
+
+      // Clamp offset between 0 and max scroll (number of candles - viewable)
+      const maxOffset = Math.max(0, stock.history.length - Math.floor(50 / zs.scale));
+      zs.offset = Math.min(Math.max(0, zs.offset + deltaOffset), maxOffset);
+
+      drawChartWithZoom(stock);
+    }
+
+    function drawChartWithZoom(stock) {
+      const canvas = document.getElementById(`chart-${stock.symbol}`);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const priceHeight = CHART_HEIGHT - PADDING;
+      const volumeHeight = VOLUME_HEIGHT;
+      const padding = PADDING;
+
+      const zs = zoomSettings[stock.symbol];
+      const totalCandles = stock.history.length;
+      const visibleCandles = Math.floor(50 / zs.scale);
+      const start = Math.floor(zs.offset);
+      const end = Math.min(start + visibleCandles, totalCandles);
+      const candles = stock.history.slice(start, end);
+
+      if (candles.length < 2) return;
+
+      const candleCount = candles.length;
+      const candleWidth = (width - 2 * padding) / candleCount * 0.7;
+      const candleStep = (width - 2 * padding) / candleCount;
+
+      // Price scale
+      let minPrice = Math.min(...candles.map(c => c.low));
+      let maxPrice = Math.max(...candles.map(c => c.high));
+      if (minPrice === maxPrice) maxPrice += 1;
+
+      // Volume scale
+      let maxVolume = Math.max(...candles.map(c => c.volume || 0));
+      if (maxVolume === 0) maxVolume = 1;
+
+      function scalePrice(y) {
+        return priceHeight - ((y - minPrice) / (maxPrice - minPrice)) * priceHeight + padding;
+      }
+      function scaleVolume(v) {
+        return volumeHeight * (v / maxVolume);
+      }
+
+      // Draw background grid lines for price
+      ctx.strokeStyle = "#444";
+      ctx.lineWidth = 1;
+      ctx.font = "10px monospace";
+      ctx.fillStyle = "#888";
+      ctx.textAlign = "right";
+
+      for (let i = 0; i <= 4; i++) {
+        let p = minPrice + (maxPrice - minPrice) * i / 4;
+        let y = scalePrice(p);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        ctx.fillText(p.toFixed(2), padding - 5, y + 3);
+      }
+
+      // Draw volume label
+      ctx.fillStyle = "#555";
+      ctx.textAlign = "left";
+      ctx.font = "9px monospace";
+      ctx.fillText("Vol", padding, priceHeight + padding + 12);
+
+      // Draw candles & volume bars
+      candles.forEach((candle, i) => {
+        const x = padding + i * candleStep + (candleStep - candleWidth) / 2;
+
+        const up = candle.close >= candle.open;
+        const color = up ? "#4caf50" : "#f44336";
+
+        // Candle wick (high-low)
+        const yHigh = scalePrice(candle.high);
+        const yLow = scalePrice(candle.low);
+        const yOpen = scalePrice(candle.open);
+        const yClose = scalePrice(candle.close);
+        const bodyTop = Math.min(yOpen, yClose);
+        const bodyHeight = Math.max(1, Math.abs(yClose - yOpen));
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth / 2, yHigh);
+        ctx.lineTo(x + candleWidth / 2, yLow);
+        ctx.stroke();
+
+        // Candle body
+        ctx.fillStyle = color;
+        ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
+
+        // Volume bar
+        if (candle.volume) {
+          const volHeight = scaleVolume(candle.volume);
+          ctx.fillStyle = color + "aa";
+          ctx.fillRect(x, priceHeight + padding + volumeHeight - volHeight, candleWidth, volHeight);
+        }
+      });
+    }
+
+    // -- TOOLTIP --
+
+    function setupTooltip(stock) {
+      const canvas = document.getElementById(`chart-${stock.symbol}`);
+      const tooltip = document.getElementById(`tooltip-${stock.symbol}`);
+      const zs = zoomSettings[stock.symbol];
+
+      canvas.onmousemove = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const priceHeight = CHART_HEIGHT - PADDING;
+        const volumeHeight = VOLUME_HEIGHT;
+        const padding = PADDING;
+
+        const visibleCandles = Math.floor(50 / zs.scale);
+        const start = Math.floor(zs.offset);
+        const end = Math.min(start + visibleCandles, stock.history.length);
+        const candles = stock.history.slice(start, end);
+
+        const candleStep = (canvas.width - 2 * padding) / candles.length;
+        const candleIndex = Math.floor((mouseX - padding) / candleStep);
+
+        if (candleIndex < 0 || candleIndex >= candles.length) {
+          tooltip.style.display = "none";
+          return;
+        }
+        const candle = candles[candleIndex];
+
+        const dateStr = `Candle ${start + candleIndex + 1}`;
+        const o = candle.open.toFixed(2);
+        const h = candle.high.toFixed(2);
+        const l = candle.low.toFixed(2);
+        const c = candle.close.toFixed(2);
+        const v = candle.volume ? candle.volume.toLocaleString() : "N/A";
+
+        tooltip.style.left = (mouseX + 15) + "px";
+        tooltip.style.top = (mouseY + 15) + "px";
+        tooltip.style.display = "block";
+
+        tooltip.innerHTML = `
+          <b>${stock.symbol} - ${dateStr}</b><br/>
+          Open: $${o}<br/>
+          High: $${h}<br/>
+          Low: $${l}<br/>
+          Close: $${c}<br/>
+          Volume: ${v}
+        `;
+      };
+
+      canvas.onmouseleave = () => {
+        tooltip.style.display = "none";
+      };
+    }
+
+    // -- ZOOM & PAN EVENT HANDLERS --
+
+    function setupZoomPan(stock) {
+      const canvas = document.getElementById(`chart-${stock.symbol}`);
+      const zs = zoomSettings[stock.symbol];
+
+      canvas.onwheel = e => {
+        e.preventDefault();
+        const scaleAmount = e.deltaY < 0 ? 1.1 : 0.9;
+        applyZoomPan(stock, scaleAmount, 0);
+      };
+
+      canvas.onmousedown = e => {
+        e.preventDefault();
+        zs.isDragging = true;
+        zs.dragStartX = e.clientX;
+        zs.dragStartOffset = zs.offset;
+        canvas.style.cursor = "grabbing";
+      };
+      window.onmouseup = () => {
+        if (zs.isDragging) {
+          zs.isDragging = false;
+          canvas.style.cursor = "grab";
+        }
+      };
+      window.onmousemove = e => {
+        if (zs.isDragging) {
+          const dx = e.clientX - zs.dragStartX;
+          const scrollCandles = dx / ((CHART_WIDTH - 2 * PADDING) / (50 / zs.scale));
+          applyZoomPan(stock, 1, -scrollCandles);
+        }
+      };
+    }
+
+    // -- INITIALIZE --
+
+    // Seed initial history
+    stocks.forEach(stock => {
+      for (let i = 0; i < 50; i++) {
+        stock.history.push({
+          open: stock.price,
+          high: stock.price,
+          low: stock.price,
+          close: stock.price,
+          volume: 100 + Math.random() * 500
+        });
+      }
+      initZoom(stock);
+    });
+
+    renderStocks();
+    stocks.forEach(stock => {
+      drawChart(stock);
+      setupTooltip(stock);
+      setupZoomPan(stock);
     });
     updateBalance();
-  }
 
-  // Initial setup
-  stocks.forEach(stock => {
-    // Seed initial history with stable candles
-    for(let i=0; i<20; i++) {
-      stock.history.push({ open: stock.price, high: stock.price, low: stock.price, close: stock.price });
-    }
-  });
-  renderStocks();
-  updateBalance();
-  stocks.forEach(drawCandlestickChart);
-
-  // Update every 5 seconds
-  setInterval(fluctuatePrices, 5000);
-</script>
+    // Update prices every 4 seconds with smooth animation
+    setInterval(() => {
+      fluctuatePrices();
+    }, 4000);
+  </script>
 </body>
 </html>
