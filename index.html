@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Interactive Story - Multiple Characters & Dynamic World</title>
+  <title>Dating Sim - Realistic Personality & Memory</title>
   <style>
     body {
       margin: 0; padding: 0;
@@ -78,6 +78,13 @@
       user-select: none;
       color: #f48fb1;
     }
+    #mood {
+      text-align: center;
+      font-style: italic;
+      margin-bottom: 12px;
+      user-select: none;
+      color: #fbc02d;
+    }
     #dialogue {
       font-size: 18px;
       min-height: 140px;
@@ -111,9 +118,9 @@
       background: #ec407a;
     }
     .option-btn:disabled {
-      background: #ccc;
+      background: #555;
       cursor: not-allowed;
-      color: #666;
+      color: #999;
     }
     #timerBarContainer {
       width: 100%;
@@ -198,7 +205,7 @@
   <div id="game">
     <div id="background"></div>
     <div id="content">
-      <h1>Interactive Story</h1>
+      <h1>Dating Sim - Realistic Personality</h1>
 
       <div id="customization">
         <label for="avatarSelect">Choose your avatar style:</label>
@@ -219,6 +226,7 @@
 
       <div id="portrait">😊</div>
       <div id="relationship"></div>
+      <div id="mood"></div>
       <div id="dialogue"></div>
       <div id="timerBarContainer"><div id="timerBar"></div></div>
       <div id="options"></div>
@@ -242,6 +250,7 @@
 
     const portraitEl = document.getElementById('portrait');
     const relationshipEl = document.getElementById('relationship');
+    const moodEl = document.getElementById('mood');
     const dialogueEl = document.getElementById('dialogue');
     const optionsEl = document.getElementById('options');
     const timerBarContainer = document.getElementById('timerBarContainer');
@@ -257,6 +266,22 @@
     const relationship = {
       lily: 0,
       mia: 0
+    };
+
+    // Mood states per character
+    // Calm: 0, Confused:1, Annoyed:2, Angry:3
+    const moodStates = ['Calm', 'Confused', 'Annoyed', 'Angry'];
+    const moodColors = ['#f48fb1', '#ffd54f', '#ffb300', '#d32f2f'];
+
+    const moods = {
+      lily: 0,
+      mia: 0
+    };
+
+    // Question memory tracker per character: questionId => count
+    const questionMemory = {
+      lily: {},
+      mia: {}
     };
 
     // Inventory shared for simplicity
@@ -283,26 +308,22 @@
     // Expressions by mood (emojis)
     const expressions = {
       lily: {
-        default: '😊',
-        happy: '😄',
-        curious: '🤔',
-        shy: '😊',
-        excited: '😍',
-        sad: '😢',
-        surprised: '😮',
+        0: '😊',
+        1: '😕',
+        2: '😒',
+        3: '😠',
         thankYou: '🙏',
-        angry: '😠'
+        happy: '😄',
+        sad: '😢'
       },
       mia: {
-        default: '😃',
-        happy: '😁',
-        curious: '🤨',
-        shy: '🙂',
-        excited: '😆',
-        sad: '😞',
-        surprised: '😲',
+        0: '😃',
+        1: '🤨',
+        2: '😤',
+        3: '😡',
         thankYou: '🙏',
-        angry: '😡'
+        happy: '😁',
+        sad: '😞'
       }
     };
 
@@ -337,11 +358,13 @@
       type();
     }
 
-    // Update UI: portrait and relationship bar
+    // Update UI: portrait, relationship, mood
     function updateUI() {
-      const mood = currentNode && currentNode.expression || 'default';
-      portraitEl.textContent = expressions[currentCharacter][mood] || expressions[currentCharacter].default;
+      const mood = moods[currentCharacter];
+      portraitEl.textContent = expressions[currentCharacter][mood] || expressions[currentCharacter][0];
       relationshipEl.textContent = `❤️ ${capitalize(currentCharacter)}’s Affection: ${relationship[currentCharacter]}`;
+      moodEl.textContent = `Mood: ${moodStates[mood]}`;
+      moodEl.style.color = moodColors[mood];
       updateInventoryUI();
       updateBackground();
     }
@@ -406,111 +429,115 @@
     };
 
     // Characters and their stories
+    // Added questionId to track repetition and mood effects
     const storyData = {
       lily: {
         start: {
-          expression: 'default',
+          expression: 0,
           location: 'park',
           text: () => `You see Lily sitting alone on a bench in the park. She looks up and smiles softly.\nWhat do you say, ${playerName}?`,
           options: [
-            { text: "Hi, I'm new here. Mind if I sit?", next: "sit" },
-            { text: "Lovely day, isn't it?", next: "weather" },
-            { text: "Just passing by.", next: "bye" }
+            { text: "Hi, I'm new here. Mind if I sit?", next: "sit", questionId: "sit" },
+            { text: "Lovely day, isn't it?", next: "weather", questionId: "weather" },
+            { text: "Just passing by.", next: "bye", questionId: "bye" }
           ],
           timed: 0
         },
         sit: {
-          expression: 'happy',
+          expression: 0,
           location: 'park',
-          text: `"Of course! I love meeting new people," she says, patting the bench beside her.`,
+          text: (memoryCount) => {
+            if(memoryCount > 1) return `"You've already asked that... Are you serious?" Lily frowns.`;
+            return `"Of course! I love meeting new people," she says, patting the bench beside her.`;
+          },
           options: [
-            { text: "So, what brings you here?", next: "meet" },
-            { text: "Do you come here often?", next: "often" },
-            { text: "I have to go now. Bye!", next: "bye" }
+            { text: "So, what brings you here?", next: "meet", questionId: "meet" },
+            { text: "Do you come here often?", next: "often", questionId: "often" },
+            { text: "I have to go now. Bye!", next: "bye", questionId: "bye" }
           ],
-          timed: 10 // 10 seconds to choose
+          timed: 10
         },
         weather: {
-          expression: 'happy',
+          expression: 0,
           location: 'park',
-          text: `"Absolutely! Perfect weather for a stroll," Lily says, her eyes twinkling.`,
+          text: (memoryCount) => {
+            if(memoryCount > 1) return `"We've already talked about the weather... Honestly, stop it." Lily looks annoyed.`;
+            return `"Absolutely! Perfect weather for a stroll," Lily says, her eyes twinkling.`;
+          },
           options: [
-            { text: "Would you like to join me for a walk?", next: "walk" },
-            { text: "I should get going, take care!", next: "bye" }
+            { text: "Would you like to join me for a walk?", next: "walk", questionId: "walk" },
+            { text: "I should get going, take care!", next: "bye", questionId: "bye" }
           ],
           timed: 12
         },
         meet: {
-          expression: 'curious',
+          expression: 0,
           location: 'park',
-          text: `"I'm just enjoying some quiet time after a hectic week," she replies.`,
+          text: (memoryCount) => {
+            if(memoryCount > 1) return `"Seriously? You keep asking the same things!" Lily's face tightens.`;
+            return `"I'm just enjoying some quiet time after a hectic week," she replies.`;
+          },
           options: [
-            { text: "I understand. Want to grab a coffee later?", next: "coffee" },
-            { text: "Maybe some other time. See you around!", next: "bye" }
+            { text: "I understand. Want to grab a coffee later?", next: "coffee", questionId: "coffee" },
+            { text: "Maybe some other time. See you around!", next: "bye", questionId: "bye" }
           ],
           timed: 10
         },
         often: {
-          expression: 'happy',
+          expression: 0,
           location: 'park',
-          text: `"Yes, this park is my favorite spot to relax and think," she smiles.`,
+          text: (memoryCount) => {
+            if(memoryCount > 1) return `"Stop repeating yourself! It's rude." Lily crosses her arms.`;
+            return `"Yeah, I like to come here when I want to relax and think."`;
+          },
           options: [
-            { text: "Mind if I join you next time?", next: "sit" },
-            { text: "Sounds peaceful. I should come here more.", next: "bye" }
-          ],
-          timed: 8
-        },
-        walk: {
-          expression: 'excited',
-          location: 'street',
-          text: `She stands up and offers her hand. "I'd like that." Together, you walk down the sun-dappled path.`,
-          options: [
-            { text: "Talk about your hobbies.", next: "hobbies" },
-            { text: "Keep the silence and enjoy the moment.", next: "silence" }
+            { text: "What's your favorite thing here?", next: "favorite", questionId: "favorite" },
+            { text: "Got to run, bye!", next: "bye", questionId: "bye" }
           ],
           timed: 10
         },
-        coffee: {
-          expression: 'happy',
-          location: 'cafe',
-          text: `"I'd love to. How about tomorrow afternoon?" Lily smiles warmly.`,
+        favorite: {
+          expression: 0,
+          location: 'park',
+          text: `"I love the cherry blossom trees. They remind me of childhood memories."`,
           options: [
-            { text: "Sounds perfect, see you then!", next: "end_good" },
-            { text: "Actually, I might be busy. Let's keep in touch.", next: "end_neutral" }
+            { text: "Sounds lovely!", next: "end_good", questionId: "end_good" },
+            { text: "I have to go now.", next: "bye", questionId: "bye" }
+          ],
+          timed: 0
+        },
+        walk: {
+          expression: 0,
+          location: 'street',
+          text: `"I'd love that. Let's enjoy the day together."`,
+          options: [
+            { text: "Lead the way.", next: "end_good", questionId: "end_good" },
+            { text: "Actually, I have to go.", next: "bye", questionId: "bye" }
           ],
           timed: 15
         },
-        silence: {
-          expression: 'happy',
-          location: 'park',
-          text: "Sometimes words aren’t needed. You enjoy the peacefulness of the park together.",
+        coffee: {
+          expression: 0,
+          location: 'cafe',
+          text: `"Coffee sounds great. See you later!"`,
           options: [
-            { text: "End the walk.", next: "end_good" }
+            { text: "Looking forward to it!", next: "end_good", questionId: "end_good" }
           ],
-          timed: 10
+          timed: 0
         },
         bye: {
-          expression: 'sad',
+          expression: 3,
           location: 'park',
-          text: `"Take care! Hope to see you around," Lily says, waving goodbye.`,
+          text: `"Alright, take care."`,
           options: [
-            { text: "Restart", next: "start" }
+            { text: "Restart", next: "start", questionId: "start" }
           ],
           timed: 0
         },
         end_good: {
-          expression: 'happy',
-          location: 'home',
-          text: "You feel like you made a true connection today. Lily smiles as you part ways. 💖",
-          options: [
-            { text: "Play again", next: "start" }
-          ],
-          timed: 0
-        },
-        end_neutral: {
-          expression: 'curious',
-          location: 'home',
-          text: "You part on good terms but wonder what might have been. 🤔",
+          expression: 0,
+          location: 'park',
+          text: `You spend a lovely day with Lily and feel a true connection. 💖`,
           options: [
             { text: "Play again", next: "start" }
           ],
@@ -525,6 +552,7 @@
           ],
           effect: () => {
             relationship.lily += 2;
+            moods.lily = Math.max(0, moods.lily - 1); // calm her a bit
           },
           timed: 0
         },
@@ -537,91 +565,96 @@
           ],
           effect: () => {
             relationship.lily += 3;
+            moods.lily = Math.max(0, moods.lily - 2);
           },
           timed: 0
         }
       },
+
       mia: {
         start: {
-          expression: 'default',
+          expression: 0,
           location: 'cafe',
-          text: `Mia is reading a book in a cozy corner of the cafe. She looks up when you approach.`,
+          text: () => `Mia is reading a book in a cozy corner of the cafe. She looks up when you approach.\nWhat do you say, ${playerName}?`,
           options: [
-            { text: "Hey Mia, what are you reading?", next: "book" },
-            { text: "Want to grab some coffee?", next: "coffee" },
-            { text: "Just saying hi.", next: "hi" }
+            { text: "Hey Mia, what are you reading?", next: "book", questionId: "book" },
+            { text: "Want to grab some coffee?", next: "coffee", questionId: "coffee" },
+            { text: "Just saying hi.", next: "hi", questionId: "hi" }
           ],
           timed: 0
         },
         book: {
-          expression: 'curious',
+          expression: 0,
           location: 'cafe',
-          text: `"It's a mystery novel. I love a good puzzle," Mia says with a smile.`,
+          text: (memoryCount) => {
+            if(memoryCount > 1) return `"You asked that before... Please stop." Mia sighs.`;
+            return `"It's a mystery novel. I love a good puzzle," Mia says with a smile.`;
+          },
           options: [
-            { text: "Do you like puzzles?", next: "puzzles" },
-            { text: "Maybe we can solve one together sometime.", next: "together" }
+            { text: "Do you like puzzles?", next: "puzzles", questionId: "puzzles" },
+            { text: "Maybe we can solve one together sometime.", next: "together", questionId: "together" }
           ],
           timed: 10
         },
         coffee: {
-          expression: 'happy',
+          expression: 0,
           location: 'cafe',
           text: `"I'd love to! Let's go!"`,
           options: [
-            { text: "Lead the way.", next: "walk" },
-            { text: "Actually, I have to run.", next: "bye" }
+            { text: "Lead the way.", next: "walk", questionId: "walk" },
+            { text: "Actually, I have to run.", next: "bye", questionId: "bye" }
           ],
           timed: 15
         },
         hi: {
-          expression: 'happy',
+          expression: 0,
           location: 'cafe',
           text: `"Hi! Nice to see you around."`,
           options: [
-            { text: "Same here!", next: "start" }
+            { text: "Same here!", next: "start", questionId: "start" }
           ],
           timed: 0
         },
         puzzles: {
-          expression: 'excited',
+          expression: 0,
           location: 'cafe',
           text: `"Yes! Puzzles are my favorite way to relax."`,
           options: [
-            { text: "Let's solve one now.", next: "puzzleMiniGame" },
-            { text: "Maybe later.", next: "start" }
+            { text: "Let's solve one now.", next: "puzzleMiniGame", questionId: "puzzleMiniGame" },
+            { text: "Maybe later.", next: "start", questionId: "start" }
           ],
           timed: 12
         },
         together: {
-          expression: 'happy',
+          expression: 0,
           location: 'street',
           text: `You plan to meet Mia for a puzzle-solving day.`,
           options: [
-            { text: "Can't wait!", next: "end_good" }
+            { text: "Can't wait!", next: "end_good", questionId: "end_good" }
           ],
           timed: 0
         },
         walk: {
-          expression: 'happy',
+          expression: 0,
           location: 'street',
           text: `You and Mia walk down a lively street, chatting happily.`,
           options: [
-            { text: "Ask about her favorite mystery book.", next: "book" },
-            { text: "Enjoy the scenery.", next: "start" }
+            { text: "Ask about her favorite mystery book.", next: "book", questionId: "book" },
+            { text: "Enjoy the scenery.", next: "start", questionId: "start" }
           ],
           timed: 10
         },
         bye: {
-          expression: 'sad',
+          expression: 3,
           location: 'cafe',
           text: `"Catch you later!" Mia waves goodbye.`,
           options: [
-            { text: "Restart", next: "start" }
+            { text: "Restart", next: "start", questionId: "start" }
           ],
           timed: 0
         },
         end_good: {
-          expression: 'happy',
+          expression: 0,
           location: 'home',
           text: "You and Mia become good friends and share many puzzle adventures! 🎉",
           options: [
@@ -630,34 +663,35 @@
           timed: 0
         },
         puzzleMiniGame: {
-          expression: 'curious',
+          expression: 1,
           location: 'cafe',
           text: `Mini-game: Solve this riddle:\nI speak without a mouth and hear without ears. I have nobody, but I come alive with wind. What am I?`,
           options: [
-            { text: "An echo", next: "puzzleWin" },
-            { text: "A shadow", next: "puzzleLose" },
-            { text: "A whisper", next: "puzzleLose" }
+            { text: "An echo", next: "puzzleWin", questionId: "puzzleWin" },
+            { text: "A shadow", next: "puzzleLose", questionId: "puzzleLose" },
+            { text: "A whisper", next: "puzzleLose", questionId: "puzzleLose" }
           ],
           timed: 20
         },
         puzzleWin: {
-          expression: 'excited',
+          expression: 0,
           location: 'cafe',
           text: `"Correct! You're quite clever."`,
           options: [
-            { text: "Thanks!", next: "start" }
+            { text: "Thanks!", next: "start", questionId: "start" }
           ],
           effect: () => {
             relationship.mia += 5;
+            moods.mia = Math.max(0, moods.mia - 1);
           },
           timed: 0
         },
         puzzleLose: {
-          expression: 'sad',
+          expression: 3,
           location: 'cafe',
           text: `"Not quite, but that's okay!"`,
           options: [
-            { text: "I'll try harder next time.", next: "start" }
+            { text: "I'll try harder next time.", next: "start", questionId: "start" }
           ],
           timed: 0
         },
@@ -670,6 +704,7 @@
           ],
           effect: () => {
             relationship.mia += 2;
+            moods.mia = Math.max(0, moods.mia - 1);
           },
           timed: 0
         },
@@ -682,6 +717,7 @@
           ],
           effect: () => {
             relationship.mia += 3;
+            moods.mia = Math.max(0, moods.mia - 2);
           },
           timed: 0
         }
@@ -690,32 +726,59 @@
 
     let currentNode = null;
 
+    // Show node - handle repeated questions & mood change
     function showNode(key) {
       if (!currentCharacter) return;
       const charStory = storyData[currentCharacter];
       if (!charStory) return;
-      const node = charStory[key];
+      let node = charStory[key];
       if (!node) return;
 
-      currentNode = node;
+      // Track question repetition if questionId exists
+      if (node.questionId) {
+        questionMemory[currentCharacter][node.questionId] = (questionMemory[currentCharacter][node.questionId] || 0) + 1;
+      }
+
+      // Prepare text with memoryCount for repeated questions
+      let memoryCount = node.questionId ? questionMemory[currentCharacter][node.questionId] : 0;
+
+      // Update mood if repeated question asked multiple times
+      if (memoryCount > 1) {
+        moods[currentCharacter] = Math.min(3, moods[currentCharacter] + 1);
+      } else {
+        // If question new or only once, mood gradually calms down
+        moods[currentCharacter] = Math.max(0, moods[currentCharacter] - 0.1);
+      }
+
+      // If node.text is function, call with memoryCount
+      let displayText = typeof node.text === 'function' ? node.text(memoryCount) : node.text;
+
+      // Apply mood-based expression fallback for numbers
+      let expression = node.expression;
+      if (typeof expression === 'number') {
+        expression = moods[currentCharacter];
+      }
+      // Map expression strings
+      if (typeof expression === 'string' && expressions[currentCharacter][expression]) {
+        expression = expressions[currentCharacter][expression];
+      }
+
+      currentNode = {...node, text: displayText, expression};
       currentNodeKey = key;
 
       updateUI();
       clearTimer();
 
-      // Execute effect if any
+      // Run any effect tied to node
       if (node.effect) node.effect();
 
-      // Show dialogue with typewriter effect
-      const text = typeof node.text === 'function' ? node.text() : node.text;
-      typeText(text, () => {
+      // Animate text with typewriter effect, then render options
+      typeText(displayText, () => {
         renderOptions(node.options);
         if (node.timed && node.timed > 0) {
           startTimer(node.timed, () => {
-            // Auto select first option or restart
             if (node.options && node.options.length > 0) {
-              const firstOption = node.options[0];
-              showNode(firstOption.next);
+              showNode(node.options[0].next);
             } else {
               showNode('start');
             }
@@ -728,8 +791,7 @@
     function renderOptions(options) {
       optionsEl.innerHTML = '';
       if (!options || options.length === 0) return;
-
-      options.forEach((opt, i) => {
+      options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt.text;
@@ -750,7 +812,7 @@
       showNode('start');
     }
 
-    // Start game with avatar style
+    // Start game button event
     startGameBtn.onclick = () => {
       avatarStyle = avatarSelect.value;
       customizationDiv.style.display = 'none';
@@ -768,8 +830,9 @@
       };
     });
 
-    // Initial UI update before start
+    // Initial update UI before start
     updateUI();
+
   </script>
 </body>
 </html>
