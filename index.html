@@ -1,308 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Bee Clicker Heroes</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fff8dc;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bee Clicker Heroes - Clicker Heroes Style UI</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f1f1;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    color: #333;
+    user-select: none;
+  }
+  #app {
+    display: flex;
+    width: 1024px;
+    height: 600px;
+    background: #222a38;
+    color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+      0 0 20px rgba(0,0,0,0.8),
+      inset 0 0 30px #0008;
+  }
+  /* Left sidebar - Heroes */
+  #heroesPanel {
+    width: 280px;
+    background: #1e2531;
+    border-right: 2px solid #444;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  #heroesPanel h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #f0c419;
+    text-shadow: 0 0 8px #f0c419aa;
+  }
+  #heroesList {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .hero {
+    background: #2a3040;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hero-info {
+    flex-grow: 1;
+  }
+  .hero-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    color: #f0c419;
+  }
+  .hero-stats {
+    font-size: 0.9rem;
+    color: #bbb;
+  }
+  button.hireBtn {
+    background: #f0c419;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #222;
+    transition: background-color 0.2s;
+  }
+  button.hireBtn:disabled {
+    background: #888;
+    cursor: not-allowed;
+  }
+  button.hireBtn:hover:not(:disabled) {
+    background: #ffdc48;
+  }
+  /* Center panel - Enemy */
+  #centerPanel {
+    flex-grow: 1;
+    background: linear-gradient(135deg, #fbeeaa 0%, #f0c419 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    position: relative;
+  }
+  #enemyImage {
+    max-width: 320px;
+    max-height: 320px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 12px;
+    box-shadow:
+      0 0 12px #ffaa22aa;
+    transition: filter 0.15s ease;
+  }
+  #enemyImage.hit {
+    filter: brightness(1.5) saturate(1.5);
+  }
+  #enemyName {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #663300;
+    text-shadow: 1px 1px 3px #fff3c1cc;
+    margin-top: 18px;
+    user-select: none;
+  }
+  #hpBarContainer {
+    width: 320px;
+    height: 28px;
+    background: #ddd;
+    border-radius: 14px;
+    margin-top: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px #aaa;
+  }
+  #hpBar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff3b3b, #bb0000);
+    transition: width 0.2s ease;
+  }
+  #enemyHPText {
+    margin-top: 6px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #330000cc;
+    user-select: none;
+  }
+  #levelInfo {
+    margin-top: 24px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #663300cc;
+  }
+  #timer {
+    margin-top: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #551a00cc;
+  }
+  /* Floating texts */
+  .floatingText {
+    position: absolute;
+    font-weight: 900;
+    pointer-events: none;
+    font-size: 1.2rem;
+    user-select: none;
+    animation: floatUpFade 1.2s forwards;
+    text-shadow: 0 0 4px #fff, 0 0 5px #ffdb5a;
+  }
+  .goldText {
+    color: gold;
+  }
+  .damageText {
+    color: #cc2222;
+  }
+  @keyframes floatUpFade {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    h1 {
-      color: #ffb300;
-      text-shadow: 2px 2px #333;
-      margin-top: 20px;
+    100% {
+      opacity: 0;
+      transform: translateY(-50px);
     }
-
-    #game {
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 4px solid #ffb300;
-      border-radius: 10px;
-      padding: 20px;
-      width: 400px;
-      position: relative;
-    }
-
-    #enemy {
-      cursor: pointer;
-      margin: 20px auto;
-      transition: transform 0.1s;
-    }
-
-    #enemy:active {
-      transform: scale(0.95);
-    }
-
-    #hpBarContainer {
-      background: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 10px auto;
-      width: 100%;
-      height: 20px;
-    }
-
-    #hpBar {
-      background: #ff5252;
-      height: 100%;
-      width: 100%;
-      transition: width 0.2s;
-    }
-
-    .goldText, .damageText {
-      position: absolute;
-      font-weight: bold;
-      pointer-events: none;
-      animation: floatUp 1s ease-out forwards;
-    }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-50px); }
-    }
-
-    #controls, .heroPanel {
-      margin: 10px 0;
-    }
-
-    button {
-      padding: 10px 15px;
-      background-color: #ffb300;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin: 4px;
-    }
-
-    button:hover {
-      background-color: #ffa000;
-    }
-
-    .hero {
-      border-bottom: 1px solid #ccc;
-      padding: 5px;
-    }
-
-    #timer, #waveInfo {
-      font-weight: bold;
-      margin-top: 5px;
-    }
-  </style>
+  }
+  /* Right panel - Levels & Rewards */
+  #rightPanel {
+    width: 280px;
+    background: #1e2531;
+    border-left: 2px solid #444;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  #rightPanel h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #f0c419;
+    text-shadow: 0 0 8px #f0c419aa;
+    user-select: none;
+  }
+  #levelsList {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .levelItem {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #2a3040;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    transition: background-color 0.2s;
+  }
+  .levelItem.locked {
+    background: #444a5a;
+    cursor: not-allowed;
+    color: #999;
+  }
+  .levelItem.active {
+    background: #f0c419;
+    color: #222;
+    text-shadow: 0 0 5px #fff;
+  }
+  .levelItem:hover:not(.locked):not(.active) {
+    background: #555b6b;
+  }
+  /* Buttons bottom */
+  #navButtons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+  #navButtons button {
+    flex-grow: 1;
+    margin: 0 8px;
+    padding: 14px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 8px;
+  }
+  #navButtons button:disabled {
+    background: #666;
+    cursor: not-allowed;
+    color: #ccc;
+  }
+</style>
 </head>
 <body>
-  <h1>🐝 Bee Clicker Heroes</h1>
-  <div id="game">
-    <div id="waveInfo">Level <span id="level">1</span> - Enemy <span id="enemyCount">1</span>/10</div>
-    <img id="enemy" src="" width="150" />
-    <div id="hpBarContainer"><div id="hpBar"></div></div>
-    <p>Enemy HP: <span id="enemyHp">0</span> / <span id="enemyMaxHp">0</span></p>
-    <p>Click Damage: <span id="clickDamage">1</span> | DPS: <span id="totalDPS">0</span></p>
-    <p>💰 Gold: <span id="gold">0</span></p>
-    <p id="timer">⏱️ Time: 30</p>
+<div id="app">
+  <!-- Left: Heroes -->
+  <section id="heroesPanel" aria-label="Bee Heroes Upgrade Panel">
+    <h2>🐝 Bee Heroes</h2>
+    <div id="heroesList" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+  </section>
 
-    <div id="controls">
-      <button onclick="prevLevel()">⬅️ Back</button>
-      <button onclick="nextLevel()">➡️ Next</button>
+  <!-- Center: Enemy -->
+  <section id="centerPanel" aria-label="Enemy and Combat">
+    <img id="enemyImage" src="" alt="Enemy Monster" aria-describedby="enemyName enemyHPText" />
+    <div id="enemyName" aria-live="polite" aria-atomic="true"></div>
+    <div id="hpBarContainer" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+      <div id="hpBar"></div>
     </div>
+    <div id="enemyHPText" aria-live="polite" aria-atomic="true"></div>
+    <div id="levelInfo" aria-live="polite" aria-atomic="true"></div>
+    <div id="timer" aria-live="polite" aria-atomic="true"></div>
+  </section>
 
-    <div class="heroPanel">
-      <h3>Hire Bees 🐝</h3>
-      <div class="hero">
-        Worker Bee - 1 DPS - Cost: <span id="cost1">50</span>
-        <button onclick="hire(0)">Hire</button> Owned: <span id="owned1">0</span>
-      </div>
-      <div class="hero">
-        Drone Bee - 5 DPS - Cost: <span id="cost2">250</span>
-        <button onclick="hire(1)">Hire</button> Owned: <span id="owned2">0</span>
-      </div>
-      <div class="hero">
-        Queen Bee - 20 DPS - Cost: <span id="cost3">1000</span>
-        <button onclick="hire(2)">Hire</button> Owned: <span id="owned3">0</span>
-      </div>
+  <!-- Right: Levels -->
+  <section id="rightPanel" aria-label="Levels and Rewards">
+    <h2>Levels</h2>
+    <div id="levelsList" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+    <div id="navButtons">
+      <button id="prevLevelBtn" aria-label="Previous Level">⬅️ Prev</button>
+      <button id="nextLevelBtn" aria-label="Next Level">Next ➡️</button>
     </div>
-  </div>
+  </section>
+</div>
 
-  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_f020a0f62f.mp3"></audio>
-  <audio id="killSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9f9b3bb2bb.mp3"></audio>
+<script>
+  // === Data ===
+  const backgrounds = [
+    "https://i.imgur.com/FL9DbjD.jpg", // Field
+    "https://i.imgur.com/lcFeYfi.jpg", // Jungle
+    "https://i.imgur.com/6oY0Wja.jpg"  // Hive
+  ];
 
-  <script>
-    const backgrounds = [
-      "https://i.imgur.com/FL9DbjD.jpg", // field
-      "https://i.imgur.com/lcFeYfi.jpg", // jungle
-      "https://i.imgur.com/6oY0Wja.jpg"  // hive
-    ];
-
-    const beeEnemies = [
-      "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png",
-      "https://upload.wikimedia.org/wikipedia/commons/3/36/Cartoon_bee_2.png",
-      "https://upload.wikimedia.org/wikipedia/commons/0/0b/Cartoon_bee_cute.png"
-    ];
-
-    const enemy = document.getElementById("enemy");
-    const hpBar = document.getElementById("hpBar");
-    const goldDisplay = document.getElementById("gold");
-    const clickDisplay = document.getElementById("clickDamage");
-    const dpsDisplay = document.getElementById("totalDPS");
-    const timerDisplay = document.getElementById("timer");
-    const levelDisplay = document.getElementById("level");
-    const enemyCountDisplay = document.getElementById("enemyCount");
-    const enemyHpDisplay = document.getElementById("enemyHp");
-    const enemyMaxHpDisplay = document.getElementById("enemyMaxHp");
-
-    const clickSound = document.getElementById("clickSound");
-    const killSound = document.getElementById("killSound");
-
-    let state = JSON.parse(localStorage.getItem("beeClickerSave")) || {
-      level: 1,
-      gold: 0,
-      clickDamage: 1,
-      heroes: [0, 0, 0],
-      enemyCount: 1
-    };
-
-    const heroData = [
-      { dps: 1, cost: 50 },
-      { dps: 5, cost: 250 },
-      { dps: 20, cost: 1000 }
-    ];
-
-    let hp = 0, maxHp = 0, timeLeft = 30;
-    let isBoss = false;
-
-    function calcDPS() {
-      return state.heroes.reduce((sum, count, i) => sum + count * heroData[i].dps, 0);
+  // Monsters for normal and boss (boss index = normal + 'Boss' version)
+  const monsters = [
+    {
+      name: "Angry Worker Bee",
+      image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png",
+      bossImage: "https://i.imgur.com/7sPAmpy.png" // example boss image, replace with your own if you want
+    },
+    {
+      name: "Drone Buzz",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/36/Cartoon_bee_2.png",
+      bossImage: "https://i.imgur.com/4jCZqD9.png"
+    },
+    {
+      name: "Queen Buzzy",
+      image: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Cartoon_bee_cute.png",
+      bossImage: "https://i.imgur.com/zxBKhpu.png"
     }
+  ];
 
-    function updateUI() {
-      goldDisplay.textContent = state.gold;
-      clickDisplay.textContent = state.clickDamage;
-      dpsDisplay.textContent = calcDPS();
-      levelDisplay.textContent = state.level;
-      enemyCountDisplay.textContent = state.enemyCount;
-      enemyHpDisplay.textContent = Math.ceil(hp);
-      enemyMaxHpDisplay.textContent = Math.ceil(maxHp);
+  // Bee heroes data: name, base DPS, base cost
+  const heroData = [
+    {name: "Worker Bee", dps: 1, baseCost: 50},
+    {name: "Drone Bee", dps: 5, baseCost: 250},
+    {name: "Queen Bee", dps: 20, baseCost: 1000}
+  ];
 
-      heroData.forEach((h, i) => {
-        document.getElementById(`cost${i + 1}`).textContent = h.cost;
-        document.getElementById(`owned${i + 1}`).textContent = state.heroes[i];
-      });
+  // === State ===
+  let state = JSON.parse(localStorage.getItem("beeClickerSave")) || {
+    level: 1,
+    gold: 0,
+    clickDamage: 1,
+    heroes: [0,0,0],
+    levelsUnlocked: 1,
+    enemyHp: 0,
+    enemyMaxHp: 0,
+    enemyIndex: 0,
+    enemyCount: 1,
+    isBoss: false,
+    timer: 30
+  };
 
-      hpBar.style.width = (hp / maxHp * 100) + "%";
-      document.body.style.backgroundImage = `url('${backgrounds[Math.floor(state.level / 10) % backgrounds.length]}')`;
+  // === Elements ===
+  const enemyImage = document.getElementById("enemyImage");
+  const enemyNameEl = document.getElementById("enemyName");
+  const hpBar = document.getElementById("hpBar");
+  const enemyHPText = document.getElementById("enemyHPText");
+  const levelInfo = document.getElementById("levelInfo");
+  const timerEl = document.getElementById("timer");
+  const heroesList = document.getElementById("heroesList");
+  const goldDisplay = null; // gold shown in hero buttons instead
+  const levelsList = document.getElementById("levelsList");
+  const prevLevelBtn = document.getElementById("prevLevelBtn");
+  const nextLevelBtn = document.getElementById("nextLevelBtn");
+
+  // --- Helpers ---
+  function saveState() {
+    localStorage.setItem("beeClickerSave", JSON.stringify(state));
+  }
+
+  function calcTotalDPS() {
+    return state.heroes.reduce((total, count, i) => total + count * heroData[i].dps, 0);
+  }
+
+  function getCurrentMonster() {
+    // Cycle through monsters by level mod 3
+    return monsters[(state.level-1) % monsters.length];
+  }
+
+  // Calculate enemy HP based on level and if boss
+  function calcEnemyHp(level, isBoss) {
+    let base = 20 + Math.pow(level, 1.5) * (isBoss ? 20 : 8);
+    return Math.round(base);
+  }
+
+  // Calculate gold reward for killing enemy
+  function calcGoldReward(level, isBoss) {
+    return isBoss ? 100 + level * 10 : 10 + level * 3;
+  }
+
+  // Calculate cost of hero purchase (scales exponentially)
+  function calcHeroCost(index) {
+    let base = heroData[index].baseCost;
+    let count = state.heroes[index];
+    return Math.floor(base * Math.pow(1.15, count));
+  }
+
+  // Update hero UI buttons
+  function renderHeroes() {
+    heroesList.innerHTML = "";
+    state.heroes.forEach((count, i) => {
+      let hero = heroData[i];
+      let cost = calcHeroCost(i);
+      let canBuy = state.gold >= cost;
+      let div = document.createElement("div");
+      div.className = "hero";
+      div.innerHTML = `
+        <div class="hero-info">
+          <div class="hero-name">${hero.name}</div>
+          <div class="hero-stats">DPS: ${hero.dps} | Owned: ${count}</div>
+        </div>
+        <button class="hireBtn" ${canBuy ? "" : "disabled"} onclick="buyHero(${i})">Buy (${cost}💰)</button>
+      `;
+      heroesList.appendChild(div);
+    });
+  }
+
+  // Render levels panel
+  function renderLevels() {
+    levelsList.innerHTML = "";
+    for(let i=1; i<=state.levelsUnlocked; i++) {
+      let isActive = i === state.level;
+      let li = document.createElement("div");
+      li.className = "levelItem" + (isActive ? " active" : "");
+      li.textContent = `Level ${i} ${i % 10 === 0 ? "⭐ Boss" : ""}`;
+      li.onclick = () => {
+        if(i <= state.levelsUnlocked) {
+          selectLevel(i);
+        }
+      };
+      levelsList.appendChild(li);
     }
+  }
 
-    function newEnemy() {
-      isBoss = state.enemyCount === 10;
-      timeLeft = isBoss ? 60 : 30;
-      maxHp = 20 + Math.pow(state.level, 1.5) * (isBoss ? 10 : 5);
-      hp = maxHp;
-      enemy.src = beeEnemies[Math.floor(Math.random() * beeEnemies.length)];
+  // Update center panel info and enemy image
+  function renderEnemy() {
+    const monster = getCurrentMonster();
+    const isBoss = state.isBoss;
+    enemyNameEl.textContent = isBoss ? `${monster.name} Boss` : monster.name;
+    enemyImage.src = isBoss ? monster.bossImage || monster.image : monster.image;
+    enemyImage.alt = isBoss ? `${monster.name} Boss Monster` : `${monster.name} Monster`;
+    enemyHPText.textContent = `${state.enemyHp} / ${state.enemyMaxHp}`;
+    levelInfo.textContent = `Level ${state.level} - Enemy ${state.enemyCount}/10`;
+    hpBar.style.width = (state.enemyHp / state.enemyMaxHp * 100) + "%";
+    document.body.style.backgroundImage = `url('${backgrounds[Math.floor((state.level-1) / 10) % backgrounds.length]}')`;
+
+    // Disable next if level locked or boss alive
+    nextLevelBtn.disabled = (state.level === state.levelsUnlocked && (state.enemyCount <= 10 && state.enemyHp > 0));
+    prevLevelBtn.disabled = (state.level === 1);
+  }
+
+  // --- Gameplay functions ---
+  function selectLevel(levelNum) {
+    if(levelNum > state.levelsUnlocked) return;
+    state.level = levelNum;
+    state.enemyCount = 1;
+    state.isBoss = false;
+    state.enemyMaxHp = calcEnemyHp(state.level, false);
+    state.enemyHp = state.enemyMaxHp;
+    state.timer = 30;
+    saveState();
+    renderEnemy();
+    renderLevels();
+  }
+
+  function buyHero(i) {
+    let cost = calcHeroCost(i);
+    if(state.gold >= cost) {
+      state.gold -= cost;
+      state.heroes[i]++;
+      saveState();
+      renderHeroes();
+      renderEnemy();
     }
+  }
 
-    function spawnGold(amount) {
-      const g = document.createElement("div");
-      g.textContent = `+${amount}💰`;
-      g.className = "goldText";
-      g.style.left = `${Math.random() * 80 + 10}px`;
-      g.style.top = `200px`;
-      document.getElementById("game").appendChild(g);
-      setTimeout(() => g.remove(), 1000);
+  function clickEnemy() {
+    if(state.enemyHp <= 0) return; // already dead
+    state.enemyHp -= state.clickDamage;
+    flashEnemy();
+    spawnFloatingText(`-${state.clickDamage}`, 'damageText');
+    if(state.enemyHp <= 0) {
+      enemyKilled();
     }
+    renderEnemy();
+    saveState();
+  }
 
-    function spawnDamage(amount) {
-      const d = document.createElement("div");
-      d.textContent = `-${amount}`;
-      d.className = "damageText";
-      d.style.left = `${Math.random() * 80 + 10}px`;
-      d.style.top = `180px`;
-      document.getElementById("game").appendChild(d);
-      setTimeout(() => d.remove(), 1000);
+  // Flash enemy image briefly on hit
+  function flashEnemy() {
+    enemyImage.classList.add('hit');
+    setTimeout(() => enemyImage.classList.remove('hit'), 120);
+  }
+
+  // Show floating text
+  function spawnFloatingText(text, className) {
+    const ft = document.createElement("div");
+    ft.textContent = text;
+    ft.className = "floatingText " + className;
+    const rect = enemyImage.getBoundingClientRect();
+    ft.style.left = (rect.left + rect.width/2 + (Math.random() * 40 - 20)) + "px";
+    ft.style.top = (rect.top + rect.height/2 + (Math.random() * 20 - 10)) + "px";
+    document.body.appendChild(ft);
+    setTimeout(() => ft.remove(), 1200);
+  }
+
+  function enemyKilled() {
+    // Reward gold
+    const reward = calcGoldReward(state.level, state.isBoss);
+    state.gold += reward;
+    spawnFloatingText(`+${reward}💰`, 'goldText');
+
+    if(state.enemyCount === 10) {
+      // Boss defeated!
+      state.levelsUnlocked = Math.max(state.levelsUnlocked, state.level + 1);
+      state.level++;
+      state.enemyCount = 1;
+      state.isBoss = false;
+      state.enemyMaxHp = calcEnemyHp(state.level, false);
+      state.enemyHp = state.enemyMaxHp;
+      state.timer = 30;
+      alert(`Boss defeated! Level ${state.level - 1} cleared.\nBonus Gold: ${reward}`);
+    } else if(state.enemyCount === 9) {
+      // Spawn boss next enemy
+      state.enemyCount++;
+      state.isBoss = true;
+      state.enemyMaxHp = calcEnemyHp(state.level, true);
+      state.enemyHp = state.enemyMaxHp;
+      state.timer = 60;
+    } else {
+      // Next enemy normal
+      state.enemyCount++;
+      state.isBoss = false;
+      state.enemyMaxHp = calcEnemyHp(state.level, false);
+      state.enemyHp = state.enemyMaxHp;
+      state.timer = 30;
     }
+    saveState();
+  }
 
-    function nextLevel() {
-      if (state.level < 1000) {
-        state.level++;
-        state.enemyCount = 1;
-        newEnemy();
-        updateUI();
+  // Timer countdown and DPS damage
+  function gameTick() {
+    if(state.enemyHp <= 0) return; // wait for player to click next enemy
+    state.timer--;
+    if(state.timer <= 0) {
+      // Time ran out, reset enemy HP and timer
+      state.enemyHp = state.enemyMaxHp;
+      state.timer = state.isBoss ? 60 : 30;
+      alert("You ran out of time! Enemy healed.");
+    } else {
+      // Apply DPS damage every second
+      const dps = calcTotalDPS();
+      if(dps > 0) {
+        state.enemyHp -= dps;
+        spawnFloatingText(`-${Math.floor(dps)}`, 'damageText');
+        if(state.enemyHp <= 0) {
+          enemyKilled();
+        }
       }
     }
+    saveState();
+    renderEnemy();
+  }
 
-    function prevLevel() {
-      if (state.level > 1) {
-        state.level--;
-        state.enemyCount = 1;
-        newEnemy();
-        updateUI();
-      }
+  // Navigation buttons
+  prevLevelBtn.onclick = () => {
+    if(state.level > 1) {
+      selectLevel(state.level - 1);
     }
-
-    function hire(index) {
-      const cost = heroData[index].cost;
-      if (state.gold >= cost) {
-        state.gold -= cost;
-        state.heroes[index]++;
-        heroData[index].cost = Math.floor(heroData[index].cost * 1.15);
-        updateUI();
-      }
+  };
+  nextLevelBtn.onclick = () => {
+    if(state.level < state.levelsUnlocked) {
+      selectLevel(state.level + 1);
     }
+  };
 
-    enemy.onclick = () => {
-      hp -= state.clickDamage;
-      clickSound.play();
-      spawnDamage(state.clickDamage);
-      if (hp <= 0) handleKill();
-      updateUI();
-    };
+  enemyImage.onclick = clickEnemy;
 
-    function handleKill() {
-      killSound.play();
-      const goldEarned = isBoss ? 50 + state.level * 5 : 10 + state.level * 2;
-      state.gold += goldEarned;
-      spawnGold(goldEarned);
-      if (state.enemyCount >= 10) {
-        state.level++;
-        state.enemyCount = 1;
-      } else {
-        state.enemyCount++;
-      }
-      newEnemy();
-    }
+  // Initial render
+  renderHeroes();
+  renderLevels();
 
-    // Game loop
-    setInterval(() => {
-      hp -= calcDPS();
-      timeLeft--;
-      if (timeLeft <= 0 && hp > 0) {
-        hp = maxHp; // reset
-        timeLeft = isBoss ? 60 : 30;
-      }
-      timerDisplay.textContent = `⏱️ Time: ${timeLeft}`;
-      if (hp <= 0) handleKill();
-      updateUI();
-    }, 1000);
+  if(state.enemyHp === 0) {
+    state.enemyMaxHp = calcEnemyHp(state.level, false);
+    state.enemyHp = state.enemyMaxHp;
+    state.timer = 30;
+  }
+  renderEnemy();
 
-    // Auto-save
-    setInterval(() => {
-      localStorage.setItem("beeClickerSave", JSON.stringify(state));
-    }, 2000);
+  // Game tick every second
+  setInterval(gameTick, 1000);
 
-    // Start game
-    newEnemy();
-    updateUI();
-  </script>
+  // Save state every 5 sec
+  setInterval(saveState, 5000);
+</script>
 </body>
 </html>
