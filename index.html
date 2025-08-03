@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bee Clicker Heroes</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #fff8dc;
+      background-color: #fff8dc;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -23,11 +25,12 @@
 
     #game {
       margin-top: 20px;
-      background: #f0e68c;
+      background: rgba(255, 255, 255, 0.85);
       border: 4px solid #ffb300;
       border-radius: 10px;
       padding: 20px;
       width: 400px;
+      position: relative;
     }
 
     #enemy {
@@ -38,27 +41,6 @@
 
     #enemy:active {
       transform: scale(0.95);
-    }
-
-    #controls {
-      display: flex;
-      justify-content: space-between;
-      margin: 10px 0;
-    }
-
-    button {
-      padding: 10px 15px;
-      background-color: #ffb300;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background-color: #ffa000;
     }
 
     #hpBarContainer {
@@ -77,21 +59,45 @@
       transition: width 0.2s;
     }
 
-    .levelInfo, .goldInfo, .upgradeSection {
+    .goldText, .damageText {
+      position: absolute;
       font-weight: bold;
-      margin-bottom: 10px;
-      color: #444;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
     }
 
-    .upgradeSection {
-      background: #fff3cd;
-      padding: 10px;
-      margin-top: 15px;
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-50px); }
+    }
+
+    #controls, .heroPanel {
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #ffb300;
+      border: none;
       border-radius: 8px;
-      border: 2px dashed #ffb300;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 4px;
     }
 
-    .upgradeButton {
+    button:hover {
+      background-color: #ffa000;
+    }
+
+    .hero {
+      border-bottom: 1px solid #ccc;
+      padding: 5px;
+    }
+
+    #timer, #waveInfo {
+      font-weight: bold;
       margin-top: 5px;
     }
   </style>
@@ -99,36 +105,45 @@
 <body>
   <h1>🐝 Bee Clicker Heroes</h1>
   <div id="game">
-    <div class="levelInfo">Level <span id="level">1</span></div>
+    <div id="waveInfo">Level <span id="level">1</span> - Enemy <span id="enemyCount">1</span>/10</div>
     <img id="enemy" src="" width="150" />
     <div id="hpBarContainer"><div id="hpBar"></div></div>
-    <p>Enemy HP: <span id="enemyHp"></span> / <span id="enemyMaxHp"></span></p>
-    <p>Total Clicks: <span id="clicks">0</span></p>
-    <p class="goldInfo">💰 Gold: <span id="gold">0</span></p>
+    <p>Enemy HP: <span id="enemyHp">0</span> / <span id="enemyMaxHp">0</span></p>
+    <p>Click Damage: <span id="clickDamage">1</span> | DPS: <span id="totalDPS">0</span></p>
+    <p>💰 Gold: <span id="gold">0</span></p>
+    <p id="timer">⏱️ Time: 30</p>
+
     <div id="controls">
       <button onclick="prevLevel()">⬅️ Back</button>
       <button onclick="nextLevel()">➡️ Next</button>
     </div>
 
-    <div class="upgradeSection">
-      <div>🔧 Upgrades</div>
-      <button class="upgradeButton" onclick="upgradeClick()">💪 Click Damage (+1) - 50 Gold</button><br>
-      <button class="upgradeButton" onclick="upgradeAuto()">🤖 Auto Clicker (+1/sec) - 100 Gold</button><br>
-      <p>Click Damage: <span id="clickDamageDisplay">1</span></p>
-      <p>Auto Clickers: <span id="autoClickers">0</span></p>
+    <div class="heroPanel">
+      <h3>Hire Bees 🐝</h3>
+      <div class="hero">
+        Worker Bee - 1 DPS - Cost: <span id="cost1">50</span>
+        <button onclick="hire(0)">Hire</button> Owned: <span id="owned1">0</span>
+      </div>
+      <div class="hero">
+        Drone Bee - 5 DPS - Cost: <span id="cost2">250</span>
+        <button onclick="hire(1)">Hire</button> Owned: <span id="owned2">0</span>
+      </div>
+      <div class="hero">
+        Queen Bee - 20 DPS - Cost: <span id="cost3">1000</span>
+        <button onclick="hire(2)">Hire</button> Owned: <span id="owned3">0</span>
+      </div>
     </div>
   </div>
 
+  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_f020a0f62f.mp3"></audio>
+  <audio id="killSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9f9b3bb2bb.mp3"></audio>
+
   <script>
-    const enemy = document.getElementById("enemy");
-    const hpBar = document.getElementById("hpBar");
-    const enemyHpDisplay = document.getElementById("enemyHp");
-    const enemyMaxHpDisplay = document.getElementById("enemyMaxHp");
-    const clicksDisplay = document.getElementById("clicks");
-    const goldDisplay = document.getElementById("gold");
-    const levelDisplay = document.getElementById("level");
-    const clickDamageDisplay = document.getElementById("clickDamageDisplay");
-    const autoClickerDisplay = document.getElementById("autoClickers");
+    const backgrounds = [
+      "https://i.imgur.com/FL9DbjD.jpg", // field
+      "https://i.imgur.com/lcFeYfi.jpg", // jungle
+      "https://i.imgur.com/6oY0Wja.jpg"  // hive
+    ];
 
     const beeEnemies = [
       "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cartoon_bee.png",
@@ -136,103 +151,158 @@
       "https://upload.wikimedia.org/wikipedia/commons/0/0b/Cartoon_bee_cute.png"
     ];
 
-    let level = 1;
-    let maxLevel = 1;
-    let clicks = 0;
-    let gold = 0;
-    let clickDamage = 1;
-    let autoClickers = 0;
+    const enemy = document.getElementById("enemy");
+    const hpBar = document.getElementById("hpBar");
+    const goldDisplay = document.getElementById("gold");
+    const clickDisplay = document.getElementById("clickDamage");
+    const dpsDisplay = document.getElementById("totalDPS");
+    const timerDisplay = document.getElementById("timer");
+    const levelDisplay = document.getElementById("level");
+    const enemyCountDisplay = document.getElementById("enemyCount");
+    const enemyHpDisplay = document.getElementById("enemyHp");
+    const enemyMaxHpDisplay = document.getElementById("enemyMaxHp");
 
-    let hp = 10;
-    let maxHp = 10;
+    const clickSound = document.getElementById("clickSound");
+    const killSound = document.getElementById("killSound");
 
-    function calculateHp(level) {
-      return 10 + Math.floor(Math.pow(level, 1.5) * 5);
-    }
+    let state = JSON.parse(localStorage.getItem("beeClickerSave")) || {
+      level: 1,
+      gold: 0,
+      clickDamage: 1,
+      heroes: [0, 0, 0],
+      enemyCount: 1
+    };
 
-    function calculateGold(level) {
-      return 5 + Math.floor(level * 1.5);
+    const heroData = [
+      { dps: 1, cost: 50 },
+      { dps: 5, cost: 250 },
+      { dps: 20, cost: 1000 }
+    ];
+
+    let hp = 0, maxHp = 0, timeLeft = 30;
+    let isBoss = false;
+
+    function calcDPS() {
+      return state.heroes.reduce((sum, count, i) => sum + count * heroData[i].dps, 0);
     }
 
     function updateUI() {
-      enemyHpDisplay.textContent = Math.max(0, Math.floor(hp));
-      enemyMaxHpDisplay.textContent = maxHp;
-      levelDisplay.textContent = level;
-      clicksDisplay.textContent = clicks;
-      goldDisplay.textContent = gold;
-      clickDamageDisplay.textContent = clickDamage;
-      autoClickerDisplay.textContent = autoClickers;
+      goldDisplay.textContent = state.gold;
+      clickDisplay.textContent = state.clickDamage;
+      dpsDisplay.textContent = calcDPS();
+      levelDisplay.textContent = state.level;
+      enemyCountDisplay.textContent = state.enemyCount;
+      enemyHpDisplay.textContent = Math.ceil(hp);
+      enemyMaxHpDisplay.textContent = Math.ceil(maxHp);
+
+      heroData.forEach((h, i) => {
+        document.getElementById(`cost${i + 1}`).textContent = h.cost;
+        document.getElementById(`owned${i + 1}`).textContent = state.heroes[i];
+      });
+
       hpBar.style.width = (hp / maxHp * 100) + "%";
+      document.body.style.backgroundImage = `url('${backgrounds[Math.floor(state.level / 10) % backgrounds.length]}')`;
     }
 
-    function resetEnemy() {
-      maxHp = calculateHp(level);
+    function newEnemy() {
+      isBoss = state.enemyCount === 10;
+      timeLeft = isBoss ? 60 : 30;
+      maxHp = 20 + Math.pow(state.level, 1.5) * (isBoss ? 10 : 5);
       hp = maxHp;
       enemy.src = beeEnemies[Math.floor(Math.random() * beeEnemies.length)];
-      updateUI();
     }
 
-    enemy.addEventListener("click", () => {
-      hp -= clickDamage;
-      clicks++;
-      if (hp <= 0) {
-        const goldEarned = calculateGold(level);
-        gold += goldEarned;
-        level++;
-        maxLevel = Math.max(maxLevel, level);
-        resetEnemy();
-      }
-      updateUI();
-    });
+    function spawnGold(amount) {
+      const g = document.createElement("div");
+      g.textContent = `+${amount}💰`;
+      g.className = "goldText";
+      g.style.left = `${Math.random() * 80 + 10}px`;
+      g.style.top = `200px`;
+      document.getElementById("game").appendChild(g);
+      setTimeout(() => g.remove(), 1000);
+    }
+
+    function spawnDamage(amount) {
+      const d = document.createElement("div");
+      d.textContent = `-${amount}`;
+      d.className = "damageText";
+      d.style.left = `${Math.random() * 80 + 10}px`;
+      d.style.top = `180px`;
+      document.getElementById("game").appendChild(d);
+      setTimeout(() => d.remove(), 1000);
+    }
 
     function nextLevel() {
-      if (level < maxLevel) {
-        level++;
-        resetEnemy();
+      if (state.level < 1000) {
+        state.level++;
+        state.enemyCount = 1;
+        newEnemy();
+        updateUI();
       }
     }
 
     function prevLevel() {
-      if (level > 1) {
-        level--;
-        resetEnemy();
-      }
-    }
-
-    function upgradeClick() {
-      if (gold >= 50) {
-        gold -= 50;
-        clickDamage += 1;
+      if (state.level > 1) {
+        state.level--;
+        state.enemyCount = 1;
+        newEnemy();
         updateUI();
       }
     }
 
-    function upgradeAuto() {
-      if (gold >= 100) {
-        gold -= 100;
-        autoClickers += 1;
+    function hire(index) {
+      const cost = heroData[index].cost;
+      if (state.gold >= cost) {
+        state.gold -= cost;
+        state.heroes[index]++;
+        heroData[index].cost = Math.floor(heroData[index].cost * 1.15);
         updateUI();
       }
     }
 
-    // Auto clicker loop
+    enemy.onclick = () => {
+      hp -= state.clickDamage;
+      clickSound.play();
+      spawnDamage(state.clickDamage);
+      if (hp <= 0) handleKill();
+      updateUI();
+    };
+
+    function handleKill() {
+      killSound.play();
+      const goldEarned = isBoss ? 50 + state.level * 5 : 10 + state.level * 2;
+      state.gold += goldEarned;
+      spawnGold(goldEarned);
+      if (state.enemyCount >= 10) {
+        state.level++;
+        state.enemyCount = 1;
+      } else {
+        state.enemyCount++;
+      }
+      newEnemy();
+    }
+
+    // Game loop
     setInterval(() => {
-      if (autoClickers > 0 && hp > 0) {
-        hp -= autoClickers;
-        clicks += autoClickers;
-        if (hp <= 0) {
-          const goldEarned = calculateGold(level);
-          gold += goldEarned;
-          level++;
-          maxLevel = Math.max(maxLevel, level);
-          resetEnemy();
-        }
-        updateUI();
+      hp -= calcDPS();
+      timeLeft--;
+      if (timeLeft <= 0 && hp > 0) {
+        hp = maxHp; // reset
+        timeLeft = isBoss ? 60 : 30;
       }
+      timerDisplay.textContent = `⏱️ Time: ${timeLeft}`;
+      if (hp <= 0) handleKill();
+      updateUI();
     }, 1000);
 
+    // Auto-save
+    setInterval(() => {
+      localStorage.setItem("beeClickerSave", JSON.stringify(state));
+    }, 2000);
+
     // Start game
-    resetEnemy();
+    newEnemy();
+    updateUI();
   </script>
 </body>
 </html>
