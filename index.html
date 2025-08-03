@@ -3,808 +3,939 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dating Sim - Grow a Relationship</title>
+<title>Deep Dating Sim</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  /* Basic styling */
   body {
-    margin:0; padding:0; font-family: 'Roboto', sans-serif;
-    background: #222;
-    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #f0e6f6, #d9c7f8);
+    margin: 0; padding: 0; color: #222;
     user-select:none;
-    display: flex; flex-direction: column; height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    margin-top: 10px;
   }
   #gameContainer {
-    max-width: 700px; margin: auto; display:flex; flex-direction: column;
-    height: 100vh;
-    background: linear-gradient(to bottom, #2c3e50, #4ca1af);
-    border-radius: 12px;
-    box-shadow: 0 0 20px #0008;
-    overflow: hidden;
-  }
-  #header {
-    padding: 12px 20px;
-    background: #34495e;
-    font-weight: 700; font-size: 1.3em;
-    text-align: center;
-    user-select:none;
-  }
-  #avatarCustomization {
-    padding: 10px 20px;
-    background: #3b5367;
-    display: flex; justify-content: center; gap: 20px;
-    flex-wrap: wrap;
-    color: #ccc;
-  }
-  label {cursor: pointer;}
-  select, input[type=color] {
-    padding: 5px;
-    border-radius: 5px;
-    border: none;
-    font-size: 1em;
-  }
-  #characterSelect {
-    display: flex; justify-content: center; background: #3b5367;
-    padding: 10px;
-    gap: 15px;
-  }
-  .charBtn {
-    padding: 8px 16px;
-    border-radius: 10px;
-    background: #5588aa;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  .charBtn.selected {
-    background: #d48;
-    color: white;
-    box-shadow: 0 0 8px #f44;
-  }
-  #scene {
-    flex-grow: 1;
-    display: flex;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    padding: 10px;
-    overflow: hidden;
+    max-width: 700px;
+    margin: 15px auto;
+    background: #faf5ffdd;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #8a6be1aa;
+    padding: 15px 20px;
   }
   #portrait {
-    width: 180px;
-    height: 320px;
-    background: #222;
-    border-radius: 15px;
-    box-shadow: 0 0 15px #000a inset;
-    flex-shrink: 0;
-    margin-right: 20px;
-    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
   }
-  #portrait img {
-    max-width: 100%;
-    border-radius: 15px;
-    user-select:none;
+  #portraitImg {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #8855ffbb;
+    filter: drop-shadow(0 0 5px #7744ff);
   }
-  #portrait .nameTag {
-    margin-top: 8px;
-    font-weight: 700;
-    font-size: 1.2em;
-    color: #eee;
-    text-shadow: 0 0 6px #0009;
-  }
-  #dialogueBox {
-    flex-grow: 1;
-    background: rgba(0,0,0,0.6);
-    border-radius: 15px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    color: #eee;
-    box-shadow: 0 0 12px #0009 inset;
-  }
-  #dialogueText {
-    font-size: 1.1em;
-    min-height: 90px;
-    white-space: pre-wrap;
-    user-select:none;
-  }
-  #choices {
-    margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .choiceBtn {
-    flex: 1 1 45%;
-    background: #4a729d;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 15px;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #2c4362;
-    transition: background 0.3s ease;
-  }
-  .choiceBtn:hover {
-    background: #5a8acc;
+  #portraitName {
+    font-size: 1.3em;
+    margin: 10px 0 5px;
   }
   #statusBar {
-    background: #34495e;
-    color: #ccc;
-    font-size: 0.9em;
-    padding: 6px 15px;
     display: flex;
-    justify-content: space-between;
-    user-select:none;
+    justify-content: space-around;
+    margin: 10px 0;
+    font-weight: bold;
   }
-  #inventory {
-    background: #3b5367;
-    padding: 10px 20px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    user-select:none;
+  #relationshipStatus {
+    color: #6a2c91;
   }
-  .invItem {
-    background: #4a729d;
-    border-radius: 8px;
-    padding: 5px 12px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #2c4362;
-    font-weight: 600;
-    color: white;
-    user-select:none;
-    transition: background 0.3s ease;
+  #dayTime {
+    font-style: italic;
+    color: #444;
   }
-  .invItem.selected {
-    background: #d48;
-    box-shadow: 0 0 10px #f44;
-  }
-  #giftArea {
-    background: #3b5367;
-    padding: 15px 20px;
-    text-align: center;
-    border-radius: 0 0 12px 12px;
-    user-select:none;
-  }
-  #giftButtons button {
-    margin: 5px 8px;
-    padding: 10px 15px;
+  #scene {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
     border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: inset 0 0 40px #a288e8aa;
+  }
+  #dialogueText {
+    min-height: 80px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1.1em;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px #c0a7ffcc;
+    white-space: pre-wrap;
+  }
+  #choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  button.choiceBtn {
+    background: linear-gradient(45deg, #845ef7, #5f3dc4);
     border: none;
-    background: #6a9c58;
     color: white;
-    font-weight: 700;
+    padding: 10px 15px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 3px 0 #466d39;
+    min-width: 140px;
+    font-weight: 600;
+    box-shadow: 0 0 8px #6f47c9bb;
     transition: background 0.3s ease;
+    user-select:none;
   }
-  #giftButtons button:hover {
-    background: #7ec76e;
+  button.choiceBtn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #a479ff, #7a53e6);
   }
-  #timeBar {
-    height: 8px;
-    background: #2c4362;
+  button.choiceBtn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  #messageBox {
+    text-align: center;
+    background: #d7b8ffcc;
+    margin: 12px auto 15px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    color: #4b2c6a;
+    box-shadow: 0 0 6px #7d57ffcc;
+    display: none;
+    max-width: 600px;
+    user-select:none;
+  }
+  #timerBar {
+    height: 6px;
+    background: #8855ffcc;
     border-radius: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 600px;
     overflow: hidden;
-    margin-top: 10px;
+    position: relative;
   }
   #timeProgress {
     height: 100%;
-    background: #d48;
+    background: linear-gradient(90deg, #9e6bff, #5f3dc4);
     width: 100%;
-    transition: width 0.1s linear;
+    transition: width 0.3s linear;
   }
-  #messageBox {
-    position: absolute;
-    top: 10px; left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.7);
-    padding: 10px 20px;
+  #inventory {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  #inventorySeeds, #inventoryGifts {
+    background: #fff;
     border-radius: 10px;
+    padding: 10px 15px;
+    box-shadow: 0 0 8px #a992ffbb;
+    min-width: 130px;
+    max-width: 220px;
+  }
+  .invTitle {
     font-weight: 700;
-    color: #f44;
-    display: none;
+    margin-bottom: 8px;
+    color: #6a47d9;
+    text-align: center;
+  }
+  .invItem {
+    background: #e4d7ffdd;
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin: 4px 0;
+    font-size: 0.95em;
+  }
+  #giftArea {
+    text-align: center;
+    margin: 12px 0 15px;
+  }
+  #giftButtons button {
+    margin: 5px;
+    background: #7e5de6;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 8px #674fd6bb;
+  }
+  #giftButtons button:hover:not(:disabled) {
+    background: #a27aff;
+  }
+  #avatarCustomization {
+    text-align: center;
+    margin-bottom: 20px;
     user-select:none;
+  }
+  label {
+    margin-right: 8px;
+  }
+  select, input[type=color] {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  #startGameBtn {
+    background: #6a47d9;
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 12px #5533c9cc;
+  }
+  #startGameBtn:hover {
+    background: #8e6bff;
+  }
+  #characterSelect {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  #characterSelect button {
+    margin: 0 10px;
+    padding: 8px 15px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    user-select:none;
+  }
+  #characterSelect button.selected {
+    border-color: #6a47d9;
+    background: #d5cfff;
+  }
+  #characterSelect button:hover:not(.selected) {
+    background: #eae1ff;
+  }
+  /* Mini-game containers */
+  #minigameContainer {
+    background: #eee;
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 15px;
+    box-shadow: inset 0 0 15px #c9b9ffcc;
+  }
+  #minigameText {
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  #minigameButtons button {
+    margin: 0 8px 10px 0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #7b59d9;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 0 10px #6a46d6bb;
+  }
+  #minigameButtons button:hover {
+    background: #a483ff;
+  }
+  /* Scroll for inventory if needed */
+  #inventorySeeds, #inventoryGifts {
+    max-height: 120px;
+    overflow-y: auto;
   }
 </style>
 </head>
 <body>
+  <h1>🌸 Deep Dating Sim</h1>
   <div id="gameContainer" role="main" aria-label="Dating simulation game">
-    <header id="header">Dating Sim: Grow a Relationship</header>
 
-    <section id="avatarCustomization" aria-label="Avatar customization">
+    <div id="avatarCustomization" aria-label="Avatar customization">
       <label for="avatarStyle">Avatar Style:</label>
-      <select id="avatarStyle" aria-describedby="avatarStyleDesc">
+      <select id="avatarStyle" aria-controls="portraitImg" aria-describedby="avatarDesc">
         <option value="style1">Style 1</option>
         <option value="style2">Style 2</option>
+        <option value="style3">Style 3</option>
       </select>
-      <span id="avatarStyleDesc" class="sr-only">Choose your avatar style</span>
-      <label for="avatarColor">Avatar Color:</label>
-      <input type="color" id="avatarColor" value="#f48fb1" aria-label="Select avatar color" />
-      <button id="startGameBtn" aria-label="Start Game Button">Start Game</button>
-    </section>
+      <label for="avatarColor">Highlight Color:</label>
+      <input type="color" id="avatarColor" value="#b459a6" aria-label="Choose avatar highlight color"/>
+      <button id="startGameBtn" aria-live="polite" aria-pressed="false">Start Game</button>
+      <p id="avatarDesc">Customize your avatar’s look before starting.</p>
+    </div>
 
-    <section id="characterSelect" aria-label="Select character to talk to" style="display:none;">
-      <button class="charBtn selected" data-char="lily" aria-pressed="true" aria-label="Talk to Lily">Lily</button>
-      <button class="charBtn" data-char="mia" aria-pressed="false" aria-label="Talk to Mia">Mia</button>
-    </section>
+    <div id="characterSelect" role="tablist" aria-label="Select character to talk to" style="display:none;">
+      <button class="charBtn selected" data-char="lily" role="tab" aria-selected="true">Lily</button>
+      <button class="charBtn" data-char="mia" role="tab" aria-selected="false">Mia</button>
+    </div>
 
-    <section id="scene" aria-live="polite" aria-atomic="true" aria-relevant="additions removals" style="background-image:url('https://i.ibb.co/3rWspNP/park-bg.jpg');">
-      <div id="portrait" aria-label="Character portrait" role="img" aria-live="polite">
-        <img src="" alt="Character portrait" id="portraitImg" />
-        <div class="nameTag" id="portraitName"></div>
-      </div>
+    <div id="portrait" aria-label="Character portrait">
+      <img id="portraitImg" src="" alt="Character portrait" />
+      <div id="portraitName" aria-live="polite"></div>
+    </div>
 
-      <article id="dialogueBox" role="region" aria-label="Dialogue">
-        <div id="dialogueText" aria-live="assertive" aria-atomic="true"></div>
-        <div id="timeBar" aria-hidden="true"><div id="timeProgress"></div></div>
-        <div id="choices" role="list"></div>
-      </article>
-    </section>
-
-    <section id="inventory" aria-label="Inventory" style="display:none;">
-      <div id="inventorySeedsLabel">Seeds:</div>
-      <div id="inventorySeeds" role="list" aria-label="Seed inventory"></div>
-      <div id="inventoryGiftsLabel">Gifts:</div>
-      <div id="inventoryGifts" role="list" aria-label="Gift inventory"></div>
-    </section>
-
-    <section id="giftArea" aria-label="Gift giving area" style="display:none;">
-      <div id="giftButtons">
-        <button data-gift="flower" aria-label="Give Flower">🌸 Flower</button>
-        <button data-gift="chocolate" aria-label="Give Chocolate">🍫 Chocolate</button>
-      </div>
-    </section>
-
-    <section id="statusBar" aria-label="Game status">
-      <div id="dayCounter">Day: 1</div>
-      <div id="timeOfDay">Time: Morning</div>
+    <div id="statusBar" aria-label="Game status">
       <div id="relationshipStatus">Relationship: 0</div>
-    </section>
+      <div id="dayTime">Day: 1, Morning</div>
+    </div>
+
+    <div id="scene" aria-label="Background scene"></div>
+
+    <div id="dialogueText" aria-live="polite"></div>
+
+    <div id="timerBar" aria-hidden="true" style="display:none;">
+      <div id="timeProgress"></div>
+    </div>
+
+    <div id="choices" role="list" aria-label="Dialogue choices"></div>
 
     <div id="messageBox" role="alert" aria-live="assertive"></div>
+
+    <div id="inventory" aria-label="Player inventory" style="display:none;">
+      <div id="inventorySeeds" tabindex="0" aria-label="Seeds inventory">
+        <div class="invTitle">Seeds</div>
+      </div>
+      <div id="inventoryGifts" tabindex="0" aria-label="Gifts inventory">
+        <div class="invTitle">Gifts</div>
+      </div>
+    </div>
+
+    <div id="giftArea" style="display:none;">
+      <div id="giftButtons" aria-label="Gift options">
+        <button data-gift="flower">Give Flower 🌹</button>
+        <button data-gift="chocolate">Give Chocolate 🍫</button>
+      </div>
+    </div>
+
+    <div id="minigameContainer" style="display:none;" aria-live="polite" aria-label="Mini-game area">
+      <div id="minigameText"></div>
+      <div id="minigameButtons"></div>
+    </div>
+
   </div>
 
 <script>
 (() => {
-  // === Game State ===
-  let playerName = "You";
-  let avatarStyle = "style1";
-  let avatarColor = "#f48fb1";
-  let currentCharacter = "lily";
-  let currentNodeKey = null;
-  let relationship = { lily: 0, mia: 0 };
-  let moods = { lily: 0, mia: 0 }; // 0 calm, 1 happy, 2 annoyed, 3 angry
-  let questionMemory = { lily: {}, mia: {} };
-  let inventory = {
-    seeds: { carrot: 2, strawberry: 1 },
-    gifts: { flower: 1, chocolate: 1 }
-  };
+  // ========== Game State ===========
   let day = 1;
-  let timeOfDayIndex = 0; // 0: Morning, 1: Afternoon, 2: Evening, 3: Night
-  const timesOfDay = ["Morning", "Afternoon", "Evening", "Night"];
+  const timesOfDay = ['Morning', 'Afternoon', 'Evening', 'Night'];
+  let timeOfDayIndex = 0;
   let timerInterval = null;
-  let timeLimit = 30; // seconds to answer
-  let timeLeft = timeLimit;
+  let timeLeft = 0;
   let timerActive = false;
+  let avatarStyle = 'style1';
+  let avatarColor = '#b459a6';
+  let currentCharacter = 'lily';
+  let currentNodeKey = 'start';
 
-  const scenes = {
-    park: "https://i.ibb.co/3rWspNP/park-bg.jpg",
-    cafe: "https://i.ibb.co/v4gPTnt/cafe-bg.jpg",
-    street: "https://i.ibb.co/b7f4kxy/street-bg.jpg",
-    home: "https://i.ibb.co/1Xw0h17/home-bg.jpg"
+  // Player inventory & currency
+  let inventory = {
+    seeds: { carrot: 3, flower: 1, chocolate: 1 },
+    gifts: { flower: 1, chocolate: 1 },
+    currency: 100
   };
 
-  // Simple avatars placeholders (circle + eyes + mouth, tinted)
-  const avatars = {
-    style1: {
-      calm: "https://i.ibb.co/4PT9ZbG/face-calm.png",
-      happy: "https://i.ibb.co/qJ1QqL2/face-happy.png",
-      annoyed: "https://i.ibb.co/MV7BkRR/face-annoyed.png",
-      angry: "https://i.ibb.co/bBK5fYw/face-angry.png"
-    },
-    style2: {
-      calm: "https://i.ibb.co/j8GmRRk/face2-calm.png",
-      happy: "https://i.ibb.co/7kpPL3P/face2-happy.png",
-      annoyed: "https://i.ibb.co/r22fLBS/face2-annoyed.png",
-      angry: "https://i.ibb.co/NKV7LmC/face2-angry.png"
-    }
+  // Memory of asked questions (to track repeats)
+  let questionMemory = {
+    lily: {},
+    mia: {}
   };
 
+  // Mood states: 0 calm, 1 happy, 2 annoyed, 3 angry
+  const moods = {
+    lily: 0,
+    mia: 0
+  };
+
+  // Relationship scores 0-100
+  const relationship = {
+    lily: 20,
+    mia: 15
+  };
+
+  // Characters data with personality and interests
   const characters = {
     lily: {
       name: "Lily",
-      location: "park",
-      personality: "sweet and shy",
-      basePortrait: avatars[avatarStyle].calm,
-      expressions: ["calm","happy","annoyed","angry"],
-      dialogue: {
-        start: {
-          text: () => `Hi ${playerName}, nice to see you! What would you like to say?`,
-          options: [
-            { text: "How are you today?", next: "howAreYou", questionId: "howAreYou" },
-            { text: "Tell me about yourself.", next: "about", questionId: "about" },
-            { text: "Give a gift", next: "giveGift" },
-            { text: "Say goodbye", next: "bye" }
-          ],
-          timed: 0
-        },
-        howAreYou: {
-          text: (memCount) => {
-            if(memCount>1) return `"You keep asking the same thing... Please stop." Lily looks annoyed.`;
-            return `"I'm doing well, thank you for asking!"`;
-          },
-          options: [
-            { text: "That's good!", next: "start" },
-            { text: "Want to hang out later?", next: "hangout", questionId: "hangout" }
-          ],
-          timed: 10
-        },
-        about: {
-          text: `"I'm a bit shy but I love gardening and cute animals."`,
-          options: [
-            { text: "That's adorable!", next: "start" },
-            { text: "Give a gift", next: "giveGift" }
-          ],
-          timed: 0
-        },
-        hangout: {
-          text: `"I'd love that! Meet me at the park this afternoon."`,
-          options: [
-            { text: "See you then!", next: "start" }
-          ],
-          timed: 0
-        },
-        giveGift: {
-          text: "Which gift would you like to give?",
-          options: [
-            { text: "Flower 🌸", next: "giftFlower" },
-            { text: "Chocolate 🍫", next: "giftChocolate" },
-            { text: "Nevermind", next: "start" }
-          ],
-          timed: 0
-        },
-        giftFlower: {
-          text: `"Oh, a flower? That's so sweet! Thank you!"`,
-          options: [
-            { text: "You're welcome!", next: "start" }
-          ],
-          effect: () => { 
-            relationship.lily += 3; 
-            moods.lily = Math.max(0, moods.lily - 1);
-            inventory.gifts.flower = Math.max(0, inventory.gifts.flower-1);
-            showMessage("You gave Lily a flower. Relationship increased!");
-          },
-          timed: 0
-        },
-        giftChocolate: {
-          text: `"Chocolate! You really know how to make me smile!"`,
-          options: [
-            { text: "Glad you like it!", next: "start" }
-          ],
-          effect: () => {
-            relationship.lily += 5;
-            moods.lily = Math.max(0, moods.lily - 2);
-            inventory.gifts.chocolate = Math.max(0, inventory.gifts.chocolate-1);
-            showMessage("You gave Lily chocolate. Relationship increased!");
-          },
-          timed: 0
-        },
-        bye: {
-          text: `"Bye! Hope to talk again soon."`,
-          options: [
-            { text: "Talk again", next: "start" }
-          ],
-          timed: 0
-        }
-      }
+      location: "garden",
+      interests: ["gardening", "books", "music"],
+      hates: ["rudeness", "lateness", "repetition"],
+      likes: ["flowers", "puzzles", "helping"],
+      dialogue: {}
     },
     mia: {
       name: "Mia",
       location: "cafe",
-      personality: "smart and mysterious",
-      basePortrait: avatars[avatarStyle].calm,
-      expressions: ["calm","happy","annoyed","angry"],
-      dialogue: {
-        start: {
-          text: () => `Hey ${playerName}, what’s up?`,
-          options: [
-            { text: "What are you reading?", next: "reading", questionId: "reading" },
-            { text: "Want to grab coffee?", next: "coffee", questionId: "coffee" },
-            { text: "Give a gift", next: "giveGift" },
-            { text: "Say goodbye", next: "bye" }
-          ],
-          timed: 0
-        },
-        reading: {
-          text: (memCount) => {
-            if(memCount > 1) return `"You asked me that before... Please stop." Mia looks annoyed.`;
-            return `"It’s a mystery novel. I love puzzles."`;
-          },
-          options: [
-            { text: "Sounds fun!", next: "start" },
-            { text: "Let’s solve one together!", next: "puzzle", questionId: "puzzle" }
-          ],
-          timed: 10
-        },
-        coffee: {
-          text: `"I’d love to! Let’s go."`,
-          options: [
-            { text: "Lead the way.", next: "start" }
-          ],
-          timed: 0
-        },
-        giveGift: {
-          text: "Which gift would you like to give?",
-          options: [
-            { text: "Flower 🌸", next: "giftFlower" },
-            { text: "Chocolate 🍫", next: "giftChocolate" },
-            { text: "Nevermind", next: "start" }
-          ],
-          timed: 0
-        },
-        giftFlower: {
-          text: `"A flower? How thoughtful, thanks!"`,
-          options: [
-            { text: "You're welcome!", next: "start" }
-          ],
-          effect: () => { 
-            relationship.mia += 3; 
-            moods.mia = Math.max(0, moods.mia - 1);
-            inventory.gifts.flower = Math.max(0, inventory.gifts.flower-1);
-            showMessage("You gave Mia a flower. Relationship increased!");
-          },
-          timed: 0
-        },
-        giftChocolate: {
-          text: `"Chocolate? You spoil me! Thanks!"`,
-          options: [
-            { text: "Glad you like it!", next: "start" }
-          ],
-          effect: () => {
-            relationship.mia += 5;
-            moods.mia = Math.max(0, moods.mia - 2);
-            inventory.gifts.chocolate = Math.max(0, inventory.gifts.chocolate-1);
-            showMessage("You gave Mia chocolate. Relationship increased!");
-          },
-          timed: 0
-        },
-        puzzle: {
-          text: "Solve this puzzle to impress Mia:\nWhat has keys but can't open locks?",
-          options: [
-            { text: "A piano", next: "puzzleCorrect" },
-            { text: "A map", next: "puzzleWrong" },
-            { text: "I don’t know", next: "puzzleWrong" }
-          ],
-          timed: 20
-        },
-        puzzleCorrect: {
-          text: `"Correct! You're really smart."`,
-          options: [
-            { text: "Thanks!", next: "start" }
-          ],
-          effect: () => {
-            relationship.mia += 7;
-            moods.mia = 1;
-            showMessage("You impressed Mia with your wit!");
-          }
-        },
-        puzzleWrong: {
-          text: `"Not quite... Maybe next time."`,
-          options: [
-            { text: "I'll try harder!", next: "start" }
-          ],
-          effect: () => {
-            relationship.mia = Math.max(0, relationship.mia - 2);
-            moods.mia = 2;
-            showMessage("Mia seems a bit disappointed.");
-          }
-        },
-        bye: {
-          text: `"Bye! Catch you later."`,
-          options: [
-            { text: "Talk again", next: "start" }
-          ],
-          timed: 0
-        }
-      }
+      interests: ["puzzles", "chocolate", "painting"],
+      hates: ["noise", "interruptions", "repetition"],
+      likes: ["chocolate", "flowers", "music"],
+      dialogue: {}
     }
   };
 
-  // === Elements ===
-  const portraitImg = document.getElementById('portraitImg');
-  const portraitName = document.getElementById('portraitName');
-  const dialogueText = document.getElementById('dialogueText');
-  const choicesDiv = document.getElementById('choices');
-  const dayCounter = document.getElementById('dayCounter');
-  const timeOfDayLabel = document.getElementById('timeOfDay');
-  const relationshipStatus = document.getElementById('relationshipStatus');
-  const messageBox = document.getElementById('messageBox');
-  const sceneEl = document.getElementById('scene');
-  const avatarStyleSelect = document.getElementById('avatarStyle');
-  const avatarColorInput = document.getElementById('avatarColor');
-  const startGameBtn = document.getElementById('startGameBtn');
-  const charButtons = document.querySelectorAll('.charBtn');
-  const characterSelect = document.getElementById('characterSelect');
-  const inventorySeeds = document.getElementById('inventorySeeds');
-  const inventoryGifts = document.getElementById('inventoryGifts');
-  const inventorySection = document.getElementById('inventory');
-  const giftArea = document.getElementById('giftArea');
-  const giftButtons = document.querySelectorAll('#giftButtons button');
-  const avatarCustomization = document.getElementById('avatarCustomization');
+  // Background scenes URLs (replace with your own or placeholders)
+  const scenes = {
+    garden: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80',
+    cafe: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=700&q=80',
+    store: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=700&q=80',
+    home: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=700&q=80'
+  };
 
-  // Accessibility helper: hide visually but keep for screen readers
-  const srOnlyCSS = document.createElement('style');
-  srOnlyCSS.innerHTML = `.sr-only {position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;}`;
-  document.head.appendChild(srOnlyCSS);
+  // Avatar images by style and mood
+  const avatars = {
+    style1: {
+      calm: 'https://i.imgur.com/JRX3aqE.png',
+      happy: 'https://i.imgur.com/o9syyZ8.png',
+      annoyed: 'https://i.imgur.com/qWx4CyB.png',
+      angry: 'https://i.imgur.com/zmq6FNa.png'
+    },
+    style2: {
+      calm: 'https://i.imgur.com/bQ9s3hK.png',
+      happy: 'https://i.imgur.com/TXYXgjN.png',
+      annoyed: 'https://i.imgur.com/cP9J9cg.png',
+      angry: 'https://i.imgur.com/I1Auw1u.png'
+    },
+    style3: {
+      calm: 'https://i.imgur.com/7DkC9CF.png',
+      happy: 'https://i.imgur.com/wQGFKiG.png',
+      annoyed: 'https://i.imgur.com/Yp4VkKz.png',
+      angry: 'https://i.imgur.com/V4pAC8g.png'
+    }
+  };
 
-  // === Helpers ===
-  function saveGame() {
-    const saveData = {
-      relationship, moods, inventory, day, timeOfDayIndex, currentCharacter, currentNodeKey,
-      avatarStyle, avatarColor, questionMemory,
-    };
-    localStorage.setItem('datingSimSave', JSON.stringify(saveData));
+  // Dialogue nodes with dynamic reactions and personality
+
+  // Utility to pick random integer
+  const randInt = (min,max) => Math.floor(Math.random() * (max-min+1)) + min;
+
+  // Relationship gain adjusted by mood and repetition
+  function relationshipGain(base) {
+    let moodMod = moods[currentCharacter] === 3 ? 0.2 : moods[currentCharacter] === 2 ? 0.5 : 1;
+    let repCount = questionMemory[currentCharacter][currentNodeKey] || 0;
+    let repMod = repCount > 1 ? 0.3 : 1;
+    return Math.max(0, Math.floor(base * moodMod * repMod));
   }
-  function loadGame() {
-    const data = localStorage.getItem('datingSimSave');
-    if (!data) return false;
-    try {
-      const saveData = JSON.parse(data);
-      Object.assign(relationship, saveData.relationship);
-      Object.assign(moods, saveData.moods);
-      Object.assign(inventory, saveData.inventory);
-      day = saveData.day;
-      timeOfDayIndex = saveData.timeOfDayIndex;
-      currentCharacter = saveData.currentCharacter || 'lily';
-      currentNodeKey = saveData.currentNodeKey || null;
-      avatarStyle = saveData.avatarStyle || 'style1';
-      avatarColor = saveData.avatarColor || '#f48fb1';
-      Object.assign(questionMemory, saveData.questionMemory || { lily: {}, mia: {} });
-      return true;
-    } catch {
-      return false;
+
+  // Increase annoyance on repeated questions
+  function handleRepeatedQuestion() {
+    let count = questionMemory[currentCharacter][currentNodeKey] || 0;
+    if(count > 1) {
+      if(moods[currentCharacter] < 3) moods[currentCharacter]++;
+      showMessage(`${characters[currentCharacter].name} looks annoyed...`);
     }
   }
-  function showMessage(msg, duration = 4000) {
-    messageBox.textContent = msg;
-    messageBox.style.display = 'block';
-    setTimeout(() => { messageBox.style.display = 'none'; }, duration);
+
+  // Dialogue nodes
+
+  // Core dialogue with personality
+
+  characters.lily.dialogue = {
+    start: {
+      text: () => {
+        const mood = moods.lily;
+        if(mood === 0) return `"Hi there! Ready to chat about gardening or books?"`;
+        if(mood === 1) return `"Hey! I’m happy to see you again 😊"`;
+        if(mood === 2) return `"Hmm... You’re asking a lot of questions today."`;
+        if(mood === 3) return `"I’m getting a bit tired of this conversation."`;
+        return `"Hello."`;
+      },
+      options: [
+        { text: "Ask about gardening", next: "gardening" },
+        { text: "Ask about books", next: "books" },
+        { text: "Give a gift", next: "giveGift" },
+        { text: "Go to store", next: "store" }
+      ],
+      timed: 0
+    },
+    gardening: {
+      text: () => {
+        return `"I love gardening! Would you help me plant some seeds?"`;
+      },
+      options: [
+        { text: "Sure, let's plant seeds", next: "minigame_gardening" },
+        { text: "Maybe later", next: "start" }
+      ],
+      timed: 0,
+      effect: () => { relationship.lily += 1; moods.lily = Math.max(0, moods.lily - 1); }
+    },
+    books: {
+      text: () => {
+        return `"Books are my escape. What's your favorite genre?"`;
+      },
+      options: [
+        { text: "Fantasy", next: "books_fantasy" },
+        { text: "Mystery", next: "books_mystery" },
+        { text: "Sci-fi", next: "books_scifi" },
+        { text: "Never mind", next: "start" }
+      ],
+      timed: 0
+    },
+    books_fantasy: {
+      text: () => `"Oh! I love fantasy worlds too! That’s wonderful."`,
+      options: [{ text: "Back", next: "books" }],
+      timed: 0,
+      effect: () => { relationship.lily += 2; }
+    },
+    books_mystery: {
+      text: () => `"Mysteries keep me on edge. Nice choice."`,
+      options: [{ text: "Back", next: "books" }],
+      timed: 0,
+      effect: () => { relationship.lily += 1; }
+    },
+    books_scifi: {
+      text: () => `"Sci-fi opens your mind to possibilities. Cool!"`,
+      options: [{ text: "Back", next: "books" }],
+      timed: 0,
+      effect: () => { relationship.lily += 1; }
+    },
+    giveGift: {
+      text: () => `"What would you like to give me?"`,
+      options: [], // dynamically filled based on gifts
+      timed: 0
+    },
+    store: {
+      text: () => `"Let's go to the store! What do you want to buy?"`,
+      options: [], // dynamically filled store items
+      timed: 0
+    }
+  };
+
+  characters.mia.dialogue = {
+    start: {
+      text: () => {
+        const mood = moods.mia;
+        if(mood === 0) return `"Hey! Fancy a chat about puzzles or chocolate?"`;
+        if(mood === 1) return `"Great to see you! I got some new painting ideas."`;
+        if(mood === 2) return `"You're being a bit much today..."`;
+        if(mood === 3) return `"I need a break from this."`;
+        return `"Hello."`;
+      },
+      options: [
+        { text: "Ask about puzzles", next: "puzzles" },
+        { text: "Ask about chocolate", next: "chocolate" },
+        { text: "Give a gift", next: "giveGift" },
+        { text: "Go to store", next: "store" }
+      ],
+      timed: 0
+    },
+    puzzles: {
+      text: () => `"I love puzzles! Want to try a quick challenge?"`,
+      options: [
+        { text: "Yes, let's play", next: "minigame_puzzle" },
+        { text: "Maybe later", next: "start" }
+      ],
+      timed: 0,
+      effect: () => { relationship.mia += 1; moods.mia = Math.max(0, moods.mia - 1); }
+    },
+    chocolate: {
+      text: () => `"Chocolate is my weakness! What's your favorite?"`,
+      options: [
+        { text: "Dark chocolate", next: "chocolate_dark" },
+        { text: "Milk chocolate", next: "chocolate_milk" },
+        { text: "White chocolate", next: "chocolate_white" },
+        { text: "Never mind", next: "start" }
+      ],
+      timed: 0
+    },
+    chocolate_dark: {
+      text: () => `"Dark chocolate is so rich! Good choice."`,
+      options: [{ text: "Back", next: "chocolate" }],
+      timed: 0,
+      effect: () => { relationship.mia += 2; }
+    },
+    chocolate_milk: {
+      text: () => `"Milk chocolate is classic and sweet."`,
+      options: [{ text: "Back", next: "chocolate" }],
+      timed: 0,
+      effect: () => { relationship.mia += 1; }
+    },
+    chocolate_white: {
+      text: () => `"White chocolate is a nice treat!"`,
+      options: [{ text: "Back", next: "chocolate" }],
+      timed: 0,
+      effect: () => { relationship.mia += 1; }
+    },
+    giveGift: {
+      text: () => `"What would you like to give me?"`,
+      options: [], // dynamically filled based on gifts
+      timed: 0
+    },
+    store: {
+      text: () => `"Shopping time! What catches your eye?"`,
+      options: [], // dynamically filled store items
+      timed: 0
+    }
+  };
+
+  // Store items
+  const storeItems = [
+    { name: "Flower", type: "gift", price: 10, emoji: "🌹" },
+    { name: "Chocolate", type: "gift", price: 15, emoji: "🍫" },
+    { name: "Seed Packet", type: "seed", price: 5, emoji: "🌱" }
+  ];
+
+  // Minigames implementations
+
+  // Gardening minigame (click 5 times quickly)
+  function gardeningMinigameStart() {
+    showMinigame("Gardening Minigame: Click the button 5 times before time runs out!", 10, () => {
+      // win effect
+      showMessage("Great job! Lily is impressed with your gardening skills!");
+      relationship.lily += 5;
+      moods.lily = Math.max(0, moods.lily - 1);
+      currentNodeKey = "start";
+      updateDialogue();
+    }, () => {
+      // lose effect
+      showMessage("Oh no! You didn’t finish in time. Lily looks a bit disappointed.");
+      moods.lily = Math.min(3, moods.lily + 1);
+      currentNodeKey = "start";
+      updateDialogue();
+    });
   }
-  function updateAvatar() {
-    const char = characters[currentCharacter];
+
+  // Puzzle minigame (simple guess a number 1-3)
+  function puzzleMinigameStart() {
+    const answer = randInt(1,3);
+    showMinigame("Puzzle Minigame: Guess the correct number between 1 and 3.", 15, null, null, (guess) => {
+      if(guess === answer) {
+        showMessage("Correct! Mia smiles happily.");
+        relationship.mia += 5;
+        moods.mia = Math.max(0, moods.mia - 1);
+      } else {
+        showMessage(`Wrong! The correct number was ${answer}. Mia looks a bit frustrated.`);
+        moods.mia = Math.min(3, moods.mia + 1);
+      }
+      currentNodeKey = "start";
+      updateDialogue();
+    });
+  }
+
+  // Generic minigame UI
+  let minigameTimeout = null;
+  function showMinigame(text, seconds, onWin, onLose, onChoice) {
+    clearInterval(timerInterval);
+    timerActive = true;
+    timeLeft = seconds;
+    document.getElementById("minigameContainer").style.display = "block";
+    document.getElementById("dialogueText").style.display = "none";
+    document.getElementById("choices").style.display = "none";
+    document.getElementById("messageBox").style.display = "none";
+    document.getElementById("timerBar").style.display = "block";
+    document.getElementById("timeProgress").style.width = "100%";
+    document.getElementById("minigameText").textContent = text;
+
+    const minigameButtons = document.getElementById("minigameButtons");
+    minigameButtons.innerHTML = '';
+
+    if(onChoice) {
+      // Show choice buttons 1-3 for guessing
+      for(let i=1; i<=3; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.onclick = () => {
+          onChoice(i);
+          endMinigame();
+        };
+        minigameButtons.appendChild(btn);
+      }
+    } else {
+      // Simple click game button
+      let clicks = 0;
+      const goal = 5;
+      const btn = document.createElement('button');
+      btn.textContent = `Click me (${clicks}/${goal})`;
+      btn.onclick = () => {
+        clicks++;
+        btn.textContent = `Click me (${clicks}/${goal})`;
+        if(clicks >= goal) {
+          clearInterval(timerInterval);
+          onWin && onWin();
+          endMinigame();
+        }
+      };
+      minigameButtons.appendChild(btn);
+
+      // Lose timer
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const perc = (timeLeft/seconds)*100;
+        document.getElementById("timeProgress").style.width = perc + "%";
+        if(timeLeft <= 0) {
+          clearInterval(timerInterval);
+          onLose && onLose();
+          endMinigame();
+        }
+      }, 1000);
+    }
+  }
+
+  function endMinigame() {
+    timerActive = false;
+    document.getElementById("minigameContainer").style.display = "none";
+    document.getElementById("dialogueText").style.display = "block";
+    document.getElementById("choices").style.display = "flex";
+    document.getElementById("timerBar").style.display = "none";
+  }
+
+  // Show temporary messages
+  let messageTimeout = null;
+  function showMessage(msg) {
+    clearTimeout(messageTimeout);
+    const box = document.getElementById("messageBox");
+    box.textContent = msg;
+    box.style.display = "block";
+    messageTimeout = setTimeout(() => {
+      box.style.display = "none";
+    }, 3000);
+  }
+
+  // Update portrait and UI based on character mood and style
+  function updatePortrait() {
+    const moodLevels = ['calm','happy','annoyed','angry'];
     const mood = moods[currentCharacter];
-    const moodKey = ['calm','happy','annoyed','angry'][mood] || 'calm';
-    const avatarImgUrl = avatars[avatarStyle][moodKey];
-    portraitImg.src = avatarImgUrl;
-    portraitImg.style.filter = `drop-shadow(0 0 8px ${avatarColor})`;
-    portraitName.textContent = char.name;
+    const avatarSet = avatars[avatarStyle] || avatars.style1;
+    let imgUrl = avatarSet[moodLevels[mood]] || avatarSet.calm;
+    // For demo, use filter for highlight color
+    const img = document.getElementById('portraitImg');
+    img.src = imgUrl;
+    img.style.filter = `drop-shadow(0 0 12px ${avatarColor})`;
+    document.getElementById('portraitName').textContent = characters[currentCharacter].name;
   }
-  function updateBackground() {
-    const loc = characters[currentCharacter].location;
-    sceneEl.style.backgroundImage = `url('${scenes[loc]}')`;
+
+  // Update inventory display
+  function updateInventory() {
+    const seedsDiv = document.getElementById('inventorySeeds');
+    const giftsDiv = document.getElementById('inventoryGifts');
+
+    seedsDiv.innerHTML = '<div class="invTitle">Seeds</div>';
+    for(const [seed,count] of Object.entries(inventory.seeds)) {
+      seedsDiv.innerHTML += `<div class="invItem">${seed} x${count}</div>`;
+    }
+    giftsDiv.innerHTML = '<div class="invTitle">Gifts</div>';
+    for(const [gift,count] of Object.entries(inventory.gifts)) {
+      giftsDiv.innerHTML += `<div class="invItem">${gift} x${count}</div>`;
+    }
   }
-  function updateStatus() {
-    dayCounter.textContent = `Day: ${day}`;
-    timeOfDayLabel.textContent = `Time: ${timesOfDay[timeOfDayIndex]}`;
+
+  // Update status bar
+  function updateStatusBar() {
     const rel = relationship[currentCharacter];
-    relationshipStatus.textContent = `Relationship: ${rel}`;
+    const moodLabels = ['Calm', 'Happy', 'Annoyed', 'Angry'];
+    const moodLabel = moodLabels[moods[currentCharacter]] || 'Calm';
+    document.getElementById('relationshipStatus').textContent = `Relationship: ${rel} (${moodLabel})`;
+    document.getElementById('dayTime').textContent = `Day: ${day}, ${timesOfDay[timeOfDayIndex]}`;
   }
-  function clearChoices() {
+
+  // Load dialogue node and render choices
+  function updateDialogue() {
+    if(timerActive) return; // ignore while minigame running
+
+    updatePortrait();
+    updateStatusBar();
+    updateInventory();
+
+    const dialogue = characters[currentCharacter].dialogue[currentNodeKey];
+    if(!dialogue) {
+      // fallback
+      currentNodeKey = 'start';
+      updateDialogue();
+      return;
+    }
+
+    // Apply effect if any
+    if(dialogue.effect) dialogue.effect();
+
+    // Track question asked count
+    questionMemory[currentCharacter][currentNodeKey] = (questionMemory[currentCharacter][currentNodeKey] || 0) + 1;
+    handleRepeatedQuestion();
+
+    // Show dialogue text
+    document.getElementById('dialogueText').textContent = dialogue.text();
+
+    // Build choices area
+    const choicesDiv = document.getElementById('choices');
     choicesDiv.innerHTML = '';
-  }
-  function setChoices(options) {
-    clearChoices();
-    options.forEach((opt, i) => {
+    choicesDiv.style.display = 'flex';
+
+    // Dynamic option filling for gift giving or store
+    if(currentNodeKey === 'giveGift') {
+      const gifts = Object.entries(inventory.gifts).filter(([_, qty]) => qty > 0);
+      if(gifts.length === 0) {
+        choicesDiv.innerHTML = '<i>You have no gifts to give.</i>';
+        choicesDiv.style.justifyContent = 'center';
+        return;
+      }
+      gifts.forEach(([gift, qty]) => {
+        const btn = document.createElement('button');
+        btn.className = 'choiceBtn';
+        btn.textContent = `Give ${gift.charAt(0).toUpperCase() + gift.slice(1)} x${qty}`;
+        btn.onclick = () => {
+          giveGift(gift);
+        };
+        choicesDiv.appendChild(btn);
+      });
+      // Add option to go back
+      const backBtn = document.createElement('button');
+      backBtn.className = 'choiceBtn';
+      backBtn.textContent = 'Back';
+      backBtn.onclick = () => {
+        currentNodeKey = 'start';
+        updateDialogue();
+      };
+      choicesDiv.appendChild(backBtn);
+      return;
+    }
+
+    if(currentNodeKey === 'store') {
+      storeItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'choiceBtn';
+        btn.textContent = `${item.name} (${item.emoji}) - ${item.price}g`;
+        btn.onclick = () => {
+          buyStoreItem(item);
+        };
+        choicesDiv.appendChild(btn);
+      });
+      // Add option to go back
+      const backBtn = document.createElement('button');
+      backBtn.className = 'choiceBtn';
+      backBtn.textContent = 'Back';
+      backBtn.onclick = () => {
+        currentNodeKey = 'start';
+        updateDialogue();
+      };
+      choicesDiv.appendChild(backBtn);
+      return;
+    }
+
+    // Render regular options
+    dialogue.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choiceBtn';
       btn.textContent = opt.text;
-      btn.disabled = false;
-      btn.setAttribute('role','listitem');
-      btn.addEventListener('click', () => {
-        if (opt.effect) opt.effect();
-        currentNodeKey = opt.next;
-        questionMemory[currentCharacter][opt.questionId] = (questionMemory[currentCharacter][opt.questionId] || 0) + 1;
-        saveGame();
-        showNode(opt.next);
-      });
+      btn.onclick = () => {
+        if(opt.next.startsWith('minigame_')) {
+          if(opt.next === 'minigame_gardening') gardeningMinigameStart();
+          else if(opt.next === 'minigame_puzzle') puzzleMinigameStart();
+          else {
+            currentNodeKey = 'start';
+            updateDialogue();
+          }
+        } else {
+          currentNodeKey = opt.next;
+          updateDialogue();
+        }
+      };
       choicesDiv.appendChild(btn);
     });
   }
-  function updateInventoryUI() {
-    // Seeds
-    inventorySeeds.innerHTML = '';
-    for (const [seedName, count] of Object.entries(inventory.seeds)) {
-      if(count <= 0) continue;
-      const div = document.createElement('div');
-      div.className = 'invItem';
-      div.textContent = `${seedName.charAt(0).toUpperCase() + seedName.slice(1)} (${count})`;
-      inventorySeeds.appendChild(div);
-    }
-    // Gifts
-    inventoryGifts.innerHTML = '';
-    for (const [giftName, count] of Object.entries(inventory.gifts)) {
-      if(count <= 0) continue;
-      const div = document.createElement('div');
-      div.className = 'invItem';
-      div.textContent = `${giftName.charAt(0).toUpperCase() + giftName.slice(1)} (${count})`;
-      inventoryGifts.appendChild(div);
+
+  // Give gift logic
+  function giveGift(gift) {
+    if(inventory.gifts[gift] > 0) {
+      inventory.gifts[gift]--;
+      // Reaction depends on gift and character preference
+      const char = characters[currentCharacter];
+      let gain = 2;
+      if(char.likes.includes(gift)) gain = 5;
+      else if(char.hates.includes(gift)) gain = -3;
+      relationship[currentCharacter] = Math.min(100, Math.max(0, relationship[currentCharacter] + gain));
+      moods[currentCharacter] = Math.max(0, moods[currentCharacter] - 1);
+      showMessage(`${char.name} ${gain>0 ? 'loved' : 'did not like'} the ${gift}.`);
+      currentNodeKey = 'start';
+      updateDialogue();
     }
   }
 
-  // === Dialogue System ===
-  function showNode(nodeKey) {
-    if (!nodeKey) return;
-    const char = characters[currentCharacter];
-    const node = char.dialogue[nodeKey];
-    if (!node) {
-      dialogueText.textContent = "Error: dialogue node not found.";
-      clearChoices();
+  // Buy from store logic
+  function buyStoreItem(item) {
+    if(inventory.currency < item.price) {
+      showMessage("Not enough gold!");
       return;
     }
-
-    // Handle timed nodes
-    if(timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
+    inventory.currency -= item.price;
+    if(item.type === 'gift') {
+      inventory.gifts[item.name.toLowerCase()] = (inventory.gifts[item.name.toLowerCase()] || 0) + 1;
+    } else if(item.type === 'seed') {
+      inventory.seeds[item.name.toLowerCase()] = (inventory.seeds[item.name.toLowerCase()] || 0) + 1;
     }
-    timeLeft = node.timed || 0;
-    timerActive = timeLeft > 0;
-
-    if(timerActive) {
-      updateTimerBar();
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerBar();
-        if(timeLeft <= 0) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          timerActive = false;
-          // Auto pick first choice or restart
-          if(node.options.length > 0) {
-            const opt = node.options[0];
-            if(opt.effect) opt.effect();
-            currentNodeKey = opt.next;
-            saveGame();
-            showNode(opt.next);
-          }
-        }
-      }, 1000);
-    } else {
-      document.getElementById('timeBar').style.display = 'none';
-    }
-
-    // Show text (handle functions)
-    let textOutput = typeof node.text === 'function' ? node.text(questionMemory[currentCharacter][nodeKey] || 0) : node.text;
-    dialogueText.textContent = textOutput;
-
-    // Show choices
-    let optionsToShow = node.options;
-
-    // If a gift is selected but no inventory, force nevermind
-    if(nodeKey === 'giveGift') {
-      giftArea.style.display = 'block';
-      inventorySection.style.display = 'none';
-      characterSelect.style.display = 'none';
-      setChoices(node.options);
-      return;
-    } else {
-      giftArea.style.display = 'none';
-      inventorySection.style.display = 'flex';
-      characterSelect.style.display = 'flex';
-    }
-
-    setChoices(optionsToShow);
-    updateAvatar();
-    updateBackground();
-    updateStatus();
-    updateInventoryUI();
+    showMessage(`Bought ${item.name}!`);
+    updateInventory();
+    updateDialogue();
   }
 
-  // === Timer bar update ===
-  function updateTimerBar() {
-    const bar = document.getElementById('timeBar');
-    const prog = document.getElementById('timeProgress');
-    if(timeLeft <= 0) {
-      bar.style.display = 'none';
-    } else {
-      bar.style.display = 'block';
-      prog.style.width = `${(timeLeft / timeLimit) * 100}%`;
-    }
-  }
+  // Change avatar style or color
+  document.getElementById('avatarStyle').addEventListener('change', e => {
+    avatarStyle = e.target.value;
+    updatePortrait();
+  });
+  document.getElementById('avatarColor').addEventListener('input', e => {
+    avatarColor = e.target.value;
+    updatePortrait();
+  });
 
-  // === Character Switching ===
-  charButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if(timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-      charButtons.forEach(b => {
+  // Character selection buttons
+  const charBtns = document.querySelectorAll('.charBtn');
+  charBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      charBtns.forEach(b => {
         b.classList.remove('selected');
-        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-selected', 'false');
       });
       btn.classList.add('selected');
-      btn.setAttribute('aria-pressed', 'true');
+      btn.setAttribute('aria-selected', 'true');
       currentCharacter = btn.dataset.char;
-      currentNodeKey = "start";
-      saveGame();
-      showNode("start");
+      currentNodeKey = 'start';
+      updateDialogue();
     });
   });
 
-  // === Gift buttons ===
-  giftButtons.forEach(btn => {
+  // Start game button
+  document.getElementById('startGameBtn').addEventListener('click', () => {
+    document.getElementById('avatarCustomization').style.display = 'none';
+    document.getElementById('characterSelect').style.display = 'block';
+    document.getElementById('inventory').style.display = 'flex';
+    document.getElementById('giftArea').style.display = 'block';
+    document.getElementById('scene').style.backgroundImage = `url(${scenes[characters[currentCharacter].location]})`;
+    updateDialogue();
+  });
+
+  // Gift giving buttons in gift area
+  document.querySelectorAll('#giftButtons button').forEach(btn => {
     btn.addEventListener('click', () => {
       const gift = btn.dataset.gift;
-      if(inventory.gifts[gift] > 0) {
-        // Trigger gift dialogue
-        const giftNode = `gift${gift.charAt(0).toUpperCase() + gift.slice(1)}`;
-        currentNodeKey = giftNode;
-        saveGame();
-        showNode(giftNode);
+      if(inventory.gifts[gift] && inventory.gifts[gift] > 0) {
+        giveGift(gift);
       } else {
-        showMessage(`You don't have any ${gift}s left!`);
+        showMessage("You don't have that gift!");
       }
     });
   });
 
-  // === Avatar customization & start game ===
-  startGameBtn.addEventListener('click', () => {
-    avatarStyle = avatarStyleSelect.value;
-    avatarColor = avatarColorInput.value;
-    avatarCustomization.style.display = 'none';
-    characterSelect.style.display = 'flex';
-    inventorySection.style.display = 'flex';
-    giftArea.style.display = 'none';
-    currentNodeKey = "start";
-    saveGame();
-    showNode("start");
-  });
-
-  // === Save/load on startup ===
-  if(!loadGame()) {
-    // Show avatar customization by default
-    avatarCustomization.style.display = 'flex';
-    characterSelect.style.display = 'none';
-    inventorySection.style.display = 'none';
-    giftArea.style.display = 'none';
-  } else {
-    avatarCustomization.style.display = 'none';
-    characterSelect.style.display = 'flex';
-    inventorySection.style.display = 'flex';
-    giftArea.style.display = 'none';
-    showNode(currentNodeKey || "start");
-  }
-
-  // === Time progression ===
+  // Advance time helper (called every action)
   function advanceTime() {
     timeOfDayIndex++;
     if(timeOfDayIndex >= timesOfDay.length) {
       timeOfDayIndex = 0;
       day++;
     }
-    saveGame();
-    showNode(currentNodeKey);
+    // Update background to character location (could add more dynamic changes here)
+    document.getElementById('scene').style.backgroundImage = `url(${scenes[characters[currentCharacter].location]})`;
+    updateStatusBar();
   }
-  setInterval(advanceTime, 60000); // Advance time every 60 seconds
 
-  // === Keyboard shortcuts ===
-  document.addEventListener('keydown', e => {
-    if(e.key === "Enter") {
-      // Auto pick first choice if timer expired or active
-      if(!timerActive && choicesDiv.children.length > 0) {
-        choicesDiv.children[0].click();
-      }
-    }
-  });
+  // Initial UI setup
+  updatePortrait();
 
-  // === Initial update ===
-  updateInventoryUI();
-  updateStatus();
+  // On each dialogue option click, also advance time and update scene (wrapped in updateDialogue)
+  const originalUpdateDialogue = updateDialogue;
+  updateDialogue = function() {
+    originalUpdateDialogue();
+    advanceTime();
+  };
 
 })();
 </script>
