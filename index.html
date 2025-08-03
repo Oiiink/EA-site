@@ -1,306 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Grow a Garden</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #e3f2d6;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #7bb661;
-      padding: 10px;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .top-info span {
-      margin-right: 20px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 10px;
-    }
-    .plot {
-      width: 100px;
-      height: 100px;
-      margin: 5px;
-      background: #b3db94;
-      border: 2px solid #567d46;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .crop {
-      font-weight: bold;
-    }
-    .timer {
-      position: absolute;
-      bottom: 5px;
-      font-size: 12px;
-      background: rgba(255,255,255,0.7);
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
-    .market, .encyclopedia {
-      padding: 10px;
-      margin: 10px;
-      background: white;
-      border-radius: 8px;
-      flex: 1;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .item {
-      margin: 5px 0;
-    }
-    button {
-      padding: 5px 10px;
-      margin-left: 10px;
-      cursor: pointer;
-    }
-    .rare { color: purple; }
-    .epic { color: orange; }
-    .legendary { color: gold; font-weight: bold; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🌼 Grow a Garden</title>
+<style>
+  body {
+    background: linear-gradient(to bottom, #e6ffe6, #ccffcc);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0; color: #2c3e50;
+  }
+  header {
+    background: #4caf50;
+    color: white;
+    padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 18px;
+  }
+  header div {
+    display: flex; gap: 25px; align-items: center;
+  }
+  #seasonWeather {
+    font-weight: bold;
+  }
+  #timers {
+    font-size: 14px;
+  }
+  #farm {
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    gap: 10px;
+    justify-content: center;
+    margin: 20px auto;
+  }
+  .plot {
+    width: 80px;
+    height: 80px;
+    background-color: #a0522d;
+    border: 3px solid #654321;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+  }
+  .plot:hover {
+    border-color: #3e8e41;
+  }
+  .planted {
+    background-color: #2e7d32;
+    color: white;
+    font-size: 36px;
+  }
+  .growTimer {
+    position: absolute;
+    bottom: 4px;
+    width: 100%;
+    font-size: 12px;
+    color: #fff;
+    text-shadow: 1px 1px 2px black;
+    font-weight: 600;
+  }
+  #controls {
+    margin: 15px auto;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  button {
+    background-color: #66bb6a;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #4caf50;
+  }
+  button:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+  }
+  #inventory {
+    margin-top: 10px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    font-weight: 600;
+  }
+  #market, #encyclopedia {
+    margin: 20px auto;
+    max-width: 900px;
+    display: flex;
+    gap: 20px;
+  }
+  #market {
+    flex: 1.5;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 10px #aaa;
+  }
+  #market h2 {
+    margin-top: 0;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 5px;
+  }
+  #marketTimer {
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #4caf50;
+  }
+  #marketGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  .marketItem {
+    background: #f1f9f1;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 10px;
+    width: 130px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+  .marketItem:hover {
+    background-color: #d9f0d9;
+  }
+  .marketIcon {
+    font-size: 32px;
+    margin-bottom: 5px;
+    user-select: none;
+  }
+  .marketName {
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .marketPrice {
+    font-weight: 600;
+    color: #388e3c;
+  }
+  .tooltip {
+    position: absolute;
+    top: -5px;
+    left: 105%;
+    background: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+  }
+  .marketItem:hover .tooltip {
+    opacity: 1;
+  }
+  #encyclopedia {
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 10px #aaa;
+    display: flex;
+    flex-direction: column;
+  }
+  #encyclopedia h2 {
+    margin-top: 0;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 5px;
+  }
+  #encyclopediaSort {
+    margin-bottom: 10px;
+  }
+  #cropList {
+    overflow-y: auto;
+    flex: 1;
+    font-size: 14px;
+  }
+  .encyclopediaEntry {
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+    cursor: default;
+  }
+  .rarityCommon { color: #555; }
+  .rarityUncommon { color: #1e90ff; }
+  .rarityRare { color: #4caf50; }
+  .rarityEpic { color: #9c27b0; }
+  .rarityLegendary { color: #ff9800; font-weight: 700; }
+</style>
 </head>
 <body>
-  <header>
-    <div class="top-info">
-      <span>🌱 Gold: <span id="gold">100</span></span>
-      <span>🌦️ Season: <span id="season">Spring</span></span>
-      <span>⛅ Weather: <span id="weather">Sunny</span></span>
-    </div>
-    <div>
-      <span>⏰ Next Market: <span id="marketTimer">300</span>s</span>
-      <span>⏳ Next Event: <span id="eventTimer">120</span>s</span>
-    </div>
-  </header>
-
-  <div class="container" id="field"></div>
-
-  <div style="display:flex; gap: 10px;">
-    <div class="market">
-      <h3>🛒 Market</h3>
-      <div id="marketList"></div>
-    </div>
-
-    <div class="encyclopedia">
-      <h3>📚 Encyclopedia</h3>
-      <select id="sortType">
-        <option value="name">Name</option>
-        <option value="rarity">Rarity</option>
-        <option value="value">Value</option>
-      </select>
-      <div id="encyclopediaList"></div>
-    </div>
+<header>
+  <div id="seasonWeather">Season: <span id="season">Spring</span> | Weather: <span id="weather">Sunny</span></div>
+  <div id="timers">
+    Market restock in: <span id="marketTimer">05:00</span> |
+    Next event in: <span id="eventTimer">02:00</span>
   </div>
+</header>
 
-  <script>
-    const crops = [
-      { name: "Carrot", base: 5 },
-      { name: "Potato", base: 6 },
-      { name: "Tomato", base: 8 },
-      { name: "Strawberry", base: 10 },
-      { name: "Pumpkin", base: 15 }
-    ];
-    const rarities = [
-      { name: "Common", chance: 0.6, class: "" },
-      { name: "Uncommon", chance: 0.25, class: "rare" },
-      { name: "Rare", chance: 0.1, class: "epic" },
-      { name: "Legendary", chance: 0.05, class: "legendary" }
-    ];
-    const pets = [{ name: "Butterfly", mutationBoost: 0.1 }];
-    let season = "Spring";
-    let weather = "Sunny";
-    let gold = 100;
-    let encyclopedia = {};
-    let field = [];
+<div id="farm"></div>
 
-    const marketItems = [
-      () => ({ name: "Buy Carrot Seed", action: () => plantCrop("Carrot"), cost: 5 }),
-      () => ({ name: "Buy Watering Can", action: () => alert("You bought a watering can!"), cost: 15 }),
-      () => ({ name: "Buy Fertilizer", action: () => { hasFertilizer = true; }, cost: 20 })
-    ];
-    let hasFertilizer = false;
-    let marketCooldown = 300;
-    let eventCooldown = 120;
+<div id="controls">
+  <button id="buySeedBtn" title="Buy a random seed from the market">Buy Seed 🌱</button>
+  <button id="buyFertilizerBtn" title="Buy fertilizer to boost mutation chance and growth speed">Buy Fertilizer 🌿</button>
+</div>
+<div id="inventory">
+  <div>Gold: <span id="gold">100</span></div>
+  <div>Seeds: <span id="seedCount">0</span></div>
+  <div>Fertilizer: <span id="fertilizerCount">0</span></div>
+</div>
 
-    const fieldEl = document.getElementById("field");
-    const marketList = document.getElementById("marketList");
-    const encyclopediaList = document.getElementById("encyclopediaList");
+<div id="market">
+  <h2>🛒 Market</h2>
+  <div id="marketTimer"></div>
+  <div id="marketGrid"></div>
+</div>
 
-    function createField() {
-      for (let i = 0; i < 20; i++) {
-        const div = document.createElement("div");
-        div.className = "plot";
-        div.innerText = "+";
-        div.onclick = () => showCropSelection(i);
-        field.push({ el: div, crop: null });
-        fieldEl.appendChild(div);
-      }
+<div id="encyclopedia">
+  <h2>📚 Crop Encyclopedia</h2>
+  <label for="encyclopediaSort">Sort by: </label>
+  <select id="encyclopediaSort">
+    <option value="name">Name</option>
+    <option value="rarity">Rarity</option>
+    <option value="value">Sell Value</option>
+  </select>
+  <div id="cropList"></div>
+</div>
+
+<script>
+(() => {
+  // Data
+  const cropsData = [
+    { name: "Carrot", icon: "🥕", baseSellPrice: 10, growTime: 20000 },
+    { name: "Strawberry", icon: "🍓", baseSellPrice: 15, growTime: 30000 },
+    { name: "Corn", icon: "🌽", baseSellPrice: 20, growTime: 35000 },
+    { name: "Pumpkin", icon: "🎃", baseSellPrice: 30, growTime: 45000 }
+  ];
+
+  const rarities = [
+    { label: "Common", color: "#555", mutationBoost: 0, chance: 0.6, className: "rarityCommon" },
+    { label: "Uncommon", color: "#1e90ff", mutationBoost: 0.05, chance: 0.25, className: "rarityUncommon" },
+    { label: "Rare", color: "#4caf50", mutationBoost: 0.1, chance: 0.1, className: "rarityRare" },
+    { label: "Epic", color: "#9c27b0", mutationBoost: 0.15, chance: 0.04, className: "rarityEpic" },
+    { label: "Legendary", color: "#ff9800", mutationBoost: 0.25, chance: 0.01, className: "rarityLegendary" }
+  ];
+
+  const seasons = ["Spring", "Summer", "Fall", "Winter"];
+  const seasonEffects = {
+    Spring: { mutationBoost: 0.10, growSpeedMultiplier: 1 },
+    Summer: { mutationBoost: 0, growSpeedMultiplier: 0.8 },
+    Fall: { mutationBoost: 0, growSpeedMultiplier: 1, sellPriceMultiplier: 1.2 },
+    Winter: { mutationBoost: -0.1, growSpeedMultiplier: 1.2 }
+  };
+
+  const weatherTypes = [
+    { name: "Sunny", growSpeedMultiplier: 1, autoWaterChance: 0 },
+    { name: "Rain", growSpeedMultiplier: 1.2, autoWaterChance: 0 },
+    { name: "Storm", growSpeedMultiplier: 1, autoWaterChance: 0.1 },
+    { name: "Snow", growSpeedMultiplier: 1.3, autoWaterChance: 0 }
+  ];
+
+  const pets = [
+    { name: "Butterfly", mutationBoost: 0.1 }
+  ];
+
+  const maxPlots = 20;
+  let farmPlots = [];
+  let gold = 100;
+  let seedsInventory = {};
+  let fertilizerCount = 0;
+  let hasFertilizer = false;
+  let currentSeasonIndex = 0;
+  let currentWeatherIndex = 0;
+  let marketStock = [];
+  let marketRestockTimer = 300; // seconds
+  let eventTimer = 120; // seconds
+  let encyclopedia = {};
+  let selectedSort = "name";
+
+  const farmEl = document.getElementById("farm");
+  const goldEl = document.getElementById("gold");
+  const seedCountEl = document.getElementById("seedCount");
+  const fertilizerEl = document.getElementById("fertilizerCount");
+  const buySeedBtn = document.getElementById("buySeedBtn");
+  const buyFertilizerBtn = document.getElementById("buyFertilizerBtn");
+  const marketGrid = document.getElementById("marketGrid");
+  const marketTimerEl = document.getElementById("marketTimer");
+  const eventTimerEl = document.getElementById("eventTimer");
+  const seasonEl = document.getElementById("season");
+  const weatherEl = document.getElementById("weather");
+  const cropListEl = document.getElementById("cropList");
+  const encyclopediaSort = document.getElementById("encyclopediaSort");
+
+  // Utility Functions
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+  }
+
+  function weightedRandom(items, weightProp) {
+    let totalWeight = items.reduce((sum, item) => sum + item[weightProp], 0);
+    let rand = Math.random() * totalWeight;
+    for (let item of items) {
+      if (rand < item[weightProp]) return item;
+      rand -= item[weightProp];
     }
+    return items[items.length - 1];
+  }
 
-    function showCropSelection(index) {
-      const crop = crops[Math.floor(Math.random() * crops.length)];
-      if (gold < 5) return alert("Not enough gold!");
-      gold -= 5;
-      updateGold();
-      growCrop(index, crop.name);
-    }
-
-    function growCrop(index, cropName) {
-      const rarity = getRarity();
-      const growTime = 10 - (season === "Summer" ? 2 : 0) - (weather === "Rain" ? 2 : 0);
-      const cropObj = { name: cropName, rarity, timer: growTime, full: growTime };
-      field[index].crop = cropObj;
-      updateField();
-    }
-
-    function getRarity() {
-      let roll = Math.random();
-      if (hasFertilizer) roll -= 0.15;
-      if (season === "Spring") roll -= 0.1;
-      if (pets.length) roll -= pets[0].mutationBoost;
-      let acc = 0;
-      for (let r of rarities) {
-        acc += r.chance;
-        if (roll <= acc) return r;
-      }
-      return rarities[0];
-    }
-
-    function updateField() {
-      field.forEach((plot, i) => {
-        const el = plot.el;
-        el.innerHTML = "";
-        if (plot.crop) {
-          const cropEl = document.createElement("div");
-          cropEl.className = `crop ${plot.crop.rarity.class}`;
-          cropEl.innerText = `${plot.crop.name}`;
-          const timer = document.createElement("div");
-          timer.className = "timer";
-          timer.innerText = `${plot.crop.timer}s`;
-          el.appendChild(cropEl);
-          el.appendChild(timer);
-        } else {
-          el.innerText = "+";
-        }
+  // Initialize farm plots
+  function initFarm() {
+    farmEl.innerHTML = "";
+    farmPlots = [];
+    for (let i = 0; i < maxPlots; i++) {
+      const div = document.createElement("div");
+      div.className = "plot";
+      div.title = "Empty plot. Click to plant.";
+      div.addEventListener("click", () => onPlotClick(i));
+      farmEl.appendChild(div);
+      farmPlots.push({
+        element: div,
+        planted: false,
+        crop: null,
+        rarity: null,
+        growthStart: null,
+        growTime: null,
+        growTimerId: null,
+        mutated: false,
       });
     }
+  }
 
-    function updateGold() {
-      document.getElementById("gold").innerText = gold;
+  // Update UI elements (gold, seeds, fertilizer counts)
+  function updateInventoryUI() {
+    goldEl.textContent = gold;
+    let totalSeeds = Object.values(seedsInventory).reduce((a,b) => a+b, 0);
+    seedCountEl.textContent = totalSeeds;
+    fertilizerEl.textContent = fertilizerCount;
+  }
+
+  // Update season and weather UI
+  function updateSeasonWeatherUI() {
+    seasonEl.textContent = seasons[currentSeasonIndex];
+    weatherEl.textContent = weatherTypes[currentWeatherIndex].name;
+  }
+
+  // Change season every 2 minutes
+  function cycleSeason() {
+    currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
+    updateSeasonWeatherUI();
+  }
+
+  // Change weather every 90 seconds
+  function cycleWeather() {
+    currentWeatherIndex = (currentWeatherIndex + 1) % weatherTypes.length;
+    updateSeasonWeatherUI();
+  }
+
+  // Calculate mutation chance influenced by rarity, season, pets, fertilizer
+  function calculateMutationChance(baseChance, rarity, seasonBoost, hasFertilizer, pets) {
+    let chance = baseChance;
+    chance += rarity.mutationBoost;
+    chance += seasonBoost;
+    if (hasFertilizer) chance += 0.15;
+    pets.forEach(p => {
+      chance += p.mutationBoost;
+    });
+    return Math.min(1, chance);
+  }
+
+  // Plant a crop if player has seeds
+  function plantCrop(plotIndex, cropName = null) {
+    const plot = farmPlots[plotIndex];
+    if (plot.planted) return alert("Plot already planted!");
+    if (!cropName) {
+      // Pick any crop with seeds available
+      const availableCrops = Object.entries(seedsInventory).filter(([c,n]) => n > 0);
+      if (availableCrops.length === 0) return alert("No seeds available to plant!");
+      cropName = availableCrops[0][0];
+    }
+    if (!seedsInventory[cropName] || seedsInventory[cropName] <= 0) {
+      alert(`No seeds for ${cropName} available.`);
+      return;
+    }
+    // Determine rarity with mutation chance
+    const baseRarity = weightedRandom(rarities, "chance");
+    const seasonBoost = seasonEffects[seasons[currentSeasonIndex]].mutationBoost;
+    const mutationChance = calculateMutationChance(0.1, baseRarity, seasonBoost, fertilizerCount > 0, pets);
+    const isMutated = Math.random() < mutationChance;
+    let finalRarity = baseRarity;
+    if (isMutated) {
+      // Try to bump rarity one tier higher if possible
+      const currentIndex = rarities.indexOf(baseRarity);
+      if (currentIndex < rarities.length - 1) finalRarity = rarities[currentIndex + 1];
+    }
+    const cropData = cropsData.find(c => c.name === cropName);
+    if (!cropData) return alert("Unknown crop");
+    // Calculate grow time with season and weather multipliers
+    const seasonMultiplier = seasonEffects[seasons[currentSeasonIndex]].growSpeedMultiplier;
+    const weatherMultiplier = weatherTypes[currentWeatherIndex].growSpeedMultiplier;
+    const growTime = cropData.growTime * seasonMultiplier * weatherMultiplier;
+    plot.planted = true;
+    plot.crop = cropData;
+    plot.rarity = finalRarity;
+    plot.growthStart = Date.now();
+    plot.growTime = growTime;
+    plot.mutated = isMutated;
+    plot.element.innerHTML = `<div style="font-size:36px;">${cropData.icon}</div><div class="${finalRarity.className}" style="font-weight:bold;">${finalRarity.label}</div><div class="growTimer">⏳</div>`;
+    plot.element.style.borderColor = finalRarity.color;
+    seedsInventory[cropName]--;
+    updateInventoryUI();
+    startGrowthTimer(plotIndex);
+    addToEncyclopedia(cropData.name, finalRarity.label, cropData.baseSellPrice);
+  }
+
+  // Start growth timer and update plot UI
+  function startGrowthTimer(plotIndex) {
+    const plot = farmPlots[plotIndex];
+    if (plot.growTimerId) clearInterval(plot.growTimerId);
+    plot.growTimerId = setInterval(() => {
+      const elapsed = Date.now() - plot.growthStart;
+      const timeLeft = Math.max(0, Math.ceil((plot.growTime - elapsed) / 1000));
+      const timerEl = plot.element.querySelector(".growTimer");
+      if (timerEl) timerEl.textContent = `⏳ ${timeLeft}s`;
+      if (elapsed >= plot.growTime) {
+        clearInterval(plot.growTimerId);
+        plot.growTimerId = null;
+        timerEl.textContent = "🌿 Ready!";
+        plot.element.title = `Click to harvest ${plot.crop.name} (${plot.rarity.label})`;
+      }
+    }, 500);
+  }
+
+  // Harvest crop on click if ready
+  function onPlotClick(plotIndex) {
+    const plot = farmPlots[plotIndex];
+    if (!plot.planted) {
+      alert("Plot is empty. Plant seeds first.");
+      return;
+    }
+    const elapsed = Date.now() - plot.growthStart;
+    if (elapsed < plot.growTime) {
+      alert("Crop not ready yet!");
+      return;
+    }
+    // Calculate sell price with rarity and season effects
+    const basePrice = plot.crop.baseSellPrice;
+    const rarityIndex = rarities.findIndex(r => r.label === plot.rarity.label);
+    let price = basePrice * (1 + rarityIndex * 0.2);
+    if (seasonEffects[seasons[currentSeasonIndex]].sellPriceMultiplier)
+      price *= seasonEffects[seasons[currentSeasonIndex]].sellPriceMultiplier;
+    price = Math.round(price);
+    gold += price;
+    alert(`Harvested ${plot.crop.name} (${plot.rarity.label}) for ${price} gold!`);
+    plot.planted = false;
+    plot.crop = null;
+    plot.rarity = null;
+    plot.growthStart = null;
+    plot.growTime = null;
+    plot.mutated = false;
+    plot.element.innerHTML = "";
+    plot.element.style.borderColor = "#654321";
+    updateInventoryUI();
+  }
+
+  // Add discovered crops to encyclopedia
+  function addToEncyclopedia(name, rarityLabel, basePrice) {
+    const key = name + rarityLabel;
+    if (!encyclopedia[key]) {
+      encyclopedia[key] = {
+        name,
+        rarityLabel,
+        basePrice
+      };
+      renderEncyclopedia();
+    }
+  }
+
+  // Render encyclopedia with sorting
+  function renderEncyclopedia() {
+    let entries = Object.values(encyclopedia);
+    if (selectedSort === "name") {
+      entries.sort((a,b) => a.name.localeCompare(b.name));
+    } else if (selectedSort === "rarity") {
+      entries.sort((a,b) => rarities.findIndex(r => r.label === b.rarityLabel) - rarities.findIndex(r => r.label === a.rarityLabel));
+    } else if (selectedSort === "value") {
+      entries.sort((a,b) => b.basePrice - a.basePrice);
+    }
+    cropListEl.innerHTML = "";
+    for (const entry of entries) {
+      const rarityObj = rarities.find(r => r.label === entry.rarityLabel);
+      const div = document.createElement("div");
+      div.className = `encyclopediaEntry ${rarityObj.className}`;
+      div.textContent = `${entry.name} — Rarity: ${entry.rarityLabel} — Base Sell: ${entry.basePrice}g`;
+      cropListEl.appendChild(div);
+    }
+  }
+
+  // Market functions
+  function restockMarket() {
+    marketStock = [];
+    const available = [...cropsData];
+    for (let i = 0; i < 5; i++) {
+      if (available.length === 0) break;
+      const idx = Math.floor(Math.random() * available.length);
+      const crop = available.splice(idx, 1)[0];
+      const price = Math.floor(crop.baseSellPrice * (0.6 + Math.random()*0.4));
+      marketStock.push({...crop, price});
+    }
+    // Add fertilizer and watering cans
+    marketStock.push({name: "Fertilizer", icon: "🌿", price: 25, type: "fertilizer", description: "Boost mutation chance and growth speed"});
+    marketStock.push({name: "Watering Can", icon: "💧", price: 15, type: "watering", description: "Chance to auto-water crops each tick"});
+  }
+
+  function renderMarket() {
+    marketGrid.innerHTML = "";
+    marketStock.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "marketItem";
+      div.title = item.description || "";
+      div.innerHTML = `<div class="marketIcon">${item.icon}</div>
+                       <div class="marketName">${item.name}</div>
+                       <div class="marketPrice">${item.price}g</div>`;
+      div.addEventListener("click", () => buyMarketItem(item));
+      marketGrid.appendChild(div);
+    });
+  }
+
+  function buyMarketItem(item) {
+    if (gold < item.price) {
+      alert("Not enough gold.");
+      return;
+    }
+    gold -= item.price;
+    if (item.type === "fertilizer") {
+      fertilizerCount++;
+      alert("Bought fertilizer! It boosts mutation chance and growth speed.");
+    } else if (item.type === "watering") {
+      alert("Bought watering can! It gives a chance to auto-water crops.");
+      // Could implement watering can effects here
+    } else {
+      // Crop seed
+      seedsInventory[item.name] = (seedsInventory[item.name] || 0) + 1;
+      alert(`Bought 1 ${item.name} seed.`);
+    }
+    updateInventoryUI();
+  }
+
+  // Market timer and event timer countdowns
+  function tickTimers() {
+    marketRestockTimer--;
+    eventTimer--;
+
+    if (marketRestockTimer <= 0) {
+      restockMarket();
+      renderMarket();
+      marketRestockTimer = 300;
+    }
+    if (eventTimer <= 0) {
+      triggerRandomEvent();
+      eventTimer = 120;
     }
 
-    function tick() {
-      field.forEach((plot, i) => {
-        if (plot.crop) {
-          plot.crop.timer--;
-          if (plot.crop.timer <= 0) {
-            gold += plot.crop.rarity.class === "legendary" ? 50 : plot.crop.rarity.class === "epic" ? 25 : 10;
-            encyclopedia[plot.crop.name] = {
-              name: plot.crop.name,
-              rarity: plot.crop.rarity.name,
-              value: plot.crop.rarity.class === "legendary" ? 50 : 10
-            };
-            plot.crop = null;
-            updateGold();
+    marketTimerEl.textContent = formatTime(marketRestockTimer);
+    eventTimerEl.textContent = formatTime(eventTimer);
+  }
+
+  // Random event example (e.g. pest infestation)
+  function triggerRandomEvent() {
+    const eventTypes = ["pest", "rain", "drought"];
+    const event = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+    switch(event) {
+      case "pest":
+        alert("🐛 Pests have appeared! They slow crop growth temporarily.");
+        // Slow all growing crops for 30s
+        farmPlots.forEach(plot => {
+          if (plot.planted && plot.growTimerId) {
+            clearInterval(plot.growTimerId);
+            let elapsed = Date.now() - plot.growthStart;
+            plot.growthStart += 15000; // delay growth by 15s (half event duration)
+            startGrowthTimer(farmPlots.indexOf(plot));
           }
-        }
-      });
-      updateField();
+        });
+        break;
+      case "rain":
+        alert("🌧️ It’s raining! Crops grow faster for a short time.");
+        // Could boost growSpeedMultiplier temporarily
+        break;
+      case "drought":
+        alert("☀️ Drought hits! Crops grow slower for a short time.");
+        // Could slow growSpeedMultiplier temporarily
+        break;
     }
+  }
 
-    function updateSeason() {
-      const order = ["Spring", "Summer", "Fall", "Winter"];
-      season = order[(order.indexOf(season) + 1) % 4];
-      document.getElementById("season").innerText = season;
+  // Button handlers
+  buySeedBtn.addEventListener("click", () => {
+    // Buy a random seed from market if available
+    const seedItems = marketStock.filter(item => !item.type);
+    if (seedItems.length === 0) {
+      alert("No seeds available in market right now.");
+      return;
     }
+    const item = seedItems[Math.floor(Math.random() * seedItems.length)];
+    buyMarketItem(item);
+  });
 
-    function updateWeather() {
-      const w = ["Sunny", "Rain", "Storm", "Snow"];
-      weather = w[Math.floor(Math.random() * w.length)];
-      document.getElementById("weather").innerText = weather;
-    }
+  buyFertilizerBtn.addEventListener("click", () => {
+    const fertItem = marketStock.find(i => i.type === "fertilizer");
+    if (!fertItem) return alert("No fertilizer available right now.");
+    buyMarketItem(fertItem);
+  });
 
-    function updateMarket() {
-      marketList.innerHTML = "";
-      marketItems.forEach(gen => {
-        const item = gen();
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerText = `${item.name} ($${item.cost})`;
-        const btn = document.createElement("button");
-        btn.innerText = "Buy";
-        btn.onclick = () => {
-          if (gold >= item.cost) {
-            gold -= item.cost;
-            updateGold();
-            item.action();
-          }
-        };
-        div.appendChild(btn);
-        marketList.appendChild(div);
-      });
-    }
+  encyclopediaSort.addEventListener("change", (e) => {
+    selectedSort = e.target.value;
+    renderEncyclopedia();
+  });
 
-    function updateEncyclopedia() {
-      encyclopediaList.innerHTML = "";
-      const sort = document.getElementById("sortType").value;
-      let data = Object.values(encyclopedia);
-      if (sort === "rarity") {
-        data.sort((a, b) => rarities.findIndex(r => r.name === a.rarity) - rarities.findIndex(r => r.name === b.rarity));
-      } else if (sort === "value") {
-        data.sort((a, b) => b.value - a.value);
-      } else {
-        data.sort((a, b) => a.name.localeCompare(b.name));
-      }
-      data.forEach(c => {
-        const div = document.createElement("div");
-        div.innerHTML = `<span class="${rarities.find(r => r.name === c.rarity).class}">${c.name}</span> – ${c.rarity} – $${c.value}`;
-        encyclopediaList.appendChild(div);
-      });
-    }
+  // Initialize everything
+  function init() {
+    initFarm();
+    restockMarket();
+    renderMarket();
+    updateInventoryUI();
+    updateSeasonWeatherUI();
+    setInterval(tickTimers, 1000);
+    setInterval(cycleSeason, 120000);
+    setInterval(cycleWeather, 90000);
+  }
 
-    createField();
-    updateMarket();
-
-    setInterval(() => {
-      tick();
-      updateEncyclopedia();
-    }, 1000);
-
-    setInterval(() => {
-      updateSeason();
-    }, 120000);
-
-    setInterval(() => {
-      updateWeather();
-    }, 90000);
-
-    setInterval(() => {
-      updateMarket();
-      marketCooldown = 300;
-    }, 300000);
-
-    setInterval(() => {
-      marketCooldown--;
-      document.getElementById("marketTimer").innerText = marketCooldown;
-    }, 1000);
-
-    setInterval(() => {
-      eventCooldown--;
-      document.getElementById("eventTimer").innerText = eventCooldown;
-    }, 1000);
-  </script>
+  init();
+})();
+</script>
 </body>
 </html>
