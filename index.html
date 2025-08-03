@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bee Tower Defense 🐝</title>
+<title>Bee Tower Defense 🐝 - Enhanced</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
   * {
@@ -27,149 +27,269 @@
   }
   #game-container {
     position: relative;
-    width: 800px;
-    height: 500px;
+    width: 850px;
+    height: 520px;
     background: linear-gradient(180deg, #ffefb8 0%, #d9b300 100%);
     border: 8px solid #d9a600;
-    border-radius: 12px;
-    box-shadow: 0 0 20px #e0b700aa inset;
+    border-radius: 14px;
+    box-shadow: 0 0 25px #e0b700cc inset;
     overflow: hidden;
     display: flex;
   }
   #game-canvas {
-    background: url('https://i.imgur.com/jXSaJix.png') repeat; /* honeycomb pattern */
+    background:
+      radial-gradient(circle at center, #fdf1a9 30%, transparent 60%),
+      repeating-conic-gradient(#ffd345 0% 10%, #d8a500 10% 20%);
     background-size: 80px 80px;
     flex: 1;
-    border-right: 4px solid #d9a600;
+    border-right: 5px solid #d9a600;
+    cursor: crosshair;
+    position: relative;
   }
   #sidebar {
-    width: 250px;
+    width: 280px;
     background: #f9d66f;
-    border-left: 4px solid #d9a600;
-    padding: 12px;
+    border-left: 5px solid #d9a600;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
   }
   #sidebar h2 {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: #a35c00;
+    font-size: 22px;
+    text-align: center;
   }
-  #money, #level, #health, #modifiers {
+  .stat-row {
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #5a3700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #modifiers {
+    font-size: 14px;
+    color: #7a4c00;
+    min-height: 38px;
   }
   #tower-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
   }
   .tower-btn {
-    background: #ffcb05;
+    background: linear-gradient(145deg, #ffd953, #d9a600);
     border: 2px solid #a35c00;
-    border-radius: 8px;
-    flex: 1 1 48%;
+    border-radius: 12px;
     cursor: pointer;
     color: #5a3700;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
-    user-select: none;
-    box-shadow: 0 3px #d7a500;
     font-weight: 700;
-    transition: background 0.3s;
-  }
-  .tower-btn:hover {
-    background: #ffd843;
-  }
-  #upgrade-section {
-    margin-top: 12px;
-    border-top: 2px solid #a35c00;
-    padding-top: 12px;
-    flex-grow: 1;
+    box-shadow: 0 4px #b78500;
+    transition: background 0.25s, transform 0.15s;
+    user-select: none;
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+  }
+  .tower-btn:hover {
+    background: linear-gradient(145deg, #ffea5c, #e3b300);
+    transform: translateY(-3px);
+  }
+  .tower-btn img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 6px;
+    filter: drop-shadow(1px 1px 0 #a35c00);
+  }
+  #upgrade-section {
+    margin-top: auto;
+    border-top: 3px solid #a35c00;
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
   #upgrade-section h3 {
     margin: 0 0 6px;
     color: #a35c00;
+    font-size: 20px;
+    text-align: center;
   }
   #upgrade-info {
     flex-grow: 1;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 15px;
+    color: #5a3700;
+    line-height: 1.3;
+    background: #fff8b2;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1.8px solid #d9a600;
+    user-select: none;
+    min-height: 90px;
   }
   #upgrade-btn {
-    background: #ffb300;
+    background: linear-gradient(145deg, #ffb300, #a87000);
     border: 2px solid #a35c00;
-    border-radius: 8px;
-    padding: 10px;
-    font-weight: 700;
+    border-radius: 12px;
+    padding: 14px 10px;
+    font-weight: 800;
     cursor: pointer;
-    color: #5a3700;
-    box-shadow: 0 3px #d79600;
-    transition: background 0.3s;
+    color: #4a2f00;
+    box-shadow: 0 4px #7a4c00;
+    font-size: 18px;
+    transition: background 0.25s, transform 0.15s;
+  }
+  #upgrade-btn:hover:not(:disabled) {
+    background: linear-gradient(145deg, #ffc91c, #c18a00);
+    transform: translateY(-3px);
   }
   #upgrade-btn:disabled {
     background: #f4d382aa;
     cursor: not-allowed;
     box-shadow: none;
+    color: #a9955b;
   }
   #game-log {
     font-size: 13px;
-    height: 70px;
+    height: 80px;
     overflow-y: auto;
-    border: 1px solid #a35c00;
-    border-radius: 6px;
+    border: 1.5px solid #a35c00;
+    border-radius: 8px;
     background: #fff7c4;
-    padding: 6px;
-    margin-top: 10px;
+    padding: 8px;
+    margin-top: 16px;
     color: #5a3700;
+    font-family: monospace;
   }
-  /* Tooltip for canvas */
+  /* Tooltip */
   #canvas-tooltip {
     position: absolute;
     background: #fff5a5cc;
-    border: 1px solid #a35c00;
-    padding: 6px 10px;
-    border-radius: 6px;
+    border: 1.5px solid #a35c00;
+    padding: 8px 14px;
+    border-radius: 8px;
     pointer-events: none;
-    font-size: 13px;
+    font-size: 14px;
     color: #4a2f00;
     display: none;
     white-space: nowrap;
+    font-weight: 700;
+    filter: drop-shadow(1px 1px 1px #d9a600aa);
+  }
+  /* Highlight tower range on selection and placement */
+  .range-circle {
+    pointer-events: none;
+    position: absolute;
+    border: 2.5px solid #e7bb00cc;
+    border-radius: 50%;
+    box-shadow: 0 0 15px 6px #e7bb0055;
   }
 </style>
 </head>
 <body>
-  <h1>Bee Tower Defense 🐝</h1>
+  <h1>Bee Tower Defense 🐝 - Enhanced</h1>
   <div id="game-container">
-    <canvas id="game-canvas" width="550" height="500"></canvas>
+    <canvas id="game-canvas" width="570" height="520"></canvas>
     <div id="sidebar">
-      <h2>Stats</h2>
-      <div id="money">Honey: 100</div>
-      <div id="level">Level: 1</div>
-      <div id="health">Hive Health: 20</div>
+      <h2>Beehive Control</h2>
+      <div class="stat-row"><span>🍯 Honey:</span><span id="money">100</span></div>
+      <div class="stat-row"><span>🌼 Level:</span><span id="level">1</span></div>
+      <div class="stat-row"><span>🏠 Hive Health:</span><span id="health">20</span></div>
       <div id="modifiers"><strong>Modifiers:</strong> None</div>
 
-      <h2>Build Towers</h2>
-      <div id="tower-list">
-        <button class="tower-btn" data-type="dart">Dart Bee<br>Cost: 30</button>
-        <button class="tower-btn" data-type="sticky">Sticky Bee<br>Cost: 40</button>
-        <button class="tower-btn" data-type="slow">Slow Bee<br>Cost: 50</button>
+      <h2>Build Your Defense</h2>
+      <div id="tower-list" title="Click a tower type, then place it on the field">
+        <!-- Tower buttons with icons -->
+        <button class="tower-btn" data-type="dart" aria-label="Dart Bee Tower">
+          <img src="https://i.imgur.com/OLJhVvH.png" alt="Dart Bee" />
+          Dart Bee<br><small>Cost: 30</small>
+        </button>
+        <button class="tower-btn" data-type="sticky" aria-label="Sticky Bee Tower">
+          <img src="https://i.imgur.com/FK9X9Fy.png" alt="Sticky Bee" />
+          Sticky Bee<br><small>Cost: 40</small>
+        </button>
+        <button class="tower-btn" data-type="slow" aria-label="Slow Bee Tower">
+          <img src="https://i.imgur.com/RWn6bUx.png" alt="Slow Bee" />
+          Slow Bee<br><small>Cost: 50</small>
+        </button>
+        <button class="tower-btn" data-type="poison" aria-label="Poison Bee Tower">
+          <img src="https://i.imgur.com/IDbrcV7.png" alt="Poison Bee" />
+          Poison Bee<br><small>Cost: 60</small>
+        </button>
+        <button class="tower-btn" data-type="splash" aria-label="Splash Bee Tower">
+          <img src="https://i.imgur.com/86T8jFE.png" alt="Splash Bee" />
+          Splash Bee<br><small>Cost: 75</small>
+        </button>
+        <button class="tower-btn" data-type="sniper" aria-label="Sniper Bee Tower">
+          <img src="https://i.imgur.com/8nMKqTU.png" alt="Sniper Bee" />
+          Sniper Bee<br><small>Cost: 90</small>
+        </button>
       </div>
 
       <div id="upgrade-section">
         <h3>Upgrade Tower</h3>
         <div id="upgrade-info">Select a tower on the field</div>
-        <button id="upgrade-btn" disabled>Upgrade (Cost: 50)</button>
+        <button id="upgrade-btn" disabled>Upgrade</button>
       </div>
-      <div id="game-log"></div>
+      <div id="game-log" aria-live="polite" aria-atomic="false"></div>
     </div>
-    <div id="canvas-tooltip"></div>
+    <div id="canvas-tooltip" role="tooltip" aria-hidden="true"></div>
   </div>
 
 <script>
 (() => {
+  /* --- Audio assets --- */
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function playSound(type) {
+    let osc = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.type = 'triangle';
+    switch(type) {
+      case 'shoot':
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        break;
+      case 'hit':
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        break;
+      case 'death':
+        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        break;
+      case 'upgrade':
+        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        break;
+      case 'waveStart':
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        break;
+    }
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.6);
+  }
+
+  /* --- Canvas and DOM --- */
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
   const moneyEl = document.getElementById('money');
@@ -185,27 +305,32 @@
   const CANVAS_WIDTH = canvas.width;
   const CANVAS_HEIGHT = canvas.height;
 
-  // Game state
+  /* --- Game state --- */
   let money = 100;
   let health = 20;
   let level = 1;
-  let modifiers = [];
+  let currentModifiers = [];
 
-  // Map & path
-  // Enemies follow this path (simple zig-zag horizontal rows)
-  // Coordinates are points enemies walk through.
+  let towers = [];
+  let enemies = [];
+  let projectiles = [];
+
+  let placingTowerType = null;
+  let selectedTower = null;
+
+  /* --- Path --- */
   const path = [
-    {x: 20, y: 480},
-    {x: 20, y: 350},
-    {x: 530, y: 350},
-    {x: 530, y: 250},
-    {x: 20, y: 250},
-    {x: 20, y: 150},
-    {x: 530, y: 150},
-    {x: 530, y: 20},
+    {x: 40, y: 500},
+    {x: 40, y: 360},
+    {x: 530, y: 360},
+    {x: 530, y: 260},
+    {x: 40, y: 260},
+    {x: 40, y: 160},
+    {x: 530, y: 160},
+    {x: 530, y: 40},
   ];
 
-  // Tower data
+  /* --- Tower Types --- */
   const towerTypes = {
     dart: {
       name: 'Dart Bee',
@@ -215,8 +340,10 @@
       fireRate: 1000,
       color: '#ffcc00',
       upgradeCost: 50,
-      maxLevel: 3,
+      maxLevel: 4,
       description: 'Shoots fast darts at wasps.',
+      projectileColor: '#f9d71c',
+      iconUrl: 'https://i.imgur.com/OLJhVvH.png'
     },
     sticky: {
       name: 'Sticky Bee',
@@ -224,11 +351,13 @@
       baseDamage: 2,
       range: 110,
       fireRate: 1500,
-      slowEffect: 0.4,
+      slowEffect: 0.5,
       color: '#ff9f00',
       upgradeCost: 70,
-      maxLevel: 3,
+      maxLevel: 4,
       description: 'Slows down wasps on hit.',
+      projectileColor: '#cc6600',
+      iconUrl: 'https://i.imgur.com/FK9X9Fy.png'
     },
     slow: {
       name: 'Slow Bee',
@@ -239,478 +368,572 @@
       slowEffect: 0.7,
       color: '#ffaa00',
       upgradeCost: 90,
-      maxLevel: 3,
+      maxLevel: 4,
       description: 'Heavy slow effect but slower shots.',
+      projectileColor: '#ffa500',
+      iconUrl: 'https://i.imgur.com/RWn6bUx.png'
+    },
+    poison: {
+      name: 'Poison Bee',
+      cost: 60,
+      baseDamage: 4,
+      range: 100,
+      fireRate: 1400,
+      poisonDamage: 1,
+      poisonDuration: 3000,
+      color: '#339933',
+      upgradeCost: 80,
+      maxLevel: 3,
+      description: 'Poisons wasps, dealing damage over time.',
+      projectileColor: '#33cc33',
+      iconUrl: 'https://i.imgur.com/IDbrcV7.png'
+    },
+    splash: {
+      name: 'Splash Bee',
+      cost: 75,
+      baseDamage: 3,
+      range: 80,
+      fireRate: 1800,
+      splashRadius: 40,
+      color: '#cc6600',
+      upgradeCost: 100,
+      maxLevel: 3,
+      description: 'Deals area damage on impact.',
+      projectileColor: '#cc5500',
+      iconUrl: 'https://i.imgur.com/86T8jFE.png'
+    },
+    sniper: {
+      name: 'Sniper Bee',
+      cost: 90,
+      baseDamage: 12,
+      range: 210,
+      fireRate: 3500,
+      color: '#4a85ff',
+      upgradeCost: 140,
+      maxLevel: 3,
+      description: 'Long range, high damage but slow firing.',
+      projectileColor: '#4477ff',
+      iconUrl: 'https://i.imgur.com/8nMKqTU.png'
     }
   };
 
-  // Enemy data
-  class Enemy {
-    constructor(level) {
-      this.maxHealth = 10 + level * 5;
-      this.health = this.maxHealth;
-      this.speed = 0.7 + level * 0.1;
-      this.pos = {...path[0]};
-      this.pathIndex = 0;
-      this.radius = 14;
-      this.slowMultiplier = 1;
-      this.slowTime = 0;
-      this.dead = false;
+  /* --- Enemy Types --- */
+  const enemyTypes = {
+    normal: {
+      name: 'Wasp',
+      maxHealth: 10,
+      speed: 50,
+      color: '#d94a00',
+      radius: 12,
+      reward: 5,
+      armor: 0,
+    },
+    fast: {
+      name: 'Fast Wasp',
+      maxHealth: 6,
+      speed: 85,
+      color: '#ff6a00',
+      radius: 10,
+      reward: 6,
+      armor: 0,
+    },
+    armored: {
+      name: 'Armored Wasp',
+      maxHealth: 25,
+      speed: 30,
+      color: '#a04a00',
+      radius: 15,
+      reward: 12,
+      armor: 3,
+    },
+    swarm: {
+      name: 'Tiny Swarm',
+      maxHealth: 3,
+      speed: 75,
+      color: '#ffad33',
+      radius: 7,
+      reward: 3,
+      armor: 0,
     }
-    update(dt) {
-      if(this.dead) return;
-      if(this.slowTime > 0) {
-        this.slowTime -= dt;
-        if(this.slowTime <= 0) {
-          this.slowMultiplier = 1;
-        }
-      }
-      let target = path[this.pathIndex+1];
-      if(!target) {
-        // Reached end
-        this.dead = true;
-        health -= 1;
-        logEvent("A wasp reached the hive!");
-        return;
-      }
-      let dirX = target.x - this.pos.x;
-      let dirY = target.y - this.pos.y;
-      let dist = Math.sqrt(dirX*dirX + dirY*dirY);
-      let moveDist = this.speed * this.slowMultiplier * dt / 16;
+  };
 
-      if(dist <= moveDist) {
-        this.pos.x = target.x;
-        this.pos.y = target.y;
-        this.pathIndex++;
-      } else {
-        this.pos.x += (dirX / dist) * moveDist;
-        this.pos.y += (dirY / dist) * moveDist;
-      }
+  /* --- Game Modifiers --- */
+  const possibleModifiers = [
+    {
+      name: 'Honey Drizzle',
+      description: 'Earn 25% more honey.',
+      apply: () => { moneyMultiplier = 1.25; },
+      remove: () => { moneyMultiplier = 1; }
+    },
+    {
+      name: 'Wasp Frenzy',
+      description: 'Enemies spawn 30% faster.',
+      apply: () => { enemySpawnRateMultiplier = 0.7; },
+      remove: () => { enemySpawnRateMultiplier = 1; }
+    },
+    {
+      name: 'Sticky Honey',
+      description: 'Enemies are slowed randomly.',
+      apply: () => { stickyHoneyActive = true; },
+      remove: () => { stickyHoneyActive = false; }
+    },
+    {
+      name: 'Armored Wasps',
+      description: 'Enemies have +2 armor.',
+      apply: () => { armoredModifierActive = true; },
+      remove: () => { armoredModifierActive = false; }
     }
-    draw(ctx) {
-      ctx.save();
-      ctx.translate(this.pos.x, this.pos.y);
-      // Body
-      ctx.fillStyle = '#aa3300';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, this.radius, this.radius*0.6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // Stripes
-      ctx.fillStyle = '#ffeeaa';
-      for(let i = -10; i <= 10; i+=10) {
-        ctx.fillRect(i - 4, -this.radius*0.6, 5, this.radius*1.2);
-      }
-      // Eyes
-      ctx.fillStyle = '#111';
-      ctx.beginPath();
-      ctx.arc(-6, -4, 4, 0, Math.PI*2);
-      ctx.arc(6, -4, 4, 0, Math.PI*2);
-      ctx.fill();
-      ctx.restore();
+  ];
 
-      // Health bar
-      ctx.fillStyle = '#ff5959';
-      ctx.fillRect(this.pos.x - this.radius, this.pos.y - this.radius - 10, this.radius*2, 5);
-      ctx.fillStyle = '#55cc55';
-      ctx.fillRect(this.pos.x - this.radius, this.pos.y - this.radius - 10, (this.health/this.maxHealth)*this.radius*2, 5);
-      ctx.strokeStyle = '#442200';
-      ctx.strokeRect(this.pos.x - this.radius, this.pos.y - this.radius - 10, this.radius*2, 5);
-    }
-    applySlow(amount, duration) {
-      if(amount < this.slowMultiplier) {
-        this.slowMultiplier = amount;
-        this.slowTime = duration;
-      }
-    }
+  /* --- Variables affected by modifiers --- */
+  let moneyMultiplier = 1;
+  let enemySpawnRateMultiplier = 1;
+  let stickyHoneyActive = false;
+  let armoredModifierActive = false;
+
+  /* --- Utility --- */
+  function distance(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
   }
 
-  // Tower class
+  /* --- Tower class --- */
   class Tower {
     constructor(type, x, y) {
       this.type = type;
       this.x = x;
       this.y = y;
       this.level = 1;
-      this.fireCooldown = 0;
-      this.target = null;
+      this.cooldown = 0;
+      this.slowTargets = new Map(); // for slow towers, track targets with slow timers
+      this.poisonTargets = new Map(); // for poison towers
+    }
+    get data() {
+      return towerTypes[this.type];
     }
     get range() {
-      return towerTypes[this.type].range + (this.level -1) * 10;
+      return this.data.range + (this.level - 1) * 10;
     }
     get damage() {
-      return towerTypes[this.type].baseDamage * this.level;
+      return this.data.baseDamage + (this.level - 1) * 2;
     }
     get fireRate() {
-      return towerTypes[this.type].fireRate / this.level;
+      return this.data.fireRate * (1 - (this.level - 1) * 0.1);
     }
     get upgradeCost() {
-      return towerTypes[this.type].upgradeCost * this.level;
+      return this.data.upgradeCost * this.level;
     }
     canUpgrade() {
-      return this.level < towerTypes[this.type].maxLevel;
+      return this.level < this.data.maxLevel;
     }
     upgrade() {
-      if(this.canUpgrade()) this.level++;
+      if (!this.canUpgrade()) return false;
+      if (money < this.upgradeCost) return false;
+      money -= this.upgradeCost;
+      this.level++;
+      playSound('upgrade');
+      log(`Upgraded ${this.data.name} to level ${this.level}.`);
+      return true;
     }
-    draw(ctx, selected) {
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      // Body - hexagon shape
-      ctx.fillStyle = towerTypes[this.type].color;
-      ctx.strokeStyle = selected ? '#ffaa00' : '#aa7a00';
-      ctx.lineWidth = selected ? 4 : 2;
-      ctx.beginPath();
-      for(let i=0; i<6; i++) {
-        let angle = Math.PI/3 * i - Math.PI/2;
-        let px = 20 * Math.cos(angle);
-        let py = 20 * Math.sin(angle);
-        if(i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+    shoot(target) {
+      if (this.cooldown > 0) return false;
+      this.cooldown = this.fireRate;
+      playSound('shoot');
 
-      // Level text
-      ctx.fillStyle = '#552f00';
-      ctx.font = 'bold 14px Fredoka One, cursive';
-      ctx.textAlign = 'center';
-      ctx.fillText('Lv.' + this.level, 0, 6);
-      ctx.restore();
+      // Create projectile
+      projectiles.push(new Projectile(this, target));
+      return true;
     }
-    update(dt, enemies) {
-      this.fireCooldown -= dt;
-      if(this.fireCooldown <= 0) {
-        // Find closest enemy in range
-        let nearest = null;
-        let nearestDist = Infinity;
-        for(let e of enemies) {
-          if(e.dead) continue;
-          let dx = e.pos.x - this.x;
-          let dy = e.pos.y - this.y;
-          let dist = Math.sqrt(dx*dx + dy*dy);
-          if(dist <= this.range && dist < nearestDist) {
-            nearest = e;
-            nearestDist = dist;
-          }
-        }
-        if(nearest) {
-          this.fireAt(nearest);
-          this.fireCooldown = this.fireRate;
-        }
-      }
-    }
-    fireAt(enemy) {
-      // Shoot a projectile at enemy
-      projectiles.push(new Projectile(this, enemy));
-      logEvent(`${towerTypes[this.type].name} shot a wasp!`);
-    }
-  }
-
-  // Projectile class
-  class Projectile {
-    constructor(tower, target) {
-      this.x = tower.x;
-      this.y = tower.y;
-      this.target = target;
-      this.speed = 8 + tower.level * 2;
-      this.damage = tower.damage;
-      this.type = tower.type;
-      this.dead = false;
-    }
-    update(dt) {
-      if(this.dead || this.target.dead) {
-        this.dead = true;
-        return;
-      }
-      let dx = this.target.pos.x - this.x;
-      let dy = this.target.pos.y - this.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist < this.speed) {
-        // Hit target
-        this.hitTarget();
-        this.dead = true;
-      } else {
-        this.x += (dx / dist) * this.speed;
-        this.y += (dy / dist) * this.speed;
-      }
-    }
-    hitTarget() {
-      this.target.health -= this.damage;
-      if(this.type === 'sticky' || this.type === 'slow') {
-        let slowAmount = this.type === 'sticky' ? 0.5 : 0.3;
-        this.target.applySlow(slowAmount, 1500);
-      }
-      if(this.target.health <= 0) {
-        this.target.dead = true;
-        money += 10;
-        logEvent("Wasp defeated! +10 Honey");
+    update(delta) {
+      if (this.cooldown > 0) {
+        this.cooldown -= delta;
       }
     }
     draw(ctx) {
+      // Draw tower base
       ctx.save();
       ctx.translate(this.x, this.y);
-      ctx.fillStyle = this.type === 'dart' ? '#f9d71c' : '#cc6600';
-      if(this.type === 'slow') ctx.fillStyle = '#ffa500';
+
+      // Draw base circle
+      ctx.fillStyle = this.data.color;
       ctx.beginPath();
-      ctx.arc(0, 0, 6, 0, Math.PI*2);
+      ctx.arc(0, 0, 18 + this.level * 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw center (bee body)
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 10, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw stripes
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      for(let i=-8; i<=8; i+=5) {
+        ctx.beginPath();
+        ctx.moveTo(i, -14);
+        ctx.lineTo(i, 14);
+        ctx.stroke();
+      }
+
+      // Draw wings
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.ellipse(-8, -8, 6, 10, -Math.PI/6, 0, Math.PI*2);
+      ctx.ellipse(8, -8, 6, 10, Math.PI/6, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // If selected or placing this tower type, draw range circle
+      if (selectedTower === this || placingTowerType === this.type) {
+        ctx.save();
+        ctx.strokeStyle = '#e7bb00cc';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = '#e7bb00aa';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.range, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  /* --- Projectile class --- */
+  class Projectile {
+    constructor(tower, target) {
+      this.tower = tower;
+      this.target = target;
+      this.x = tower.x;
+      this.y = tower.y;
+      this.speed = 300;
+      this.color = tower.data.projectileColor;
+      this.damage = tower.damage;
+      this.splashRadius = tower.data.splashRadius || 0;
+      this.type = tower.type;
+      this.isDead = false;
+    }
+    update(delta) {
+      if (this.isDead) return;
+
+      let dx = this.target.x - this.x;
+      let dy = this.target.y - this.y;
+      let dist = Math.hypot(dx, dy);
+      if (dist < this.speed * delta / 1000) {
+        // Hit target
+        this.hit();
+        this.isDead = true;
+      } else {
+        this.x += (dx / dist) * this.speed * delta / 1000;
+        this.y += (dy / dist) * this.speed * delta / 1000;
+      }
+    }
+    hit() {
+      if (this.splashRadius > 0) {
+        // Splash damage
+        enemies.forEach(e => {
+          if (distance({x:this.x, y:this.y}, e) <= this.splashRadius) {
+            e.takeDamage(this.damage, this.type);
+          }
+        });
+      } else {
+        this.target.takeDamage(this.damage, this.type);
+      }
+      playSound('hit');
+    }
+    draw(ctx) {
+      ctx.save();
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
   }
 
-  // Game variables
-  let enemies = [];
-  let towers = [];
-  let projectiles = [];
-  let selectedTower = null;
-  let placingTowerType = null;
-
-  // Game modifiers that apply per level (random)
-  const possibleModifiers = [
-    {name: 'Fast Wasps', effect: (lvl) => lvl * 0.15, description: 'Enemies move faster.'},
-    {name: 'More Health', effect: (lvl) => lvl * 10, description: 'Enemies have more health.'},
-    {name: 'Less Money', effect: () => -5, description: 'Earn less honey per kill.'},
-    {name: 'Sticky Grounds', effect: () => 1, description: 'Enemies slow down occasionally.'}
-  ];
-
-  let currentModifiers = [];
-
-  // Logging events to sidebar
-  function logEvent(text) {
-    const time = new Date().toLocaleTimeString();
-    const entry = document.createElement('div');
-    entry.textContent = `[${time}] ${text}`;
-    gameLog.appendChild(entry);
-    gameLog.scrollTop = gameLog.scrollHeight;
-  }
-
-  // Place tower function
-  function tryPlaceTower(x, y) {
-    if(!placingTowerType) return false;
-    const tData = towerTypes[placingTowerType];
-    if(money < tData.cost) {
-      alert("Not enough honey!");
-      return false;
+  /* --- Enemy class --- */
+  class Enemy {
+    constructor(type) {
+      this.type = type;
+      this.data = enemyTypes[type];
+      this.maxHealth = this.data.maxHealth;
+      this.health = this.maxHealth;
+      this.speed = this.data.speed;
+      this.x = path[0].x;
+      this.y = path[0].y;
+      this.radius = this.data.radius;
+      this.color = this.data.color;
+      this.reward = this.data.reward;
+      this.armor = this.data.armor;
+      this.pathIndex = 0;
+      this.isDead = false;
+      this.poisonTimer = 0;
+      this.slowMultiplier = 1;
+      this.slowTimer = 0;
     }
-    // Prevent placement too close to path
-    for(let i=0; i<path.length-1; i++) {
-      let p1 = path[i];
-      let p2 = path[i+1];
-      if(distancePointToSegment({x,y}, p1, p2) < 40) {
-        alert("Can't place tower on the path!");
-        return false;
+    takeDamage(amount, damageType) {
+      let effectiveDamage = amount;
+      if (this.armor && damageType !== 'poison') {
+        effectiveDamage = Math.max(1, amount - this.armor);
+      }
+
+      this.health -= effectiveDamage;
+
+      // Apply poison if from poison tower
+      if (damageType === 'poison') {
+        this.poisonTimer = 3000; // 3 seconds poison
+      }
+
+      if (this.health <= 0) {
+        this.die();
       }
     }
-    // Prevent overlapping towers
-    for(let t of towers) {
-      let dist = Math.sqrt((t.x - x)**2 + (t.y - y)**2);
-      if(dist < 50) {
-        alert("Too close to another tower!");
-        return false;
+    die() {
+      this.isDead = true;
+      money += Math.floor(this.reward * moneyMultiplier);
+      playSound('death');
+      log(`Defeated ${this.data.name}. Earned ${Math.floor(this.reward * moneyMultiplier)} honey.`);
+    }
+    update(delta) {
+      if (this.isDead) return;
+
+      // Poison damage over time
+      if (this.poisonTimer > 0) {
+        this.poisonTimer -= delta;
+        if (this.poisonTimer > 0) {
+          this.health -= 0.01 * delta; // poison ticks
+          if (this.health <= 0) {
+            this.die();
+            return;
+          }
+        }
+      }
+
+      // Slow effect decay
+      if (this.slowTimer > 0) {
+        this.slowTimer -= delta;
+        if (this.slowTimer <= 0) this.slowMultiplier = 1;
+      }
+
+      // Sticky Honey modifier random slow
+      if (stickyHoneyActive && Math.random() < 0.001) {
+        this.slowMultiplier = 0.5;
+        this.slowTimer = 1200;
+      }
+
+      // Move along path
+      let targetPoint = path[this.pathIndex + 1];
+      if (!targetPoint) {
+        // Reached end
+        health--;
+        this.isDead = true;
+        log('A wasp got into the hive! Hive health -1.');
+        if (health <= 0) {
+          gameOver();
+        }
+        return;
+      }
+
+      let dx = targetPoint.x - this.x;
+      let dy = targetPoint.y - this.y;
+      let dist = Math.hypot(dx, dy);
+      let step = this.speed * this.slowMultiplier * delta / 1000;
+
+      if (dist <= step) {
+        this.x = targetPoint.x;
+        this.y = targetPoint.y;
+        this.pathIndex++;
+      } else {
+        this.x += (dx / dist) * step;
+        this.y += (dy / dist) * step;
       }
     }
-    money -= tData.cost;
-    towers.push(new Tower(placingTowerType, x, y));
-    logEvent(`${tData.name} placed!`);
-    placingTowerType = null;
-    updateUI();
-    return true;
-  }
+    draw(ctx) {
+      if (this.isDead) return;
+      ctx.save();
+      ctx.translate(this.x, this.y);
 
-  // Utility: distance from point to line segment
-  function distancePointToSegment(pt, v, w) {
-    const l2 = (v.x - w.x)**2 + (v.y - w.y)**2;
-    if(l2 === 0) return Math.sqrt((pt.x - v.x)**2 + (pt.y - v.y)**2);
-    let t = ((pt.x - v.x)*(w.x - v.x) + (pt.y - v.y)*(w.y - v.y)) / l2;
-    t = Math.max(0, Math.min(1, t));
-    return Math.sqrt((pt.x - (v.x + t*(w.x - v.x)))**2 + (pt.y - (v.y + t*(w.y - v.y)))**2);
-  }
+      // Body
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.radius, this.radius * 0.7, 0, 0, Math.PI * 2);
+      ctx.fill();
 
-  // Handle tower selection on click
-  canvas.addEventListener('click', e => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    if(placingTowerType) {
-      if(tryPlaceTower(x, y)) {
-        selectedTower = null;
-        updateUpgradeSection();
+      // Stripes
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      for(let i = -this.radius; i <= this.radius; i += this.radius / 3) {
+        ctx.beginPath();
+        ctx.moveTo(i, -this.radius * 0.7);
+        ctx.lineTo(i, this.radius * 0.7);
+        ctx.stroke();
       }
-      return;
-    }
 
-    // Check if clicked on a tower
-    let found = false;
-    for(let t of towers) {
-      let dist = Math.sqrt((t.x - x)**2 + (t.y - y)**2);
-      if(dist <= 20) {
-        selectedTower = t;
-        updateUpgradeSection();
-        found = true;
-        break;
-      }
-    }
-    if(!found) {
-      selectedTower = null;
-      updateUpgradeSection();
-    }
-  });
+      // Wings
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.ellipse(-this.radius * 0.7, -this.radius * 0.9, this.radius * 0.5, this.radius * 0.9, -Math.PI/6, 0, Math.PI*2);
+      ctx.ellipse(this.radius * 0.7, -this.radius * 0.9, this.radius * 0.5, this.radius * 0.9, Math.PI/6, 0, Math.PI*2);
+      ctx.fill();
 
-  // Tower build buttons
-  towerButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      placingTowerType = btn.dataset.type;
-      selectedTower = null;
-      updateUpgradeSection();
-      logEvent(`Click on the field to place a ${towerTypes[placingTowerType].name}.`);
-    });
-  });
+      // Health bar background
+      ctx.fillStyle = '#ddd';
+      ctx.fillRect(-this.radius, -this.radius - 12, this.radius * 2, 6);
 
-  // Upgrade button
-  upgradeBtn.addEventListener('click', () => {
-    if(!selectedTower) return;
-    const cost = selectedTower.upgradeCost;
-    if(money < cost) {
-      alert("Not enough honey!");
-      return;
-    }
-    money -= cost;
-    selectedTower.upgrade();
-    logEvent(`${towerTypes[selectedTower.type].name} upgraded to level ${selectedTower.level}!`);
-    updateUpgradeSection();
-    updateUI();
-  });
+      // Health bar
+      let healthWidth = (this.health / this.maxHealth) * this.radius * 2;
+      ctx.fillStyle = '#39b639';
+      ctx.fillRect(-this.radius, -this.radius - 12, healthWidth, 6);
 
-  // Update upgrade section UI
-  function updateUpgradeSection() {
-    if(!selectedTower) {
-      upgradeInfo.textContent = "Select a tower on the field";
-      upgradeBtn.disabled = true;
-      return;
-    }
-    const t = selectedTower;
-    upgradeInfo.innerHTML = `
-      <strong>${towerTypes[t.type].name} (Lv.${t.level})</strong><br>
-      Damage: ${t.damage}<br>
-      Range: ${t.range}px<br>
-      Fire Rate: ${(1000 / t.fireRate).toFixed(2)} shots/sec<br>
-      ${towerTypes[t.type].description}<br><br>
-      Upgrade cost: ${t.canUpgrade() ? t.upgradeCost : 'MAX'}
-    `;
-    upgradeBtn.disabled = !t.canUpgrade();
-    if(!t.canUpgrade()) upgradeBtn.textContent = "Max Level";
-    else upgradeBtn.textContent = `Upgrade (Cost: ${t.upgradeCost})`;
-  }
-
-  // Update UI money, health, level
-  function updateUI() {
-    moneyEl.textContent = `Honey: ${money}`;
-    healthEl.textContent = `Hive Health: ${health}`;
-    levelEl.textContent = `Level: ${level}`;
-    if(currentModifiers.length === 0) {
-      modifiersEl.innerHTML = '<strong>Modifiers:</strong> None';
-    } else {
-      modifiersEl.innerHTML = '<strong>Modifiers:</strong> ' + currentModifiers.map(m => m.name).join(', ');
+      ctx.restore();
     }
   }
 
-  // Spawn enemies for current level
-  function spawnWave(level) {
-    let count = 5 + level * 2;
+  /* --- Game functions --- */
+  function log(text) {
+    const now = new Date().toLocaleTimeString();
+    gameLog.textContent = `[${now}] ${text}\n` + gameLog.textContent;
+  }
+
+  function gameOver() {
+    alert('🐝 The hive has fallen! Game Over.');
+    resetGame();
+  }
+
+  function resetGame() {
+    money = 100;
+    health = 20;
+    level = 1;
+    towers = [];
     enemies = [];
-    for(let i=0; i<count; i++) {
-      let e = new Enemy(level);
-      // Apply modifiers
-      for(let mod of currentModifiers) {
-        if(mod.name === 'Fast Wasps') e.speed += mod.effect(level);
-        if(mod.name === 'More Health') e.maxHealth += mod.effect(level);
-      }
-      e.health = e.maxHealth;
-      // Stagger spawn position
-      e.pos.x -= i * 50;
-      enemies.push(e);
-    }
-    logEvent(`Wave ${level} started with ${count} wasps!`);
-  }
-
-  // Select random modifiers each level
-  function pickModifiers(level) {
+    projectiles = [];
     currentModifiers = [];
-    // 30% chance to get each modifier (max 2 modifiers)
-    for(let mod of possibleModifiers) {
-      if(Math.random() < 0.3) {
-        currentModifiers.push(mod);
-      }
-      if(currentModifiers.length >= 2) break;
-    }
+    moneyMultiplier = 1;
+    enemySpawnRateMultiplier = 1;
+    stickyHoneyActive = false;
+    armoredModifierActive = false;
+    updateUI();
+    startLevel(level);
   }
 
-  // Game loop variables
+  function updateUI() {
+    moneyEl.textContent = Math.floor(money);
+    healthEl.textContent = health;
+    levelEl.textContent = level;
+    modifiersEl.innerHTML = `<strong>Modifiers:</strong> ${
+      currentModifiers.length ? currentModifiers.map(m => m.name).join(', ') : 'None'
+    }`;
+  }
+
+  /* --- Enemy spawning --- */
+  let enemySpawnTimer = 0;
+  let enemiesToSpawn = 0;
+
+  function startLevel(lvl) {
+    enemiesToSpawn = 5 + lvl * 3;
+    enemySpawnTimer = 0;
+    assignModifiers(lvl);
+    log(`Starting level ${lvl} with modifiers: ${currentModifiers.length ? currentModifiers.map(m => m.name).join(', ') : 'None'}`);
+    playSound('waveStart');
+  }
+
+  function assignModifiers(lvl) {
+    // Clear old modifiers
+    currentModifiers.forEach(m => m.remove && m.remove());
+    currentModifiers = [];
+
+    // Pick 0-2 random modifiers for level
+    const count = Math.min(2, possibleModifiers.length);
+    let chosen = [];
+    while(chosen.length < count) {
+      let pick = possibleModifiers[Math.floor(Math.random() * possibleModifiers.length)];
+      if (!chosen.includes(pick)) chosen.push(pick);
+    }
+    currentModifiers = chosen;
+    currentModifiers.forEach(m => m.apply && m.apply());
+  }
+
+  function spawnEnemy() {
+    // Choose enemy type based on level and modifiers
+    let typeChoices = ['normal', 'fast', 'armored', 'swarm'];
+
+    // Adjust weights for modifiers
+    if (!armoredModifierActive) {
+      typeChoices = ['normal', 'fast', 'swarm'];
+    }
+
+    // Select random enemy type from available types
+    let enemyType = typeChoices[Math.floor(Math.random() * typeChoices.length)];
+
+    enemies.push(new Enemy(enemyType));
+  }
+
+  /* --- Game loop --- */
   let lastTime = 0;
-  let spawnCooldown = 0;
-  let waveInProgress = false;
 
   function gameLoop(timestamp) {
-    if(!lastTime) lastTime = timestamp;
-    const dt = timestamp - lastTime;
+    if (!lastTime) lastTime = timestamp;
+    let delta = timestamp - lastTime;
     lastTime = timestamp;
 
-    if(health <= 0) {
-      draw();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      ctx.fillStyle = '#b22222';
-      ctx.font = 'bold 48px Fredoka One, cursive';
-      ctx.textAlign = 'center';
-      ctx.fillText('Hive Destroyed! Game Over', CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
-      return;
+    // Clear canvas
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Draw path with honey drip effect
+    drawPath();
+
+    // Update and draw towers
+    towers.forEach(t => t.update(delta));
+    towers.forEach(t => t.draw(ctx));
+
+    // Spawn enemies
+    enemySpawnTimer -= delta;
+    if (enemySpawnTimer <= 0 && enemiesToSpawn > 0) {
+      spawnEnemy();
+      enemiesToSpawn--;
+      enemySpawnTimer = 1000 * enemySpawnRateMultiplier;
     }
 
-    if(!waveInProgress) {
-      // Start next wave after 3 seconds
-      spawnCooldown -= dt;
-      if(spawnCooldown <= 0) {
-        pickModifiers(level);
-        spawnWave(level);
-        waveInProgress = true;
+    // Update and draw enemies
+    enemies.forEach(e => e.update(delta));
+    enemies = enemies.filter(e => !e.isDead);
+    enemies.forEach(e => e.draw(ctx));
+
+    // Tower shooting logic
+    towers.forEach(t => {
+      if (t.cooldown <= 0) {
+        // Find nearest enemy in range
+        let target = enemies.find(e => distance(t, e) <= t.range);
+        if (target) t.shoot(target);
       }
-    }
+    });
 
-    // Update enemies
-    enemies.forEach(e => e.update(dt));
-    enemies = enemies.filter(e => !e.dead || e.health > 0);
-
-    // Update towers
-    towers.forEach(t => t.update(dt, enemies));
-
-    // Update projectiles
-    projectiles.forEach(p => p.update(dt));
-    projectiles = projectiles.filter(p => !p.dead);
-
-    // Check wave end
-    if(waveInProgress && enemies.length === 0) {
-      waveInProgress = false;
-      spawnCooldown = 3000;
-      level++;
-      money += 20 + level * 10;
-      logEvent(`Wave cleared! +${20 + level * 10} Honey`);
-    }
+    // Update and draw projectiles
+    projectiles.forEach(p => p.update(delta));
+    projectiles = projectiles.filter(p => !p.isDead);
+    projectiles.forEach(p => p.draw(ctx));
 
     updateUI();
-    draw();
+
+    if (enemiesToSpawn === 0 && enemies.length === 0) {
+      // Level complete
+      level++;
+      log(`Level ${level-1} cleared! Starting next level...`);
+      setTimeout(() => startLevel(level), 2000);
+    }
 
     requestAnimationFrame(gameLoop);
   }
 
-  // Draw everything
-  function draw() {
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  /* --- Draw path function --- */
+  function drawPath() {
+    ctx.save();
 
-    // Draw path
-    ctx.strokeStyle = '#8b5e00';
-    ctx.lineWidth = 32;
+    // Draw honey dripping path with glow
+    ctx.strokeStyle = '#daa520';
+    ctx.lineWidth = 20;
+    ctx.shadowColor = '#ffdb4d';
+    ctx.shadowBlur = 10;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(path[0].x, path[0].y);
@@ -719,9 +942,10 @@
     }
     ctx.stroke();
 
-    // Draw path outline
-    ctx.strokeStyle = '#d9a600';
-    ctx.lineWidth = 8;
+    // Inner path
+    ctx.strokeStyle = '#f4c542';
+    ctx.lineWidth = 10;
+    ctx.shadowBlur = 4;
     ctx.beginPath();
     ctx.moveTo(path[0].x, path[0].y);
     for(let i=1; i<path.length; i++) {
@@ -729,52 +953,162 @@
     }
     ctx.stroke();
 
-    // Draw towers
-    towers.forEach(t => t.draw(ctx, t === selectedTower));
-
-    // Draw enemies
-    enemies.forEach(e => e.draw(ctx));
-
-    // Draw projectiles
-    projectiles.forEach(p => p.draw(ctx));
+    ctx.restore();
   }
 
-  // Tooltip for towers info on hover
+  /* --- Tower placement --- */
+  towerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      placingTowerType = btn.dataset.type;
+      selectedTower = null;
+      upgradeBtn.disabled = true;
+      upgradeInfo.textContent = 'Click on the field to place the tower.';
+      updateTooltip(towerTypes[placingTowerType].description);
+    });
+  });
+
   canvas.addEventListener('mousemove', e => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    let foundTower = null;
-    for(let t of towers) {
-      let dist = Math.sqrt((t.x - x)**2 + (t.y - y)**2);
-      if(dist <= 20) {
-        foundTower = t;
-        break;
-      }
-    }
-    if(foundTower) {
+    if (placingTowerType) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      showRangeCircle(mouseX, mouseY, towerTypes[placingTowerType].range);
+
+      // Tooltip near cursor with tower info & cost
+      updateTooltip(`${towerTypes[placingTowerType].name}\nCost: ${towerTypes[placingTowerType].cost} honey`);
+      positionTooltip(e.clientX, e.clientY);
       tooltip.style.display = 'block';
-      tooltip.style.left = e.clientX + 15 + 'px';
-      tooltip.style.top = e.clientY + 15 + 'px';
-      tooltip.innerHTML = `<strong>${towerTypes[foundTower.type].name} (Lv.${foundTower.level})</strong><br>
-        Damage: ${foundTower.damage}<br>
-        Range: ${foundTower.range}px<br>
-        Fire Rate: ${(1000 / foundTower.fireRate).toFixed(2)} shots/sec`;
     } else {
       tooltip.style.display = 'none';
+      removeRangeCircle();
     }
   });
-  canvas.addEventListener('mouseout', e => {
+
+  canvas.addEventListener('mouseleave', () => {
     tooltip.style.display = 'none';
+    removeRangeCircle();
   });
 
-  // Start game
-  updateUI();
-  updateUpgradeSection();
-  spawnCooldown = 3000;
-  requestAnimationFrame(gameLoop);
+  canvas.addEventListener('click', e => {
+    if (placingTowerType) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
+      if (canPlaceTower(mouseX, mouseY)) {
+        if (money >= towerTypes[placingTowerType].cost) {
+          towers.push(new Tower(placingTowerType, mouseX, mouseY));
+          money -= towerTypes[placingTowerType].cost;
+          playSound('upgrade');
+          log(`Placed a ${towerTypes[placingTowerType].name} tower.`);
+          placingTowerType = null;
+          tooltip.style.display = 'none';
+          removeRangeCircle();
+          updateUI();
+        } else {
+          alert('Not enough honey to place that tower!');
+        }
+      } else {
+        alert('Cannot place tower on path or too close to another tower.');
+      }
+    } else {
+      // Select tower on field if clicked near one
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      selectedTower = towers.find(t => distance(t, {x: mouseX, y: mouseY}) < 25);
+      if (selectedTower) {
+        upgradeBtn.disabled = !selectedTower.canUpgrade() || money < selectedTower.upgradeCost;
+        upgradeInfo.innerHTML = `${selectedTower.data.name} (Lvl ${selectedTower.level})<br>Upgrade Cost: ${selectedTower.upgradeCost} honey<br><br>${selectedTower.data.description}`;
+      } else {
+        selectedTower = null;
+        upgradeBtn.disabled = true;
+        upgradeInfo.textContent = 'Select a tower on the field';
+      }
+      updateUI();
+    }
+  });
+
+  upgradeBtn.addEventListener('click', () => {
+    if (selectedTower && selectedTower.canUpgrade() && money >= selectedTower.upgradeCost) {
+      selectedTower.upgrade();
+      upgradeBtn.disabled = !selectedTower.canUpgrade() || money < selectedTower.upgradeCost;
+      upgradeInfo.innerHTML = `${selectedTower.data.name} (Lvl ${selectedTower.level})<br>Upgrade Cost: ${selectedTower.upgradeCost} honey<br><br>${selectedTower.data.description}`;
+      updateUI();
+    }
+  });
+
+  /* --- Placement validation --- */
+  function canPlaceTower(x, y) {
+    // Cannot place on path
+    for(let i=0; i<path.length-1; i++) {
+      let a = path[i];
+      let b = path[i+1];
+      let distToSegment = distanceToSegment({x, y}, a, b);
+      if (distToSegment < 35) return false;
+    }
+    // Cannot overlap other towers
+    for(let t of towers) {
+      if (distance(t, {x,y}) < 50) return false;
+    }
+    return true;
+  }
+
+  function distanceToSegment(p, v, w) {
+    // Return minimum distance between point p and line segment vw
+    let l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
+    if (l2 === 0) return distance(p, v);
+    let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return distance(p, {x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y)});
+  }
+
+  /* --- Range circle on canvas --- */
+  let rangeCircle = null;
+  function showRangeCircle(x, y, r) {
+    if (!rangeCircle) {
+      rangeCircle = document.createElement('div');
+      rangeCircle.classList.add('range-circle');
+      document.getElementById('game-container').appendChild(rangeCircle);
+    }
+    rangeCircle.style.left = `${x - r}px`;
+    rangeCircle.style.top = `${y - r}px`;
+    rangeCircle.style.width = `${r * 2}px`;
+    rangeCircle.style.height = `${r * 2}px`;
+  }
+  function removeRangeCircle() {
+    if (rangeCircle) {
+      rangeCircle.remove();
+      rangeCircle = null;
+    }
+  }
+
+  /* --- Tooltip --- */
+  function updateTooltip(text) {
+    tooltip.textContent = text;
+  }
+  function positionTooltip(x, y) {
+    const offset = 20;
+    let tooltipRect = tooltip.getBoundingClientRect();
+    let newX = x + offset;
+    let newY = y + offset;
+    if (newX + tooltipRect.width > window.innerWidth) {
+      newX = x - tooltipRect.width - offset;
+    }
+    if (newY + tooltipRect.height > window.innerHeight) {
+      newY = y - tooltipRect.height - offset;
+    }
+    tooltip.style.left = newX + 'px';
+    tooltip.style.top = newY + 'px';
+  }
+
+  /* --- Initialization --- */
+  updateUI();
+  resetGame();
+  requestAnimationFrame(gameLoop);
 })();
 </script>
+
 </body>
 </html>
