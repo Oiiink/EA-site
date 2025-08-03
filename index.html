@@ -3,244 +3,440 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Glass Bridge Mini Game</title>
+<title>Auto Chess Lite</title>
 <style>
-  body, html {
-    margin: 0; padding: 0; background: #111;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100vh; color: #eee; font-family: Arial, sans-serif;
+  body {
+    margin: 0;
+    background: #222;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+  }
+  h1 {
+    margin-bottom: 10px;
+    color: #f3da0b;
+  }
+  #gameContainer {
+    display: flex;
+    gap: 20px;
+  }
+  #board {
+    background: #333;
+    border: 3px solid #f3da0b;
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 4px;
+    padding: 10px;
+  }
+  .cell {
+    background: #444;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 0 8px #111;
+  }
+  .cell.occupied {
+    background: #1e7f7f;
+    box-shadow: 0 0 10px #14b3b3;
+  }
+  .unit {
+    width: 70px;
+    height: 70px;
+    background: #f3da0b;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    color: #222;
     user-select: none;
   }
-  canvas {
-    border: 3px solid #eee;
-    background: #222;
-    display: block;
+  .unit.enemy {
+    background: #f34b4b;
+    color: #fff;
   }
-  #info {
-    margin: 10px;
-    font-size: 18px;
-    text-align: center;
+  #shop {
+    background: #333;
+    border: 3px solid #f3da0b;
+    border-radius: 12px;
+    padding: 10px;
+    width: 300px;
+  }
+  #shop h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .shop-unit {
+    background: #555;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s;
+  }
+  .shop-unit:hover {
+    background: #777;
+  }
+  .stats {
+    font-size: 14px;
+    margin-top: 4px;
+    color: #ccc;
+  }
+  #controls {
+    margin-top: 15px;
+  }
+  button {
+    background: #f3da0b;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #222;
+    user-select: none;
+  }
+  button:disabled {
+    background: #bbb;
+    cursor: default;
   }
   #message {
     margin-top: 15px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #f33;
+    font-size: 20px;
+    font-weight: 700;
   }
-  #restart {
-    margin-top: 10px;
-    padding: 8px 16px;
-    font-size: 16px;
-    background: #f3da0b;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: #111;
-  }
-  #restart:hover {
-    background: #c9b008;
+  #gold {
+    margin-bottom: 10px;
   }
 </style>
 </head>
 <body>
 
-<div id="info">Use arrow keys or WASD to move forward and sideways. Reach the end without falling!</div>
-<canvas id="game" width="600" height="600"></canvas>
+<h1>Auto Chess Lite</h1>
+<div id="gold">Gold: 10</div>
+<div id="gameContainer">
+  <div id="board"></div>
+  <div id="shop">
+    <h2>Shop</h2>
+    <div id="shopUnits"></div>
+  </div>
+</div>
+<div id="controls">
+  <button id="startBattleBtn">Start Battle</button>
+  <button id="resetBtn" style="display:none;">Reset Game</button>
+</div>
 <div id="message"></div>
-<button id="restart" style="display:none;">Restart Game</button>
 
 <script>
 (() => {
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-
-  const ROWS = 10;     // Number of rows in the bridge (depth)
-  const COLS = 6;      // Number of tiles across (width)
-  const TILE_SIZE = 50;
-
-  // Tiles: true = strong tile, false = weak tile (breaks)
-  let bridge = [];
-
-  // Player position: row and col (row 0 is start, row ROWS-1 is finish)
-  let player = { row: 0, col: Math.floor(COLS/2) };
+  // Constants
+  const ROWS = 4;
+  const COLS = 5;
 
   // Game state
-  let gameOver = false;
-  let messageEl = document.getElementById('message');
-  let restartBtn = document.getElementById('restart');
-  let attempts = 0;
+  let gold = 10;
+  let playerUnits = []; // placed on board
+  let enemyUnits = [];  // placed on board
+  let isBattleStarted = false;
 
-  // Generate the bridge pattern
-  function generateBridge() {
-    bridge = [];
+  // DOM elements
+  const boardEl = document.getElementById('board');
+  const shopUnitsEl = document.getElementById('shopUnits');
+  const goldEl = document.getElementById('gold');
+  const startBtn = document.getElementById('startBattleBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const messageEl = document.getElementById('message');
+
+  // Board cells: track what's placed in each cell
+  // null = empty, {unit} otherwise
+  let boardCells = new Array(ROWS * COLS).fill(null);
+
+  // Unit templates for shop
+  const unitTemplates = [
+    { id: 'soldier', name: 'Soldier', cost: 3, hp: 10, attack: 3 },
+    { id: 'archer', name: 'Archer', cost: 4, hp: 6, attack: 5 },
+    { id: 'tank', name: 'Tank', cost: 6, hp: 20, attack: 2 },
+  ];
+
+  // Enemy unit templates (for AI)
+  const enemyTemplates = [
+    { id: 'enemySoldier', name: 'Enemy Soldier', hp: 10, attack: 3 },
+    { id: 'enemyArcher', name: 'Enemy Archer', hp: 6, attack: 5 },
+    { id: 'enemyTank', name: 'Enemy Tank', hp: 20, attack: 2 },
+  ];
+
+  // Initialize the board UI
+  function createBoard() {
+    boardEl.innerHTML = '';
     for(let r=0; r<ROWS; r++) {
-      let row = [];
       for(let c=0; c<COLS; c++) {
-        // Randomly assign strong/weak tile: about 40% weak
-        row.push(Math.random() < 0.6);
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = r * COLS + c;
+        // Player side: rows 2 and 3 (bottom two rows)
+        if (r >= 2) cell.style.background = '#2a2a2a';
+        else cell.style.background = '#222';
+        boardEl.appendChild(cell);
       }
-      bridge.push(row);
-    }
-    // Ensure start and finish rows are all strong tiles
-    for(let c=0; c<COLS; c++) {
-      bridge[0][c] = true;
-      bridge[ROWS-1][c] = true;
     }
   }
 
-  // Draw the bridge tiles and player
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
+  // Update gold display
+  function updateGold() {
+    goldEl.textContent = `Gold: ${gold}`;
+  }
 
-    // Draw tiles
-    for(let r=0; r<ROWS; r++) {
+  // Create shop UI
+  function createShop() {
+    shopUnitsEl.innerHTML = '';
+    unitTemplates.forEach(unit => {
+      const div = document.createElement('div');
+      div.classList.add('shop-unit');
+      div.textContent = `${unit.name} - Cost: ${unit.cost}g`;
+      const stats = document.createElement('div');
+      stats.className = 'stats';
+      stats.textContent = `HP: ${unit.hp} | ATK: ${unit.attack}`;
+      div.appendChild(stats);
+
+      div.addEventListener('click', () => {
+        if (gold >= unit.cost && !isBattleStarted) {
+          selectedShopUnit = {...unit}; // copy for placement
+          messageEl.textContent = `Selected ${unit.name}, click a cell in your side to place.`;
+        } else if (!isBattleStarted) {
+          messageEl.textContent = `Not enough gold to buy ${unit.name}.`;
+        }
+      });
+
+      shopUnitsEl.appendChild(div);
+    });
+  }
+
+  // Selected unit to place
+  let selectedShopUnit = null;
+
+  // Place unit on board
+  boardEl.addEventListener('click', e => {
+    if (!selectedShopUnit || isBattleStarted) return;
+
+    const cell = e.target.closest('.cell');
+    if (!cell) return;
+
+    const idx = parseInt(cell.dataset.index);
+    const row = Math.floor(idx / COLS);
+
+    // Allow placing only on player side (rows 2 and 3)
+    if (row < 2) {
+      messageEl.textContent = "You can only place units on your side (bottom rows).";
+      return;
+    }
+
+    if (boardCells[idx]) {
+      messageEl.textContent = "Cell is already occupied.";
+      return;
+    }
+
+    // Place unit
+    const unit = {
+      ...selectedShopUnit,
+      hp: selectedShopUnit.hp,
+      maxHp: selectedShopUnit.hp,
+      id: selectedShopUnit.id + '_' + Date.now() + Math.random(),
+      row: row,
+      col: idx % COLS,
+      isEnemy: false,
+    };
+    boardCells[idx] = unit;
+    playerUnits.push(unit);
+
+    gold -= selectedShopUnit.cost;
+    updateGold();
+    selectedShopUnit = null;
+    messageEl.textContent = "Unit placed.";
+
+    updateBoardUI();
+  });
+
+  // Update board UI to show units
+  function updateBoardUI() {
+    const cells = boardEl.querySelectorAll('.cell');
+    cells.forEach((cell, i) => {
+      cell.innerHTML = '';
+      const unit = boardCells[i];
+      if (unit) {
+        const unitDiv = document.createElement('div');
+        unitDiv.className = 'unit' + (unit.isEnemy ? ' enemy' : '');
+        unitDiv.textContent = unit.name[0];
+        // HP bar
+        const hpBar = document.createElement('div');
+        hpBar.style.position = 'absolute';
+        hpBar.style.bottom = '4px';
+        hpBar.style.left = '5px';
+        hpBar.style.width = '70px';
+        hpBar.style.height = '8px';
+        hpBar.style.background = '#555';
+        hpBar.style.borderRadius = '4px';
+
+        const hpFill = document.createElement('div');
+        hpFill.style.height = '8px';
+        hpFill.style.background = unit.isEnemy ? '#f34b4b' : '#f3da0b';
+        hpFill.style.width = (unit.hp / unit.maxHp * 100) + '%';
+        hpFill.style.borderRadius = '4px';
+
+        hpBar.appendChild(hpFill);
+        unitDiv.appendChild(hpBar);
+
+        cell.appendChild(unitDiv);
+        cell.classList.add('occupied');
+      } else {
+        cell.classList.remove('occupied');
+      }
+    });
+  }
+
+  // Spawn enemy units randomly on top rows (0 and 1)
+  function spawnEnemies() {
+    enemyUnits = [];
+    for(let r=0; r<2; r++) {
       for(let c=0; c<COLS; c++) {
-        const x = c * TILE_SIZE + (canvas.width - COLS*TILE_SIZE)/2;
-        const y = r * TILE_SIZE + 50;
-
-        // Tile color depends on tile type and if broken
-        if(bridge[r][c] === null) {
-          // Broken tile
-          ctx.fillStyle = '#222';
-          ctx.strokeStyle = '#660000';
-          ctx.lineWidth = 3;
-          ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-          ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
-
-          // Cracks lines
-          ctx.strokeStyle = '#aa0000';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(x + 5, y + 5);
-          ctx.lineTo(x + TILE_SIZE - 5, y + TILE_SIZE - 5);
-          ctx.moveTo(x + TILE_SIZE - 5, y + 5);
-          ctx.lineTo(x + 5, y + TILE_SIZE - 5);
-          ctx.stroke();
-
-        } else if (bridge[r][c]) {
-          // Strong tile - teal-ish
-          ctx.fillStyle = '#1e7f7f';
-          ctx.strokeStyle = '#145454';
-          ctx.lineWidth = 2;
-          ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-          ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
-        } else {
-          // Weak tile - grayish
-          ctx.fillStyle = '#555';
-          ctx.strokeStyle = '#333';
-          ctx.lineWidth = 2;
-          ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-          ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+        if (Math.random() < 0.4) {
+          const template = enemyTemplates[Math.floor(Math.random() * enemyTemplates.length)];
+          const unit = {
+            ...template,
+            hp: template.hp,
+            maxHp: template.hp,
+            id: template.id + '_' + Date.now() + Math.random(),
+            row: r,
+            col: c,
+            isEnemy: true,
+          };
+          enemyUnits.push(unit);
+          boardCells[r * COLS + c] = unit;
         }
       }
     }
-
-    // Draw player (red square)
-    const px = player.col * TILE_SIZE + (canvas.width - COLS*TILE_SIZE)/2;
-    const py = player.row * TILE_SIZE + 50;
-    ctx.fillStyle = '#f33';
-    ctx.shadowColor = '#f33';
-    ctx.shadowBlur = 15;
-    ctx.fillRect(px + 5, py + 5, TILE_SIZE - 10, TILE_SIZE - 10);
-
-    ctx.restore();
-
-    // Draw progress bar background
-    const barX = (canvas.width - 300)/2;
-    const barY = 20;
-    const barWidth = 300;
-    const barHeight = 15;
-    ctx.fillStyle = '#333';
-    ctx.fillRect(barX, barY, barWidth, barHeight);
-    // Progress fill
-    ctx.fillStyle = '#f3da0b';
-    const progress = player.row / (ROWS - 1);
-    ctx.fillRect(barX, barY, progress * barWidth, barHeight);
-
-    // Progress text
-    ctx.fillStyle = '#eee';
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Progress: ${(progress*100).toFixed(0)}%`, canvas.width/2, barY + barHeight - 2);
   }
 
-  // Handle player move if allowed
-  function movePlayer(dr, dc) {
-    if(gameOver) return;
+  // Clear enemies from board
+  function clearEnemies() {
+    enemyUnits.forEach(eu => {
+      const idx = eu.row * COLS + eu.col;
+      if (boardCells[idx] && boardCells[idx].id === eu.id) {
+        boardCells[idx] = null;
+      }
+    });
+    enemyUnits = [];
+  }
 
-    const newRow = player.row + dr;
-    const newCol = player.col + dc;
+  // Combat loop - units attack opposing units in same column, adjacent row
+  function combatRound() {
+    // Simple AI: each unit attacks one enemy unit in adjacent row(s) same column
+    const allUnits = playerUnits.concat(enemyUnits);
 
-    if(newRow < 0 || newRow >= ROWS) return;
-    if(newCol < 0 || newCol >= COLS) return;
+    // Shuffle attack order
+    const shuffled = allUnits.slice().sort(() => Math.random() - 0.5);
 
-    player.row = newRow;
-    player.col = newCol;
+    for (const unit of shuffled) {
+      if (unit.hp <= 0) continue;
 
-    // Check tile stability
-    const tile = bridge[newRow][newCol];
-    if(tile === false) {
-      // weak tile - break and lose
-      bridge[newRow][newCol] = null; // mark broken
-      gameOver = true;
-      messageEl.textContent = 'You fell through a weak tile! Game Over.';
-      restartBtn.style.display = 'inline-block';
-      attempts++;
+      // Find target in opposing team in adjacent row(s)
+      const opposingUnits = unit.isEnemy ? playerUnits : enemyUnits;
+      // Candidate targets: same col, row +1 or -1
+      const targets = opposingUnits.filter(u =>
+        u.col === unit.col && Math.abs(u.row - unit.row) <= 1 && u.hp > 0
+      );
+      if (targets.length === 0) continue;
+
+      // Random target from candidates
+      const target = targets[Math.floor(Math.random() * targets.length)];
+      target.hp -= unit.attack;
+      if (target.hp < 0) target.hp = 0;
+    }
+
+    // Remove dead units from board
+    playerUnits = playerUnits.filter(u => u.hp > 0);
+    enemyUnits = enemyUnits.filter(u => u.hp > 0);
+
+    // Update board cells
+    boardCells = boardCells.map(cell => {
+      if (!cell) return null;
+      if (cell.hp <= 0) return null;
+      return cell;
+    });
+
+    updateBoardUI();
+  }
+
+  // Check if battle ended
+  function checkBattleEnd() {
+    if (playerUnits.length === 0) {
+      messageEl.textContent = 'You Lost!';
+      return 'lost';
+    }
+    if (enemyUnits.length === 0) {
+      messageEl.textContent = 'You Won!';
+      return 'won';
+    }
+    return null;
+  }
+
+  // Start battle
+  async function startBattle() {
+    if (isBattleStarted) return;
+    if (playerUnits.length === 0) {
+      messageEl.textContent = 'Place at least one unit to start battle.';
       return;
     }
 
-    if(newRow === ROWS - 1) {
-      // Reached the end - win
-      gameOver = true;
-      messageEl.textContent = `You crossed safely! Attempts: ${attempts + 1}`;
-      restartBtn.style.display = 'inline-block';
-      attempts++;
-      return;
+    isBattleStarted = true;
+    messageEl.textContent = 'Battle started!';
+
+    // Spawn enemies
+    spawnEnemies();
+    updateBoardUI();
+
+    startBtn.disabled = true;
+
+    // Run battle rounds until one side is defeated
+    while (true) {
+      combatRound();
+      await new Promise(r => setTimeout(r, 1000)); // wait 1s between rounds
+      const result = checkBattleEnd();
+      if (result) break;
     }
+
+    resetBtn.style.display = 'inline-block';
   }
 
-  // Keyboard controls
-  window.addEventListener('keydown', e => {
-    if(gameOver) return;
-    switch(e.key) {
-      case 'ArrowUp':
-      case 'w':
-      case 'W':
-        movePlayer(-1, 0);
-        break;
-      case 'ArrowDown':
-      case 's':
-      case 'S':
-        movePlayer(1, 0);
-        break;
-      case 'ArrowLeft':
-      case 'a':
-      case 'A':
-        movePlayer(0, -1);
-        break;
-      case 'ArrowRight':
-      case 'd':
-      case 'D':
-        movePlayer(0, 1);
-        break;
-    }
-    draw();
-  });
-
-  // Restart game
-  restartBtn.addEventListener('click', () => {
-    gameOver = false;
+  // Reset game
+  function resetGame() {
+    gold = 10;
+    playerUnits = [];
+    enemyUnits = [];
+    boardCells = new Array(ROWS * COLS).fill(null);
+    isBattleStarted = false;
     messageEl.textContent = '';
-    restartBtn.style.display = 'none';
-    player = { row: 0, col: Math.floor(COLS/2) };
-    generateBridge();
-    draw();
-  });
+    startBtn.disabled = false;
+    resetBtn.style.display = 'none';
+    selectedShopUnit = null;
+    updateGold();
+    createBoard();
+    createShop();
+    updateBoardUI();
+  }
 
-  // Initial setup
-  generateBridge();
-  draw();
+  // Initialize UI
+  createBoard();
+  createShop();
+  updateGold();
+
+  startBtn.addEventListener('click', startBattle);
+  resetBtn.addEventListener('click', resetGame);
 
 })();
 </script>
