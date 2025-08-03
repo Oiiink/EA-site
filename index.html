@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Advanced Dating Sim - Deep Dialogue</title>
+<title>Advanced Dating Sim - Multi-line Dialogue</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -99,7 +99,7 @@
     text-align: center;
   }
   #dialogue {
-    min-height: 120px;
+    min-height: 140px;
     font-size: 1.2em;
     line-height: 1.4;
     margin-bottom: 15px;
@@ -128,117 +128,6 @@
   button.choice:hover {
     background-color: #2e4a33;
   }
-  #minigame {
-    margin-top: 20px;
-    padding: 15px;
-    background: #e6f0ec;
-    border-radius: 10px;
-    display: none;
-    text-align: center;
-  }
-  #minigame button {
-    background: #5a8267;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  #inventory {
-    margin-top: 15px;
-    border-top: 2px solid #ccc;
-    padding-top: 15px;
-  }
-  #inventory h3 {
-    color: #3a5a40;
-    margin-bottom: 8px;
-  }
-  #inventoryItems {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .inventory-item {
-    background: #f0f4f3;
-    border-radius: 8px;
-    padding: 10px 14px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    user-select: none;
-    min-width: 100px;
-    text-align: center;
-    font-weight: 600;
-    color: #3a5a40;
-  }
-  .inventory-item.selected {
-    border-color: #5a8267;
-    background: #d6e2d1;
-  }
-  #giftSection {
-    margin-top: 20px;
-    border-top: 2px solid #ccc;
-    padding-top: 15px;
-  }
-  #giftSection h3 {
-    color: #3a5a40;
-    margin-bottom: 8px;
-  }
-  #gifts {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .gift {
-    background: #f0f4f3;
-    border-radius: 8px;
-    padding: 10px 14px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    user-select: none;
-    min-width: 120px;
-    text-align: center;
-    font-weight: 600;
-    color: #3a5a40;
-  }
-  .gift.soldout {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  #eventsLog {
-    margin-top: 15px;
-    font-size: 0.85em;
-    max-height: 80px;
-    overflow-y: auto;
-    background: #e9f0ea;
-    border-radius: 6px;
-    padding: 8px 12px;
-    color: #52703a;
-  }
-  #saveLoad {
-    margin-top: 15px;
-    text-align: center;
-  }
-  #saveLoad button {
-    background: #567a52;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    margin: 0 5px;
-  }
-  #location {
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #3a5a40;
-  }
 </style>
 </head>
 <body>
@@ -258,8 +147,6 @@
     <div id="dateTime"></div>
   </div>
 
-  <div id="location"></div>
-
   <div id="characterInfo">
     <div id="portrait"><img src="" alt="Character Portrait" /></div>
     <div>
@@ -273,761 +160,226 @@
 
   <div id="dialogue"></div>
   <div id="choices"></div>
-
-  <div id="minigame">
-    <div id="minigameText"></div>
-    <button id="playMinigameBtn">Play Minigame</button>
-  </div>
-
-  <div id="inventory">
-    <h3>Your Inventory</h3>
-    <div id="inventoryItems"></div>
-  </div>
-
-  <div id="giftSection">
-    <h3>Gift Shop</h3>
-    <div id="gifts"></div>
-  </div>
-
-  <div id="eventsLog"></div>
-
-  <div id="saveLoad">
-    <button id="saveBtn">Save Progress</button>
-    <button id="loadBtn">Load Progress</button>
-    <button id="resetBtn">Reset Game</button>
-  </div>
 </div>
 
 <script>
 (() => {
-  // --- Player Setup ---
-  let player = {
-    name: "",
-    avatar: "🧑",
-    inventory: [],
-    currency: 100
+  // Player setup (simplified)
+  let player = { name: "Player", avatar: "🧑" };
+  const character = {
+    name: "Sakura",
+    avatarUrl: "https://avatars.dicebear.com/api/female/sakura.svg",
+    stats: { affection: 30, trust: 20, respect: 25, jealousy: 5 },
+    mood: 2,
+    moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
+    memory: { lastQuestion: null, confusionCount: 0 }
   };
 
-  // --- Time & Location System ---
-  const locations = ["Park", "Cafe", "Library", "Museum"];
-  let currentLocationIndex = 0;
-
-  let gameTime = {
-    day: 1,
-    hour: 10,
-  };
-
-  function advanceTime(hours) {
-    gameTime.hour += hours;
-    while (gameTime.hour >= 24) {
-      gameTime.hour -= 24;
-      gameTime.day++;
-      logEvent(`A new day begins: Day ${gameTime.day}`);
-      maybeTriggerRandomEvent();
-    }
-    updateDateTimeDisplay();
-  }
-
-  function updateDateTimeDisplay() {
-    const hour12 = gameTime.hour % 12 === 0 ? 12 : gameTime.hour % 12;
-    const ampm = gameTime.hour < 12 ? "AM" : "PM";
-    document.getElementById("dateTime").textContent = `Day ${gameTime.day} - ${hour12}:00 ${ampm}`;
-  }
-
-  // --- Characters ---
-  const characters = [
-    {
-      id: "sakura",
-      name: "Sakura",
-      avatarUrl: "https://avatars.dicebear.com/api/female/sakura.svg",
-      personality: {
-        likes: ["reading", "gardening", "chocolate"],
-        dislikes: ["rudeness", "lateness"],
-        hobbies: "loves reading fantasy novels and tending her garden.",
-        hates: "dislikes when people are rude or late."
-      },
-      stats: {
-        affection: 30,
-        trust: 20,
-        respect: 25,
-        jealousy: 5
-      },
-      mood: 1,
-      moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
-      memory: {
-        askedAboutHobbies: 0,
-        gaveCompliment: 0,
-        minigamePlayed: false,
-        repeatedQuestions: 0,
-        giftsReceived: [],
-        lastQuestion: null,
-        confusionCount: 0
-      },
-      dialogueTrees: {}, // will define later
-      locationPreferences: ["Park", "Cafe", "Library"],
+  // Dialogue tree supporting multi-line dialogue (array of strings)
+  const dialogueTree = {
+    start: {
+      text: [`Hi ${player.name}! What would you like to talk about with Sakura?`],
+      choices: [
+        { text: "Ask about hobbies", next: "hobbies" },
+        { text: "Give a compliment", next: "compliment" },
+        { text: "Say goodbye", next: "goodbye" }
+      ]
     },
-    {
-      id: "kevin",
-      name: "Kevin",
-      avatarUrl: "https://avatars.dicebear.com/api/male/kevin.svg",
-      personality: {
-        likes: ["sports", "music", "coffee"],
-        dislikes: ["lateness", "boring conversations"],
-        hobbies: "enjoys playing basketball and listening to rock music.",
-        hates: "does not like people who are late or boring."
-      },
-      stats: {
-        affection: 20,
-        trust: 30,
-        respect: 30,
-        jealousy: 10
-      },
-      mood: 1,
-      moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
-      memory: {
-        askedAboutHobbies: 0,
-        gaveCompliment: 0,
-        minigamePlayed: false,
-        repeatedQuestions: 0,
-        giftsReceived: [],
-        lastQuestion: null,
-        confusionCount: 0
-      },
-      dialogueTrees: {},
-      locationPreferences: ["Cafe", "Museum"],
+    hobbies: {
+      text: [
+        "Well, I love reading fantasy novels.",
+        "Gardening is something I enjoy a lot too — it helps me relax after a long day.",
+        "Sometimes I even grow rare herbs for tea!"
+      ],
+      choices: [
+        { text: "That sounds wonderful!", next: "hobbies_positive" },
+        { text: "I don't like gardening...", next: "hobbies_negative" },
+        { text: "Back to main", next: "start" }
+      ]
+    },
+    hobbies_positive: {
+      text: [
+        "Thank you! Maybe I can show you my garden sometime.",
+        "Would you like to come over this weekend?"
+      ],
+      choices: [
+        { text: "I'd love to!", next: "invite_accept" },
+        { text: "Maybe another time.", next: "invite_decline" }
+      ]
+    },
+    hobbies_negative: {
+      text: [
+        "Oh... that's a shame.",
+        "Gardening is really calming, but I understand it's not for everyone."
+      ],
+      choices: [
+        { text: "Sorry if I offended you.", next: "start" },
+        { text: "Let's talk about something else.", next: "start" }
+      ]
+    },
+    invite_accept: {
+      text: [
+        "Yay! I'm so excited to show you.",
+        "I hope you'll like it."
+      ],
+      choices: [{ text: "Back to main", next: "start" }]
+    },
+    invite_decline: {
+      text: [
+        "That's okay. Maybe another time then.",
+        "I look forward to seeing you whenever you're ready."
+      ],
+      choices: [{ text: "Back to main", next: "start" }]
+    },
+    compliment: {
+      text: [
+        "You're so sweet to say that.",
+        "It really means a lot to me."
+      ],
+      choices: [{ text: "Back to main", next: "start" }]
+    },
+    goodbye: {
+      text: ["Goodbye! Hope to see you again soon."],
+      choices: []
     }
-  ];
+  };
 
-  let currentCharacterIndex = 0;
-  let currentCharacter = characters[currentCharacterIndex];
+  // State for tracking multi-line text in current node
+  let currentNodeId = "start";
+  let currentLineIndex = 0;
 
-  // --- Inventory & Gifts ---
-  const giftCatalog = [
-    { id: "flowers", name: "Flowers", price: 20, likes: ["sakura"], dislikes: ["kevin"] },
-    { id: "chocolate", name: "Chocolate", price: 15, likes: ["sakura", "kevin"], dislikes: [] },
-    { id: "book", name: "Book", price: 25, likes: ["sakura"], dislikes: ["kevin"] },
-    { id: "coffee", name: "Coffee", price: 10, likes: ["kevin"], dislikes: [] },
-    { id: "music_cd", name: "Music CD", price: 30, likes: ["kevin"], dislikes: [] }
-  ];
+  // Elements
+  const playerNameInput = document.getElementById("playerNameInput");
+  const avatarSelect = document.getElementById("avatarSelect");
+  const dialogueEl = document.getElementById("dialogue");
+  const choicesEl = document.getElementById("choices");
+  const portraitImg = document.querySelector("#portrait img");
+  const charNameEl = document.getElementById("charName");
+  const moodEl = document.getElementById("mood");
+  const relationshipBarsEl = document.getElementById("relationshipBars");
+  const dateTimeEl = document.getElementById("dateTime");
 
-  // --- Utilities ---
-  function logEvent(text) {
-    const eventsLog = document.getElementById("eventsLog");
-    const p = document.createElement("p");
-    p.textContent = `[Day ${gameTime.day}] ${text}`;
-    eventsLog.prepend(p);
-    while(eventsLog.childElementCount > 20) eventsLog.removeChild(eventsLog.lastChild);
-  }
+  // Render functions
+  function renderCharacterInfo() {
+    portraitImg.src = character.avatarUrl;
+    portraitImg.alt = character.name;
+    charNameEl.textContent = character.name;
 
-  // --- Save & Load ---
-  function saveGame() {
-    const saveData = {
-      player,
-      gameTime,
-      currentCharacterIndex,
-      characters
-    };
-    localStorage.setItem("datingSimSave", JSON.stringify(saveData));
-    alert("Game saved!");
-  }
-
-  function loadGame() {
-    const data = localStorage.getItem("datingSimSave");
-    if(!data) {
-      alert("No saved game found.");
-      return;
-    }
-    const saveData = JSON.parse(data);
-    player = saveData.player;
-    Object.assign(gameTime, saveData.gameTime);
-    currentCharacterIndex = saveData.currentCharacterIndex;
-    currentCharacter = characters[currentCharacterIndex];
-    for (let i=0; i < characters.length; i++) {
-      Object.assign(characters[i], saveData.characters[i]);
-    }
-    renderUI();
-    alert("Game loaded!");
-  }
-
-  function resetGame() {
-    if(confirm("Are you sure you want to reset? All progress will be lost.")) {
-      localStorage.removeItem("datingSimSave");
-      location.reload();
-    }
-  }
-
-  // --- Mood & Relationship Bars ---
-  function updateMoodAndStats() {
-    const moodEl = document.getElementById("mood");
-    const moodIndex = Math.min(Math.max(currentCharacter.mood, 0), currentCharacter.moodLevels.length-1);
-    moodEl.textContent = `Mood: ${currentCharacter.moodLevels[moodIndex]}`;
-    const moodsColors = ["#aa4444", "#999999", "#4caf50", "#a3d977"];
-    moodEl.style.color = moodsColors[moodIndex] || "#333";
-
-    // Update bars
-    const barsContainer = document.getElementById("relationshipBars");
-    barsContainer.innerHTML = "";
-    for(const stat in currentCharacter.stats) {
-      const container = document.createElement("div");
-      container.className = "statLabel";
-      container.textContent = `${capitalize(stat)}:`;
+    // Render stats bars
+    relationshipBarsEl.innerHTML = "";
+    for (const stat in character.stats) {
+      const label = document.createElement("div");
+      label.className = "statLabel";
+      label.textContent = `${capitalize(stat)}:`;
 
       const barWrapper = document.createElement("div");
       barWrapper.className = "statBar";
 
       const fill = document.createElement("div");
       fill.className = "statFill";
-      fill.style.width = `${currentCharacter.stats[stat]}%`;
-
-      if(stat === "jealousy") fill.style.backgroundColor = "#d9534f";
-      else fill.style.backgroundColor = "#6ab04c";
+      fill.style.width = `${character.stats[stat]}%`;
+      fill.style.backgroundColor = stat === "jealousy" ? "#d9534f" : "#6ab04c";
 
       barWrapper.appendChild(fill);
-      barsContainer.appendChild(container);
-      barsContainer.appendChild(barWrapper);
+      relationshipBarsEl.appendChild(label);
+      relationshipBarsEl.appendChild(barWrapper);
     }
+
+    // Mood
+    moodEl.textContent = `Mood: ${character.moodLevels[character.mood]}`;
+    const moodColors = ["#aa4444", "#999999", "#4caf50", "#a3d977"];
+    moodEl.style.color = moodColors[character.mood];
   }
 
   function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  // --- Dialogue Helpers ---
-  function adjustStat(stat, amount) {
-    if(!currentCharacter.stats.hasOwnProperty(stat)) return;
-    currentCharacter.stats[stat] = Math.min(100, Math.max(0, currentCharacter.stats[stat] + amount));
-  }
-  function changeMood(amount) {
-    currentCharacter.mood = Math.min(currentCharacter.moodLevels.length-1, Math.max(0, currentCharacter.mood + amount));
-  }
-
-  // Memory update with repetition check & confusion escalation
-  function handleRepeatedQuestion(questionKey) {
-    if(currentCharacter.memory.lastQuestion === questionKey) {
-      currentCharacter.memory.confusionCount++;
-      adjustStat("affection", -3 * currentCharacter.memory.confusionCount);
-      changeMood(-1 * currentCharacter.memory.confusionCount);
-      return true; // repeated
-    } else {
-      currentCharacter.memory.confusionCount = 0;
-      currentCharacter.memory.lastQuestion = questionKey;
-      return false;
-    }
-  }
-
-  // --- Dialogue Trees ---
-
-  const dialogueTrees = {
-    sakura: {
-      start: {
-        text: () => `Hi ${player.name}! What would you like to talk about with Sakura?`,
-        choices: [
-          { text: "Ask about hobbies", next: "hobbies" },
-          { text: "Give a compliment", next: "compliment" },
-          { text: "Give a gift", next: "giveGift" },
-          { text: "Play minigame", next: "minigame" },
-          { text: "Change location", next: "changeLocation" },
-          { text: "Say goodbye", next: "goodbye" }
-        ]
-      },
-      hobbies: {
-        text: () => {
-          const repeated = handleRepeatedQuestion("hobbies");
-          if(repeated) return `Sakura looks annoyed. "You've already asked about my hobbies too many times."`;
-          adjustStat("trust", 5);
-          changeMood(1);
-          return `Sakura smiles warmly. "I love reading fantasy novels and gardening. It's my favorite way to relax."`;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      compliment: {
-        text: () => {
-          const repeated = handleRepeatedQuestion("compliment");
-          if(repeated) return `"You're flattering me too much... it's starting to feel fake."`;
-          adjustStat("affection", 7);
-          changeMood(1);
-          return `"Thank you! That means a lot to me."`;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      giveGift: {
-        text: () => {
-          if(player.inventory.length === 0) return `"You have no gifts to give."`;
-          return `"Choose a gift to give:"`;
-        },
-        choices: player.inventory.map((gift, i) => ({
-          text: gift.name,
-          next: "giftResult",
-          effect: () => giveGiftToCharacter(gift)
-        })).concat({ text: "Back", next: "start" })
-      },
-      giftResult: {
-        text: () => {
-          const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
-          if(!lastGift) return `"No gift given."`;
-          let response = "";
-          if(currentCharacter.personality.likes.includes(lastGift.id)) {
-            adjustStat("affection", 10);
-            adjustStat("trust", 5);
-            changeMood(1);
-            response = `"Sakura loves the ${lastGift.name}! She's very happy."`;
-          } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
-            adjustStat("affection", -10);
-            changeMood(-1);
-            response = `"Sakura didn't like the ${lastGift.name}. She looks displeased."`;
-          } else {
-            adjustStat("affection", 3);
-            response = `"Sakura thanks you for the ${lastGift.name}."`;
-          }
-          return response;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      minigame: {
-        text: () => {
-          if(currentCharacter.memory.minigamePlayed) {
-            return `"We've already played the minigame today!"`;
-          } else {
-            return `"Let's play a quick minigame!"`;
-          }
-        },
-        choices: [
-          { text: "Start Reaction Test", next: "reactionTest" },
-          { text: "Back", next: "start" }
-        ]
-      },
-      reactionTest: {
-        text: "Wait for the GO signal, then click as fast as you can!",
-        choices: [],
-        action: startReactionTest
-      },
-      changeLocation: {
-        text: "Choose a new location:",
-        choices: locations.map(loc => ({
-          text: loc,
-          next: "locationChanged",
-          effect: () => changeLocation(loc)
-        })).concat({ text: "Back", next: "start" })
-      },
-      locationChanged: {
-        text: () => `You moved to the ${currentLocation()}.`,
-        choices: [{ text: "Back to conversation", next: "start" }]
-      },
-      goodbye: {
-        text: () => {
-          advanceTime(1);
-          return `"Goodbye for now, ${player.name}. Hope to see you again soon!"`;
-        },
-        choices: []
-      }
-    },
-    kevin: {
-      start: {
-        text: () => `Hey ${player.name}, what do you want to talk about with Kevin?`,
-        choices: [
-          { text: "Ask about music", next: "music" },
-          { text: "Give a compliment", next: "compliment" },
-          { text: "Give a gift", next: "giveGift" },
-          { text: "Play minigame", next: "minigame" },
-          { text: "Change location", next: "changeLocation" },
-          { text: "Say goodbye", next: "goodbye" }
-        ]
-      },
-      music: {
-        text: () => {
-          const repeated = handleRepeatedQuestion("music");
-          if(repeated) return `Kevin frowns. "You've already asked about my music taste too many times."`;
-          adjustStat("trust", 5);
-          changeMood(1);
-          return `Kevin says, "I love rock music and basketball. What about you?"`;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      compliment: {
-        text: () => {
-          const repeated = handleRepeatedQuestion("compliment");
-          if(repeated) return `"You're flattering me too much, it feels fake."`;
-          adjustStat("affection", 7);
-          changeMood(1);
-          return `"Thanks, I appreciate that."`;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      giveGift: {
-        text: () => {
-          if(player.inventory.length === 0) return `"You have no gifts to give."`;
-          return `"Choose a gift to give:"`;
-        },
-        choices: player.inventory.map((gift, i) => ({
-          text: gift.name,
-          next: "giftResult",
-          effect: () => giveGiftToCharacter(gift)
-        })).concat({ text: "Back", next: "start" })
-      },
-      giftResult: {
-        text: () => {
-          const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
-          if(!lastGift) return `"No gift given."`;
-          let response = "";
-          if(currentCharacter.personality.likes.includes(lastGift.id)) {
-            adjustStat("affection", 10);
-            adjustStat("trust", 5);
-            changeMood(1);
-            response = `"Kevin really likes the ${lastGift.name}! He's very happy."`;
-          } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
-            adjustStat("affection", -10);
-            changeMood(-1);
-            response = `"Kevin didn't care much for the ${lastGift.name}."`;
-          } else {
-            adjustStat("affection", 3);
-            response = `"Kevin thanks you for the ${lastGift.name}."`;
-          }
-          return response;
-        },
-        choices: [{ text: "Back", next: "start" }]
-      },
-      minigame: {
-        text: () => {
-          if(currentCharacter.memory.minigamePlayed) {
-            return `"We've already played the minigame today!"`;
-          } else {
-            return `"Wanna try a quick minigame?"`;
-          }
-        },
-        choices: [
-          { text: "Start Quiz", next: "quiz" },
-          { text: "Back", next: "start" }
-        ]
-      },
-      quiz: {
-        text: "Answer these questions about Kevin correctly!",
-        choices: [],
-        action: startQuiz
-      },
-      changeLocation: {
-        text: "Choose a new location:",
-        choices: locations.map(loc => ({
-          text: loc,
-          next: "locationChanged",
-          effect: () => changeLocation(loc)
-        })).concat({ text: "Back", next: "start" })
-      },
-      locationChanged: {
-        text: () => `You moved to the ${currentLocation()}.`,
-        choices: [{ text: "Back to conversation", next: "start" }]
-      },
-      goodbye: {
-        text: () => {
-          advanceTime(1);
-          return `"See you later, ${player.name}!"`;
-        },
-        choices: []
-      }
-    }
-  };
-
-  // --- Current Dialogue State ---
-  let currentNodeId = "start";
-
-  // --- Render Functions ---
-  function renderUI() {
-    // Player name & avatar
-    const nameInput = document.getElementById("playerNameInput");
-    nameInput.value = player.name || "";
-    const avatarSelect = document.getElementById("avatarSelect");
-    avatarSelect.value = player.avatar;
-
-    // Character Info
-    const portraitImg = document.querySelector("#portrait img");
-    portraitImg.src = currentCharacter.avatarUrl;
-    portraitImg.alt = currentCharacter.name;
-
-    document.getElementById("charName").textContent = currentCharacter.name;
-    updateMoodAndStats();
-
-    // Dialogue & choices
-    renderDialogue();
-
-    // Inventory
-    renderInventory();
-
-    // Gifts shop
-    renderGifts();
-
-    // Location
-    document.getElementById("location").textContent = `Location: ${currentLocation()}`;
-
-    updateDateTimeDisplay();
-  }
-
+  // Dialogue rendering supports multi-line with "Next" button
   function renderDialogue() {
-    const dialogueEl = document.getElementById("dialogue");
-    const choicesEl = document.getElementById("choices");
-    const minigameEl = document.getElementById("minigame");
-
-    minigameEl.style.display = "none";
-    choicesEl.innerHTML = "";
-
-    const tree = dialogueTrees[currentCharacter.id];
-    if (!tree) {
-      dialogueEl.textContent = "No dialogue available.";
-      return;
-    }
-
-    const node = tree[currentNodeId];
+    const node = dialogueTree[currentNodeId];
     if (!node) {
-      dialogueEl.textContent = "Dialogue node not found.";
+      dialogueEl.textContent = "Dialogue not found.";
+      choicesEl.innerHTML = "";
       return;
     }
 
-    // Text
-    let textContent = typeof node.text === "function" ? node.text() : node.text;
-    dialogueEl.textContent = textContent;
-
-    // Action on enter
-    if (typeof node.action === "function") {
-      node.action();
-    }
-
-    // Choices
-    if (node.choices && node.choices.length > 0) {
-      node.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.textContent = choice.text;
-        btn.onclick = () => {
-          if(choice.effect) choice.effect();
-          currentNodeId = choice.next;
-          renderDialogue();
-        };
-        choicesEl.appendChild(btn);
-      });
-    } else if (node.next) {
-      currentNodeId = node.next;
-      renderDialogue();
+    // If the current line index is less than total lines, show that line and "Next"
+    if (Array.isArray(node.text) && currentLineIndex < node.text.length - 1) {
+      dialogueEl.textContent = node.text[currentLineIndex];
+      choicesEl.innerHTML = "";
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "choice";
+      nextBtn.textContent = "Next";
+      nextBtn.onclick = () => {
+        currentLineIndex++;
+        renderDialogue();
+      };
+      choicesEl.appendChild(nextBtn);
     } else {
-      // no choices - show back button unless goodbye node (no choices)
-      if(currentNodeId !== "goodbye") {
+      // Show last line or single line
+      dialogueEl.textContent = Array.isArray(node.text) ? node.text[currentLineIndex] : node.text;
+      choicesEl.innerHTML = "";
+
+      if (node.choices && node.choices.length > 0) {
+        node.choices.forEach(choice => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.textContent = choice.text;
+          btn.onclick = () => {
+            currentNodeId = choice.next;
+            currentLineIndex = 0;
+            renderDialogue();
+          };
+          choicesEl.appendChild(btn);
+        });
+      } else {
+        // No choices = end of dialogue
         const btn = document.createElement("button");
         btn.className = "choice";
-        btn.textContent = "Back";
+        btn.textContent = "Restart Conversation";
         btn.onclick = () => {
           currentNodeId = "start";
+          currentLineIndex = 0;
           renderDialogue();
         };
         choicesEl.appendChild(btn);
-      } else {
-        choicesEl.innerHTML = "";
       }
     }
   }
 
-  // --- Inventory Rendering & Management ---
-  function renderInventory() {
-    const invContainer = document.getElementById("inventoryItems");
-    invContainer.innerHTML = "";
-    if (player.inventory.length === 0) {
-      invContainer.textContent = "You have no items.";
-      return;
-    }
-    player.inventory.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "inventory-item";
-      div.textContent = item.name;
-      invContainer.appendChild(div);
-    });
+  // Initialize UI
+  function renderUI() {
+    playerNameInput.value = player.name;
+    avatarSelect.value = player.avatar;
+    renderCharacterInfo();
+    renderDialogue();
+    updateDateTime();
   }
 
-  // --- Gifts Rendering ---
-  function renderGifts() {
-    const giftsContainer = document.getElementById("gifts");
-    giftsContainer.innerHTML = "";
-    giftCatalog.forEach(gift => {
-      const div = document.createElement("div");
-      div.className = "gift";
-      div.textContent = `${gift.name} - ${gift.price}g`;
-      if (player.currency < gift.price) {
-        div.classList.add("soldout");
-      }
-      div.onclick = () => {
-        if (player.currency >= gift.price) {
-          player.currency -= gift.price;
-          player.inventory.push({ id: gift.id, name: gift.name });
-          logEvent(`You bought a ${gift.name}.`);
-          renderUI();
-        }
-      };
-      giftsContainer.appendChild(div);
-    });
+  // Date/time display (simple for now)
+  function updateDateTime() {
+    const now = new Date();
+    dateTimeEl.textContent = now.toLocaleString();
   }
 
-  // --- Gift giving ---
-  function giveGiftToCharacter(gift) {
-    currentCharacter.memory.giftsReceived.push(gift);
-    player.inventory = player.inventory.filter(i => i !== gift);
-  }
-
-  // --- Minigames ---
-
-  // Reaction Test
-  let reactionStartTime = 0;
-  function startReactionTest() {
-    const minigameEl = document.getElementById("minigame");
-    const minigameText = document.getElementById("minigameText");
-    const playBtn = document.getElementById("playMinigameBtn");
-    minigameEl.style.display = "block";
-    minigameText.textContent = "Get ready...";
-    playBtn.style.display = "none";
-
-    setTimeout(() => {
-      minigameText.textContent = "GO! Click the button!";
-      playBtn.style.display = "inline-block";
-      reactionStartTime = Date.now();
-      playBtn.onclick = () => {
-        const reactionTime = Date.now() - reactionStartTime;
-        minigameText.textContent = `Your reaction time: ${reactionTime} ms`;
-        minigameEl.style.display = "none";
-        currentCharacter.memory.minigamePlayed = true;
-        // Affect stats based on reaction speed
-        if (reactionTime < 300) {
-          adjustStat("affection", 10);
-          adjustStat("trust", 5);
-          changeMood(1);
-          logEvent("You impressed your date with your quick reaction!");
-        } else if (reactionTime < 600) {
-          adjustStat("affection", 5);
-          logEvent("Your date thinks you're okay at the minigame.");
-        } else {
-          adjustStat("affection", -5);
-          changeMood(-1);
-          logEvent("Your date is a bit disappointed with your reaction.");
-        }
-        renderUI();
-      };
-    }, 2000);
-  }
-
-  // Quiz for Kevin
-  function startQuiz() {
-    const minigameEl = document.getElementById("minigame");
-    const minigameText = document.getElementById("minigameText");
-    const playBtn = document.getElementById("playMinigameBtn");
-    const choicesEl = document.getElementById("choices");
-    minigameEl.style.display = "block";
-    playBtn.style.display = "inline-block";
-
-    const questions = [
-      {
-        q: "What is Kevin's favorite sport?",
-        options: ["Basketball", "Soccer", "Tennis", "Baseball"],
-        answer: 0
-      },
-      {
-        q: "Which music genre does Kevin enjoy?",
-        options: ["Jazz", "Rock", "Classical", "Pop"],
-        answer: 1
-      },
-      {
-        q: "What time of day does Kevin prefer?",
-        options: ["Morning", "Afternoon", "Evening", "Night"],
-        answer: 2
-      }
-    ];
-
-    let currentQ = 0;
-    minigameText.textContent = questions[currentQ].q;
-    choicesEl.innerHTML = "";
-
-    function showQuestion() {
-      minigameText.textContent = questions[currentQ].q;
-      choicesEl.innerHTML = "";
-      questions[currentQ].options.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.textContent = opt;
-        btn.onclick = () => {
-          if (i === questions[currentQ].answer) {
-            logEvent("Correct answer!");
-            adjustStat("affection", 5);
-            changeMood(1);
-          } else {
-            logEvent("Wrong answer.");
-            adjustStat("affection", -5);
-            changeMood(-1);
-          }
-          currentQ++;
-          if (currentQ < questions.length) {
-            showQuestion();
-          } else {
-            minigameEl.style.display = "none";
-            renderUI();
-          }
-        };
-        choicesEl.appendChild(btn);
-      });
-    }
-
-    playBtn.onclick = () => {
-      playBtn.style.display = "none";
-      showQuestion();
-    };
-  }
-
-  // --- Location Functions ---
-  function currentLocation() {
-    return locations[currentLocationIndex];
-  }
-  function changeLocation(loc) {
-    const idx = locations.indexOf(loc);
-    if (idx >= 0) currentLocationIndex = idx;
-    advanceTime(2);
-    logEvent(`You went to the ${loc}.`);
-    renderUI();
-  }
-
-  // --- Player Setup Handlers ---
-  document.getElementById("playerNameInput").addEventListener("input", (e) => {
+  // Event listeners for player name and avatar changes
+  playerNameInput.addEventListener("input", e => {
     player.name = e.target.value.trim() || "Player";
     renderUI();
   });
-  document.getElementById("avatarSelect").addEventListener("change", (e) => {
+
+  avatarSelect.addEventListener("change", e => {
     player.avatar = e.target.value;
   });
 
-  // --- Character Switching ---
-  function switchCharacter(index) {
-    if(index >= 0 && index < characters.length) {
-      currentCharacterIndex = index;
-      currentCharacter = characters[index];
-      currentNodeId = "start";
-      renderUI();
-    }
-  }
-
-  // --- Save / Load Buttons ---
-  document.getElementById("saveBtn").onclick = saveGame;
-  document.getElementById("loadBtn").onclick = loadGame;
-  document.getElementById("resetBtn").onclick = resetGame;
-
-  // Initialize
-  if(!player.name) player.name = "Player";
+  // Start
   renderUI();
 
-  // Quick character switch for demo
-  const header = document.getElementById("header");
-  const switcherDiv = document.createElement("div");
-  switcherDiv.style.marginLeft = "10px";
-  characters.forEach((char, i) => {
-    const btn = document.createElement("button");
-    btn.textContent = char.name;
-    btn.style.marginLeft = "5px";
-    btn.onclick = () => switchCharacter(i);
-    switcherDiv.appendChild(btn);
-  });
-  header.appendChild(switcherDiv);
-
-  updateDateTimeDisplay();
-
+  // Capitalize utility reused
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 })();
 </script>
 </body>
