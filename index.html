@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Advanced Dating Sim</title>
+<title>Advanced Dating Sim - Deep Dialogue</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -265,9 +265,7 @@
     <div>
       <div id="charName"></div>
       <div id="stats">
-        <div id="relationshipBars">
-          <!-- Dynamic relationship bars here -->
-        </div>
+        <div id="relationshipBars"></div>
       </div>
       <div id="mood"></div>
     </div>
@@ -316,7 +314,7 @@
 
   let gameTime = {
     day: 1,
-    hour: 10, // 24h format, starting at 10am
+    hour: 10,
   };
 
   function advanceTime(hours) {
@@ -325,7 +323,6 @@
       gameTime.hour -= 24;
       gameTime.day++;
       logEvent(`A new day begins: Day ${gameTime.day}`);
-      // Trigger day-based events here
       maybeTriggerRandomEvent();
     }
     updateDateTimeDisplay();
@@ -362,7 +359,9 @@
         gaveCompliment: 0,
         minigamePlayed: false,
         repeatedQuestions: 0,
-        giftsReceived: []
+        giftsReceived: [],
+        lastQuestion: null,
+        confusionCount: 0
       },
       dialogueTrees: {}, // will define later
       locationPreferences: ["Park", "Cafe", "Library"],
@@ -390,7 +389,9 @@
         gaveCompliment: 0,
         minigamePlayed: false,
         repeatedQuestions: 0,
-        giftsReceived: []
+        giftsReceived: [],
+        lastQuestion: null,
+        confusionCount: 0
       },
       dialogueTrees: {},
       locationPreferences: ["Cafe", "Museum"],
@@ -402,11 +403,11 @@
 
   // --- Inventory & Gifts ---
   const giftCatalog = [
-    { id: "flowers", name: "Flowers", price: 20, likes: ["Sakura"], dislikes: ["Kevin"] },
-    { id: "chocolate", name: "Chocolate", price: 15, likes: ["Sakura", "Kevin"], dislikes: [] },
-    { id: "book", name: "Book", price: 25, likes: ["Sakura"], dislikes: ["Kevin"] },
-    { id: "coffee", name: "Coffee", price: 10, likes: ["Kevin"], dislikes: [] },
-    { id: "music_cd", name: "Music CD", price: 30, likes: ["Kevin"], dislikes: [] }
+    { id: "flowers", name: "Flowers", price: 20, likes: ["sakura"], dislikes: ["kevin"] },
+    { id: "chocolate", name: "Chocolate", price: 15, likes: ["sakura", "kevin"], dislikes: [] },
+    { id: "book", name: "Book", price: 25, likes: ["sakura"], dislikes: ["kevin"] },
+    { id: "coffee", name: "Coffee", price: 10, likes: ["kevin"], dislikes: [] },
+    { id: "music_cd", name: "Music CD", price: 30, likes: ["kevin"], dislikes: [] }
   ];
 
   // --- Utilities ---
@@ -441,7 +442,9 @@
     Object.assign(gameTime, saveData.gameTime);
     currentCharacterIndex = saveData.currentCharacterIndex;
     currentCharacter = characters[currentCharacterIndex];
-    Object.assign(characters, saveData.characters);
+    for (let i=0; i < characters.length; i++) {
+      Object.assign(characters[i], saveData.characters[i]);
+    }
     renderUI();
     alert("Game loaded!");
   }
@@ -476,7 +479,6 @@
       fill.className = "statFill";
       fill.style.width = `${currentCharacter.stats[stat]}%`;
 
-      // Color based on stat
       if(stat === "jealousy") fill.style.backgroundColor = "#d9534f";
       else fill.style.backgroundColor = "#6ab04c";
 
@@ -490,20 +492,7 @@
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  // --- Dialogue System ---
-
-  /*
-  Dialogue structure:
-  {
-    id: {
-      text: string or function returning string,
-      choices: [{ text: string, next: string, effect: function, condition: function? }],
-      action: function? to run on node enter
-    }
-  }
-  */
-
-  // Common functions for adjusting stats with caps
+  // --- Dialogue Helpers ---
   function adjustStat(stat, amount) {
     if(!currentCharacter.stats.hasOwnProperty(stat)) return;
     currentCharacter.stats[stat] = Math.min(100, Math.max(0, currentCharacter.stats[stat] + amount));
@@ -512,18 +501,22 @@
     currentCharacter.mood = Math.min(currentCharacter.moodLevels.length-1, Math.max(0, currentCharacter.mood + amount));
   }
 
-  // Simple condition for whether player has a gift in inventory
-  function hasGift(id) {
-    return player.inventory.some(i => i.id === id);
+  // Memory update with repetition check & confusion escalation
+  function handleRepeatedQuestion(questionKey) {
+    if(currentCharacter.memory.lastQuestion === questionKey) {
+      currentCharacter.memory.confusionCount++;
+      adjustStat("affection", -3 * currentCharacter.memory.confusionCount);
+      changeMood(-1 * currentCharacter.memory.confusionCount);
+      return true; // repeated
+    } else {
+      currentCharacter.memory.confusionCount = 0;
+      currentCharacter.memory.lastQuestion = questionKey;
+      return false;
+    }
   }
 
-  // Track repeated questions
-  function incrementMemory(key) {
-    currentCharacter.memory[key] = (currentCharacter.memory[key] || 0) + 1;
-  }
+  // --- Dialogue Trees ---
 
-  // Dialogue trees for each character
-  // For brevity, only Sakura and Kevin for now.
   const dialogueTrees = {
     sakura: {
       start: {
@@ -533,44 +526,37 @@
           { text: "Give a compliment", next: "compliment" },
           { text: "Give a gift", next: "giveGift" },
           { text: "Play minigame", next: "minigame" },
-          { text: "Change location", next: "changeLocation" }
+          { text: "Change location", next: "changeLocation" },
+          { text: "Say goodbye", next: "goodbye" }
         ]
       },
       hobbies: {
         text: () => {
-          incrementMemory("askedAboutHobbies");
-          if(currentCharacter.memory.askedAboutHobbies > 1) {
-            adjustStat("affection", -5);
-            changeMood(-1);
-            return "You've asked about my hobbies too many times! Please don't bother me.";
-          }
+          const repeated = handleRepeatedQuestion("hobbies");
+          if(repeated) return `Sakura looks annoyed. "You've already asked about my hobbies too many times."`;
           adjustStat("trust", 5);
           changeMood(1);
-          return `I love reading and gardening. ${currentCharacter.personality.hobbies}`;
+          return `Sakura smiles warmly. "I love reading fantasy novels and gardening. It's my favorite way to relax."`;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       compliment: {
         text: () => {
-          incrementMemory("gaveCompliment");
-          if(currentCharacter.memory.gaveCompliment > 3) {
-            adjustStat("affection", -3);
-            changeMood(-1);
-            return "You're being a bit too flattering... it feels insincere.";
-          }
+          const repeated = handleRepeatedQuestion("compliment");
+          if(repeated) return `"You're flattering me too much... it's starting to feel fake."`;
           adjustStat("affection", 7);
           changeMood(1);
-          return "Thank you! That means a lot to me.";
+          return `"Thank you! That means a lot to me."`;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       giveGift: {
         text: () => {
-          if(player.inventory.length === 0) return "You have no gifts to give.";
-          return "Select a gift to give:";
+          if(player.inventory.length === 0) return `"You have no gifts to give."`;
+          return `"Choose a gift to give:"`;
         },
         choices: player.inventory.map((gift, i) => ({
-          text: `${gift.name}`,
+          text: gift.name,
           next: "giftResult",
           effect: () => giveGiftToCharacter(gift)
         })).concat({ text: "Back", next: "start" })
@@ -578,28 +564,37 @@
       giftResult: {
         text: () => {
           const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
-          if(!lastGift) return "No gift given.";
+          if(!lastGift) return `"No gift given."`;
           let response = "";
           if(currentCharacter.personality.likes.includes(lastGift.id)) {
             adjustStat("affection", 10);
             adjustStat("trust", 5);
             changeMood(1);
-            response = `Sakura loves the ${lastGift.name}! She's very happy.`;
+            response = `"Sakura loves the ${lastGift.name}! She's very happy."`;
           } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
             adjustStat("affection", -10);
             changeMood(-1);
-            response = `Sakura didn't like the ${lastGift.name}. She looks displeased.`;
+            response = `"Sakura didn't like the ${lastGift.name}. She looks displeased."`;
           } else {
             adjustStat("affection", 3);
-            response = `Sakura thanks you for the ${lastGift.name}.`;
+            response = `"Sakura thanks you for the ${lastGift.name}."`;
           }
           return response;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       minigame: {
-        text: "Let's play a quick minigame!",
-        choices: [{ text: "Start Reaction Test", next: "reactionTest" }, { text: "Back", next: "start" }]
+        text: () => {
+          if(currentCharacter.memory.minigamePlayed) {
+            return `"We've already played the minigame today!"`;
+          } else {
+            return `"Let's play a quick minigame!"`;
+          }
+        },
+        choices: [
+          { text: "Start Reaction Test", next: "reactionTest" },
+          { text: "Back", next: "start" }
+        ]
       },
       reactionTest: {
         text: "Wait for the GO signal, then click as fast as you can!",
@@ -608,59 +603,63 @@
       },
       changeLocation: {
         text: "Choose a new location:",
-        choices: locations.map(loc => ({ text: loc, next: "locationChanged", effect: () => changeLocation(loc) })).concat({ text: "Back", next: "start" })
+        choices: locations.map(loc => ({
+          text: loc,
+          next: "locationChanged",
+          effect: () => changeLocation(loc)
+        })).concat({ text: "Back", next: "start" })
       },
       locationChanged: {
         text: () => `You moved to the ${currentLocation()}.`,
         choices: [{ text: "Back to conversation", next: "start" }]
+      },
+      goodbye: {
+        text: () => {
+          advanceTime(1);
+          return `"Goodbye for now, ${player.name}. Hope to see you again soon!"`;
+        },
+        choices: []
       }
     },
     kevin: {
       start: {
-        text: () => `Hey ${player.name}, ready to chat with Kevin?`,
+        text: () => `Hey ${player.name}, what do you want to talk about with Kevin?`,
         choices: [
           { text: "Ask about music", next: "music" },
           { text: "Give a compliment", next: "compliment" },
           { text: "Give a gift", next: "giveGift" },
           { text: "Play minigame", next: "minigame" },
-          { text: "Change location", next: "changeLocation" }
+          { text: "Change location", next: "changeLocation" },
+          { text: "Say goodbye", next: "goodbye" }
         ]
       },
       music: {
         text: () => {
-          incrementMemory("askedAboutHobbies");
-          if(currentCharacter.memory.askedAboutHobbies > 1) {
-            adjustStat("affection", -5);
-            changeMood(-1);
-            return "You've already asked me about my music taste too many times.";
-          }
+          const repeated = handleRepeatedQuestion("music");
+          if(repeated) return `Kevin frowns. "You've already asked about my music taste too many times."`;
           adjustStat("trust", 5);
           changeMood(1);
-          return `I enjoy rock music and playing basketball. ${currentCharacter.personality.hobbies}`;
+          return `Kevin says, "I love rock music and basketball. What about you?"`;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       compliment: {
         text: () => {
-          incrementMemory("gaveCompliment");
-          if(currentCharacter.memory.gaveCompliment > 3) {
-            adjustStat("affection", -3);
-            changeMood(-1);
-            return "You're flattering me too much, it feels fake.";
-          }
+          const repeated = handleRepeatedQuestion("compliment");
+          if(repeated) return `"You're flattering me too much, it feels fake."`;
           adjustStat("affection", 7);
           changeMood(1);
-          return "Thanks, I appreciate that.";
+          return `"Thanks, I appreciate that."`;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       giveGift: {
         text: () => {
-          if(player.inventory.length === 0) return "You have no gifts to give.";
-          return "Select a gift to give:";
+          if(player.inventory.length === 0) return `"You have no gifts to give."`;
+          return `"Choose a gift to give:"`;
         },
         choices: player.inventory.map((gift, i) => ({
-          text: `${gift.name}`,
+          text: gift.name,
           next: "giftResult",
           effect: () => giveGiftToCharacter(gift)
         })).concat({ text: "Back", next: "start" })
@@ -668,28 +667,37 @@
       giftResult: {
         text: () => {
           const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
-          if(!lastGift) return "No gift given.";
+          if(!lastGift) return `"No gift given."`;
           let response = "";
           if(currentCharacter.personality.likes.includes(lastGift.id)) {
             adjustStat("affection", 10);
             adjustStat("trust", 5);
             changeMood(1);
-            response = `Kevin really likes the ${lastGift.name}! He's very happy.`;
+            response = `"Kevin really likes the ${lastGift.name}! He's very happy."`;
           } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
             adjustStat("affection", -10);
             changeMood(-1);
-            response = `Kevin didn't care much for the ${lastGift.name}.`;
+            response = `"Kevin didn't care much for the ${lastGift.name}."`;
           } else {
             adjustStat("affection", 3);
-            response = `Kevin thanks you for the ${lastGift.name}.`;
+            response = `"Kevin thanks you for the ${lastGift.name}."`;
           }
           return response;
         },
         choices: [{ text: "Back", next: "start" }]
       },
       minigame: {
-        text: "Wanna try a quick minigame?",
-        choices: [{ text: "Start Quiz", next: "quiz" }, { text: "Back", next: "start" }]
+        text: () => {
+          if(currentCharacter.memory.minigamePlayed) {
+            return `"We've already played the minigame today!"`;
+          } else {
+            return `"Wanna try a quick minigame?"`;
+          }
+        },
+        choices: [
+          { text: "Start Quiz", next: "quiz" },
+          { text: "Back", next: "start" }
+        ]
       },
       quiz: {
         text: "Answer these questions about Kevin correctly!",
@@ -698,11 +706,22 @@
       },
       changeLocation: {
         text: "Choose a new location:",
-        choices: locations.map(loc => ({ text: loc, next: "locationChanged", effect: () => changeLocation(loc) })).concat({ text: "Back", next: "start" })
+        choices: locations.map(loc => ({
+          text: loc,
+          next: "locationChanged",
+          effect: () => changeLocation(loc)
+        })).concat({ text: "Back", next: "start" })
       },
       locationChanged: {
         text: () => `You moved to the ${currentLocation()}.`,
         choices: [{ text: "Back to conversation", next: "start" }]
+      },
+      goodbye: {
+        text: () => {
+          advanceTime(1);
+          return `"See you later, ${player.name}!"`;
+        },
+        choices: []
       }
     }
   };
@@ -787,15 +806,19 @@
       currentNodeId = node.next;
       renderDialogue();
     } else {
-      // no choices - show back button
-      const btn = document.createElement("button");
-      btn.className = "choice";
-      btn.textContent = "Back";
-      btn.onclick = () => {
-        currentNodeId = "start";
-        renderDialogue();
-      };
-      choicesEl.appendChild(btn);
+      // no choices - show back button unless goodbye node (no choices)
+      if(currentNodeId !== "goodbye") {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = "Back";
+        btn.onclick = () => {
+          currentNodeId = "start";
+          renderDialogue();
+        };
+        choicesEl.appendChild(btn);
+      } else {
+        choicesEl.innerHTML = "";
+      }
     }
   }
 
@@ -864,6 +887,7 @@
         const reactionTime = Date.now() - reactionStartTime;
         minigameText.textContent = `Your reaction time: ${reactionTime} ms`;
         minigameEl.style.display = "none";
+        currentCharacter.memory.minigamePlayed = true;
         // Affect stats based on reaction speed
         if (reactionTime < 300) {
           adjustStat("affection", 10);
@@ -888,6 +912,7 @@
     const minigameEl = document.getElementById("minigame");
     const minigameText = document.getElementById("minigameText");
     const playBtn = document.getElementById("playMinigameBtn");
+    const choicesEl = document.getElementById("choices");
     minigameEl.style.display = "block";
     playBtn.style.display = "inline-block";
 
@@ -911,7 +936,7 @@
 
     let currentQ = 0;
     minigameText.textContent = questions[currentQ].q;
-    playBtn.textContent = "Start";
+    choicesEl.innerHTML = "";
 
     function showQuestion() {
       minigameText.textContent = questions[currentQ].q;
@@ -942,7 +967,6 @@
       });
     }
 
-    const choicesEl = document.getElementById("choices");
     playBtn.onclick = () => {
       playBtn.style.display = "none";
       showQuestion();
@@ -961,44 +985,9 @@
     renderUI();
   }
 
-  // --- Event System ---
-  const randomEvents = [
-    {
-      text: "Your date got called away unexpectedly, conversation paused.",
-      effect: () => {
-        adjustStat("affection", -5);
-        changeMood(-1);
-      }
-    },
-    {
-      text: "You found a beautiful flower on your walk, your date likes the gesture.",
-      effect: () => {
-        adjustStat("affection", 8);
-        changeMood(1);
-      }
-    },
-    {
-      text: "Your date is distracted by their phone, seems annoyed.",
-      effect: () => {
-        adjustStat("affection", -8);
-        changeMood(-1);
-      }
-    }
-  ];
-
-  function maybeTriggerRandomEvent() {
-    if(Math.random() < 0.3) {
-      const ev = randomEvents[Math.floor(Math.random()*randomEvents.length)];
-      logEvent(ev.text);
-      ev.effect();
-      renderUI();
-    }
-  }
-
   // --- Player Setup Handlers ---
   document.getElementById("playerNameInput").addEventListener("input", (e) => {
-    player.name = e.target.value.trim();
-    if(player.name === "") player.name = "Player";
+    player.name = e.target.value.trim() || "Player";
     renderUI();
   });
   document.getElementById("avatarSelect").addEventListener("change", (e) => {
@@ -1020,19 +1009,11 @@
   document.getElementById("loadBtn").onclick = loadGame;
   document.getElementById("resetBtn").onclick = resetGame;
 
-  // --- Gift Giving ---
-  function giveGiftToCharacter(gift) {
-    currentCharacter.memory.giftsReceived.push(gift);
-    // Remove gift from inventory
-    player.inventory = player.inventory.filter(i => i !== gift);
-  }
-
   // Initialize
   if(!player.name) player.name = "Player";
   renderUI();
 
   // Quick character switch for demo
-  // Create buttons to switch character for testing
   const header = document.getElementById("header");
   const switcherDiv = document.createElement("div");
   switcherDiv.style.marginLeft = "10px";
