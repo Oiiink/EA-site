@@ -3,24 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts</title>
+  <title>Event Alerts - Wordle</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       background: url('https://media.discordapp.net/attachments/1015724913165865110/1384683534236516443/banner_bees.png?ex=68535288&is=68520108&hm=12c0f609d99e27b857a71122703e327823b5c24f025a44af537951368937c4c6&=&format=webp&quality=lossless&width=800&height=240') no-repeat center center fixed;
       background-size: cover;
     }
+
     .overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.65);
       z-index: -1;
     }
-    .nav-shadow {
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+
+    .tile {
+      transition: all 0.3s ease;
+      transform: scale(1);
     }
-    img {
-      background-color: transparent;
+
+    .tile.revealed {
+      animation: flip 0.6s forwards;
+    }
+
+    @keyframes flip {
+      0% {
+        transform: rotateX(0);
+      }
+      50% {
+        transform: rotateX(90deg);
+        background-color: #1f2937;
+        color: white;
+      }
+      100% {
+        transform: rotateX(0);
+      }
     }
   </style>
 </head>
@@ -28,101 +46,10 @@
 
   <div class="overlay"></div>
 
-  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-95 z-50 nav-shadow">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <img src="assets/images/logo.png" alt="Event Alerts Logo" class="h-8 w-auto" />
-        <span class="text-white font-bold text-lg uppercase tracking-wide">Event Alerts</span>
-      </div>
-
-      <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center space-x-8 text-xs font-semibold uppercase tracking-widest">
-        <a href="#" class="hover:text-cyan-400">News</a>
-        <a href="#" class="hover:text-cyan-400">Features</a>
-        <a href="#" class="hover:text-cyan-400">Support</a>
-        <a href="#" class="hover:text-cyan-400">Store</a>
-
-        <!-- Socials Dropdown -->
-        <div class="relative group">
-          <a href="#" class="hover:text-cyan-400 inline-block select-none">Socials</a>
-          <div class="absolute hidden group-hover:block bg-black bg-opacity-90 rounded shadow-lg p-2 space-y-1 text-xs text-white whitespace-nowrap top-full left-0" style="min-width: 8rem;">
-            <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/discord.png" alt="Discord" class="w-4 h-4 mr-2" />
-              Discord
-            </a>
-            <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/twitter.png" alt="Twitter" class="w-4 h-4 mr-2" />
-              Twitter
-            </a>
-            <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/youtube.png" alt="YouTube" class="w-4 h-4 mr-2" />
-              YouTube
-            </a>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Right side - Download & Mobile hamburger -->
-      <div class="flex items-center space-x-6 relative">
-        <a
-          href="https://modrinth.com/mod/alerts"
-          target="_blank"
-          class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 font-bold uppercase rounded text-sm tracking-widest select-none shadow-lg"
-          >Download</a
-        >
-
-        <div class="relative md:hidden">
-          <button id="hamburgerBtn" class="focus:outline-none" aria-label="Menu">
-            <svg class="w-6 h-6" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div
-            id="mobileMenu"
-            class="absolute right-0 mt-2 bg-black bg-opacity-90 rounded shadow-lg p-2 text-sm hidden z-50"
-            style="min-width: 10rem;"
-          >
-            <a href="#" class="block px-4 py-2 hover:text-cyan-400">News</a>
-            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Features</a>
-            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Support</a>
-            <a href="#" class="block px-4 py-2 hover:text-cyan-400">Store</a>
-            <div class="border-t border-gray-700 my-2"></div>
-            <span class="block px-4 py-1 text-gray-400 uppercase text-xs select-none">Socials</span>
-            <a href="https://discord.gg/skeppy" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/discord.png" alt="Discord" class="w-4 h-4 mr-2" />
-              Discord
-            </a>
-            <a href="https://x.com/Event_Alerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/twitter.png" alt="Twitter" class="w-4 h-4 mr-2" />
-              Twitter
-            </a>
-            <a href="https://www.youtube.com/@EventAlerts" class="flex items-center px-4 py-1 hover:text-cyan-400">
-              <img src="assets/images/youtube.png" alt="YouTube" class="w-4 h-4 mr-2" />
-              YouTube
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-36 max-w-3xl mx-auto">
-    <img src="assets/images/logo.png" alt="Event Alerts Logo" class="w-24 md:w-28 mb-6 drop-shadow-2xl" />
-    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-4">EventUtils</h1>
-    <p class="text-gray-300 text-lg md:text-xl max-w-md select-none mb-8">
-      A mod designed to help players in events
-    </p>
-    <div class="flex flex-wrap justify-center gap-4">
-      <a
-        href="https://modrinth.com/mod/alerts"
-        target="_blank"
-        class="bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md"
-        >Download on Modrinth</a
-      >
-      <a href="#" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md"
-        >Store</a
-      >
-    </div>
+  <main class="flex-grow flex flex-col items-center justify-center text-center px-6 pt-24 max-w-3xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md select-none mb-6">Event Alerts Wordle</h1>
+    <p class="text-gray-300 mb-6">Guess the 5-letter word! New word every refresh.</p>
+    <div id="wordle-game" class="space-y-2"></div>
   </main>
 
   <footer class="text-center text-gray-400 py-6 bg-black bg-opacity-90 mt-auto">
@@ -134,20 +61,93 @@
   </footer>
 
   <script>
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
+    const WORDS = ["apple", "event", "modem", "skepp", "utils", "alert", "track", "fight", "games", "party"];
+    const targetWord = WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
+    const MAX_GUESSES = 6;
 
-    hamburgerBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mobileMenu.classList.toggle('hidden');
-    });
+    let currentGuess = "";
+    let currentRow = 0;
 
-    document.addEventListener('click', (e) => {
-      const isClickInside = mobileMenu.contains(e.target) || hamburgerBtn.contains(e.target);
-      if (!isClickInside) {
-        mobileMenu.classList.add('hidden');
+    const game = document.getElementById("wordle-game");
+
+    for (let r = 0; r < MAX_GUESSES; r++) {
+      const row = document.createElement("div");
+      row.className = "flex justify-center gap-2";
+      for (let c = 0; c < 5; c++) {
+        const tile = document.createElement("div");
+        tile.className = "tile w-14 h-14 border-2 border-gray-600 text-2xl flex items-center justify-center uppercase font-bold bg-gray-800 text-white";
+        row.appendChild(tile);
+      }
+      game.appendChild(row);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      const key = e.key.toUpperCase();
+      if (currentRow >= MAX_GUESSES) return;
+
+      if (key === "BACKSPACE") {
+        currentGuess = currentGuess.slice(0, -1);
+        updateRow();
+      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
+        currentGuess += key;
+        updateRow();
+      } else if (key === "ENTER" && currentGuess.length === 5) {
+        revealGuess();
       }
     });
+
+    function updateRow() {
+      const row = game.children[currentRow];
+      for (let i = 0; i < 5; i++) {
+        const cell = row.children[i];
+        cell.textContent = currentGuess[i] || "";
+        cell.classList.remove("revealed");
+        cell.style.backgroundColor = "#1f2937";
+        cell.style.borderColor = "#4b5563";
+      }
+    }
+
+    function revealGuess() {
+      const row = game.children[currentRow];
+      const guess = currentGuess;
+      const used = targetWord.split("");
+
+      for (let i = 0; i < 5; i++) {
+        const cell = row.children[i];
+        const letter = guess[i];
+
+        setTimeout(() => {
+          cell.classList.add("revealed");
+
+          if (letter === targetWord[i]) {
+            cell.style.backgroundColor = "#16a34a"; // green
+            cell.style.borderColor = "#16a34a";
+          } else if (used.includes(letter)) {
+            cell.style.backgroundColor = "#eab308"; // yellow
+            cell.style.borderColor = "#eab308";
+            used[used.indexOf(letter)] = null;
+          } else {
+            cell.style.backgroundColor = "#374151"; // gray
+            cell.style.borderColor = "#374151";
+          }
+        }, i * 300);
+      }
+
+      if (guess === targetWord) {
+        setTimeout(() => alert("You got it!"), 1600);
+        document.removeEventListener("keydown", handleKeyPress);
+      } else {
+        currentRow++;
+        currentGuess = "";
+        if (currentRow >= MAX_GUESSES) {
+          setTimeout(() => alert(`Out of guesses! The word was ${targetWord}`), 1600);
+        }
+      }
+    }
+
+    function handleKeyPress(e) {
+      // unused now (for removeEventListener reference)
+    }
   </script>
 </body>
 </html>
