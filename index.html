@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mini YouTube</title>
+<title>OiiinkTube</title>
 <style>
   body {
     margin: 0; font-family: Arial, sans-serif; background: #f9f9f9; color: #222;
@@ -56,7 +56,8 @@
   /* Video player overlay */
   #playerOverlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.85); display: none; flex-direction: column;
+    align-items: center; justify-content: flex-start; padding-top: 40px;
     z-index: 20;
   }
   #playerContainer {
@@ -72,11 +73,68 @@
   iframe {
     width: 100%; height: 100%; border: none;
   }
+  /* Comments section */
+  #commentsSection {
+    margin-top: 15px;
+    width: 80vw; max-width: 960px;
+    background: white; border-radius: 8px; padding: 15px;
+    max-height: 300px; overflow-y: auto;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
+  }
+  #commentsSection h3 {
+    margin-top: 0;
+  }
+  .comment {
+    display: flex; margin-bottom: 12px; gap: 10px;
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; background: #ccc;
+    flex-shrink: 0;
+  }
+  .comment-content {
+    flex-grow: 1;
+  }
+  .comment-user {
+    font-weight: bold; font-size: 14px; margin: 0 0 4px 0;
+  }
+  .comment-text {
+    margin: 0; font-size: 14px; white-space: pre-wrap;
+  }
+  #commentForm {
+    display: flex; gap: 10px; margin-top: 10px;
+  }
+  #commentForm select, #commentForm textarea {
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+  }
+  #commentForm select {
+    width: 120px;
+  }
+  #commentForm textarea {
+    flex-grow: 1;
+    resize: vertical;
+    height: 50px;
+  }
+  #commentForm button {
+    background: #cc181e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #commentForm button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
 </style>
 </head>
 <body>
   <header>
-    <h1>MiniYouTube</h1>
+    <h1>OiiinkTube</h1>
     <form id="searchForm" onsubmit="event.preventDefault(); searchVideos();">
       <input type="text" id="searchInput" placeholder="Search videos..." />
     </form>
@@ -87,48 +145,86 @@
   </main>
 
   <div id="playerOverlay" onclick="closePlayer(event)">
-    <div id="playerContainer">
+    <div id="playerContainer" onclick="event.stopPropagation()">
       <button id="closeBtn" onclick="closePlayer(event)">×</button>
       <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div id="commentsSection">
+        <h3>Comments</h3>
+        <div id="commentsList"></div>
+        <form id="commentForm" onsubmit="submitComment(event)">
+          <select id="userSelect"></select>
+          <textarea id="commentInput" placeholder="Add a comment..." required></textarea>
+          <button type="submit" disabled>Post</button>
+        </form>
+      </div>
     </div>
   </div>
 
 <script>
+  // Users (profiles)
+  const users = [
+    { id: 1, name: "Oiiink", avatar: "https://i.pravatar.cc/40?u=oiiink" },
+    { id: 2, name: "Friend1", avatar: "https://i.pravatar.cc/40?u=friend1" },
+    { id: 3, name: "Friend2", avatar: "https://i.pravatar.cc/40?u=friend2" },
+  ];
+
+  // Videos: only Oiiink videos
   const videos = [
     {
-      id: "dQw4w9WgXcQ",
-      title: "Never Gonna Give You Up",
-      channel: "Rick Astley",
-      views: "1.2B views",
-      thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+      id: "M7lc1UVf-VE",
+      title: "Oiiink Gaming Highlights",
+      channel: "Oiiink",
+      views: "523K views",
+      thumbnail: "https://img.youtube.com/vi/M7lc1UVf-VE/hqdefault.jpg",
+      comments: [
+        { userId: 2, text: "Loved the epic moments!" },
+        { userId: 3, text: "Can't wait for the next video!" },
+      ],
     },
     {
-      id: "3JZ_D3ELwOQ",
-      title: "Imagine Dragons - Believer",
-      channel: "ImagineDragonsVEVO",
-      views: "1.6B views",
-      thumbnail: "https://img.youtube.com/vi/3JZ_D3ELwOQ/hqdefault.jpg"
+      id: "sBws8MSXN7A",
+      title: "Oiiink's Funny Fails Compilation",
+      channel: "Oiiink",
+      views: "245K views",
+      thumbnail: "https://img.youtube.com/vi/sBws8MSXN7A/hqdefault.jpg",
+      comments: [
+        { userId: 1, text: "Haha that was hilarious!" },
+        { userId: 3, text: "Classic Oiiink style." },
+      ],
     },
     {
-      id: "9bZkp7q19f0",
-      title: "PSY - GANGNAM STYLE",
-      channel: "officialpsy",
-      views: "4.6B views",
-      thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg"
-    },
-    {
-      id: "JGwWNGJdvx8",
-      title: "Ed Sheeran - Shape of You",
-      channel: "Ed Sheeran",
-      views: "5.5B views",
-      thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/hqdefault.jpg"
+      id: "LXb3EKWsInQ",
+      title: "Oiiink Adventure Vlog",
+      channel: "Oiiink",
+      views: "100K views",
+      thumbnail: "https://img.youtube.com/vi/LXb3EKWsInQ/hqdefault.jpg",
+      comments: [],
     }
   ];
 
   const videoList = document.getElementById("videoList");
   const playerOverlay = document.getElementById("playerOverlay");
   const videoPlayer = document.getElementById("videoPlayer");
+  const commentsList = document.getElementById("commentsList");
+  const commentForm = document.getElementById("commentForm");
+  const userSelect = document.getElementById("userSelect");
+  const commentInput = document.getElementById("commentInput");
+  const postBtn = commentForm.querySelector("button");
 
+  let currentVideo = null;
+
+  // Render user options in comment form
+  function renderUserOptions() {
+    userSelect.innerHTML = "";
+    for (const user of users) {
+      const opt = document.createElement("option");
+      opt.value = user.id;
+      opt.textContent = user.name;
+      userSelect.appendChild(opt);
+    }
+  }
+
+  // Render videos on homepage
   function renderVideos(list) {
     videoList.innerHTML = "";
     for (const video of list) {
@@ -166,17 +262,81 @@
     }
   }
 
+  // Play video and show overlay
   function playVideo(id) {
+    currentVideo = videos.find(v => v.id === id);
     videoPlayer.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
     playerOverlay.style.display = "flex";
+    renderComments();
   }
 
+  // Close player overlay
   function closePlayer(e) {
     e.stopPropagation();
     videoPlayer.src = "";
     playerOverlay.style.display = "none";
+    currentVideo = null;
+    commentsList.innerHTML = "";
+    commentInput.value = "";
+    postBtn.disabled = true;
   }
 
+  // Render comments for current video
+  function renderComments() {
+    if (!currentVideo) return;
+    commentsList.innerHTML = "";
+    if (currentVideo.comments.length === 0) {
+      commentsList.textContent = "No comments yet. Be the first!";
+      return;
+    }
+    for (const comment of currentVideo.comments) {
+      const user = users.find(u => u.id === comment.userId);
+      const c = document.createElement("div");
+      c.className = "comment";
+
+      const avatar = document.createElement("img");
+      avatar.className = "avatar";
+      avatar.src = `https://i.pravatar.cc/40?u=${user.id}`;
+      avatar.alt = user.name;
+
+      const content = document.createElement("div");
+      content.className = "comment-content";
+
+      const username = document.createElement("p");
+      username.className = "comment-user";
+      username.textContent = user.name;
+
+      const text = document.createElement("p");
+      text.className = "comment-text";
+      text.textContent = comment.text;
+
+      content.appendChild(username);
+      content.appendChild(text);
+      c.appendChild(avatar);
+      c.appendChild(content);
+      commentsList.appendChild(c);
+    }
+  }
+
+  // Submit new comment
+  function submitComment(e) {
+    e.preventDefault();
+    if (!currentVideo) return;
+    const userId = parseInt(userSelect.value);
+    const text = commentInput.value.trim();
+    if (!text) return;
+    currentVideo.comments.push({ userId, text });
+    commentInput.value = "";
+    postBtn.disabled = true;
+    renderComments();
+  }
+
+  // Enable/disable post button based on input
+  commentInput.addEventListener("input", () => {
+    postBtn.disabled = commentInput.value.trim() === "";
+  });
+
+  // Search videos
   function searchVideos() {
     const query = document.getElementById("searchInput").value.toLowerCase();
     if (!query) {
@@ -190,6 +350,7 @@
     renderVideos(filtered);
   }
 
+  renderUserOptions();
   renderVideos(videos);
 </script>
 </body>
