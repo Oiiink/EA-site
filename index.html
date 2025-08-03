@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simple Farming Simulator</title>
+<title>Grow a Garden - Farming Simulator</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -14,31 +14,43 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: background 1s;
   }
   h1 {
     color: #3e621f;
   }
-  #gold {
-    font-size: 20px;
-    margin-bottom: 15px;
+  #status {
     color: #2e4a11;
+    margin-bottom: 15px;
+    font-size: 18px;
   }
   #inventory {
     margin-bottom: 20px;
     color: #2e4a11;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  #inventory button {
-    padding: 8px 12px;
-    margin: 0 8px;
+  #inventory > div {
     background: #558b2f;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+  }
+  button {
+    padding: 8px 14px;
+    background: #33691e;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
     transition: background 0.3s;
   }
-  #inventory button:disabled {
+  button:disabled {
     background: #9ccc65;
     cursor: default;
   }
@@ -56,6 +68,10 @@
     box-shadow: inset 0 0 5px #3e2723;
     position: relative;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .plot.planted {
     background: #3e7d16;
@@ -77,51 +93,93 @@
     border-radius: 6px;
     transition: width 0.2s linear;
   }
-  .crop {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
+  .cropIcon {
+    font-size: 30px;
     pointer-events: none;
+    user-select: none;
+  }
+  #upgrades {
+    margin-top: 20px;
+    max-width: 420px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .upgradeBtn {
+    flex: 1 1 45%;
+    background: #33691e;
+  }
+  #dayNightCycle {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #2e4a11;
   }
 </style>
 </head>
 <body>
 
-<h1>Simple Farming Simulator</h1>
-<div id="gold">Gold: 20</div>
-<div id="inventory">
-  Seeds: <span id="seedCount">5</span>
-  <button id="buySeedBtn">Buy Seed (5 Gold)</button>
+<h1>Grow a Garden 🌱</h1>
+
+<div id="status">
+  Gold: <span id="gold">20</span> &nbsp;&nbsp; Seeds: <span id="seedCount">5</span> &nbsp;&nbsp; Fertilizer: <span id="fertilizerCount">0</span>
 </div>
+
+<div id="inventory">
+  <button id="buySeedBtn">Buy Seed (5 Gold)</button>
+  <button id="buyFertilizerBtn">Buy Fertilizer (10 Gold)</button>
+</div>
+
 <div id="farmGrid"></div>
+
+<div id="upgrades">
+  <button class="upgradeBtn" id="upgradeSeedCostBtn">Upgrade Seed Cost (-10%) - 50 Gold</button>
+  <button class="upgradeBtn" id="upgradeSellPriceBtn">Upgrade Sell Price (+10%) - 50 Gold</button>
+</div>
+
+<div id="dayNightCycle">Day Time</div>
 
 <script>
 (() => {
   const ROWS = 3;
   const COLS = 5;
 
+  // Game state variables
   let gold = 20;
   let seeds = 5;
+  let fertilizer = 0;
 
+  // Upgrades state
+  let seedCostMultiplier = 1.0; // reduces seed cost
+  let sellPriceMultiplier = 1.0; // increases sell price
+
+  // Day/Night cycle
+  let isDay = true;
+  const DAY_DURATION = 30000; // 30 seconds day, 30 seconds night
+
+  // DOM Elements
   const goldEl = document.getElementById('gold');
   const seedCountEl = document.getElementById('seedCount');
+  const fertilizerCountEl = document.getElementById('fertilizerCount');
   const buySeedBtn = document.getElementById('buySeedBtn');
+  const buyFertilizerBtn = document.getElementById('buyFertilizerBtn');
   const farmGrid = document.getElementById('farmGrid');
+  const upgradeSeedCostBtn = document.getElementById('upgradeSeedCostBtn');
+  const upgradeSellPriceBtn = document.getElementById('upgradeSellPriceBtn');
+  const dayNightCycleEl = document.getElementById('dayNightCycle');
 
-  // Each plot state: {planted: bool, growth: 0-100, intervalId: int|null}
+  // Crop types
+  // Each crop: name, growTime (ms), sellPrice, icon
+  const crops = [
+    {name: 'Carrot', growTime: 6000, baseSellPrice: 10, icon: '🥕'},
+    {name: 'Tomato', growTime: 9000, baseSellPrice: 15, icon: '🍅'},
+    {name: 'Pumpkin', growTime: 15000, baseSellPrice: 30, icon: '🎃'},
+  ];
+
+  // Plot state: {planted: bool, growth: ms, cropIndex: int, watered: bool, fertilizer: bool, intervalId: int|null, element: HTMLElement}
   const plots = [];
 
-  function updateGold() {
-    goldEl.textContent = `Gold: ${gold}`;
-  }
-  function updateSeeds() {
-    seedCountEl.textContent = seeds;
-    buySeedBtn.disabled = gold < 5;
-  }
-
-  // Create farm grid UI
+  // Initialize farm grid UI
   function createFarmGrid() {
     farmGrid.innerHTML = '';
     for(let i=0; i<ROWS*COLS; i++) {
@@ -130,91 +188,272 @@
       plot.dataset.index = i;
       farmGrid.appendChild(plot);
 
-      plots[i] = {planted:false, growth:0, intervalId:null, element: plot};
-      
-      plot.addEventListener('click', () => {
-        const state = plots[i];
-        if (!state.planted) {
-          if (seeds > 0) {
-            plantSeed(i);
-          } else {
-            alert('No seeds left! Buy some seeds.');
-          }
-        } else if (state.growth >= 100) {
-          harvestCrop(i);
-        } else {
-          alert('Crop is still growing.');
-        }
-      });
+      plots[i] = {
+        planted: false,
+        growth: 0,
+        cropIndex: null,
+        watered: false,
+        fertilizer: false,
+        intervalId: null,
+        element: plot,
+      };
+
+      plot.addEventListener('click', () => onPlotClick(i));
     }
   }
 
-  // Plant seed on plot
+  // Update UI displays
+  function updateUI() {
+    goldEl.textContent = gold;
+    seedCountEl.textContent = seeds;
+    fertilizerCountEl.textContent = fertilizer;
+
+    buySeedBtn.disabled = gold < getSeedCost();
+    buyFertilizerBtn.disabled = gold < 10;
+
+    upgradeSeedCostBtn.disabled = gold < 50;
+    upgradeSellPriceBtn.disabled = gold < 50;
+  }
+
+  // Calculate current seed cost based on upgrades
+  function getSeedCost() {
+    return Math.max(1, Math.floor(5 * seedCostMultiplier));
+  }
+
+  // Calculate sell price of crop with fertilizer and upgrades
+  function getSellPrice(basePrice, hasFertilizer) {
+    let price = basePrice * sellPriceMultiplier;
+    if (hasFertilizer) price *= 1.5;
+    return Math.floor(price);
+  }
+
+  // Plant seed function: choose crop randomly for fun
   function plantSeed(index) {
-    if (plots[index].planted) return;
-    plots[index].planted = true;
-    plots[index].growth = 0;
+    if (plots[index].planted || seeds <= 0) return false;
+
+    // Random crop chosen to plant
+    const cropIndex = Math.floor(Math.random() * crops.length);
+    const crop = crops[cropIndex];
+
     seeds--;
-    updateSeeds();
+    updateUI();
 
-    const plot = plots[index].element;
-    plot.classList.add('planted');
+    const plot = plots[index];
+    plot.planted = true;
+    plot.growth = 0;
+    plot.cropIndex = cropIndex;
+    plot.watered = false;
+    plot.fertilizer = false;
 
-    // Add crop icon
-    const crop = document.createElement('div');
-    crop.className = 'crop';
-    crop.textContent = '🌱';
-    plot.appendChild(crop);
+    plot.element.classList.add('planted');
+    plot.element.innerHTML = '';
 
-    // Add progress bar
+    // Crop icon
+    const cropIcon = document.createElement('div');
+    cropIcon.className = 'cropIcon';
+    cropIcon.textContent = crops[cropIndex].icon;
+    plot.element.appendChild(cropIcon);
+
+    // Progress bar
     const progressBar = document.createElement('div');
     progressBar.className = 'progressBar';
     const progressFill = document.createElement('div');
     progressFill.className = 'progressFill';
     progressBar.appendChild(progressFill);
-    plot.appendChild(progressBar);
+    plot.element.appendChild(progressBar);
 
-    // Grow over time
-    plots[index].intervalId = setInterval(() => {
-      if (plots[index].growth >= 100) {
-        clearInterval(plots[index].intervalId);
-        plots[index].intervalId = null;
-        crop.textContent = '🌾';
-        progressFill.style.width = '100%';
+    // Water icon if watered
+    const waterIcon = document.createElement('div');
+    waterIcon.style.position = 'absolute';
+    waterIcon.style.top = '6px';
+    waterIcon.style.right = '6px';
+    waterIcon.style.fontSize = '20px';
+    waterIcon.style.opacity = '0.6';
+    waterIcon.textContent = '';
+    plot.element.appendChild(waterIcon);
+
+    // Fertilizer icon if fertilized
+    const fertIcon = document.createElement('div');
+    fertIcon.style.position = 'absolute';
+    fertIcon.style.bottom = '6px';
+    fertIcon.style.right = '6px';
+    fertIcon.style.fontSize = '20px';
+    fertIcon.style.opacity = '0.8';
+    fertIcon.textContent = '';
+    plot.element.appendChild(fertIcon);
+
+    // Growth interval
+    plot.intervalId = setInterval(() => {
+      if (!plot.planted) {
+        clearInterval(plot.intervalId);
+        plot.intervalId = null;
         return;
       }
-      plots[index].growth += 2;
-      progressFill.style.width = plots[index].growth + '%';
+
+      // Growth rate modifier
+      let growthRate = 200; // ms per growth unit
+      if (plot.watered) growthRate /= 2;
+      if (plot.fertilizer) growthRate /= 1.5;
+
+      plot.growth += 1000 / growthRate;
+
+      // Update progress bar
+      let progressPercent = Math.min(100, (plot.growth / crops[cropIndex].growTime) * 100);
+      progressFill.style.width = progressPercent + '%';
+
+      // Update icons
+      waterIcon.textContent = plot.watered ? '💧' : '';
+      fertIcon.textContent = plot.fertilizer ? '🌿' : '';
+
+      if (plot.growth >= crops[cropIndex].growTime) {
+        plot.growth = crops[cropIndex].growTime;
+        clearInterval(plot.intervalId);
+        plot.intervalId = null;
+        // Change crop icon to grown
+        cropIcon.textContent = '🌾';
+      }
     }, 300);
+    return true;
   }
 
-  // Harvest crop
+  // Harvest crop function
   function harvestCrop(index) {
-    if (!plots[index].planted || plots[index].growth < 100) return;
-    plots[index].planted = false;
-    plots[index].growth = 0;
+    const plot = plots[index];
+    if (!plot.planted) return false;
+    if (plot.growth < crops[plot.cropIndex].growTime) return false;
 
-    const plot = plots[index].element;
-    plot.classList.remove('planted');
-    plot.innerHTML = '';
+    // Calculate sell price
+    const crop = crops[plot.cropIndex];
+    const sellPrice = getSellPrice(crop.baseSellPrice, plot.fertilizer);
 
-    gold += 10;
-    updateGold();
+    gold += sellPrice;
+    updateUI();
+
+    // Reset plot
+    plot.planted = false;
+    plot.growth = 0;
+    plot.cropIndex = null;
+    plot.watered = false;
+    plot.fertilizer = false;
+
+    plot.element.classList.remove('planted');
+    plot.element.innerHTML = '';
+
+    return true;
   }
 
+  // Water plot function
+  function waterPlot(index) {
+    const plot = plots[index];
+    if (!plot.planted) return false;
+    plot.watered = true;
+    return true;
+  }
+
+  // Apply fertilizer to plot
+  function applyFertilizer(index) {
+    const plot = plots[index];
+    if (!plot.planted) return false;
+    if (fertilizer <= 0) return false;
+    if (plot.fertilizer) return false; // only one fertilizer per plot
+
+    fertilizer--;
+    plot.fertilizer = true;
+    updateUI();
+    return true;
+  }
+
+  // Handle clicking on plots:
+  // If empty: plant seed if possible
+  // If planted & grown: harvest
+  // If planted & not grown: water or apply fertilizer (choose with prompt)
+  function onPlotClick(index) {
+    const plot = plots[index];
+
+    if (!plot.planted) {
+      if (seeds <= 0) {
+        alert('No seeds available. Buy more seeds!');
+        return;
+      }
+      if (!plantSeed(index)) {
+        alert('Cannot plant seed here.');
+      }
+      return;
+    }
+
+    if (plot.growth >= crops[plot.cropIndex].growTime) {
+      harvestCrop(index);
+      return;
+    }
+
+    // Not fully grown, ask watering or fertilizer
+    if (fertilizer > 0 && !plot.fertilizer) {
+      const choice = confirm('Apply fertilizer to speed growth? (Cancel to water instead)');
+      if (choice) {
+        if (!applyFertilizer(index)) alert('Cannot apply fertilizer here.');
+        return;
+      }
+    }
+    waterPlot(index);
+  }
+
+  // Buy seed
   buySeedBtn.addEventListener('click', () => {
-    if (gold >= 5) {
-      gold -= 5;
+    const cost = getSeedCost();
+    if (gold >= cost) {
+      gold -= cost;
       seeds++;
-      updateGold();
-      updateSeeds();
+      updateUI();
     }
   });
 
+  // Buy fertilizer
+  buyFertilizerBtn.addEventListener('click', () => {
+    if (gold >= 10) {
+      gold -= 10;
+      fertilizer++;
+      updateUI();
+    }
+  });
+
+  // Upgrades
+  upgradeSeedCostBtn.addEventListener('click', () => {
+    if (gold >= 50) {
+      gold -= 50;
+      seedCostMultiplier = Math.max(0.5, seedCostMultiplier - 0.1);
+      alert('Seed cost reduced by 10%!');
+      updateUI();
+    }
+  });
+  upgradeSellPriceBtn.addEventListener('click', () => {
+    if (gold >= 50) {
+      gold -= 50;
+      sellPriceMultiplier += 0.1;
+      alert('Sell price increased by 10%!');
+      updateUI();
+    }
+  });
+
+  // Day/Night cycle toggle
+  function toggleDayNight() {
+    isDay = !isDay;
+    if (isDay) {
+      document.body.style.background = '#8bc34a';
+      dayNightCycleEl.textContent = 'Day Time';
+    } else {
+      document.body.style.background = '#264d00';
+      dayNightCycleEl.textContent = 'Night Time (Water plants!)';
+      // Water all plants automatically at night start
+      plots.forEach(plot => {
+        if (plot.planted) plot.watered = false;
+      });
+    }
+  }
+  setInterval(toggleDayNight, DAY_DURATION);
+
   // Init
-  updateGold();
-  updateSeeds();
   createFarmGrid();
+  updateUI();
 })();
 </script>
 
