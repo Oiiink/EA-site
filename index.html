@@ -1,218 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bee Tower Defense Lite - Phase 3</title>
-<style>
-  body, html {
-    margin: 0; padding: 0; font-family: 'Arial', sans-serif; background: #f0f8ff;
-    user-select: none;
-  }
-  #game-container {
-    position: relative;
-    width: 900px;
-    margin: 20px auto;
-    background: #def1e0;
-    border: 3px solid #4a7c59;
-    border-radius: 12px;
-  }
-  canvas {
-    background: #a3d9a5;
-    display: block;
-    border-radius: 12px;
-  }
-  #ui {
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    background: #e6f0e6;
-    border-bottom: 3px solid #4a7c59;
-    border-radius: 12px 12px 0 0;
-  }
-  #base-health, #money, #wave-info {
-    font-size: 18px;
-    color: #27532a;
-    font-weight: bold;
-  }
-  #tower-info {
-    max-width: 280px;
-    background: #d9f0d9;
-    border: 2px solid #4a7c59;
-    border-radius: 8px;
-    padding: 12px;
-  }
-  #tower-info h3 {
-    margin-top: 0;
-    color: #2b582e;
-  }
-  #upgrade-buttons {
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  button.upgrade-btn {
-    background: #4a7c59;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    padding: 8px;
-    cursor: pointer;
-    transition: background-color 0.25s ease;
-    display: flex;
-    justify-content: space-between;
-  }
-  button.upgrade-btn:hover:not(:disabled) {
-    background: #396640;
-  }
-  button.upgrade-btn:disabled {
-    background: #a0bba1;
-    cursor: not-allowed;
-  }
-  #message {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 20px;
-    color: #ba2e2e;
-    font-weight: bold;
-  }
-  #tower-options {
-    margin-top: 10px;
-    display: flex;
-    gap: 12px;
-  }
-  .tower-option {
-    background: #7fb678;
-    border-radius: 8px;
-    padding: 10px;
-    cursor: pointer;
-    color: #1b361b;
-    font-weight: bold;
-    user-select: none;
-    text-align: center;
-    width: 90px;
-  }
-  .tower-option:hover {
-    background: #67965e;
-  }
-  .tower-option.selected {
-    border: 3px solid #3a5b35;
-    background: #578047;
-    color: #e2f0d9;
-  }
-  /* Tooltip styling */
-  .tooltip {
-    position: absolute;
-    background: #4a7c59cc;
-    color: #d9f0d9;
-    padding: 6px 8px;
-    border-radius: 6px;
-    font-size: 13px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    max-width: 200px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flappy Bee Tower Defense</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body, html {
+      margin: 0; padding: 0;
+      font-family: 'Fredoka One', cursive, sans-serif;
+      background: linear-gradient(135deg, #f5f1e7 0%, #ffefb3 100%);
+      user-select: none;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
 
-  /* Challenge popup */
-  #challenge-popup {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
-    border-radius: 20px;
-    border: 3px solid #dba900;
-    padding: 25px 40px;
-    box-shadow: 0 0 20px #f8b500aa;
-    width: 380px;
-    text-align: center;
-    z-index: 100;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    color: #5a3e00;
-    display: none;
-  }
-  #challenge-popup h2 {
-    margin-top: 0;
-    font-size: 32px;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 2px #d49f00;
-  }
-  #challenge-popup p {
-    font-size: 18px;
-    line-height: 1.3;
-    margin: 0;
-    font-weight: bold;
-  }
-  #challenge-popup .bee-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    color: #f8b500;
-    text-shadow: 1px 1px 3px #d49f00;
-  }
-  #challenge-popup button {
-    margin-top: 20px;
-    font-size: 18px;
-    padding: 8px 20px;
-    border: none;
-    background: #5a3e00;
-    color: #fceabb;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 12px #f8b500aa;
-    transition: background-color 0.3s ease;
-  }
-  #challenge-popup button:hover {
-    background: #7a5400;
-  }
+    #game-header {
+      width: 100%;
+      max-width: 900px;
+      background: #f7d358;
+      color: #4a3e1d;
+      font-weight: 900;
+      font-size: 1.4rem;
+      padding: 12px 20px;
+      box-shadow: inset 0 0 15px #c79a23;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 12px 12px;
+      user-select: none;
+      z-index: 10;
+    }
 
-  /* Special ability effect visuals */
-  .ability-effect {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: pulse 1.2s ease-out forwards;
-  }
-  @keyframes pulse {
-    0% { transform: scale(0.6); opacity: 1; }
-    100% { transform: scale(2.2); opacity: 0; }
-  }
-</style>
+    #game-header > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #game-header .icon {
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 0 2px #c79a23);
+    }
+
+    #game-container {
+      position: relative;
+      width: 900px;
+      height: 600px;
+      background: linear-gradient(to bottom, #a0c95f 0%, #e0dd8f 100%);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(170, 140, 0, 0.5);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    canvas {
+      display: block;
+      border-radius: 16px;
+      background: url('assets/images/honeycomb-bg.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Enemies Health Bar */
+    .enemy-health-bar {
+      position: absolute;
+      height: 6px;
+      border-radius: 4px;
+      background: #e0e0e0;
+      box-shadow: inset 0 0 4px #7a6a0d;
+      overflow: hidden;
+    }
+    .enemy-health-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #d32f2f);
+      transition: width 0.2s ease;
+    }
+
+    /* Tower Upgrade Panel */
+    #tower-info {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 260px;
+      background: #fff7cc;
+      border: 3px solid #d9b500;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #c9a200aa;
+      padding: 14px 18px;
+      color: #4a3e1d;
+      user-select: none;
+      z-index: 15;
+      font-size: 14px;
+    }
+
+    #tower-info h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.6rem;
+      text-align: center;
+      color: #b78300;
+      text-shadow: 1px 1px 2px #7b6500;
+    }
+
+    #tower-info .icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 12px auto;
+      filter: drop-shadow(0 0 6px #b78300);
+    }
+
+    #tower-info .upgrade-section {
+      margin-top: 10px;
+    }
+
+    #tower-info button.upgrade-btn {
+      width: 100%;
+      padding: 10px 0;
+      background: linear-gradient(145deg, #ffd833, #d9b500);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      color: #4a3e1d;
+      font-size: 1.1rem;
+      box-shadow: 0 4px #a68200;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    #tower-info button.upgrade-btn:hover:not(:disabled) {
+      background: linear-gradient(145deg, #fff160, #e3ca0a);
+      box-shadow: 0 6px #c9a200;
+    }
+    #tower-info button.upgrade-btn:disabled {
+      background: #c4b07d;
+      color: #7a6a0d;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    #tower-info .upgrade-cost {
+      font-weight: 700;
+      margin-top: 6px;
+      text-align: center;
+      color: #6e5800;
+    }
+
+    /* Wave & Money Display */
+    #status-bar {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: #fff7ccdd;
+      padding: 8px 14px;
+      border-radius: 12px;
+      box-shadow: inset 0 0 10px #c9a200cc;
+      color: #4a3e1d;
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+      z-index: 10;
+    }
+
+    /* Message Popup */
+    #message-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #f8e98a;
+      padding: 20px 32px;
+      border-radius: 14px;
+      box-shadow: 0 0 18px #d9b500cc;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #7a6500;
+      text-align: center;
+      pointer-events: none;
+      user-select: none;
+      transition: transform 0.3s ease;
+      z-index: 25;
+    }
+    #message-popup.show {
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+      animation: pulse 1.2s ease infinite alternate;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 18px #d9b500cc; }
+      100% { box-shadow: 0 0 30px #fadb36cc; }
+    }
+
+    /* Tower selection highlight */
+    .tower-selected {
+      outline: 3px solid #fadb36;
+      outline-offset: 4px;
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 12px 3px #fadb36cc; }
+      50% { box-shadow: 0 0 22px 7px #fff89ecc; }
+    }
+
+  </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="ui">
-      <div id="base-health">Base Health: 10</div>
-      <div id="money">Money: 100</div>
-      <div id="wave-info">Wave: 0</div>
-      <div id="tower-info">
-        <h3>Tower Info</h3>
-        <div id="tower-details">Select a tower to see details</div>
-        <div id="upgrade-buttons"></div>
-      </div>
-    </div>
-    <canvas id="game-canvas" width="900" height="500"></canvas>
-    <div id="tower-options">
-      <div class="tower-option" data-type="basic">Basic Tower</div>
-      <div class="tower-option" data-type="rapid">Rapid Fire</div>
-      <div class="tower-option" data-type="slow">Slowdown</div>
-    </div>
-    <div id="message"></div>
 
-    <!-- Challenge Modifier Popup -->
-    <div id="challenge-popup">
-      <div class="bee-icon">🐝</div>
-      <h2>Challenge Modifier</h2>
-      <p id="challenge-text"></p>
-      <button id="challenge-close-btn">Got it!</button>
+  <div id="game-header" aria-label="Game status and info">
+    <div>
+      <img class="icon" src="assets/images/bee-icon.png" alt="Bee icon" />
+      <span id="money-display">Money: 0</span>
     </div>
-
-    <div class="tooltip" id="tooltip"></div>
+    <div>
+      <img class="icon" src="assets/images/wave-icon.png" alt="Wave icon" />
+      <span id="wave-display">Wave: 0</span>
+    </div>
   </div>
 
-  <script src="game.js"></script>
+  <div id="game-container" role="main" aria-label="Tower Defense game area">
+    <canvas id="gameCanvas" width="900" height="600" aria-label="Game canvas"></canvas>
+
+    <!-- Tower info & upgrade panel -->
+    <aside id="tower-info" aria-live="polite" aria-atomic="true" aria-relevant="additions removals">
+      <h2 id="tower-name">Select a tower</h2>
+      <img id="tower-icon" class="icon" src="" alt="" hidden />
+      <p id="tower-desc">Click a tower to see details and upgrades</p>
+      <div class="upgrade-section">
+        <button id="upgrade-btn" class="upgrade-btn" disabled aria-disabled="true">Upgrade</button>
+        <div id="upgrade-cost" class="upgrade-cost"></div>
+      </div>
+    </aside>
+
+    <!-- Message popup -->
+    <div id="message-popup" role="alert" aria-live="assertive" aria-atomic="true"></div>
+  </div>
+
+<script src="game.js"></script>
+
 </body>
 </html>
