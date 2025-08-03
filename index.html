@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bee Tower Defense Lite - Phase 2</title>
+<title>Bee Tower Defense Lite - Phase 3</title>
 <style>
   body, html {
     margin: 0; padding: 0; font-family: 'Arial', sans-serif; background: #f0f8ff;
@@ -167,6 +167,18 @@
   }
   #challenge-popup button:hover {
     background: #7a5400;
+  }
+
+  /* Special ability effect visuals */
+  .ability-effect {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: pulse 1.2s ease-out forwards;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
   }
 </style>
 </head>
