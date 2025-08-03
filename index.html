@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dating Sim with Relationship Meter & Minigame</title>
+<title>Advanced Dating Sim</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,20 +11,48 @@
     margin: 0; padding: 20px; color: #333;
   }
   #game {
-    max-width: 640px;
+    max-width: 720px;
     margin: auto;
     background: #fff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  #header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  #playerNameInput {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    font-size: 1em;
+    width: 160px;
+  }
+  #avatarSelect {
+    font-size: 1em;
+    border-radius: 6px;
+    padding: 6px 8px;
+  }
+  #dateTime {
+    font-weight: 600;
+    color: #567a52;
+  }
+  #characterInfo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
   }
   #portrait {
     width: 140px;
     height: 140px;
-    margin: 0 auto 15px;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 0 15px #7b9aa7;
+    margin-right: 15px;
+    flex-shrink: 0;
   }
   #portrait img {
     width: 100%;
@@ -32,41 +60,53 @@
     object-fit: cover;
   }
   #charName {
-    text-align: center;
-    font-size: 1.8em;
+    font-size: 2em;
     font-weight: 700;
-    margin-bottom: 8px;
     color: #3a5a40;
+    margin-bottom: 4px;
   }
-  #relationshipBar {
-    width: 100%;
-    height: 24px;
+  #stats {
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #3b5e3b;
+  }
+  #relationshipBars {
+    margin-top: 10px;
+  }
+  .statBar {
     background: #ddd;
     border-radius: 12px;
+    margin-bottom: 6px;
     overflow: hidden;
-    margin-bottom: 10px;
+    height: 18px;
   }
-  #relationshipFill {
+  .statFill {
     height: 100%;
+    background: #6ab04c;
     width: 0%;
-    background: #56ab2f;
     transition: width 0.5s ease;
   }
+  .statLabel {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #2f5a32;
+  }
   #mood {
-    text-align: center;
     font-style: italic;
-    margin-bottom: 15px;
+    margin: 8px 0 15px 0;
     font-weight: 600;
     color: #427839;
+    text-align: center;
   }
   #dialogue {
-    min-height: 100px;
+    min-height: 120px;
     font-size: 1.2em;
     line-height: 1.4;
     margin-bottom: 15px;
-    padding: 10px;
+    padding: 12px 15px;
     background: #f0f4f3;
     border-radius: 8px;
+    white-space: pre-line;
   }
   #choices {
     display: flex;
@@ -83,6 +123,7 @@
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s ease;
+    min-width: 140px;
   }
   button.choice:hover {
     background-color: #2e4a33;
@@ -105,17 +146,133 @@
     cursor: pointer;
     margin-top: 10px;
   }
+  #inventory {
+    margin-top: 15px;
+    border-top: 2px solid #ccc;
+    padding-top: 15px;
+  }
+  #inventory h3 {
+    color: #3a5a40;
+    margin-bottom: 8px;
+  }
+  #inventoryItems {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .inventory-item {
+    background: #f0f4f3;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    user-select: none;
+    min-width: 100px;
+    text-align: center;
+    font-weight: 600;
+    color: #3a5a40;
+  }
+  .inventory-item.selected {
+    border-color: #5a8267;
+    background: #d6e2d1;
+  }
+  #giftSection {
+    margin-top: 20px;
+    border-top: 2px solid #ccc;
+    padding-top: 15px;
+  }
+  #giftSection h3 {
+    color: #3a5a40;
+    margin-bottom: 8px;
+  }
+  #gifts {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .gift {
+    background: #f0f4f3;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    user-select: none;
+    min-width: 120px;
+    text-align: center;
+    font-weight: 600;
+    color: #3a5a40;
+  }
+  .gift.soldout {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  #eventsLog {
+    margin-top: 15px;
+    font-size: 0.85em;
+    max-height: 80px;
+    overflow-y: auto;
+    background: #e9f0ea;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #52703a;
+  }
+  #saveLoad {
+    margin-top: 15px;
+    text-align: center;
+  }
+  #saveLoad button {
+    background: #567a52;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  #location {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #3a5a40;
+  }
 </style>
 </head>
 <body>
 <div id="game">
-  <div id="portrait"><img src="" alt="Character Portrait" /></div>
-  <div id="charName"></div>
-
-  <div id="relationshipBar">
-    <div id="relationshipFill"></div>
+  <div id="header">
+    <div>
+      <label for="playerNameInput">Your Name: </label>
+      <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="15" />
+      <select id="avatarSelect" title="Choose your avatar">
+        <option value="🧑">🧑</option>
+        <option value="👩">👩</option>
+        <option value="🧔">🧔</option>
+        <option value="🧑‍🦰">🧑‍🦰</option>
+        <option value="🧑‍🎓">🧑‍🎓</option>
+      </select>
+    </div>
+    <div id="dateTime"></div>
   </div>
-  <div id="mood"></div>
+
+  <div id="location"></div>
+
+  <div id="characterInfo">
+    <div id="portrait"><img src="" alt="Character Portrait" /></div>
+    <div>
+      <div id="charName"></div>
+      <div id="stats">
+        <div id="relationshipBars">
+          <!-- Dynamic relationship bars here -->
+        </div>
+      </div>
+      <div id="mood"></div>
+    </div>
+  </div>
+
   <div id="dialogue"></div>
   <div id="choices"></div>
 
@@ -123,272 +280,773 @@
     <div id="minigameText"></div>
     <button id="playMinigameBtn">Play Minigame</button>
   </div>
+
+  <div id="inventory">
+    <h3>Your Inventory</h3>
+    <div id="inventoryItems"></div>
+  </div>
+
+  <div id="giftSection">
+    <h3>Gift Shop</h3>
+    <div id="gifts"></div>
+  </div>
+
+  <div id="eventsLog"></div>
+
+  <div id="saveLoad">
+    <button id="saveBtn">Save Progress</button>
+    <button id="loadBtn">Load Progress</button>
+    <button id="resetBtn">Reset Game</button>
+  </div>
 </div>
 
 <script>
 (() => {
-  // Character definition with personality traits, likes, dislikes
-  const character = {
-    name: "Sakura",
-    avatarUrl: "https://avatars.dicebear.com/api/female/sakura.svg",
-    moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
-    mood: 1, // starts Neutral
-    relationship: 30, // out of 100
-    interests: ["reading", "chocolate", "gardening"],
-    dislikes: ["rudeness", "lateness"],
-    memory: { // Track answers or events
-      askedAboutHobbies: 0,
-      gaveCompliment: 0,
-      minigamePlayed: false,
-    }
+  // --- Player Setup ---
+  let player = {
+    name: "",
+    avatar: "🧑",
+    inventory: [],
+    currency: 100
   };
 
-  const portrait = document.querySelector("#portrait img");
-  const charName = document.getElementById("charName");
-  const relationshipFill = document.getElementById("relationshipFill");
-  const moodEl = document.getElementById("mood");
-  const dialogueEl = document.getElementById("dialogue");
-  const choicesEl = document.getElementById("choices");
-  const minigameEl = document.getElementById("minigame");
-  const minigameText = document.getElementById("minigameText");
-  const playMinigameBtn = document.getElementById("playMinigameBtn");
+  // --- Time & Location System ---
+  const locations = ["Park", "Cafe", "Library", "Museum"];
+  let currentLocationIndex = 0;
 
-  // Dialogue nodes with conditions and effects on mood/relationship
-  const dialogueTree = {
-    start: {
-      text: "Hi there! What do you want to talk about?",
-      choices: [
-        { text: "Ask about hobbies", next: "hobbies" },
-        { text: "Give a compliment", next: "compliment" },
-        { text: "Play a minigame", next: "startMinigame" },
-        { text: "Say goodbye", next: "goodbye" },
-      ]
-    },
-    hobbies: {
-      text: () => {
-        character.memory.askedAboutHobbies++;
-        if(character.memory.askedAboutHobbies === 1) {
-          adjustRelationship(5);
-          adjustMood(1);
-          return "I love reading books, especially fantasy. I also enjoy gardening and chocolate!";
-        } else if(character.memory.askedAboutHobbies === 2) {
-          adjustRelationship(2);
-          adjustMood(0);
-          return "I've already told you, I like reading, gardening, and chocolate.";
-        } else {
-          adjustRelationship(-2);
-          adjustMood(-1);
-          return "You keep asking the same thing, it's getting annoying...";
-        }
-      },
-      choices: [
-        { text: "Sounds interesting!", next: "start" },
-        { text: "Not really my thing", next: "dislikeHobbies" },
-      ]
-    },
-    dislikeHobbies: {
-      text: () => {
-        adjustRelationship(-5);
-        adjustMood(-1);
-        return "Oh, that's disappointing to hear...";
-      },
-      choices: [
-        { text: "Sorry, let's talk about something else", next: "start" }
-      ]
-    },
-    compliment: {
-      text: () => {
-        character.memory.gaveCompliment++;
-        if(character.memory.gaveCompliment === 1) {
-          adjustRelationship(10);
-          adjustMood(2);
-          return "Aww, thank you! That means a lot to me.";
-        } else if(character.memory.gaveCompliment === 2) {
-          adjustRelationship(5);
-          adjustMood(1);
-          return "You're so sweet!";
-        } else {
-          adjustRelationship(-5);
-          adjustMood(-2);
-          return "You're flattering me a bit too much...";
-        }
-      },
-      choices: [
-        { text: "I mean it!", next: "start" },
-        { text: "Back", next: "start" }
-      ]
-    },
-    startMinigame: {
-      text: () => "Let's play a quick minigame! Try to click the button when the timer hits zero.",
-      choices: [],
-      action: "startMinigame"
-    },
-    minigameResultWin: {
-      text: () => {
-        adjustRelationship(15);
-        adjustMood(3);
-        character.memory.minigamePlayed = true;
-        return "Wow! You did great! I had so much fun playing with you.";
-      },
-      choices: [
-        { text: "Thanks!", next: "start" }
-      ]
-    },
-    minigameResultLose: {
-      text: () => {
-        adjustRelationship(-5);
-        adjustMood(-1);
-        character.memory.minigamePlayed = true;
-        return "Oh, so close! Better luck next time!";
-      },
-      choices: [
-        { text: "I'll try again", next: "start" }
-      ]
-    },
-    goodbye: {
-      text: "Bye! Hope to talk to you again soon.",
-      choices: []
-    }
+  let gameTime = {
+    day: 1,
+    hour: 10, // 24h format, starting at 10am
   };
 
-  function adjustRelationship(amount) {
-    character.relationship = Math.min(100, Math.max(0, character.relationship + amount));
-    updateRelationshipBar();
+  function advanceTime(hours) {
+    gameTime.hour += hours;
+    while (gameTime.hour >= 24) {
+      gameTime.hour -= 24;
+      gameTime.day++;
+      logEvent(`A new day begins: Day ${gameTime.day}`);
+      // Trigger day-based events here
+      maybeTriggerRandomEvent();
+    }
+    updateDateTimeDisplay();
   }
 
-  function adjustMood(amount) {
-    character.mood = Math.min(character.moodLevels.length - 1, Math.max(0, character.mood + amount));
-    updateMood();
+  function updateDateTimeDisplay() {
+    const hour12 = gameTime.hour % 12 === 0 ? 12 : gameTime.hour % 12;
+    const ampm = gameTime.hour < 12 ? "AM" : "PM";
+    document.getElementById("dateTime").textContent = `Day ${gameTime.day} - ${hour12}:00 ${ampm}`;
   }
 
-  function updateRelationshipBar() {
-    relationshipFill.style.width = character.relationship + "%";
-    // Color gradient from red (0) to green (100)
-    const green = Math.floor((character.relationship / 100) * 170 + 50);
-    const red = 220 - green;
-    relationshipFill.style.backgroundColor = `rgb(${red},${green},70)`;
+  // --- Characters ---
+  const characters = [
+    {
+      id: "sakura",
+      name: "Sakura",
+      avatarUrl: "https://avatars.dicebear.com/api/female/sakura.svg",
+      personality: {
+        likes: ["reading", "gardening", "chocolate"],
+        dislikes: ["rudeness", "lateness"],
+        hobbies: "loves reading fantasy novels and tending her garden.",
+        hates: "dislikes when people are rude or late."
+      },
+      stats: {
+        affection: 30,
+        trust: 20,
+        respect: 25,
+        jealousy: 5
+      },
+      mood: 1,
+      moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
+      memory: {
+        askedAboutHobbies: 0,
+        gaveCompliment: 0,
+        minigamePlayed: false,
+        repeatedQuestions: 0,
+        giftsReceived: []
+      },
+      dialogueTrees: {}, // will define later
+      locationPreferences: ["Park", "Cafe", "Library"],
+    },
+    {
+      id: "kevin",
+      name: "Kevin",
+      avatarUrl: "https://avatars.dicebear.com/api/male/kevin.svg",
+      personality: {
+        likes: ["sports", "music", "coffee"],
+        dislikes: ["lateness", "boring conversations"],
+        hobbies: "enjoys playing basketball and listening to rock music.",
+        hates: "does not like people who are late or boring."
+      },
+      stats: {
+        affection: 20,
+        trust: 30,
+        respect: 30,
+        jealousy: 10
+      },
+      mood: 1,
+      moodLevels: ["Annoyed", "Neutral", "Happy", "Excited"],
+      memory: {
+        askedAboutHobbies: 0,
+        gaveCompliment: 0,
+        minigamePlayed: false,
+        repeatedQuestions: 0,
+        giftsReceived: []
+      },
+      dialogueTrees: {},
+      locationPreferences: ["Cafe", "Museum"],
+    }
+  ];
+
+  let currentCharacterIndex = 0;
+  let currentCharacter = characters[currentCharacterIndex];
+
+  // --- Inventory & Gifts ---
+  const giftCatalog = [
+    { id: "flowers", name: "Flowers", price: 20, likes: ["Sakura"], dislikes: ["Kevin"] },
+    { id: "chocolate", name: "Chocolate", price: 15, likes: ["Sakura", "Kevin"], dislikes: [] },
+    { id: "book", name: "Book", price: 25, likes: ["Sakura"], dislikes: ["Kevin"] },
+    { id: "coffee", name: "Coffee", price: 10, likes: ["Kevin"], dislikes: [] },
+    { id: "music_cd", name: "Music CD", price: 30, likes: ["Kevin"], dislikes: [] }
+  ];
+
+  // --- Utilities ---
+  function logEvent(text) {
+    const eventsLog = document.getElementById("eventsLog");
+    const p = document.createElement("p");
+    p.textContent = `[Day ${gameTime.day}] ${text}`;
+    eventsLog.prepend(p);
+    while(eventsLog.childElementCount > 20) eventsLog.removeChild(eventsLog.lastChild);
   }
 
-  function updateMood() {
-    moodEl.textContent = `Mood: ${character.moodLevels[character.mood]}`;
-    const moodsColors = ["#aa4444", "#999999", "#4caf50", "#a3d977"];
-    moodEl.style.color = moodsColors[character.mood] || "#333";
+  // --- Save & Load ---
+  function saveGame() {
+    const saveData = {
+      player,
+      gameTime,
+      currentCharacterIndex,
+      characters
+    };
+    localStorage.setItem("datingSimSave", JSON.stringify(saveData));
+    alert("Game saved!");
   }
 
-  function setDialogue(text) {
-    dialogueEl.textContent = (typeof text === "function") ? text() : text;
-  }
-
-  function renderChoices(choices) {
-    choicesEl.innerHTML = "";
-    if(choices.length === 0) {
-      // Show restart button
-      const btn = document.createElement("button");
-      btn.className = "choice";
-      btn.textContent = "Restart";
-      btn.onclick = () => {
-        currentNode = "start";
-        renderNode(currentNode);
-      };
-      choicesEl.appendChild(btn);
+  function loadGame() {
+    const data = localStorage.getItem("datingSimSave");
+    if(!data) {
+      alert("No saved game found.");
       return;
     }
-    choices.forEach(choice => {
+    const saveData = JSON.parse(data);
+    player = saveData.player;
+    Object.assign(gameTime, saveData.gameTime);
+    currentCharacterIndex = saveData.currentCharacterIndex;
+    currentCharacter = characters[currentCharacterIndex];
+    Object.assign(characters, saveData.characters);
+    renderUI();
+    alert("Game loaded!");
+  }
+
+  function resetGame() {
+    if(confirm("Are you sure you want to reset? All progress will be lost.")) {
+      localStorage.removeItem("datingSimSave");
+      location.reload();
+    }
+  }
+
+  // --- Mood & Relationship Bars ---
+  function updateMoodAndStats() {
+    const moodEl = document.getElementById("mood");
+    const moodIndex = Math.min(Math.max(currentCharacter.mood, 0), currentCharacter.moodLevels.length-1);
+    moodEl.textContent = `Mood: ${currentCharacter.moodLevels[moodIndex]}`;
+    const moodsColors = ["#aa4444", "#999999", "#4caf50", "#a3d977"];
+    moodEl.style.color = moodsColors[moodIndex] || "#333";
+
+    // Update bars
+    const barsContainer = document.getElementById("relationshipBars");
+    barsContainer.innerHTML = "";
+    for(const stat in currentCharacter.stats) {
+      const container = document.createElement("div");
+      container.className = "statLabel";
+      container.textContent = `${capitalize(stat)}:`;
+
+      const barWrapper = document.createElement("div");
+      barWrapper.className = "statBar";
+
+      const fill = document.createElement("div");
+      fill.className = "statFill";
+      fill.style.width = `${currentCharacter.stats[stat]}%`;
+
+      // Color based on stat
+      if(stat === "jealousy") fill.style.backgroundColor = "#d9534f";
+      else fill.style.backgroundColor = "#6ab04c";
+
+      barWrapper.appendChild(fill);
+      barsContainer.appendChild(container);
+      barsContainer.appendChild(barWrapper);
+    }
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // --- Dialogue System ---
+
+  /*
+  Dialogue structure:
+  {
+    id: {
+      text: string or function returning string,
+      choices: [{ text: string, next: string, effect: function, condition: function? }],
+      action: function? to run on node enter
+    }
+  }
+  */
+
+  // Common functions for adjusting stats with caps
+  function adjustStat(stat, amount) {
+    if(!currentCharacter.stats.hasOwnProperty(stat)) return;
+    currentCharacter.stats[stat] = Math.min(100, Math.max(0, currentCharacter.stats[stat] + amount));
+  }
+  function changeMood(amount) {
+    currentCharacter.mood = Math.min(currentCharacter.moodLevels.length-1, Math.max(0, currentCharacter.mood + amount));
+  }
+
+  // Simple condition for whether player has a gift in inventory
+  function hasGift(id) {
+    return player.inventory.some(i => i.id === id);
+  }
+
+  // Track repeated questions
+  function incrementMemory(key) {
+    currentCharacter.memory[key] = (currentCharacter.memory[key] || 0) + 1;
+  }
+
+  // Dialogue trees for each character
+  // For brevity, only Sakura and Kevin for now.
+  const dialogueTrees = {
+    sakura: {
+      start: {
+        text: () => `Hi ${player.name}! What would you like to talk about with Sakura?`,
+        choices: [
+          { text: "Ask about hobbies", next: "hobbies" },
+          { text: "Give a compliment", next: "compliment" },
+          { text: "Give a gift", next: "giveGift" },
+          { text: "Play minigame", next: "minigame" },
+          { text: "Change location", next: "changeLocation" }
+        ]
+      },
+      hobbies: {
+        text: () => {
+          incrementMemory("askedAboutHobbies");
+          if(currentCharacter.memory.askedAboutHobbies > 1) {
+            adjustStat("affection", -5);
+            changeMood(-1);
+            return "You've asked about my hobbies too many times! Please don't bother me.";
+          }
+          adjustStat("trust", 5);
+          changeMood(1);
+          return `I love reading and gardening. ${currentCharacter.personality.hobbies}`;
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      compliment: {
+        text: () => {
+          incrementMemory("gaveCompliment");
+          if(currentCharacter.memory.gaveCompliment > 3) {
+            adjustStat("affection", -3);
+            changeMood(-1);
+            return "You're being a bit too flattering... it feels insincere.";
+          }
+          adjustStat("affection", 7);
+          changeMood(1);
+          return "Thank you! That means a lot to me.";
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      giveGift: {
+        text: () => {
+          if(player.inventory.length === 0) return "You have no gifts to give.";
+          return "Select a gift to give:";
+        },
+        choices: player.inventory.map((gift, i) => ({
+          text: `${gift.name}`,
+          next: "giftResult",
+          effect: () => giveGiftToCharacter(gift)
+        })).concat({ text: "Back", next: "start" })
+      },
+      giftResult: {
+        text: () => {
+          const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
+          if(!lastGift) return "No gift given.";
+          let response = "";
+          if(currentCharacter.personality.likes.includes(lastGift.id)) {
+            adjustStat("affection", 10);
+            adjustStat("trust", 5);
+            changeMood(1);
+            response = `Sakura loves the ${lastGift.name}! She's very happy.`;
+          } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
+            adjustStat("affection", -10);
+            changeMood(-1);
+            response = `Sakura didn't like the ${lastGift.name}. She looks displeased.`;
+          } else {
+            adjustStat("affection", 3);
+            response = `Sakura thanks you for the ${lastGift.name}.`;
+          }
+          return response;
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      minigame: {
+        text: "Let's play a quick minigame!",
+        choices: [{ text: "Start Reaction Test", next: "reactionTest" }, { text: "Back", next: "start" }]
+      },
+      reactionTest: {
+        text: "Wait for the GO signal, then click as fast as you can!",
+        choices: [],
+        action: startReactionTest
+      },
+      changeLocation: {
+        text: "Choose a new location:",
+        choices: locations.map(loc => ({ text: loc, next: "locationChanged", effect: () => changeLocation(loc) })).concat({ text: "Back", next: "start" })
+      },
+      locationChanged: {
+        text: () => `You moved to the ${currentLocation()}.`,
+        choices: [{ text: "Back to conversation", next: "start" }]
+      }
+    },
+    kevin: {
+      start: {
+        text: () => `Hey ${player.name}, ready to chat with Kevin?`,
+        choices: [
+          { text: "Ask about music", next: "music" },
+          { text: "Give a compliment", next: "compliment" },
+          { text: "Give a gift", next: "giveGift" },
+          { text: "Play minigame", next: "minigame" },
+          { text: "Change location", next: "changeLocation" }
+        ]
+      },
+      music: {
+        text: () => {
+          incrementMemory("askedAboutHobbies");
+          if(currentCharacter.memory.askedAboutHobbies > 1) {
+            adjustStat("affection", -5);
+            changeMood(-1);
+            return "You've already asked me about my music taste too many times.";
+          }
+          adjustStat("trust", 5);
+          changeMood(1);
+          return `I enjoy rock music and playing basketball. ${currentCharacter.personality.hobbies}`;
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      compliment: {
+        text: () => {
+          incrementMemory("gaveCompliment");
+          if(currentCharacter.memory.gaveCompliment > 3) {
+            adjustStat("affection", -3);
+            changeMood(-1);
+            return "You're flattering me too much, it feels fake.";
+          }
+          adjustStat("affection", 7);
+          changeMood(1);
+          return "Thanks, I appreciate that.";
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      giveGift: {
+        text: () => {
+          if(player.inventory.length === 0) return "You have no gifts to give.";
+          return "Select a gift to give:";
+        },
+        choices: player.inventory.map((gift, i) => ({
+          text: `${gift.name}`,
+          next: "giftResult",
+          effect: () => giveGiftToCharacter(gift)
+        })).concat({ text: "Back", next: "start" })
+      },
+      giftResult: {
+        text: () => {
+          const lastGift = currentCharacter.memory.giftsReceived.slice(-1)[0];
+          if(!lastGift) return "No gift given.";
+          let response = "";
+          if(currentCharacter.personality.likes.includes(lastGift.id)) {
+            adjustStat("affection", 10);
+            adjustStat("trust", 5);
+            changeMood(1);
+            response = `Kevin really likes the ${lastGift.name}! He's very happy.`;
+          } else if(currentCharacter.personality.dislikes.includes(lastGift.id)) {
+            adjustStat("affection", -10);
+            changeMood(-1);
+            response = `Kevin didn't care much for the ${lastGift.name}.`;
+          } else {
+            adjustStat("affection", 3);
+            response = `Kevin thanks you for the ${lastGift.name}.`;
+          }
+          return response;
+        },
+        choices: [{ text: "Back", next: "start" }]
+      },
+      minigame: {
+        text: "Wanna try a quick minigame?",
+        choices: [{ text: "Start Quiz", next: "quiz" }, { text: "Back", next: "start" }]
+      },
+      quiz: {
+        text: "Answer these questions about Kevin correctly!",
+        choices: [],
+        action: startQuiz
+      },
+      changeLocation: {
+        text: "Choose a new location:",
+        choices: locations.map(loc => ({ text: loc, next: "locationChanged", effect: () => changeLocation(loc) })).concat({ text: "Back", next: "start" })
+      },
+      locationChanged: {
+        text: () => `You moved to the ${currentLocation()}.`,
+        choices: [{ text: "Back to conversation", next: "start" }]
+      }
+    }
+  };
+
+  // --- Current Dialogue State ---
+  let currentNodeId = "start";
+
+  // --- Render Functions ---
+  function renderUI() {
+    // Player name & avatar
+    const nameInput = document.getElementById("playerNameInput");
+    nameInput.value = player.name || "";
+    const avatarSelect = document.getElementById("avatarSelect");
+    avatarSelect.value = player.avatar;
+
+    // Character Info
+    const portraitImg = document.querySelector("#portrait img");
+    portraitImg.src = currentCharacter.avatarUrl;
+    portraitImg.alt = currentCharacter.name;
+
+    document.getElementById("charName").textContent = currentCharacter.name;
+    updateMoodAndStats();
+
+    // Dialogue & choices
+    renderDialogue();
+
+    // Inventory
+    renderInventory();
+
+    // Gifts shop
+    renderGifts();
+
+    // Location
+    document.getElementById("location").textContent = `Location: ${currentLocation()}`;
+
+    updateDateTimeDisplay();
+  }
+
+  function renderDialogue() {
+    const dialogueEl = document.getElementById("dialogue");
+    const choicesEl = document.getElementById("choices");
+    const minigameEl = document.getElementById("minigame");
+
+    minigameEl.style.display = "none";
+    choicesEl.innerHTML = "";
+
+    const tree = dialogueTrees[currentCharacter.id];
+    if (!tree) {
+      dialogueEl.textContent = "No dialogue available.";
+      return;
+    }
+
+    const node = tree[currentNodeId];
+    if (!node) {
+      dialogueEl.textContent = "Dialogue node not found.";
+      return;
+    }
+
+    // Text
+    let textContent = typeof node.text === "function" ? node.text() : node.text;
+    dialogueEl.textContent = textContent;
+
+    // Action on enter
+    if (typeof node.action === "function") {
+      node.action();
+    }
+
+    // Choices
+    if (node.choices && node.choices.length > 0) {
+      node.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = choice.text;
+        btn.onclick = () => {
+          if(choice.effect) choice.effect();
+          currentNodeId = choice.next;
+          renderDialogue();
+        };
+        choicesEl.appendChild(btn);
+      });
+    } else if (node.next) {
+      currentNodeId = node.next;
+      renderDialogue();
+    } else {
+      // no choices - show back button
       const btn = document.createElement("button");
       btn.className = "choice";
-      btn.textContent = choice.text;
+      btn.textContent = "Back";
       btn.onclick = () => {
-        if(choice.next) {
-          currentNode = choice.next;
-          renderNode(currentNode);
-        }
+        currentNodeId = "start";
+        renderDialogue();
       };
       choicesEl.appendChild(btn);
+    }
+  }
+
+  // --- Inventory Rendering & Management ---
+  function renderInventory() {
+    const invContainer = document.getElementById("inventoryItems");
+    invContainer.innerHTML = "";
+    if (player.inventory.length === 0) {
+      invContainer.textContent = "You have no items.";
+      return;
+    }
+    player.inventory.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "inventory-item";
+      div.textContent = item.name;
+      invContainer.appendChild(div);
     });
   }
 
-  let currentNode = "start";
-
-  function renderNode(nodeKey) {
-    const node = dialogueTree[nodeKey];
-    if(!node) return;
-
-    // Show avatar & name
-    portrait.src = character.avatarUrl;
-    charName.textContent = character.name;
-
-    // Run any action attached to node
-    if(node.action === "startMinigame") {
-      showMinigame();
-    } else {
-      hideMinigame();
-    }
-
-    setDialogue(node.text);
-    renderChoices(node.choices);
-
-    updateMood();
-    updateRelationshipBar();
+  // --- Gifts Rendering ---
+  function renderGifts() {
+    const giftsContainer = document.getElementById("gifts");
+    giftsContainer.innerHTML = "";
+    giftCatalog.forEach(gift => {
+      const div = document.createElement("div");
+      div.className = "gift";
+      div.textContent = `${gift.name} - ${gift.price}g`;
+      if (player.currency < gift.price) {
+        div.classList.add("soldout");
+      }
+      div.onclick = () => {
+        if (player.currency >= gift.price) {
+          player.currency -= gift.price;
+          player.inventory.push({ id: gift.id, name: gift.name });
+          logEvent(`You bought a ${gift.name}.`);
+          renderUI();
+        }
+      };
+      giftsContainer.appendChild(div);
+    });
   }
 
-  // --- Minigame: Reaction test ---
+  // --- Gift giving ---
+  function giveGiftToCharacter(gift) {
+    currentCharacter.memory.giftsReceived.push(gift);
+    player.inventory = player.inventory.filter(i => i !== gift);
+  }
 
-  const minigameButton = document.createElement("button");
-  minigameButton.textContent = "Click me!";
-  minigameButton.style.padding = "15px 25px";
-  minigameButton.style.fontSize = "1.2em";
-  minigameButton.style.cursor = "pointer";
+  // --- Minigames ---
 
-  let timerId = null;
-  let waitingForClick = false;
-
-  function showMinigame() {
+  // Reaction Test
+  let reactionStartTime = 0;
+  function startReactionTest() {
+    const minigameEl = document.getElementById("minigame");
+    const minigameText = document.getElementById("minigameText");
+    const playBtn = document.getElementById("playMinigameBtn");
     minigameEl.style.display = "block";
-    minigameText.textContent = "Wait for the button to turn green, then click it as fast as you can!";
-    minigameEl.appendChild(minigameButton);
-    minigameButton.disabled = true;
-    minigameButton.style.backgroundColor = "#777";
-    waitingForClick = false;
+    minigameText.textContent = "Get ready...";
+    playBtn.style.display = "none";
 
-    // Random wait between 1.5s and 3.5s
-    const waitTime = 1500 + Math.random() * 2000;
-    timerId = setTimeout(() => {
-      minigameButton.style.backgroundColor = "#4caf50";
-      minigameButton.disabled = false;
-      waitingForClick = true;
-      // Start reaction timer (max 1.5s to click)
-      const startTime = Date.now();
-      minigameButton.onclick = () => {
-        if(!waitingForClick) return;
-        waitingForClick = false;
-        const reactionTime = Date.now() - startTime;
-        if(reactionTime <= 1500) {
-          currentNode = "minigameResultWin";
+    setTimeout(() => {
+      minigameText.textContent = "GO! Click the button!";
+      playBtn.style.display = "inline-block";
+      reactionStartTime = Date.now();
+      playBtn.onclick = () => {
+        const reactionTime = Date.now() - reactionStartTime;
+        minigameText.textContent = `Your reaction time: ${reactionTime} ms`;
+        minigameEl.style.display = "none";
+        // Affect stats based on reaction speed
+        if (reactionTime < 300) {
+          adjustStat("affection", 10);
+          adjustStat("trust", 5);
+          changeMood(1);
+          logEvent("You impressed your date with your quick reaction!");
+        } else if (reactionTime < 600) {
+          adjustStat("affection", 5);
+          logEvent("Your date thinks you're okay at the minigame.");
         } else {
-          currentNode = "minigameResultLose";
+          adjustStat("affection", -5);
+          changeMood(-1);
+          logEvent("Your date is a bit disappointed with your reaction.");
         }
-        renderNode(currentNode);
+        renderUI();
       };
-    }, waitTime);
+    }, 2000);
+  }
 
-    // If user clicks early
-    minigameButton.onclick = () => {
-      if(waitingForClick) return;
-      // Clicked too early
-      clearTimeout(timerId);
-      currentNode = "minigameResultLose";
-      renderNode(currentNode);
+  // Quiz for Kevin
+  function startQuiz() {
+    const minigameEl = document.getElementById("minigame");
+    const minigameText = document.getElementById("minigameText");
+    const playBtn = document.getElementById("playMinigameBtn");
+    minigameEl.style.display = "block";
+    playBtn.style.display = "inline-block";
+
+    const questions = [
+      {
+        q: "What is Kevin's favorite sport?",
+        options: ["Basketball", "Soccer", "Tennis", "Baseball"],
+        answer: 0
+      },
+      {
+        q: "Which music genre does Kevin enjoy?",
+        options: ["Jazz", "Rock", "Classical", "Pop"],
+        answer: 1
+      },
+      {
+        q: "What time of day does Kevin prefer?",
+        options: ["Morning", "Afternoon", "Evening", "Night"],
+        answer: 2
+      }
+    ];
+
+    let currentQ = 0;
+    minigameText.textContent = questions[currentQ].q;
+    playBtn.textContent = "Start";
+
+    function showQuestion() {
+      minigameText.textContent = questions[currentQ].q;
+      choicesEl.innerHTML = "";
+      questions[currentQ].options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (i === questions[currentQ].answer) {
+            logEvent("Correct answer!");
+            adjustStat("affection", 5);
+            changeMood(1);
+          } else {
+            logEvent("Wrong answer.");
+            adjustStat("affection", -5);
+            changeMood(-1);
+          }
+          currentQ++;
+          if (currentQ < questions.length) {
+            showQuestion();
+          } else {
+            minigameEl.style.display = "none";
+            renderUI();
+          }
+        };
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    const choicesEl = document.getElementById("choices");
+    playBtn.onclick = () => {
+      playBtn.style.display = "none";
+      showQuestion();
     };
   }
 
-  function hideMinigame() {
-    minigameEl.style.display = "none";
-    minigameButton.onclick = null;
-    clearTimeout(timerId);
+  // --- Location Functions ---
+  function currentLocation() {
+    return locations[currentLocationIndex];
+  }
+  function changeLocation(loc) {
+    const idx = locations.indexOf(loc);
+    if (idx >= 0) currentLocationIndex = idx;
+    advanceTime(2);
+    logEvent(`You went to the ${loc}.`);
+    renderUI();
   }
 
-  // Start game
-  renderNode(currentNode);
+  // --- Event System ---
+  const randomEvents = [
+    {
+      text: "Your date got called away unexpectedly, conversation paused.",
+      effect: () => {
+        adjustStat("affection", -5);
+        changeMood(-1);
+      }
+    },
+    {
+      text: "You found a beautiful flower on your walk, your date likes the gesture.",
+      effect: () => {
+        adjustStat("affection", 8);
+        changeMood(1);
+      }
+    },
+    {
+      text: "Your date is distracted by their phone, seems annoyed.",
+      effect: () => {
+        adjustStat("affection", -8);
+        changeMood(-1);
+      }
+    }
+  ];
+
+  function maybeTriggerRandomEvent() {
+    if(Math.random() < 0.3) {
+      const ev = randomEvents[Math.floor(Math.random()*randomEvents.length)];
+      logEvent(ev.text);
+      ev.effect();
+      renderUI();
+    }
+  }
+
+  // --- Player Setup Handlers ---
+  document.getElementById("playerNameInput").addEventListener("input", (e) => {
+    player.name = e.target.value.trim();
+    if(player.name === "") player.name = "Player";
+    renderUI();
+  });
+  document.getElementById("avatarSelect").addEventListener("change", (e) => {
+    player.avatar = e.target.value;
+  });
+
+  // --- Character Switching ---
+  function switchCharacter(index) {
+    if(index >= 0 && index < characters.length) {
+      currentCharacterIndex = index;
+      currentCharacter = characters[index];
+      currentNodeId = "start";
+      renderUI();
+    }
+  }
+
+  // --- Save / Load Buttons ---
+  document.getElementById("saveBtn").onclick = saveGame;
+  document.getElementById("loadBtn").onclick = loadGame;
+  document.getElementById("resetBtn").onclick = resetGame;
+
+  // --- Gift Giving ---
+  function giveGiftToCharacter(gift) {
+    currentCharacter.memory.giftsReceived.push(gift);
+    // Remove gift from inventory
+    player.inventory = player.inventory.filter(i => i !== gift);
+  }
+
+  // Initialize
+  if(!player.name) player.name = "Player";
+  renderUI();
+
+  // Quick character switch for demo
+  // Create buttons to switch character for testing
+  const header = document.getElementById("header");
+  const switcherDiv = document.createElement("div");
+  switcherDiv.style.marginLeft = "10px";
+  characters.forEach((char, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = char.name;
+    btn.style.marginLeft = "5px";
+    btn.onclick = () => switchCharacter(i);
+    switcherDiv.appendChild(btn);
+  });
+  header.appendChild(switcherDiv);
+
+  updateDateTimeDisplay();
+
 })();
 </script>
 </body>
