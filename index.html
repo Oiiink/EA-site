@@ -135,6 +135,43 @@
     text-align: center;
   }
 
+  #seedInventory {
+    margin: 20px auto 30px auto;
+    max-width: 600px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .seedItem {
+    cursor: pointer;
+    background: #f0fff0;
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 80px;
+    user-select: none;
+    box-shadow: 0 0 5px #7bcc7b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 700;
+  }
+  .seedItem.selected {
+    border-color: #ff9800;
+    box-shadow: 0 0 10px #ffa726;
+    background: #fff4e5;
+  }
+  .seedIcon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .seedCount {
+    font-size: 14px;
+    color: #333;
+  }
+
   #market, #encyclopedia {
     margin: 0 auto 40px auto;
     max-width: 1000px;
@@ -272,9 +309,13 @@
     <button id="buyFertilizerBtn" title="Buy fertilizer to boost mutation and growth speed">Buy Fertilizer 🌿</button>
   </div>
 
+  <!-- New Seed Inventory Panel -->
+  <section id="seedInventory" aria-label="Seed Inventory - Select a seed to plant">
+    <!-- Seeds dynamically populated here -->
+  </section>
+
   <div id="inventory" role="region" aria-label="Inventory and resources">
     <div>Gold: <span id="gold">100</span></div>
-    <div>Seeds: <span id="seedCount">0</span></div>
     <div>Fertilizer: <span id="fertilizerCount">0</span></div>
   </div>
 
@@ -346,9 +387,12 @@
   let encyclopedia = {};
   let selectedSort = "name";
 
+  // New: Selected seed to plant
+  let selectedSeedName = null;
+
+  // DOM Elements
   const farmEl = document.getElementById("farm");
   const goldEl = document.getElementById("gold");
-  const seedCountEl = document.getElementById("seedCount");
   const fertilizerEl = document.getElementById("fertilizerCount");
   const buySeedBtn = document.getElementById("buySeedBtn");
   const buyFertilizerBtn = document.getElementById("buyFertilizerBtn");
@@ -359,6 +403,7 @@
   const weatherEl = document.getElementById("weather");
   const cropListEl = document.getElementById("cropList");
   const encyclopediaSort = document.getElementById("encyclopediaSort");
+  const seedInventoryEl = document.getElementById("seedInventory");
 
   // Utility Functions
   function formatTime(seconds) {
@@ -403,69 +448,41 @@
         growthStart: null,
         growTime: null,
         growTimerId: null,
-        mutated: false,
+        mutated: false
       });
     }
   }
 
-  // Update UI elements (gold, seeds, fertilizer counts)
-  function updateInventoryUI() {
-    goldEl.textContent = gold;
-    let totalSeeds = Object.values(seedsInventory).reduce((a,b) => a+b, 0);
-    seedCountEl.textContent = totalSeeds;
-    fertilizerEl.textContent = fertilizerCount;
-    buySeedBtn.disabled = totalSeeds >= 10;
-    buyFertilizerBtn.disabled = gold < 25;
+  // Calculate mutation chance with factors
+  function calculateMutationChance(baseChance, baseRarity, seasonBoost, fertilizerUsed, pets) {
+    let chance = baseChance + (baseRarity.mutationBoost || 0);
+    if (seasonBoost) chance += seasonEffects[seasons[currentSeasonIndex]].mutationBoost;
+    if (fertilizerUsed) chance += 0.1;
+    if (pets.length) chance += pets.reduce((sum, p) => sum + (p.mutationBoost || 0), 0);
+    return Math.min(chance, 0.99);
   }
 
-  // Update season and weather UI
-  function updateSeasonWeatherUI() {
-    seasonEl.textContent = seasons[currentSeasonIndex];
-    weatherEl.textContent = weatherTypes[currentWeatherIndex].name;
-  }
-
-  // Change season every 2 minutes
-  function cycleSeason() {
-    currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
-    updateSeasonWeatherUI();
-  }
-
-  // Change weather every 90 seconds
-  function cycleWeather() {
-    currentWeatherIndex = (currentWeatherIndex + 1) % weatherTypes.length;
-    updateSeasonWeatherUI();
-  }
-
-  // Calculate mutation chance influenced by rarity, season, pets, fertilizer
-  function calculateMutationChance(baseChance, rarity, seasonBoost, hasFertilizer, pets) {
-    let chance = baseChance;
-    chance += rarity.mutationBoost;
-    chance += seasonBoost;
-    if (hasFertilizer) chance += 0.15;
-    pets.forEach(p => {
-      chance += p.mutationBoost;
-    });
-    return Math.min(1, chance);
-  }
-
-  // Plant a crop if player has seeds
-  function plantCrop(plotIndex, cropName = null) {
+  // Plant a crop on plot index
+  function plantCrop(plotIndex) {
     const plot = farmPlots[plotIndex];
-    if (plot.planted) return alert("Plot already planted!");
-    if (!cropName) {
-      // Pick any crop with seeds available
-      const availableCrops = Object.entries(seedsInventory).filter(([c,n]) => n > 0);
-      if (availableCrops.length === 0) return alert("No seeds available to plant!");
-      cropName = availableCrops[0][0];
-    }
-    if (!seedsInventory[cropName] || seedsInventory[cropName] <= 0) {
-      alert(`No seeds for ${cropName} available.`);
+    if (plot.planted) {
+      alert("Plot already planted!");
       return;
     }
-    // Determine rarity with mutation chance
-    const baseRarity = weightedRandom(rarities, "chance");
-    const seasonBoost = seasonEffects[seasons[currentSeasonIndex]].mutationBoost;
-    const mutationChance = calculateMutationChance(0.1, baseRarity, seasonBoost, fertilizerCount > 0, pets);
+    if (!selectedSeedName || !seedsInventory[selectedSeedName] || seedsInventory[selectedSeedName] <= 0) {
+      alert("You don't have that seed selected or no seeds left!");
+      return;
+    }
+    const baseRarity = rarities[0]; // Start from Common
+
+    const mutationChance = calculateMutationChance(
+      0.1,
+      baseRarity,
+      true,
+      fertilizerCount > 0,
+      pets
+    );
+
     let finalRarity = baseRarity;
     if (Math.random() < mutationChance) {
       // Upgrade rarity if possible
@@ -475,7 +492,7 @@
     }
 
     plot.planted = true;
-    plot.crop = cropsData.find(c => c.name === cropName);
+    plot.crop = cropsData.find(c => c.name === selectedSeedName);
     plot.rarity = finalRarity;
     plot.growthStart = Date.now();
     plot.growTime = plot.crop.growTime / seasonEffects[seasons[currentSeasonIndex]].growSpeedMultiplier;
@@ -486,13 +503,19 @@
     }
     plot.mutated = finalRarity !== baseRarity;
 
-    seedsInventory[cropName]--;
-    if (seedsInventory[cropName] <= 0) delete seedsInventory[cropName];
+    seedsInventory[selectedSeedName]--;
+    if (seedsInventory[selectedSeedName] <= 0) {
+      delete seedsInventory[selectedSeedName];
+      // If no seeds left of selected, reset selection
+      selectedSeedName = null;
+      renderSeedInventory();
+    }
 
     // Visual update
     plot.element.innerHTML = `<div style="font-size: 32px;">${plot.crop.icon}</div>
       <div class="growTimer ${finalRarity.className}">${finalRarity.label} - 0s</div>`;
     plot.element.style.borderColor = finalRarity.color;
+    plot.element.title = "Growing...";
 
     // Start growth timer
     if (plot.growTimerId) clearInterval(plot.growTimerId);
@@ -511,14 +534,21 @@
 
     updateInventoryUI();
     addToEncyclopedia(plot.crop.name, finalRarity.label, plot.crop.baseSellPrice);
+    renderSeedInventory();
   }
 
-  // Harvest a plot if ready
+  // Harvest a crop if ready
   function harvestCrop(plotIndex) {
     const plot = farmPlots[plotIndex];
-    if (!plot.planted) return alert("Plot is empty. Plant seeds first.");
+    if (!plot.planted) {
+      alert("Plot is empty. Plant seeds first.");
+      return;
+    }
     const elapsed = Date.now() - plot.growthStart;
-    if (elapsed < plot.growTime) return alert("Crop not ready yet!");
+    if (elapsed < plot.growTime) {
+      alert("Crop not ready yet!");
+      return;
+    }
 
     // Calculate sell price with rarity and season effects
     let price = plot.crop.baseSellPrice * (1 + rarities.indexOf(plot.rarity) * 0.2);
@@ -551,7 +581,7 @@
     }
   }
 
-  // Encyclopedia management
+  // Add to encyclopedia
   function addToEncyclopedia(name, rarityLabel, basePrice) {
     const key = name + rarityLabel;
     if (!encyclopedia[key]) {
@@ -560,6 +590,7 @@
     }
   }
 
+  // Render encyclopedia with sorting
   function renderEncyclopedia() {
     let entries = Object.values(encyclopedia);
     if (selectedSort === "name") {
@@ -579,7 +610,7 @@
     }
   }
 
-  // Market functions
+  // Restock market with crops, fertilizer, watering can
   function restockMarket() {
     marketStock = [];
     const available = [...cropsData];
@@ -590,11 +621,11 @@
       const price = Math.floor(crop.baseSellPrice * (0.6 + Math.random() * 0.4));
       marketStock.push({...crop, price});
     }
-    // Add fertilizer and watering cans
     marketStock.push({name: "Fertilizer", icon: "🌿", price: 25, type: "fertilizer", description: "Boost mutation chance and growth speed"});
     marketStock.push({name: "Watering Can", icon: "💧", price: 15, type: "watering", description: "Chance to auto-water crops each tick"});
   }
 
+  // Render market items
   function renderMarket() {
     marketGrid.innerHTML = "";
     marketStock.forEach(item => {
@@ -610,23 +641,80 @@
     });
   }
 
+  // Buy items from market
   function buyMarketItem(item) {
-    if (gold < item.price) return alert("Not enough gold.");
+    if (gold < item.price) {
+      alert("Not enough gold.");
+      return;
+    }
     gold -= item.price;
     if (item.type === "fertilizer") {
       fertilizerCount++;
       alert("Bought fertilizer! It boosts mutation chance and growth speed.");
     } else if (item.type === "watering") {
       alert("Bought watering can! It gives a chance to auto-water crops.");
-      // Could implement watering can effects here
+      // Could implement watering can effect here
     } else {
       seedsInventory[item.name] = (seedsInventory[item.name] || 0) + 1;
       alert(`Bought 1 ${item.name} seed.`);
+      // Auto-select newly bought seed if none selected
+      if (!selectedSeedName) {
+        selectedSeedName = item.name;
+      }
     }
     updateInventoryUI();
+    renderSeedInventory();
   }
 
-  // Timers and events
+  // Update inventory UI
+  function updateInventoryUI() {
+    goldEl.textContent = gold;
+    fertilizerEl.textContent = fertilizerCount;
+  }
+
+  // Render seed inventory for selection
+  function renderSeedInventory() {
+    seedInventoryEl.innerHTML = "";
+    if (Object.keys(seedsInventory).length === 0) {
+      seedInventoryEl.textContent = "No seeds owned. Buy some from the market!";
+      return;
+    }
+    for (const seedName in seedsInventory) {
+      const count = seedsInventory[seedName];
+      const crop = cropsData.find(c => c.name === seedName);
+      if (!crop) continue;
+      const div = document.createElement("div");
+      div.className = "seedItem" + (selectedSeedName === seedName ? " selected" : "");
+      div.title = `Select ${seedName} to plant. You own ${count}`;
+      div.innerHTML = `<div class="seedIcon">${crop.icon}</div><div>${seedName}</div><div class="seedCount">x${count}</div>`;
+      div.addEventListener("click", () => {
+        selectedSeedName = seedName;
+        renderSeedInventory();
+      });
+      seedInventoryEl.appendChild(div);
+    }
+  }
+
+  // Season cycle
+  function cycleSeason() {
+    currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
+    seasonEl.textContent = seasons[currentSeasonIndex];
+    updateSeasonWeatherUI();
+  }
+
+  // Weather cycle (random)
+  function cycleWeather() {
+    currentWeatherIndex = Math.floor(Math.random() * weatherTypes.length);
+    weatherEl.textContent = weatherTypes[currentWeatherIndex].name;
+    updateSeasonWeatherUI();
+  }
+
+  function updateSeasonWeatherUI() {
+    // You could update bonuses or visual effects here based on season/weather
+    // Currently, growSpeedMultiplier is applied on planting
+  }
+
+  // Timers for market restock and events
   function tickTimers() {
     marketRestockTimer--;
     eventTimer--;
@@ -645,57 +733,31 @@
     eventTimerEl.textContent = formatTime(eventTimer);
   }
 
+  // Random events (simplified)
   function triggerRandomEvent() {
-    const eventTypes = ["pest", "rain", "drought"];
-    const event = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+    const events = ["pests", "rain", "drought"];
+    const event = events[Math.floor(Math.random() * events.length)];
     switch(event) {
-      case "pest":
-        alert("🐛 Pests have appeared! They slow crop growth temporarily.");
-        // Slow all growing crops for 30s
+      case "pests":
+        alert("🐛 Pests appeared! Crop growth slowed temporarily.");
         farmPlots.forEach(plot => {
           if (plot.planted && plot.growTimerId) {
             clearInterval(plot.growTimerId);
-            let elapsed = Date.now() - plot.growthStart;
-            plot.growthStart += 15000; // delay growth by 15s (half event duration)
+            plot.growthStart += 15000; // delay growth 15s
             startGrowthTimer(farmPlots.indexOf(plot));
           }
         });
         break;
       case "rain":
-        alert("🌧️ It’s raining! Crops grow faster for a short time.");
-        // Could boost growSpeedMultiplier temporarily
+        alert("🌧️ Rain is here! Crops grow faster for a while.");
         break;
       case "drought":
-        alert("☀️ Drought hits! Crops grow slower for a short time.");
-        // Could slow growSpeedMultiplier temporarily
+        alert("☀️ Drought! Crops grow slower for a while.");
         break;
     }
   }
 
-  // Button handlers
-  buySeedBtn.addEventListener("click", () => {
-    // Buy a random seed from market if available
-    const seedItems = marketStock.filter(item => !item.type);
-    if (seedItems.length === 0) {
-      alert("No seeds available in market right now.");
-      return;
-    }
-    const item = seedItems[Math.floor(Math.random() * seedItems.length)];
-    buyMarketItem(item);
-  });
-
-  buyFertilizerBtn.addEventListener("click", () => {
-    const fertItem = marketStock.find(i => i.type === "fertilizer");
-    if (!fertItem) return alert("No fertilizer available right now.");
-    buyMarketItem(fertItem);
-  });
-
-  encyclopediaSort.addEventListener("change", (e) => {
-    selectedSort = e.target.value;
-    renderEncyclopedia();
-  });
-
-  // Start growth timer helper (used on pests event)
+  // Start growth timer helper (used in events)
   function startGrowthTimer(plotIndex) {
     const plot = farmPlots[plotIndex];
     if (!plot.planted) return;
@@ -714,14 +776,37 @@
     }, 1000);
   }
 
+  // Button event listeners
+  buySeedBtn.addEventListener("click", () => {
+    const seedItems = marketStock.filter(item => !item.type);
+    if (seedItems.length === 0) {
+      alert("No seeds available in market right now.");
+      return;
+    }
+    const item = seedItems[Math.floor(Math.random() * seedItems.length)];
+    buyMarketItem(item);
+  });
+
+  buyFertilizerBtn.addEventListener("click", () => {
+    const fertItem = marketStock.find(i => i.type === "fertilizer");
+    if (!fertItem) return alert("No fertilizer available right now.");
+    buyMarketItem(fertItem);
+  });
+
+  encyclopediaSort.addEventListener("change", e => {
+    selectedSort = e.target.value;
+    renderEncyclopedia();
+  });
+
   // Initialize game
   function init() {
     initFarm();
     restockMarket();
     renderMarket();
     updateInventoryUI();
-    updateSeasonWeatherUI();
+    renderSeedInventory();
     renderEncyclopedia();
+    updateSeasonWeatherUI();
     setInterval(tickTimers, 1000);
     setInterval(cycleSeason, 120000);
     setInterval(cycleWeather, 90000);
