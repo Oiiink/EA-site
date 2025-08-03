@@ -1,194 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Time Jumper: Memory Loop</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #111;
-      font-family: sans-serif;
-      color: white;
-    }
-    #canvas {
-      display: block;
-      background: linear-gradient(#222, #000);
-    }
-    #info {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 8px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mini YouTube</title>
+<style>
+  body {
+    margin: 0; font-family: Arial, sans-serif; background: #f9f9f9; color: #222;
+  }
+  header {
+    background: white; padding: 10px 20px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header h1 {
+    margin: 0; font-weight: bold; color: #cc181e;
+  }
+  #searchForm {
+    flex-grow: 1; max-width: 600px; margin-left: 20px;
+  }
+  #searchForm input[type="text"] {
+    width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 2px;
+    font-size: 16px;
+  }
+  main {
+    padding: 20px; max-width: 1100px; margin: auto;
+  }
+  .videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+    gap: 16px;
+  }
+  .video-card {
+    background: white; border-radius: 6px; box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+    cursor: pointer; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .thumbnail {
+    width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+    background: #ddd;
+  }
+  .video-info {
+    padding: 10px 12px; flex-grow: 1;
+  }
+  .video-title {
+    font-weight: bold; font-size: 15px; margin: 0 0 6px 0;
+    line-height: 1.2; color: #111;
+  }
+  .video-channel {
+    font-size: 13px; color: #555;
+    margin-bottom: 4px;
+  }
+  .video-views {
+    font-size: 12px; color: #777;
+  }
+  /* Video player overlay */
+  #playerOverlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center;
+    z-index: 20;
+  }
+  #playerContainer {
+    background: #000; width: 80vw; max-width: 960px; aspect-ratio: 16 / 9;
+    position: relative; border-radius: 8px; overflow: hidden;
+  }
+  #closeBtn {
+    position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.8);
+    border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer;
+    font-weight: bold; font-size: 20px; line-height: 28px; text-align: center;
+    color: #333;
+  }
+  iframe {
+    width: 100%; height: 100%; border: none;
+  }
+</style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-  <div id="info">
-    <div>⏱ Time Left: <span id="timer">60</span>s</div>
-    <div>🌀 Loop: <span id="loop">1</span></div>
-    <div>🎯 Goal: Reach the glowing orb!</div>
+  <header>
+    <h1>MiniYouTube</h1>
+    <form id="searchForm" onsubmit="event.preventDefault(); searchVideos();">
+      <input type="text" id="searchInput" placeholder="Search videos..." />
+    </form>
+  </header>
+
+  <main>
+    <div class="videos" id="videoList"></div>
+  </main>
+
+  <div id="playerOverlay" onclick="closePlayer(event)">
+    <div id="playerContainer">
+      <button id="closeBtn" onclick="closePlayer(event)">×</button>
+      <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
   </div>
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
 
-    let player = { x: 100, y: 300, w: 30, h: 30, color: "cyan", vx: 0, vy: 0, history: [] };
-    let gravity = 0.6;
-    let friction = 0.8;
-    let keys = {};
-    let loop = 1;
-    let timeLeft = 60;
-    let ghosts = [];
-    let goal = { x: 900, y: 300, size: 20 };
-    let platforms = [
-      { x: 200, y: 400, w: 100, h: 10 },
-      { x: 400, y: 350, w: 120, h: 10 },
-      { x: 600, y: 300, w: 80, h: 10 },
-    ];
-
-    window.addEventListener("keydown", e => keys[e.key] = true);
-    window.addEventListener("keyup", e => keys[e.key] = false);
-
-    function update() {
-      // Movement
-      player.vx *= friction;
-      if (keys["ArrowLeft"]) player.vx -= 1.5;
-      if (keys["ArrowRight"]) player.vx += 1.5;
-      if (keys["ArrowUp"] && player.onGround) player.vy = -12;
-
-      player.vy += gravity;
-      player.x += player.vx;
-      player.y += player.vy;
-      player.onGround = false;
-
-      // Ground
-      if (player.y + player.h > canvas.height - 50) {
-        player.y = canvas.height - 50 - player.h;
-        player.vy = 0;
-        player.onGround = true;
-      }
-
-      // Platforms
-      for (const plat of platforms) {
-        if (
-          player.x < plat.x + plat.w &&
-          player.x + player.w > plat.x &&
-          player.y + player.h > plat.y &&
-          player.y + player.h < plat.y + plat.h + 10 &&
-          player.vy >= 0
-        ) {
-          player.y = plat.y - player.h;
-          player.vy = 0;
-          player.onGround = true;
-        }
-      }
-
-      // Store history
-      player.history.push({ x: player.x, y: player.y });
-      if (player.history.length > 3600) player.history.shift();
-
-      // Ghost collision
-      for (const ghost of ghosts) {
-        if (ghost.frame < ghost.history.length) {
-          const pos = ghost.history[ghost.frame];
-          ghost.x = pos.x;
-          ghost.y = pos.y;
-          ghost.frame++;
-          if (
-            player.x < ghost.x + player.w &&
-            player.x + player.w > ghost.x &&
-            player.y < ghost.y + player.h &&
-            player.y + player.h > ghost.y
-          ) {
-            resetLoop();
-          }
-        }
-      }
-
-      // Goal check
-      if (
-        player.x < goal.x + goal.size &&
-        player.x + player.w > goal.x &&
-        player.y < goal.y + goal.size &&
-        player.y + player.h > goal.y
-      ) {
-        alert("You broke the loop! 🎉");
-        location.reload();
-      }
+<script>
+  const videos = [
+    {
+      id: "dQw4w9WgXcQ",
+      title: "Never Gonna Give You Up",
+      channel: "Rick Astley",
+      views: "1.2B views",
+      thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+    },
+    {
+      id: "3JZ_D3ELwOQ",
+      title: "Imagine Dragons - Believer",
+      channel: "ImagineDragonsVEVO",
+      views: "1.6B views",
+      thumbnail: "https://img.youtube.com/vi/3JZ_D3ELwOQ/hqdefault.jpg"
+    },
+    {
+      id: "9bZkp7q19f0",
+      title: "PSY - GANGNAM STYLE",
+      channel: "officialpsy",
+      views: "4.6B views",
+      thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg"
+    },
+    {
+      id: "JGwWNGJdvx8",
+      title: "Ed Sheeran - Shape of You",
+      channel: "Ed Sheeran",
+      views: "5.5B views",
+      thumbnail: "https://img.youtube.com/vi/JGwWNGJdvx8/hqdefault.jpg"
     }
+  ];
 
-    function draw() {
-      // Background
-      const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      bg.addColorStop(0, '#003');
-      bg.addColorStop(1, '#000');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const videoList = document.getElementById("videoList");
+  const playerOverlay = document.getElementById("playerOverlay");
+  const videoPlayer = document.getElementById("videoPlayer");
 
-      // Ground
-      ctx.fillStyle = "#444";
-      ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+  function renderVideos(list) {
+    videoList.innerHTML = "";
+    for (const video of list) {
+      const card = document.createElement("div");
+      card.className = "video-card";
+      card.onclick = () => playVideo(video.id);
 
-      // Platforms
-      ctx.fillStyle = "#555";
-      for (const plat of platforms) {
-        ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-      }
+      const thumb = document.createElement("img");
+      thumb.className = "thumbnail";
+      thumb.src = video.thumbnail;
+      thumb.alt = video.title;
 
-      // Goal
-      ctx.fillStyle = "gold";
-      ctx.beginPath();
-      ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI * 2);
-      ctx.fill();
+      const info = document.createElement("div");
+      info.className = "video-info";
 
-      // Ghosts
-      for (const ghost of ghosts) {
-        ctx.fillStyle = "rgba(255, 0, 0, 0.4)";
-        ctx.fillRect(ghost.x, ghost.y, player.w, player.h);
-      }
+      const title = document.createElement("h3");
+      title.className = "video-title";
+      title.textContent = video.title;
 
-      // Player
-      ctx.fillStyle = player.color;
-      ctx.fillRect(player.x, player.y, player.w, player.h);
+      const channel = document.createElement("div");
+      channel.className = "video-channel";
+      channel.textContent = video.channel;
+
+      const views = document.createElement("div");
+      views.className = "video-views";
+      views.textContent = video.views;
+
+      info.appendChild(title);
+      info.appendChild(channel);
+      info.appendChild(views);
+
+      card.appendChild(thumb);
+      card.appendChild(info);
+      videoList.appendChild(card);
     }
+  }
 
-    function loopGame() {
-      update();
-      draw();
-      requestAnimationFrame(loopGame);
+  function playVideo(id) {
+    videoPlayer.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    playerOverlay.style.display = "flex";
+  }
+
+  function closePlayer(e) {
+    e.stopPropagation();
+    videoPlayer.src = "";
+    playerOverlay.style.display = "none";
+  }
+
+  function searchVideos() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    if (!query) {
+      renderVideos(videos);
+      return;
     }
+    const filtered = videos.filter(v =>
+      v.title.toLowerCase().includes(query) ||
+      v.channel.toLowerCase().includes(query)
+    );
+    renderVideos(filtered);
+  }
 
-    function startTimer() {
-      setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").textContent = timeLeft;
-        if (timeLeft <= 0) {
-          ghosts.push({ history: [...player.history], frame: 0 });
-          resetLoop();
-        }
-      }, 1000);
-    }
-
-    function resetLoop() {
-      player.x = 100;
-      player.y = 300;
-      player.vx = 0;
-      player.vy = 0;
-      player.history = [];
-      timeLeft = 60;
-      loop++;
-      document.getElementById("loop").textContent = loop;
-    }
-
-    startTimer();
-    loopGame();
-  </script>
+  renderVideos(videos);
+</script>
 </body>
 </html>
