@@ -1,382 +1,199 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Event Alerts Wordle</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Flappy Bee</title>
   <style>
-    .tile.revealed {
-      transition: background-color 0.3s, border-color 0.3s;
-    }
-    .key {
-      background-color: #374151; /* dark gray */
-      color: white;
-      padding: 0.5rem 0.5rem;
-      border-radius: 0.375rem;
-      font-weight: 700;
-      font-size: 0.875rem;
-      margin: 0.25rem 0.125rem;
-      width: 2rem;
-      height: 2.5rem;
+    body {
+      margin: 0;
+      background: #87ceeb; /* sky blue */
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
       user-select: none;
-      box-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+    }
+    canvas {
+      background: #8ed0a4; /* greenish ground bottom */
+      display: block;
+      border: 2px solid #333;
+      border-radius: 10px;
+    }
+    #score {
+      position: absolute;
+      top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      text-shadow: 1px 1px 1px #fff;
+      user-select: none;
+    }
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+      background: #fff8;
+      padding: 20px 40px;
+      border-radius: 10px;
+      display: none;
+      user-select: none;
       cursor: pointer;
-      border: none;
-      text-transform: uppercase;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .key-row {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 0.5rem;
-    }
-    .key-row.second-row .key {
-      margin-left: 0.375rem;
-    }
-    .key.wide {
-      width: 4.5rem;
-    }
-    .key.disabled {
-      cursor: default;
-      opacity: 0.5;
     }
   </style>
 </head>
-<body class="bg-black text-white min-h-screen flex items-center justify-center">
-  <main class="text-center">
-    <h1 class="text-3xl font-bold mb-6">Event Alerts Wordle</h1>
-    <div id="wordle-game" class="space-y-2 mb-4"></div>
-
-    <div class="keyboard" aria-label="On-screen keyboard">
-      <div class="key-row first-row"></div>
-      <div class="key-row second-row"></div>
-      <div class="key-row third-row"></div>
-    </div>
-
-    <div id="stats" class="mt-6 text-center text-sm"></div>
-  </main>
-
+<body>
+  <div id="score">Score: 0</div>
+  <div id="message">Game Over<br>Click or press Space to restart</div>
+  <canvas width="400" height="600"></canvas>
+  
   <script>
-    const WORDS = [
-      "ALERT",
-      "EVENT",
-      "FLASH",
-      "SIREN",
-      "ALARM",
-      "BEEPY",
-      "NOTIF",
-      "BREAK",
-      "PULSE",
-      "RADAR",
-      "REACT",
-      "SOUND",
-      "STORM",
-      "VIGIL",
-      "WATCH",
-      "BLINK",
-      "BRIEF",
-      "SPEED",
-      "SWEEP",
-      "TRACE",
-      "CHAOS",
-      "CLASH",
-      "DRILL",
-      "FAULT",
-      "FOCUS",
-      "GAUGE",
-      "HASTE",
-      "HINTS",
-      "KNOCK",
-      "LIMIT",
-      "NOISE",
-      "OCCUR",
-      "PHASE",
-      "QUICK",
-      "RALLY",
-      "RISKS",
-      "SCALE",
-      "SHIFT",
-      "SIGNS",
-      "SPEAK",
-      "STAND",
-      "START",
-      "SURGE",
-      "TIMER",
-      "TRACK",
-      "TRIAL",
-      "TROOP",
-      "TURNS",
-      "UPSET",
-      "VISTA",
-      "VOICE",
-      "WAGER",
-      "WAVED",
-      "WRONG",
-      "YIELD",
-      "ZONES"
-    ];
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDiv = document.getElementById('score');
+    const messageDiv = document.getElementById('message');
 
-    const VALID_WORDS = WORDS.filter(w => w.length === 5).map(w => w.toUpperCase());
+    const GRAVITY = 0.5;
+    const FLAP_POWER = -10;
+    const PIPE_WIDTH = 60;
+    const PIPE_GAP = 150;
+    const PIPE_SPACING = 200;
+    const BEE_WIDTH = 50;
+    const BEE_HEIGHT = 40;
 
-    const targetWord = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)];
-    const MAX_GUESSES = 6;
+    let bee = {
+      x: 80,
+      y: canvas.height / 2,
+      velocity: 0,
+      width: BEE_WIDTH,
+      height: BEE_HEIGHT,
+    };
 
-    let currentGuess = "";
-    let currentRow = 0;
-    let guessHistory = [];
-    const date = new Date().toISOString().slice(0, 10);
+    let pipes = [];
+    let frameCount = 0;
+    let score = 0;
+    let gameOver = false;
 
-    const keyboardState = {};
+    // Load bee image
+    const beeImg = new Image();
+    beeImg.src = 'assets/images/logo.png';
 
-    const game = document.getElementById("wordle-game");
-
-    for (let r = 0; r < MAX_GUESSES; r++) {
-      const row = document.createElement("div");
-      row.className = "flex justify-center gap-2";
-      for (let c = 0; c < 5; c++) {
-        const tile = document.createElement("div");
-        tile.className = "tile w-14 h-14 border-2 border-gray-600 text-2xl flex items-center justify-center uppercase font-bold bg-gray-800 text-white";
-        row.appendChild(tile);
-      }
-      game.appendChild(row);
+    function resetGame() {
+      bee.y = canvas.height / 2;
+      bee.velocity = 0;
+      pipes = [];
+      frameCount = 0;
+      score = 0;
+      gameOver = false;
+      scoreDiv.textContent = 'Score: 0';
+      messageDiv.style.display = 'none';
+      loop();
     }
 
-    const keyboardLayout = [
-      "QWERTYUIOP",
-      "ASDFGHJKL",
-      "ZXCVBNM"
-    ];
-
-    function createKeyboard() {
-      const rows = document.querySelectorAll(".key-row");
-      rows[0].innerHTML = "";
-      rows[1].innerHTML = "";
-      rows[2].innerHTML = "";
-
-      keyboardLayout.forEach((rowLetters, idx) => {
-        const rowEl = rows[idx];
-        if (idx === 2) {
-          const enterKey = document.createElement("button");
-          enterKey.textContent = "↵";
-          enterKey.setAttribute("data-key", "ENTER");
-          enterKey.className = "key wide";
-          rowEl.appendChild(enterKey);
-        }
-
-        for (const letter of rowLetters) {
-          const btn = document.createElement("button");
-          btn.textContent = letter;
-          btn.setAttribute("data-key", letter);
-          btn.className = "key";
-          rowEl.appendChild(btn);
-        }
-
-        if (idx === 2) {
-          const backspaceKey = document.createElement("button");
-          backspaceKey.textContent = "⌫";
-          backspaceKey.setAttribute("data-key", "BACKSPACE");
-          backspaceKey.className = "key wide";
-          rowEl.appendChild(backspaceKey);
-        }
-      });
-    }
-
-    createKeyboard();
-
-    function updateRow() {
-      const row = game.children[currentRow];
-      for (let i = 0; i < 5; i++) {
-        const cell = row.children[i];
-        cell.textContent = currentGuess[i] || "";
-        cell.classList.remove("revealed");
-        cell.style.backgroundColor = "#1f2937";
-        cell.style.borderColor = "#4b5563";
-      }
-    }
-
-    function getEmojiRow(guess) {
-      let result = "";
-      let used = targetWord.split("");
-
-      for (let i = 0; i < 5; i++) {
-        if (guess[i] === targetWord[i]) {
-          result += "🟩";
-          used[i] = null;
-        } else if (used.includes(guess[i])) {
-          result += "🟨";
-          used[used.indexOf(guess[i])] = null;
-        } else {
-          result += "⬛";
-        }
-      }
-      return result;
-    }
-
-    function revealGuess() {
-      const row = game.children[currentRow];
-      const guess = currentGuess.toUpperCase();
-      let used = targetWord.split("");
-      const emojiRow = getEmojiRow(guess);
-
-      guessHistory.push(emojiRow);
-
-      for (let i = 0; i < 5; i++) {
-        const cell = row.children[i];
-        const letter = guess[i];
-
-        setTimeout(() => {
-          cell.classList.add("revealed");
-
-          if (letter === targetWord[i]) {
-            cell.style.backgroundColor = "#16a34a"; // green
-            cell.style.borderColor = "#16a34a";
-            keyboardState[letter] = "correct";
-          } else if (used.includes(letter)) {
-            cell.style.backgroundColor = "#eab308"; // yellow
-            cell.style.borderColor = "#eab308";
-            if (keyboardState[letter] !== "correct") keyboardState[letter] = "present";
-            used[used.indexOf(letter)] = null;
-          } else {
-            cell.style.backgroundColor = "#374151"; // dark gray
-            cell.style.borderColor = "#374151";
-            if (!keyboardState[letter]) keyboardState[letter] = "absent";
-          }
-          updateKeyboardColors();
-        }, i * 300);
-      }
-
-      if (guess === targetWord) {
-        setTimeout(() => {
-          alert("You got it!");
-          showShareButton();
-          updateStats(true);
-        }, 1800);
-        disableInput();
+    function drawBee() {
+      if (beeImg.complete) {
+        ctx.drawImage(beeImg, bee.x, bee.y, bee.width, bee.height);
       } else {
-        currentRow++;
-        currentGuess = "";
-        if (currentRow >= MAX_GUESSES) {
-          setTimeout(() => {
-            alert(`Out of guesses! The word was ${targetWord}`);
-            showShareButton(true);
-            updateStats(false);
-          }, 1800);
-          disableInput();
-        }
+        // If image not loaded yet, draw placeholder
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(bee.x, bee.y, bee.width, bee.height);
       }
     }
 
-    function updateKeyboardColors() {
-      const keys = document.querySelectorAll(".key");
-      keys.forEach(key => {
-        const k = key.getAttribute("data-key");
-        if (keyboardState[k] === "correct") {
-          key.style.backgroundColor = "#16a34a"; // green
-          key.style.color = "white";
-        } else if (keyboardState[k] === "present") {
-          key.style.backgroundColor = "#eab308"; // yellow
-          key.style.color = "black";
-        } else if (keyboardState[k] === "absent") {
-          key.style.backgroundColor = "#374151"; // dark gray
-          key.style.color = "white";
-        } else {
-          // Default
-          key.style.backgroundColor = "#374151"; // dark gray
-          key.style.color = "white";
-        }
-      });
+    function drawPipe(pipe) {
+      ctx.fillStyle = '#228B22'; // forest green
+      // Top pipe
+      ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.top);
+      // Bottom pipe
+      ctx.fillRect(pipe.x, pipe.bottom, PIPE_WIDTH, canvas.height - pipe.bottom);
     }
 
-    function handleInput(key) {
-      if (currentRow >= MAX_GUESSES) return;
+    function updatePipes() {
+      if (frameCount % PIPE_SPACING === 0) {
+        let topHeight = Math.random() * (canvas.height - PIPE_GAP - 100) + 50;
+        pipes.push({
+          x: canvas.width,
+          top: topHeight,
+          bottom: topHeight + PIPE_GAP,
+          passed: false,
+        });
+      }
+      pipes.forEach(pipe => {
+        pipe.x -= 3;
 
-      if (key === "BACKSPACE") {
-        currentGuess = currentGuess.slice(0, -1);
-        updateRow();
-      } else if (/^[A-Z]$/.test(key) && currentGuess.length < 5) {
-        currentGuess += key;
-        updateRow();
-      } else if (key === "ENTER" && currentGuess.length === 5) {
-        revealGuess();
+        if (!pipe.passed && pipe.x + PIPE_WIDTH < bee.x) {
+          score++;
+          scoreDiv.textContent = `Score: ${score}`;
+          pipe.passed = true;
+        }
+      });
+
+      pipes = pipes.filter(pipe => pipe.x + PIPE_WIDTH > 0);
+    }
+
+    function checkCollision() {
+      if (bee.y + bee.height > canvas.height || bee.y < 0) {
+        return true;
+      }
+
+      for (const pipe of pipes) {
+        if (bee.x + bee.width > pipe.x && bee.x < pipe.x + PIPE_WIDTH) {
+          if (bee.y < pipe.top || bee.y + bee.height > pipe.bottom) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function loop() {
+      if (gameOver) return;
+
+      frameCount++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      bee.velocity += GRAVITY;
+      bee.y += bee.velocity;
+
+      drawBee();
+
+      updatePipes();
+
+      pipes.forEach(drawPipe);
+
+      if (checkCollision()) {
+        gameOver = true;
+        messageDiv.style.display = 'block';
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    function flap() {
+      if (gameOver) {
+        resetGame();
+      } else {
+        bee.velocity = FLAP_POWER;
       }
     }
 
-    function disableInput() {
-      document.removeEventListener("keydown", keyListener);
-      document.querySelectorAll(".key").forEach(k => k.disabled = true);
-    }
-
-    function keyListener(e) {
-      handleInput(e.key.toUpperCase());
-    }
-
-    document.addEventListener("keydown", keyListener);
-
-    document.querySelectorAll(".key").forEach(button => {
-      button.addEventListener("click", () => {
-        if (button.disabled) return;
-        const key = button.getAttribute("data-key");
-        handleInput(key);
-      });
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flap();
+      }
     });
 
-    function showShareButton(failed = false) {
-      const oldBox = document.querySelector(".share-box");
-      if (oldBox) oldBox.remove();
+    window.addEventListener('mousedown', () => {
+      flap();
+    });
 
-      const shareBox = document.createElement("div");
-      shareBox.className = "share-box mt-6 text-center";
-
-      const emojiBlock = guessHistory.join("\n");
-      const header = `Event Alerts Wordle — ${date}`;
-      const score = `${failed ? "X" : currentRow + 1}/${MAX_GUESSES}`;
-      const resultText = `${header}\n${score}\n${emojiBlock}`;
-
-      const btn = document.createElement("button");
-      btn.className = "mt-4 bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md";
-      btn.innerText = "Copy Result";
-
-      btn.addEventListener("click", () => {
-        navigator.clipboard.writeText(resultText).then(() => {
-          btn.innerText = "Copied!";
-          setTimeout(() => (btn.innerText = "Copy Result"), 2000);
-        });
-      });
-
-      const again = document.createElement("button");
-      again.className = "ml-2 bg-gray-500 hover:bg-gray-600 text-white font-bold px-6 py-3 rounded-md text-sm uppercase tracking-widest select-none shadow-md";
-      again.innerText = "Play Again";
-      again.onclick = () => window.location.reload();
-
-      const pre = document.createElement("pre");
-      pre.className = "whitespace-pre-wrap text-sm text-left text-white bg-black bg-opacity-50 p-4 rounded-lg max-w-md mx-auto border border-white mt-2";
-      pre.innerText = resultText;
-
-      shareBox.appendChild(pre);
-      shareBox.appendChild(btn);
-      shareBox.appendChild(again);
-      document.querySelector("main").appendChild(shareBox);
-    }
-
-    function updateStats(win) {
-      let streak = parseInt(localStorage.getItem("wordleStreak")) || 0;
-      let lastDate = localStorage.getItem("lastWordleDate");
-
-      if (lastDate !== date) {
-        if (win) streak++;
-        else streak = 0;
-        localStorage.setItem("wordleStreak", streak);
-        localStorage.setItem("lastWordleDate", date);
-      }
-
-      document.getElementById("stats").textContent = `Streak: ${streak}`;
-    }
-
-    updateStats(false);
+    resetGame();
   </script>
 </body>
 </html>
