@@ -1,752 +1,320 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bee Clicker Heroes - Worlds & Bosses</title>
-  <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f1f1f1;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      color: #333;
-      user-select: none;
-    }
-    #app {
-      display: flex;
-      width: 1024px;
-      height: 600px;
-      background: #222a38;
-      color: #eee;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow:
-        0 0 20px rgba(0,0,0,0.8),
-        inset 0 0 30px #0008;
-    }
-    /* Left sidebar - Heroes */
-    #heroesPanel {
-      width: 280px;
-      background: #1e2531;
-      border-right: 2px solid #444;
-      padding: 20px;
-      display: flex;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bee Tower Defense</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0a0a0a;
+    color: #eee;
+    user-select: none;
+  }
+  .container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Left Sidebar */
+  .sidebar-left {
+    width: 250px;
+    background: #111;
+    border-right: 1px solid #333;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-left h2 {
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 18px;
+    color: #ffd600;
+    text-align: center;
+  }
+  .tower-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+  }
+  .tower {
+    background: #222;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .tower:hover {
+    background: #333;
+  }
+  .tower-icon {
+    width: 48px;
+    height: 48px;
+    background: #444;
+    border-radius: 8px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 24px;
+    color: #ffd600;
+    box-shadow: 0 0 5px #ffd600aa;
+  }
+  .tower-info {
+    flex-grow: 1;
+  }
+  .tower-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 4px 0;
+  }
+  .tower-cost {
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* Main game area */
+  .main-area {
+    flex-grow: 1;
+    background: linear-gradient(135deg, #222 25%, #111 75%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .game-map {
+    width: 80%;
+    height: 80%;
+    background-color: #0d0d0d;
+    border: 3px solid #444;
+    border-radius: 16px;
+    box-shadow: 0 0 20px #ffd600bb inset;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+  }
+  .map-cell {
+    background: #111;
+    border-radius: 6px;
+    border: 1px solid #333;
+  }
+
+  /* Right Sidebar */
+  .sidebar-right {
+    width: 280px;
+    background: #111;
+    border-left: 1px solid #333;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    color: #ddd;
+  }
+  .sidebar-right h2 {
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 18px;
+    margin: 0 0 15px 0;
+    color: #ffd600;
+    text-align: center;
+  }
+  .stat {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+  .stat span {
+    font-weight: 700;
+    float: right;
+    color: #ffd600;
+  }
+  .wave-bar {
+    height: 20px;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 10px #ffd600aa;
+  }
+  .wave-progress {
+    height: 100%;
+    width: 35%;
+    background: #ffd600;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.3s ease;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    right: 280px;
+    height: 60px;
+    background: #111;
+    border-top: 1px solid #333;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 20px;
+    box-shadow: 0 -3px 15px #ffd600bb inset;
+  }
+  .button {
+    background: #222;
+    color: #ffd600;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ffd600bb;
+    transition: background 0.3s ease;
+  }
+  .button:hover {
+    background: #333;
+  }
+  .button:active {
+    background: #444;
+  }
+
+  /* Scrollbar styling */
+  .tower-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  .tower-list::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 10px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 900px) {
+    .container {
       flex-direction: column;
     }
-    #heroesPanel h2 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: #f0c419;
-      text-shadow: 0 0 8px #f0c419aa;
-    }
-    #heroesList {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding-right: 6px;
-    }
-    .hero {
-      background: #2a3040;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .hero-info {
-      flex-grow: 1;
-    }
-    .hero-name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 4px;
-      color: #f0c419;
-    }
-    .hero-stats {
-      font-size: 0.9rem;
-      color: #bbb;
-    }
-    button.hireBtn {
-      background: #f0c419;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-weight: 700;
-      cursor: pointer;
-      color: #222;
-      transition: background-color 0.2s;
-    }
-    button.hireBtn:disabled {
-      background: #888;
-      cursor: not-allowed;
-    }
-    button.hireBtn:hover:not(:disabled) {
-      background: #ffdc48;
-    }
-    /* Center panel - Enemy */
-    #centerPanel {
-      flex-grow: 1;
-      background: linear-gradient(135deg, #fbeeaa 0%, #f0c419 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 20px;
-      position: relative;
-    }
-    #enemySVG {
-      max-width: 320px;
-      max-height: 320px;
-      cursor: pointer;
-      user-select: none;
-      border-radius: 12px;
-      box-shadow:
-        0 0 12px #ffaa22aa;
-      transition: filter 0.15s ease;
-    }
-    #enemySVG.hit {
-      filter: brightness(1.5) saturate(1.5);
-    }
-    #enemyName {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #663300;
-      text-shadow: 1px 1px 3px #fff3c1cc;
-      margin-top: 18px;
-      user-select: none;
-    }
-    #hpBarContainer {
-      width: 320px;
-      height: 28px;
-      background: #ddd;
-      border-radius: 14px;
-      margin-top: 12px;
-      overflow: hidden;
-      box-shadow: inset 0 0 5px #aaa;
-    }
-    #hpBar {
-      height: 100%;
+    .sidebar-left, .sidebar-right {
       width: 100%;
-      background: linear-gradient(90deg, #ff3b3b, #bb0000);
-      transition: width 0.2s ease;
-    }
-    #enemyHPText {
-      margin-top: 6px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #330000cc;
-      user-select: none;
-    }
-    #levelInfo {
-      margin-top: 24px;
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: #663300cc;
-      user-select: none;
-    }
-    #timer {
-      margin-top: 14px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #551a00cc;
-      user-select: none;
-    }
-    /* Floating texts */
-    .floatingText {
-      position: absolute;
-      font-weight: 900;
-      pointer-events: none;
-      font-size: 1.2rem;
-      user-select: none;
-      animation: floatUpFade 1.2s forwards;
-      text-shadow: 0 0 4px #fff, 0 0 5px #ffdb5a;
-      z-index: 1000;
-    }
-    .goldText {
-      color: gold;
-    }
-    .damageText {
-      color: #cc2222;
-    }
-    @keyframes floatUpFade {
-      0% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-    }
-    /* Right panel - Worlds */
-    #rightPanel {
-      width: 280px;
-      background: #1e2531;
-      border-left: 2px solid #444;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    #rightPanel h2 {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: #f0c419;
-      text-shadow: 0 0 8px #f0c419aa;
-      user-select: none;
-    }
-    #worldsList {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding-right: 6px;
-    }
-    .worldItem {
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      background: #2a3040;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-      font-weight: 700;
-      transition: background-color 0.2s;
-    }
-    .worldItem.locked {
-      background: #444a5a;
-      cursor: not-allowed;
-      color: #999;
-    }
-    .worldItem.active {
-      background: #f0c419;
-      color: #222;
-      text-shadow: 0 0 5px #fff;
-    }
-    .worldItem:hover:not(.locked):not(.active) {
-      background: #555b6b;
-    }
-    /* Buttons bottom */
-    #navButtons {
-      margin-top: 15px;
-      display: flex;
-      justify-content: space-between;
-    }
-    #navButtons button {
-      flex-grow: 1;
-      margin: 0 8px;
-      padding: 14px 0;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #f0c419;
+      height: auto;
       border: none;
-      color: #222;
-      transition: background-color 0.2s;
-      user-select: none;
+      border-bottom: 1px solid #333;
+      padding: 10px 5px;
+      display: flex;
+      justify-content: center;
     }
-    #navButtons button:disabled {
-      background: #666;
-      cursor: not-allowed;
-      color: #ccc;
+    .bottom-bar {
+      left: 0;
+      right: 0;
+      height: 70px;
+      padding: 0 10px;
+      gap: 10px;
     }
-  </style>
+    .main-area {
+      flex-grow: 1;
+      height: 60vh;
+      width: 100%;
+      padding: 10px 0;
+    }
+    .game-map {
+      width: 95%;
+      height: 100%;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+    }
+  }
+</style>
 </head>
 <body>
-  <div id="app" role="main" aria-label="Bee Clicker Heroes Game">
-    <!-- Left: Heroes -->
-    <section id="heroesPanel" aria-label="Bee Heroes Upgrade Panel">
-      <h2>🐝 Bee Heroes</h2>
-      <div id="heroesList" tabindex="0" aria-live="polite" aria-atomic="true"></div>
-      <div style="margin-top: 20px; font-size: 1.3rem; font-weight: 700; color: gold; user-select:none;">
-        💰 Gold: <span id="goldDisplay">0</span>
-      </div>
-    </section>
+<div class="container">
 
-    <!-- Center: Enemy -->
-    <section id="centerPanel" aria-label="Enemy and Combat">
-      <!-- SVG monster will be injected here -->
-      <svg id="enemySVG" width="320" height="320" role="img" aria-label="Enemy Monster" tabindex="0"></svg>
-      <div id="enemyName" aria-live="polite" aria-atomic="true"></div>
-      <div id="hpBarContainer" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-label="Enemy health bar">
-        <div id="hpBar"></div>
-      </div>
-      <div id="enemyHPText" aria-live="polite" aria-atomic="true"></div>
-      <div id="levelInfo" aria-live="polite" aria-atomic="true"></div>
-      <div id="timer" aria-live="polite" aria-atomic="true"></div>
-    </section>
-
-    <!-- Right: Worlds -->
-    <section id="rightPanel" aria-label="Worlds and Rewards">
-      <h2>Worlds</h2>
-      <div id="worldsList" tabindex="0" aria-live="polite" aria-atomic="true"></div>
-      <div id="navButtons">
-        <button id="prevWorldBtn" aria-label="Previous World">⬅️ Prev</button>
-        <button id="nextWorldBtn" aria-label="Next World">Next ➡️</button>
-      </div>
-    </section>
-  </div>
-
-<script>
-  // --- DATA ---
-  // 3 worlds, each with 10 levels, total 30 levels max for now
-  const TOTAL_WORLDS = 3;
-  const LEVELS_PER_WORLD = 10;
-  const MAX_LEVEL = TOTAL_WORLDS * LEVELS_PER_WORLD;
-
-  // Bee heroes data
-  const heroData = [
-    {name: "Worker Bee", dps: 1, baseCost: 50},
-    {name: "Drone Bee", dps: 5, baseCost: 250},
-    {name: "Queen Bee", dps: 20, baseCost: 1000}
-  ];
-
-  // Utility: Generate a simple bee SVG with colors based on world (just circles and wings)
-  function generateBeeSVG(world, isBoss = false) {
-    // Colors per world
-    const colors = [
-      {body: "#ffca28", wings: "#e1f5fe"},
-      {body: "#f57c00", wings: "#b3e5fc"},
-      {body: "#ff6f00", wings: "#81d4fa"}
-    ];
-    const c = colors[world % colors.length];
-    // Bigger and more complex for boss
-    const scale = isBoss ? 1.7 : 1;
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", "0 0 100 100");
-    svg.setAttribute("width", 320 * scale);
-    svg.setAttribute("height", 320 * scale);
-
-    // Body ellipse
-    const body = document.createElementNS(svgNS, "ellipse");
-    body.setAttribute("cx", 50);
-    body.setAttribute("cy", 50);
-    body.setAttribute("rx", 25 * scale);
-    body.setAttribute("ry", 40 * scale);
-    body.setAttribute("fill", c.body);
-    body.setAttribute("stroke", "#333");
-    body.setAttribute("stroke-width", 3 * scale);
-    svg.appendChild(body);
-
-    // Stripes (5 stripes)
-    for(let i=0; i<5; i++) {
-      const stripe = document.createElementNS(svgNS, "rect");
-      stripe.setAttribute("x", 50 - 20 * scale);
-      stripe.setAttribute("y", 30 * scale + i*15 * scale);
-      stripe.setAttribute("width", 40 * scale);
-      stripe.setAttribute("height", 8 * scale);
-      stripe.setAttribute("fill", i%2===0 ? "#333" : c.body);
-      svg.appendChild(stripe);
-    }
-
-    // Wings (2 ellipses)
-    const wing1 = document.createElementNS(svgNS, "ellipse");
-    wing1.setAttribute("cx", 30 * scale);
-    wing1.setAttribute("cy", 20 * scale);
-    wing1.setAttribute("rx", 15 * scale);
-    wing1.setAttribute("ry", 25 * scale);
-    wing1.setAttribute("fill", c.wings);
-    wing1.setAttribute("stroke", "#aaa");
-    wing1.setAttribute("stroke-width", 1.5 * scale);
-    wing1.setAttribute("opacity", 0.7);
-    svg.appendChild(wing1);
-
-    const wing2 = document.createElementNS(svgNS, "ellipse");
-    wing2.setAttribute("cx", 70 * scale);
-    wing2.setAttribute("cy", 20 * scale);
-    wing2.setAttribute("rx", 15 * scale);
-    wing2.setAttribute("ry", 25 * scale);
-    wing2.setAttribute("fill", c.wings);
-    wing2.setAttribute("stroke", "#aaa");
-    wing2.setAttribute("stroke-width", 1.5 * scale);
-    wing2.setAttribute("opacity", 0.7);
-    svg.appendChild(wing2);
-
-    // Eyes (2 circles)
-    const eye1 = document.createElementNS(svgNS, "circle");
-    eye1.setAttribute("cx", 35 * scale);
-    eye1.setAttribute("cy", 55 * scale);
-    eye1.setAttribute("r", 5 * scale);
-    eye1.setAttribute("fill", "#222");
-    svg.appendChild(eye1);
-
-    const eye2 = document.createElementNS(svgNS, "circle");
-    eye2.setAttribute("cx", 65 * scale);
-    eye2.setAttribute("cy", 55 * scale);
-    eye2.setAttribute("r", 5 * scale);
-    eye2.setAttribute("fill", "#222");
-    svg.appendChild(eye2);
-
-    // Antennae
-    const antenna1 = document.createElementNS(svgNS, "line");
-    antenna1.setAttribute("x1", 35 * scale);
-    antenna1.setAttribute("y1", 10 * scale);
-    antenna1.setAttribute("x2", 30 * scale);
-    antenna1.setAttribute("y2", 0 * scale);
-    antenna1.setAttribute("stroke", "#333");
-    antenna1.setAttribute("stroke-width", 2 * scale);
-    svg.appendChild(antenna1);
-
-    const antenna2 = document.createElementNS(svgNS, "line");
-    antenna2.setAttribute("x1", 65 * scale);
-    antenna2.setAttribute("y1", 10 * scale);
-    antenna2.setAttribute("x2", 70 * scale);
-    antenna2.setAttribute("y2", 0 * scale);
-    antenna2.setAttribute("stroke", "#333");
-    antenna2.setAttribute("stroke-width", 2 * scale);
-    svg.appendChild(antenna2);
-
-    return svg;
-  }
-
-  // --- STATE ---
-  let state = JSON.parse(localStorage.getItem("beeClickerSave")) || {
-    currentWorld: 1,
-    currentLevel: 1, // level 1 to 10 per world
-    gold: 0,
-    clickDamage: 1,
-    heroes: [0,0,0],
-    worldsUnlocked: 1,
-    levelsCleared: [[],[],[]], // per world, array of cleared level indices (1-based)
-    enemyHp: 0,
-    enemyMaxHp: 0,
-    enemyTimer: 30,
-    isBoss: false,
-    enemyHitCooldown: false
-  };
-
-  // DOM refs
-  const heroesList = document.getElementById("heroesList");
-  const goldDisplay = document.getElementById("goldDisplay");
-  const enemySVGContainer = document.getElementById("enemySVG");
-  const enemyNameEl = document.getElementById("enemyName");
-  const hpBar = document.getElementById("hpBar");
-  const enemyHPText = document.getElementById("enemyHPText");
-  const levelInfo = document.getElementById("levelInfo");
-  const timerEl = document.getElementById("timer");
-  const worldsList = document.getElementById("worldsList");
-  const prevWorldBtn = document.getElementById("prevWorldBtn");
-  const nextWorldBtn = document.getElementById("nextWorldBtn");
-
-  // --- HELPERS ---
-  function save() {
-    localStorage.setItem("beeClickerSave", JSON.stringify(state));
-  }
-
-  function getCurrentLevelGlobal() {
-    return (state.currentWorld - 1) * LEVELS_PER_WORLD + state.currentLevel;
-  }
-
-  function calcEnemyHp() {
-    let base = 20 + Math.pow(getCurrentLevelGlobal(), 1.5) * (state.isBoss ? 25 : 8);
-    return Math.round(base);
-  }
-
-  function calcGoldReward() {
-    return state.isBoss ? 100 + getCurrentLevelGlobal() * 10 : 10 + getCurrentLevelGlobal() * 3;
-  }
-
-  function calcHeroCost(i) {
-    let base = heroData[i].baseCost;
-    let count = state.heroes[i];
-    return Math.floor(base * Math.pow(1.15, count));
-  }
-
-  function calcTotalDPS() {
-    let dps = 0;
-    for(let i=0;i<heroData.length;i++) {
-      dps += heroData[i].dps * state.heroes[i];
-    }
-    return dps;
-  }
-
-  function isLevelCleared(world, level) {
-    return state.levelsCleared[world-1].includes(level);
-  }
-
-  function markLevelCleared(world, level) {
-    if(!isLevelCleared(world, level)) {
-      state.levelsCleared[world-1].push(level);
-      // Unlock next level or world
-      if(level === LEVELS_PER_WORLD) {
-        // Last level of world => unlock next world if any
-        if(world < TOTAL_WORLDS && state.worldsUnlocked < world + 1) {
-          state.worldsUnlocked = world + 1;
-        }
-      }
-    }
-  }
-
-  function resetEnemy() {
-    state.isBoss = state.currentLevel === LEVELS_PER_WORLD;
-    state.enemyMaxHp = calcEnemyHp();
-    state.enemyHp = state.enemyMaxHp;
-    state.enemyTimer = state.isBoss ? 60 : 30;
-  }
-
-  // --- RENDERING ---
-
-  function renderGold() {
-    goldDisplay.textContent = state.gold.toLocaleString();
-  }
-
-  function renderHeroes() {
-    heroesList.innerHTML = "";
-    heroData.forEach((hero, i) => {
-      const cost = calcHeroCost(i);
-      const affordable = state.gold >= cost;
-      const div = document.createElement("div");
-      div.className = "hero";
-      div.innerHTML = `
-        <div class="hero-info">
-          <div class="hero-name">${hero.name}</div>
-          <div class="hero-stats">DPS: ${hero.dps} | Owned: ${state.heroes[i]}</div>
+  <!-- Left Sidebar -->
+  <aside class="sidebar-left">
+    <h2>Towers</h2>
+    <div class="tower-list" tabindex="0" aria-label="Tower selection list">
+      <div class="tower" role="button" tabindex="0" aria-pressed="false">
+        <div class="tower-icon">🐝</div>
+        <div class="tower-info">
+          <p class="tower-name">Bee Shooter</p>
+          <p class="tower-cost">Cost: 100 Gold</p>
         </div>
-        <button class="hireBtn" ${affordable ? "" : "disabled"} data-index="${i}">
-          Buy (${cost})
-        </button>
-      `;
-      heroesList.appendChild(div);
-    });
-    // Add event listeners for buy buttons
-    document.querySelectorAll(".hireBtn").forEach(btn => {
-      btn.onclick = () => {
-        const idx = +btn.getAttribute("data-index");
-        const cost = calcHeroCost(idx);
-        if(state.gold >= cost) {
-          state.gold -= cost;
-          state.heroes[idx]++;
-          save();
-          renderGold();
-          renderHeroes();
+      </div>
+      <div class="tower" role="button" tabindex="0" aria-pressed="false">
+        <div class="tower-icon">🍯</div>
+        <div class="tower-info">
+          <p class="tower-name">Honey Splash</p>
+          <p class="tower-cost">Cost: 200 Gold</p>
+        </div>
+      </div>
+      <div class="tower" role="button" tabindex="0" aria-pressed="false">
+        <div class="tower-icon">🌸</div>
+        <div class="tower-info">
+          <p class="tower-name">Flower Trap</p>
+          <p class="tower-cost">Cost: 150 Gold</p>
+        </div>
+      </div>
+      <div class="tower" role="button" tabindex="0" aria-pressed="false">
+        <div class="tower-icon">⚡</div>
+        <div class="tower-info">
+          <p class="tower-name">Lightning Buzz</p>
+          <p class="tower-cost">Cost: 300 Gold</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Game Area -->
+  <main class="main-area" role="main" aria-label="Game map and play area">
+    <div class="game-map" aria-label="Tower defense game grid">
+      <!-- Generate 100 map cells -->
+      <script>
+        // This script dynamically generates the map grid cells
+        for(let i=0; i<100; i++) {
+          document.write('<div class="map-cell" aria-label="Map grid cell"></div>');
         }
-      };
-    });
-  }
+      </script>
+    </div>
+  </main>
 
-  // Renders worlds list with locked/unlocked states and current selection
-  function renderWorlds() {
-    worldsList.innerHTML = "";
-    for(let w=1; w <= TOTAL_WORLDS; w++) {
-      const unlocked = w <= state.worldsUnlocked;
-      const div = document.createElement("div");
-      div.className = "worldItem";
-      if(!unlocked) div.classList.add("locked");
-      if(w === state.currentWorld) div.classList.add("active");
-      div.textContent = `World ${w}`;
-      div.title = unlocked ? "" : "Locked";
-      div.onclick = () => {
-        if(unlocked) {
-          if(state.currentWorld !== w) {
-            state.currentWorld = w;
-            // Clamp level to max cleared or 1 if no cleared levels
-            let maxCleared = Math.max(...state.levelsCleared[w-1], 1);
-            if(state.currentLevel > maxCleared) state.currentLevel = maxCleared;
-            resetEnemy();
-            save();
-            renderAll();
-          }
-        }
-      };
-      worldsList.appendChild(div);
-    }
-    // Disable prev/next buttons based on current world
-    prevWorldBtn.disabled = state.currentWorld <= 1;
-    nextWorldBtn.disabled = state.currentWorld >= state.worldsUnlocked;
-  }
+  <!-- Right Sidebar -->
+  <aside class="sidebar-right" aria-live="polite">
+    <h2>Game Info</h2>
+    <div class="stat" aria-label="Current Wave">
+      Wave: <span>3 / 10</span>
+    </div>
+    <div class="stat" aria-label="Gold">
+      Gold: <span>450</span>
+    </div>
+    <div class="wave-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="35" aria-label="Wave progress">
+      <div class="wave-progress"></div>
+    </div>
+    <div class="stat" aria-label="Enemies remaining">
+      Enemies Remaining: <span>15</span>
+    </div>
+    <div class="stat" aria-label="Towers built">
+      Towers Built: <span>5</span>
+    </div>
+  </aside>
+</div>
 
-  function renderEnemy() {
-    enemyNameEl.textContent = state.isBoss ? `Boss Bee (Level ${state.currentLevel})` : `Enemy Bee (Level ${state.currentLevel})`;
-    // Update HP bar width and text
-    let hpPercent = Math.max(0, Math.min(100, (state.enemyHp / state.enemyMaxHp) * 100));
-    hpBar.style.width = hpPercent + "%";
-    enemyHPText.textContent = `${Math.floor(state.enemyHp)} / ${state.enemyMaxHp}`;
+<!-- Bottom bar with action buttons -->
+<div class="bottom-bar" role="region" aria-label="Game action controls">
+  <button class="button" type="button">Build Tower</button>
+  <button class="button" type="button">Upgrade Tower</button>
+  <button class="button" type="button">Sell Tower</button>
+  <button class="button" type="button">Start Wave</button>
+</div>
 
-    // Update ARIA value
-    document.getElementById("hpBarContainer").setAttribute("aria-valuenow", Math.floor(hpPercent));
-
-    // Level info
-    levelInfo.textContent = `World ${state.currentWorld} - Level ${state.currentLevel}`;
-    timerEl.textContent = `Time Left: ${state.enemyTimer}s`;
-
-    // Clear old SVG
-    while (enemySVGContainer.firstChild) {
-      enemySVGContainer.removeChild(enemySVGContainer.firstChild);
-    }
-    // Append generated bee SVG
-    const svg = generateBeeSVG(state.currentWorld - 1, state.isBoss);
-    // Add click listener for damage
-    svg.onclick = clickEnemy;
-    svg.setAttribute("tabindex", 0);
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", state.isBoss ? "Boss Bee Enemy" : "Enemy Bee");
-    enemySVGContainer.appendChild(svg);
-  }
-
-  // Floating texts (damage or gold)
-  function spawnFloatingText(text, className) {
-    const div = document.createElement("div");
-    div.className = "floatingText " + className;
-    div.textContent = text;
-    const centerX = enemySVGContainer.getBoundingClientRect().left + enemySVGContainer.clientWidth / 2;
-    const centerY = enemySVGContainer.getBoundingClientRect().top + enemySVGContainer.clientHeight / 2;
-    div.style.left = centerX + (Math.random() * 100 - 50) + "px";
-    div.style.top = centerY + (Math.random() * 50 - 25) + "px";
-    document.body.appendChild(div);
-    setTimeout(() => {
-      div.remove();
-    }, 1200);
-  }
-
-  // --- GAME MECHANICS ---
-
-  // Enemy clicked (take damage)
-  function clickEnemy() {
-    if(state.enemyHp <= 0) return; // Already dead
-    const dmg = state.clickDamage;
-    state.enemyHp -= dmg;
-    if(state.enemyHp < 0) state.enemyHp = 0;
-
-    // Flash enemy on hit
-    const svg = enemySVGContainer.querySelector("svg");
-    if(svg) {
-      svg.classList.add("hit");
-      setTimeout(() => svg.classList.remove("hit"), 150);
-    }
-
-    spawnFloatingText(`-${dmg}`, "damageText");
-    renderEnemy();
-
-    if(state.enemyHp === 0) {
-      enemyDefeated();
-    }
-    save();
-  }
-
-  // Passive DPS every second
-  function applyDPS() {
-    if(state.enemyHp <= 0) return;
-    let dps = calcTotalDPS();
-    if(dps <= 0) return;
-
-    state.enemyHp -= dps;
-    if(state.enemyHp < 0) state.enemyHp = 0;
-    spawnFloatingText(`-${Math.floor(dps)}`, "damageText");
-    renderEnemy();
-
-    if(state.enemyHp === 0) {
-      enemyDefeated();
-    }
-    save();
-  }
-
-  // Enemy defeated - award gold and advance
-  function enemyDefeated() {
-    let reward = calcGoldReward();
-    state.gold += reward;
-    spawnFloatingText(`+${reward} Gold!`, "goldText");
-
-    // Mark level cleared if boss defeated (end of level)
-    if(state.isBoss) {
-      markLevelCleared(state.currentWorld, state.currentLevel);
-      // Auto advance level or world
-      if(state.currentLevel < LEVELS_PER_WORLD) {
-        state.currentLevel++;
-      } else {
-        if(state.currentWorld < TOTAL_WORLDS) {
-          state.currentWorld++;
-          state.currentLevel = 1;
-        }
-      }
-    } else {
-      // Normal enemy - advance enemy in level (simulate multiple enemies per level)
-      state.currentLevelEnemyCount = (state.currentLevelEnemyCount || 1) + 1;
-      if(state.currentLevelEnemyCount > LEVELS_PER_WORLD - 1) {
-        // Next enemy is boss
-        state.currentLevelEnemyCount = 1;
-        state.currentLevel++;
-        if(state.currentLevel > LEVELS_PER_WORLD) state.currentLevel = LEVELS_PER_WORLD;
-      }
-    }
-    resetEnemy();
-    renderWorlds();
-    renderGold();
-    save();
-  }
-
-  // Timer countdown every second
-  function enemyTimerTick() {
-    if(state.enemyHp <= 0) return;
-    state.enemyTimer--;
-    if(state.enemyTimer <= 0) {
-      // Enemy heals to full
-      state.enemyHp = state.enemyMaxHp;
-      state.enemyTimer = state.isBoss ? 60 : 30;
-      alert("Time's up! Enemy healed!");
-      renderEnemy();
-      save();
-    } else {
-      renderEnemy();
-    }
-  }
-
-  // World navigation
-  prevWorldBtn.onclick = () => {
-    if(state.currentWorld > 1) {
-      state.currentWorld--;
-      // Clamp level to max cleared or 1 if none cleared
-      let maxCleared = Math.max(...state.levelsCleared[state.currentWorld-1], 1);
-      state.currentLevel = Math.min(state.currentLevel, maxCleared);
-      resetEnemy();
-      renderAll();
-      save();
-    }
-  };
-  nextWorldBtn.onclick = () => {
-    if(state.currentWorld < state.worldsUnlocked) {
-      state.currentWorld++;
-      let maxCleared = Math.max(...state.levelsCleared[state.currentWorld-1], 1);
-      state.currentLevel = Math.min(state.currentLevel, maxCleared);
-      resetEnemy();
-      renderAll();
-      save();
-    }
-  };
-
-  // --- INITIALIZATION & RENDERING ---
-  function renderAll() {
-    renderHeroes();
-    renderGold();
-    renderWorlds();
-    renderEnemy();
-  }
-
-  // Start the game
-  if(state.enemyHp <= 0) {
-    resetEnemy();
-  }
-  renderAll();
-
-  // Timers
-  setInterval(() => {
-    enemyTimerTick();
-  }, 1000);
-
-  setInterval(() => {
-    applyDPS();
-  }, 1000);
-</script>
 </body>
 </html>
