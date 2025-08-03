@@ -5,163 +5,206 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌼 Grow a Garden</title>
 <style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
   body {
+    margin: 0; padding: 0;
     background: linear-gradient(to bottom, #e6ffe6, #ccffcc);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0; color: #2c3e50;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
   header {
     background: #4caf50;
     color: white;
     padding: 12px 20px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
     font-size: 18px;
-  }
-  header div {
-    display: flex; gap: 25px; align-items: center;
+    gap: 10px;
   }
   #seasonWeather {
-    font-weight: bold;
+    font-weight: 700;
+    min-width: 180px;
   }
   #timers {
     font-size: 14px;
+    min-width: 200px;
+  }
+  main {
+    flex-grow: 1;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 10px;
+    width: 100%;
   }
   #farm {
     display: grid;
-    grid-template-columns: repeat(5, 80px);
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 12px;
     justify-content: center;
-    margin: 20px auto;
   }
   .plot {
     width: 80px;
     height: 80px;
     background-color: #a0522d;
     border: 3px solid #654321;
-    border-radius: 8px;
+    border-radius: 12px;
     position: relative;
     cursor: pointer;
-    transition: border-color 0.3s ease;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     user-select: none;
+    transition: border-color 0.3s ease;
+    box-shadow: inset 0 0 6px #4caf50;
   }
   .plot:hover {
     border-color: #3e8e41;
-  }
-  .planted {
-    background-color: #2e7d32;
-    color: white;
-    font-size: 36px;
+    box-shadow: 0 0 10px #66bb6a;
   }
   .growTimer {
     position: absolute;
-    bottom: 4px;
+    bottom: 6px;
     width: 100%;
     font-size: 12px;
     color: #fff;
-    text-shadow: 1px 1px 2px black;
-    font-weight: 600;
+    text-shadow: 1px 1px 3px #000;
+    font-weight: 700;
+    user-select: none;
   }
+  .rarityCommon { color: #555; }
+  .rarityUncommon { color: #1e90ff; }
+  .rarityRare { color: #4caf50; }
+  .rarityEpic { color: #9c27b0; }
+  .rarityLegendary { color: #ff9800; font-weight: 700; }
+
   #controls {
-    margin: 15px auto;
-    max-width: 500px;
+    margin: 15px 0 25px 0;
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 18px;
+    flex-wrap: wrap;
   }
   button {
     background-color: #66bb6a;
     border: none;
-    border-radius: 6px;
-    padding: 10px 15px;
+    border-radius: 8px;
+    padding: 12px 20px;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(50, 168, 82, 0.6);
+    transition: background-color 0.3s ease, transform 0.15s ease;
   }
   button:hover:not(:disabled) {
     background-color: #4caf50;
+    transform: scale(1.05);
   }
   button:disabled {
     background-color: #9e9e9e;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
   }
+
   #inventory {
-    margin-top: 10px;
-    font-size: 16px;
     display: flex;
     justify-content: center;
     gap: 25px;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
   }
+  #inventory > div {
+    background: #d4f1d4;
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 6px #88cc88;
+    user-select: none;
+    min-width: 110px;
+    text-align: center;
+  }
+
   #market, #encyclopedia {
-    margin: 20px auto;
-    max-width: 900px;
+    margin: 0 auto 40px auto;
+    max-width: 1000px;
     display: flex;
     gap: 20px;
+    flex-wrap: wrap;
   }
   #market {
-    flex: 1.5;
+    flex: 2;
     background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 10px #aaa;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 12px #a4d6a4;
   }
   #market h2 {
     margin-top: 0;
-    border-bottom: 2px solid #4caf50;
-    padding-bottom: 5px;
+    border-bottom: 3px solid #4caf50;
+    padding-bottom: 8px;
   }
   #marketTimer {
     font-size: 14px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: #4caf50;
+    margin-bottom: 12px;
+    font-weight: 700;
+    color: #388e3c;
   }
   #marketGrid {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 18px;
     justify-content: center;
   }
   .marketItem {
-    background: #f1f9f1;
+    background: #f9fff9;
     border: 2px solid #4caf50;
-    border-radius: 8px;
-    padding: 10px;
-    width: 130px;
+    border-radius: 10px;
+    padding: 14px;
+    width: 140px;
     cursor: pointer;
     position: relative;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.4);
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
   .marketItem:hover {
-    background-color: #d9f0d9;
+    background-color: #d1f0d1;
+    transform: scale(1.07);
   }
   .marketIcon {
-    font-size: 32px;
-    margin-bottom: 5px;
+    font-size: 38px;
+    margin-bottom: 8px;
     user-select: none;
   }
   .marketName {
     font-weight: 700;
-    margin-bottom: 5px;
+    font-size: 17px;
+    margin-bottom: 6px;
   }
   .marketPrice {
-    font-weight: 600;
-    color: #388e3c;
+    font-weight: 700;
+    color: #2e7d32;
+    font-size: 15px;
   }
   .tooltip {
     position: absolute;
-    top: -5px;
-    left: 105%;
+    top: -4px;
+    left: 100%;
     background: #333;
     color: white;
     padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
+    border-radius: 8px;
+    font-size: 13px;
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
@@ -171,38 +214,45 @@
   .marketItem:hover .tooltip {
     opacity: 1;
   }
+
   #encyclopedia {
     flex: 1;
     background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 10px #aaa;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 12px #a4d6a4;
     display: flex;
     flex-direction: column;
+    max-height: 540px;
+    min-width: 270px;
   }
   #encyclopedia h2 {
     margin-top: 0;
-    border-bottom: 2px solid #4caf50;
-    padding-bottom: 5px;
+    border-bottom: 3px solid #4caf50;
+    padding-bottom: 8px;
   }
   #encyclopediaSort {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    padding: 6px 8px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #4caf50;
+    font-weight: 700;
+    cursor: pointer;
   }
   #cropList {
     overflow-y: auto;
-    flex: 1;
+    flex-grow: 1;
     font-size: 14px;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
   }
   .encyclopediaEntry {
-    padding: 6px 8px;
+    padding: 8px 10px;
     border-bottom: 1px solid #ddd;
     cursor: default;
+    user-select: none;
   }
-  .rarityCommon { color: #555; }
-  .rarityUncommon { color: #1e90ff; }
-  .rarityRare { color: #4caf50; }
-  .rarityEpic { color: #9c27b0; }
-  .rarityLegendary { color: #ff9800; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -214,34 +264,37 @@
   </div>
 </header>
 
-<div id="farm"></div>
+<main>
+  <div id="farm" aria-label="Farm plots"></div>
 
-<div id="controls">
-  <button id="buySeedBtn" title="Buy a random seed from the market">Buy Seed 🌱</button>
-  <button id="buyFertilizerBtn" title="Buy fertilizer to boost mutation chance and growth speed">Buy Fertilizer 🌿</button>
-</div>
-<div id="inventory">
-  <div>Gold: <span id="gold">100</span></div>
-  <div>Seeds: <span id="seedCount">0</span></div>
-  <div>Fertilizer: <span id="fertilizerCount">0</span></div>
-</div>
+  <div id="controls" role="region" aria-label="Game Controls">
+    <button id="buySeedBtn" title="Buy a random seed from the market">Buy Seed 🌱</button>
+    <button id="buyFertilizerBtn" title="Buy fertilizer to boost mutation and growth speed">Buy Fertilizer 🌿</button>
+  </div>
 
-<div id="market">
-  <h2>🛒 Market</h2>
-  <div id="marketTimer"></div>
-  <div id="marketGrid"></div>
-</div>
+  <div id="inventory" role="region" aria-label="Inventory and resources">
+    <div>Gold: <span id="gold">100</span></div>
+    <div>Seeds: <span id="seedCount">0</span></div>
+    <div>Fertilizer: <span id="fertilizerCount">0</span></div>
+  </div>
 
-<div id="encyclopedia">
-  <h2>📚 Crop Encyclopedia</h2>
-  <label for="encyclopediaSort">Sort by: </label>
-  <select id="encyclopediaSort">
-    <option value="name">Name</option>
-    <option value="rarity">Rarity</option>
-    <option value="value">Sell Value</option>
-  </select>
-  <div id="cropList"></div>
-</div>
+  <section id="market" aria-label="Market">
+    <h2>🛒 Market</h2>
+    <div id="marketTimer"></div>
+    <div id="marketGrid" role="list"></div>
+  </section>
+
+  <section id="encyclopedia" aria-label="Crop Encyclopedia">
+    <h2>📚 Crop Encyclopedia</h2>
+    <label for="encyclopediaSort">Sort by: </label>
+    <select id="encyclopediaSort" aria-controls="cropList" aria-label="Sort encyclopedia entries">
+      <option value="name">Name</option>
+      <option value="rarity">Rarity</option>
+      <option value="value">Sell Value</option>
+    </select>
+    <div id="cropList" role="list"></div>
+  </section>
+</main>
 
 <script>
 (() => {
@@ -263,10 +316,10 @@
 
   const seasons = ["Spring", "Summer", "Fall", "Winter"];
   const seasonEffects = {
-    Spring: { mutationBoost: 0.10, growSpeedMultiplier: 1 },
-    Summer: { mutationBoost: 0, growSpeedMultiplier: 0.8 },
+    Spring: { mutationBoost: 0.10, growSpeedMultiplier: 1, sellPriceMultiplier: 1 },
+    Summer: { mutationBoost: 0, growSpeedMultiplier: 0.8, sellPriceMultiplier: 1 },
     Fall: { mutationBoost: 0, growSpeedMultiplier: 1, sellPriceMultiplier: 1.2 },
-    Winter: { mutationBoost: -0.1, growSpeedMultiplier: 1.2 }
+    Winter: { mutationBoost: -0.1, growSpeedMultiplier: 1.2, sellPriceMultiplier: 1 }
   };
 
   const weatherTypes = [
@@ -285,7 +338,6 @@
   let gold = 100;
   let seedsInventory = {};
   let fertilizerCount = 0;
-  let hasFertilizer = false;
   let currentSeasonIndex = 0;
   let currentWeatherIndex = 0;
   let marketStock = [];
@@ -333,7 +385,15 @@
       const div = document.createElement("div");
       div.className = "plot";
       div.title = "Empty plot. Click to plant.";
+      div.setAttribute("role", "button");
+      div.setAttribute("tabindex", "0");
       div.addEventListener("click", () => onPlotClick(i));
+      div.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onPlotClick(i);
+          e.preventDefault();
+        }
+      });
       farmEl.appendChild(div);
       farmPlots.push({
         element: div,
@@ -354,6 +414,8 @@
     let totalSeeds = Object.values(seedsInventory).reduce((a,b) => a+b, 0);
     seedCountEl.textContent = totalSeeds;
     fertilizerEl.textContent = fertilizerCount;
+    buySeedBtn.disabled = totalSeeds >= 10;
+    buyFertilizerBtn.disabled = gold < 25;
   }
 
   // Update season and weather UI
@@ -404,72 +466,68 @@
     const baseRarity = weightedRandom(rarities, "chance");
     const seasonBoost = seasonEffects[seasons[currentSeasonIndex]].mutationBoost;
     const mutationChance = calculateMutationChance(0.1, baseRarity, seasonBoost, fertilizerCount > 0, pets);
-    const isMutated = Math.random() < mutationChance;
     let finalRarity = baseRarity;
-    if (isMutated) {
-      // Try to bump rarity one tier higher if possible
-      const currentIndex = rarities.indexOf(baseRarity);
-      if (currentIndex < rarities.length - 1) finalRarity = rarities[currentIndex + 1];
+    if (Math.random() < mutationChance) {
+      // Upgrade rarity if possible
+      let newIndex = rarities.indexOf(baseRarity) + 1;
+      if (newIndex >= rarities.length) newIndex = rarities.length - 1;
+      finalRarity = rarities[newIndex];
     }
-    const cropData = cropsData.find(c => c.name === cropName);
-    if (!cropData) return alert("Unknown crop");
-    // Calculate grow time with season and weather multipliers
-    const seasonMultiplier = seasonEffects[seasons[currentSeasonIndex]].growSpeedMultiplier;
-    const weatherMultiplier = weatherTypes[currentWeatherIndex].growSpeedMultiplier;
-    const growTime = cropData.growTime * seasonMultiplier * weatherMultiplier;
+
     plot.planted = true;
-    plot.crop = cropData;
+    plot.crop = cropsData.find(c => c.name === cropName);
     plot.rarity = finalRarity;
     plot.growthStart = Date.now();
-    plot.growTime = growTime;
-    plot.mutated = isMutated;
-    plot.element.innerHTML = `<div style="font-size:36px;">${cropData.icon}</div><div class="${finalRarity.className}" style="font-weight:bold;">${finalRarity.label}</div><div class="growTimer">⏳</div>`;
-    plot.element.style.borderColor = finalRarity.color;
-    seedsInventory[cropName]--;
-    updateInventoryUI();
-    startGrowthTimer(plotIndex);
-    addToEncyclopedia(cropData.name, finalRarity.label, cropData.baseSellPrice);
-  }
+    plot.growTime = plot.crop.growTime / seasonEffects[seasons[currentSeasonIndex]].growSpeedMultiplier;
+    if (fertilizerCount > 0) {
+      plot.growTime *= 0.85;
+      fertilizerCount--;
+      alert("Fertilizer used! Growth speed increased.");
+    }
+    plot.mutated = finalRarity !== baseRarity;
 
-  // Start growth timer and update plot UI
-  function startGrowthTimer(plotIndex) {
-    const plot = farmPlots[plotIndex];
+    seedsInventory[cropName]--;
+    if (seedsInventory[cropName] <= 0) delete seedsInventory[cropName];
+
+    // Visual update
+    plot.element.innerHTML = `<div style="font-size: 32px;">${plot.crop.icon}</div>
+      <div class="growTimer ${finalRarity.className}">${finalRarity.label} - 0s</div>`;
+    plot.element.style.borderColor = finalRarity.color;
+
+    // Start growth timer
     if (plot.growTimerId) clearInterval(plot.growTimerId);
     plot.growTimerId = setInterval(() => {
       const elapsed = Date.now() - plot.growthStart;
       const timeLeft = Math.max(0, Math.ceil((plot.growTime - elapsed) / 1000));
-      const timerEl = plot.element.querySelector(".growTimer");
-      if (timerEl) timerEl.textContent = `⏳ ${timeLeft}s`;
-      if (elapsed >= plot.growTime) {
+      const timerDiv = plot.element.querySelector(".growTimer");
+      if (timerDiv) timerDiv.textContent = `${finalRarity.label} - ${timeLeft}s`;
+      if (timeLeft <= 0) {
         clearInterval(plot.growTimerId);
         plot.growTimerId = null;
-        timerEl.textContent = "🌿 Ready!";
-        plot.element.title = `Click to harvest ${plot.crop.name} (${plot.rarity.label})`;
+        timerDiv.textContent = `${finalRarity.label} - Ready!`;
+        plot.element.title = "Click to harvest!";
       }
-    }, 500);
+    }, 1000);
+
+    updateInventoryUI();
+    addToEncyclopedia(plot.crop.name, finalRarity.label, plot.crop.baseSellPrice);
   }
 
-  // Harvest crop on click if ready
-  function onPlotClick(plotIndex) {
+  // Harvest a plot if ready
+  function harvestCrop(plotIndex) {
     const plot = farmPlots[plotIndex];
-    if (!plot.planted) {
-      alert("Plot is empty. Plant seeds first.");
-      return;
-    }
+    if (!plot.planted) return alert("Plot is empty. Plant seeds first.");
     const elapsed = Date.now() - plot.growthStart;
-    if (elapsed < plot.growTime) {
-      alert("Crop not ready yet!");
-      return;
-    }
+    if (elapsed < plot.growTime) return alert("Crop not ready yet!");
+
     // Calculate sell price with rarity and season effects
-    const basePrice = plot.crop.baseSellPrice;
-    const rarityIndex = rarities.findIndex(r => r.label === plot.rarity.label);
-    let price = basePrice * (1 + rarityIndex * 0.2);
-    if (seasonEffects[seasons[currentSeasonIndex]].sellPriceMultiplier)
-      price *= seasonEffects[seasons[currentSeasonIndex]].sellPriceMultiplier;
+    let price = plot.crop.baseSellPrice * (1 + rarities.indexOf(plot.rarity) * 0.2);
+    price *= seasonEffects[seasons[currentSeasonIndex]].sellPriceMultiplier;
     price = Math.round(price);
+
     gold += price;
     alert(`Harvested ${plot.crop.name} (${plot.rarity.label}) for ${price} gold!`);
+
     plot.planted = false;
     plot.crop = null;
     plot.rarity = null;
@@ -478,23 +536,30 @@
     plot.mutated = false;
     plot.element.innerHTML = "";
     plot.element.style.borderColor = "#654321";
+    plot.element.title = "Empty plot. Click to plant.";
+
     updateInventoryUI();
   }
 
-  // Add discovered crops to encyclopedia
+  // Handle plot click (plant or harvest)
+  function onPlotClick(i) {
+    const plot = farmPlots[i];
+    if (!plot.planted) {
+      plantCrop(i);
+    } else {
+      harvestCrop(i);
+    }
+  }
+
+  // Encyclopedia management
   function addToEncyclopedia(name, rarityLabel, basePrice) {
     const key = name + rarityLabel;
     if (!encyclopedia[key]) {
-      encyclopedia[key] = {
-        name,
-        rarityLabel,
-        basePrice
-      };
+      encyclopedia[key] = { name, rarityLabel, basePrice };
       renderEncyclopedia();
     }
   }
 
-  // Render encyclopedia with sorting
   function renderEncyclopedia() {
     let entries = Object.values(encyclopedia);
     if (selectedSort === "name") {
@@ -522,7 +587,7 @@
       if (available.length === 0) break;
       const idx = Math.floor(Math.random() * available.length);
       const crop = available.splice(idx, 1)[0];
-      const price = Math.floor(crop.baseSellPrice * (0.6 + Math.random()*0.4));
+      const price = Math.floor(crop.baseSellPrice * (0.6 + Math.random() * 0.4));
       marketStock.push({...crop, price});
     }
     // Add fertilizer and watering cans
@@ -538,17 +603,15 @@
       div.title = item.description || "";
       div.innerHTML = `<div class="marketIcon">${item.icon}</div>
                        <div class="marketName">${item.name}</div>
-                       <div class="marketPrice">${item.price}g</div>`;
+                       <div class="marketPrice">${item.price}g</div>
+                       <div class="tooltip">${item.description || ""}</div>`;
       div.addEventListener("click", () => buyMarketItem(item));
       marketGrid.appendChild(div);
     });
   }
 
   function buyMarketItem(item) {
-    if (gold < item.price) {
-      alert("Not enough gold.");
-      return;
-    }
+    if (gold < item.price) return alert("Not enough gold.");
     gold -= item.price;
     if (item.type === "fertilizer") {
       fertilizerCount++;
@@ -557,14 +620,13 @@
       alert("Bought watering can! It gives a chance to auto-water crops.");
       // Could implement watering can effects here
     } else {
-      // Crop seed
       seedsInventory[item.name] = (seedsInventory[item.name] || 0) + 1;
       alert(`Bought 1 ${item.name} seed.`);
     }
     updateInventoryUI();
   }
 
-  // Market timer and event timer countdowns
+  // Timers and events
   function tickTimers() {
     marketRestockTimer--;
     eventTimer--;
@@ -583,7 +645,6 @@
     eventTimerEl.textContent = formatTime(eventTimer);
   }
 
-  // Random event example (e.g. pest infestation)
   function triggerRandomEvent() {
     const eventTypes = ["pest", "rain", "drought"];
     const event = eventTypes[Math.floor(Math.random() * eventTypes.length)];
@@ -634,13 +695,33 @@
     renderEncyclopedia();
   });
 
-  // Initialize everything
+  // Start growth timer helper (used on pests event)
+  function startGrowthTimer(plotIndex) {
+    const plot = farmPlots[plotIndex];
+    if (!plot.planted) return;
+    if (plot.growTimerId) clearInterval(plot.growTimerId);
+    plot.growTimerId = setInterval(() => {
+      const elapsed = Date.now() - plot.growthStart;
+      const timeLeft = Math.max(0, Math.ceil((plot.growTime - elapsed) / 1000));
+      const timerDiv = plot.element.querySelector(".growTimer");
+      if (timerDiv) timerDiv.textContent = `${plot.rarity.label} - ${timeLeft}s`;
+      if (timeLeft <= 0) {
+        clearInterval(plot.growTimerId);
+        plot.growTimerId = null;
+        timerDiv.textContent = `${plot.rarity.label} - Ready!`;
+        plot.element.title = "Click to harvest!";
+      }
+    }, 1000);
+  }
+
+  // Initialize game
   function init() {
     initFarm();
     restockMarket();
     renderMarket();
     updateInventoryUI();
     updateSeasonWeatherUI();
+    renderEncyclopedia();
     setInterval(tickTimers, 1000);
     setInterval(cycleSeason, 120000);
     setInterval(cycleWeather, 90000);
