@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grow a Garden - Farming Simulator</title>
+<title>Grow a Garden 🌻 with Pests, Events & Pets</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -18,11 +18,21 @@
   }
   h1 {
     color: #3e621f;
+    margin-bottom: 5px;
   }
   #status {
     color: #2e4a11;
     margin-bottom: 15px;
     font-size: 18px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  #status > div {
+    font-weight: bold;
+    user-select: none;
   }
   #inventory {
     margin-bottom: 20px;
@@ -31,14 +41,6 @@
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
-  }
-  #inventory > div {
-    background: #558b2f;
-    padding: 10px 16px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    user-select: none;
   }
   button {
     padding: 8px 14px;
@@ -100,7 +102,7 @@
   }
   #upgrades {
     margin-top: 20px;
-    max-width: 420px;
+    max-width: 460px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -115,14 +117,62 @@
     font-weight: bold;
     color: #2e4a11;
   }
+  .pestIcon {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 24px;
+    pointer-events: none;
+    user-select: none;
+    animation: pestShake 1.5s infinite ease-in-out;
+  }
+  @keyframes pestShake {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+  }
+  #petsUI {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pet {
+    background: #558b2f;
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.3s;
+  }
+  .pet:hover {
+    background: #33691e;
+  }
+  .pet-icon {
+    font-size: 24px;
+  }
+  #eventMessage {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #2e4a11;
+    min-height: 24px;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
 
-<h1>Grow a Garden 🌱</h1>
+<h1>Grow a Garden 🌻 with Pests, Events & Pets</h1>
 
 <div id="status">
-  Gold: <span id="gold">20</span> &nbsp;&nbsp; Seeds: <span id="seedCount">5</span> &nbsp;&nbsp; Fertilizer: <span id="fertilizerCount">0</span>
+  <div>Gold: <span id="gold">20</span></div>
+  <div>Seeds: <span id="seedCount">5</span></div>
+  <div>Fertilizer: <span id="fertilizerCount">0</span></div>
 </div>
 
 <div id="inventory">
@@ -138,6 +188,19 @@
 </div>
 
 <div id="dayNightCycle">Day Time</div>
+<div id="eventMessage"></div>
+
+<div id="petsUI">
+  <div class="pet" id="petButterfly" title="Butterfly: Speeds growth by 10%">
+    <span class="pet-icon">🦋</span> Butterfly - 100 Gold
+  </div>
+  <div class="pet" id="petLadybug" title="Ladybug: Removes pests automatically">
+    <span class="pet-icon">🐞</span> Ladybug - 150 Gold
+  </div>
+  <div class="pet" id="petBird" title="Bird: Increases harvest gold by 15%">
+    <span class="pet-icon">🐦</span> Bird - 200 Gold
+  </div>
+</div>
 
 <script>
 (() => {
@@ -157,6 +220,17 @@
   let isDay = true;
   const DAY_DURATION = 30000; // 30 seconds day, 30 seconds night
 
+  // Event variables
+  let currentEvent = null; // "rain", "drought", "bonus", null
+  let eventTimeout = null;
+
+  // Pets state and bonuses
+  const pets = {
+    butterfly: { owned: false, cost: 100, growthSpeedBonus: 0.1 },
+    ladybug: { owned: false, cost: 150 },
+    bird: { owned: false, cost: 200, sellBonus: 0.15 }
+  };
+
   // DOM Elements
   const goldEl = document.getElementById('gold');
   const seedCountEl = document.getElementById('seedCount');
@@ -167,16 +241,23 @@
   const upgradeSeedCostBtn = document.getElementById('upgradeSeedCostBtn');
   const upgradeSellPriceBtn = document.getElementById('upgradeSellPriceBtn');
   const dayNightCycleEl = document.getElementById('dayNightCycle');
+  const eventMessageEl = document.getElementById('eventMessage');
 
-  // Crop types
-  // Each crop: name, growTime (ms), sellPrice, icon
+  const petButterflyBtn = document.getElementById('petButterfly');
+  const petLadybugBtn = document.getElementById('petLadybug');
+  const petBirdBtn = document.getElementById('petBird');
+
+  // Crop types: added rare crops
+  // Each crop: name, growTime (ms), baseSellPrice, icon, rarity (common=1, rare=2)
   const crops = [
-    {name: 'Carrot', growTime: 6000, baseSellPrice: 10, icon: '🥕'},
-    {name: 'Tomato', growTime: 9000, baseSellPrice: 15, icon: '🍅'},
-    {name: 'Pumpkin', growTime: 15000, baseSellPrice: 30, icon: '🎃'},
+    {name: 'Carrot', growTime: 6000, baseSellPrice: 10, icon: '🥕', rarity: 1},
+    {name: 'Tomato', growTime: 9000, baseSellPrice: 15, icon: '🍅', rarity: 1},
+    {name: 'Pumpkin', growTime: 15000, baseSellPrice: 30, icon: '🎃', rarity: 1},
+    {name: 'Golden Apple', growTime: 20000, baseSellPrice: 60, icon: '🍏', rarity: 2},
+    {name: 'Magic Mushroom', growTime: 25000, baseSellPrice: 80, icon: '🍄', rarity: 2},
   ];
 
-  // Plot state: {planted: bool, growth: ms, cropIndex: int, watered: bool, fertilizer: bool, intervalId: int|null, element: HTMLElement}
+  // Plot state: planted:bool, growth:ms, cropIndex:int, watered:bool, fertilizer:bool, pest:bool, intervalId:int|null, element:HTMLElement
   const plots = [];
 
   // Initialize farm grid UI
@@ -194,6 +275,7 @@
         cropIndex: null,
         watered: false,
         fertilizer: false,
+        pest: false,
         intervalId: null,
         element: plot,
       };
@@ -213,6 +295,13 @@
 
     upgradeSeedCostBtn.disabled = gold < 50;
     upgradeSellPriceBtn.disabled = gold < 50;
+
+    petButterflyBtn.style.opacity = pets.butterfly.owned ? 0.5 : 1;
+    petLadybugBtn.style.opacity = pets.ladybug.owned ? 0.5 : 1;
+    petBirdBtn.style.opacity = pets.bird.owned ? 0.5 : 1;
+    petButterflyBtn.disabled = pets.butterfly.owned || gold < pets.butterfly.cost;
+    petLadybugBtn.disabled = pets.ladybug.owned || gold < pets.ladybug.cost;
+    petBirdBtn.disabled = pets.bird.owned || gold < pets.bird.cost;
   }
 
   // Calculate current seed cost based on upgrades
@@ -220,19 +309,26 @@
     return Math.max(1, Math.floor(5 * seedCostMultiplier));
   }
 
-  // Calculate sell price of crop with fertilizer and upgrades
+  // Calculate sell price of crop with fertilizer, upgrades and pets
   function getSellPrice(basePrice, hasFertilizer) {
     let price = basePrice * sellPriceMultiplier;
     if (hasFertilizer) price *= 1.5;
+    if (pets.bird.owned) price *= 1 + pets.bird.sellBonus;
+    if (currentEvent === 'bonus') price *= 1.5;
     return Math.floor(price);
   }
 
-  // Plant seed function: choose crop randomly for fun
+  // Plant seed function: weighted random crop by rarity (rarer = lower chance)
   function plantSeed(index) {
     if (plots[index].planted || seeds <= 0) return false;
 
-    // Random crop chosen to plant
-    const cropIndex = Math.floor(Math.random() * crops.length);
+    // Weighted random by rarity
+    let weightedCrops = [];
+    crops.forEach((crop, i) => {
+      const weight = crop.rarity === 1 ? 10 : 2; // commons 10x chance vs rares
+      for(let w=0; w<weight; w++) weightedCrops.push(i);
+    });
+    const cropIndex = weightedCrops[Math.floor(Math.random() * weightedCrops.length)];
     const crop = crops[cropIndex];
 
     seeds--;
@@ -244,6 +340,7 @@
     plot.cropIndex = cropIndex;
     plot.watered = false;
     plot.fertilizer = false;
+    plot.pest = false;
 
     plot.element.classList.add('planted');
     plot.element.innerHTML = '';
@@ -282,6 +379,13 @@
     fertIcon.textContent = '';
     plot.element.appendChild(fertIcon);
 
+    // Pest icon if pest appears
+    const pestIcon = document.createElement('div');
+    pestIcon.className = 'pestIcon';
+    pestIcon.style.display = 'none';
+    pestIcon.textContent = '🐛';
+    plot.element.appendChild(pestIcon);
+
     // Growth interval
     plot.intervalId = setInterval(() => {
       if (!plot.planted) {
@@ -294,6 +398,11 @@
       let growthRate = 200; // ms per growth unit
       if (plot.watered) growthRate /= 2;
       if (plot.fertilizer) growthRate /= 1.5;
+      if (pets.butterfly.owned) growthRate /= 1 + pets.butterfly.growthSpeedBonus;
+      if (currentEvent === 'drought') growthRate *= 2; // drought slows growth
+      
+      // Pest effect: slows growth by 50%
+      if (plot.pest) growthRate *= 1.5;
 
       plot.growth += 1000 / growthRate;
 
@@ -304,6 +413,7 @@
       // Update icons
       waterIcon.textContent = plot.watered ? '💧' : '';
       fertIcon.textContent = plot.fertilizer ? '🌿' : '';
+      pestIcon.style.display = plot.pest ? 'block' : 'none';
 
       if (plot.growth >= crops[cropIndex].growTime) {
         plot.growth = crops[cropIndex].growTime;
@@ -335,6 +445,7 @@
     plot.cropIndex = null;
     plot.watered = false;
     plot.fertilizer = false;
+    plot.pest = false;
 
     plot.element.classList.remove('planted');
     plot.element.innerHTML = '';
@@ -363,10 +474,20 @@
     return true;
   }
 
+  // Remove pest from plot
+  function removePest(index) {
+    const plot = plots[index];
+    if (!plot.planted || !plot.pest) return false;
+    plot.pest = false;
+    updateUI();
+    return true;
+  }
+
   // Handle clicking on plots:
   // If empty: plant seed if possible
   // If planted & grown: harvest
-  // If planted & not grown: water or apply fertilizer (choose with prompt)
+  // If planted & pest: remove pest
+  // If planted & not grown & no pest: water or fertilizer (choose with prompt)
   function onPlotClick(index) {
     const plot = plots[index];
 
@@ -378,6 +499,11 @@
       if (!plantSeed(index)) {
         alert('Cannot plant seed here.');
       }
+      return;
+    }
+
+    if (plot.pest) {
+      if (!removePest(index)) alert('No pests to remove!');
       return;
     }
 
@@ -434,24 +560,132 @@
     }
   });
 
-  // Day/Night cycle toggle
+  // Pets purchase handlers
+  petButterflyBtn.addEventListener('click', () => {
+    if (pets.butterfly.owned) {
+      alert('You already own the Butterfly!');
+      return;
+    }
+    if (gold >= pets.butterfly.cost) {
+      gold -= pets.butterfly.cost;
+      pets.butterfly.owned = true;
+      alert('Butterfly purchased! Growth speed increased by 10%.');
+      updateUI();
+    }
+  });
+  petLadybugBtn.addEventListener('click', () => {
+    if (pets.ladybug.owned) {
+      alert('You already own the Ladybug!');
+      return;
+    }
+    if (gold >= pets.ladybug.cost) {
+      gold -= pets.ladybug.cost;
+      pets.ladybug.owned = true;
+      alert('Ladybug purchased! Pests will be removed automatically every 10 seconds.');
+      updateUI();
+    }
+  });
+  petBirdBtn.addEventListener('click', () => {
+    if (pets.bird.owned) {
+      alert('You already own the Bird!');
+      return;
+    }
+    if (gold >= pets.bird.cost) {
+      gold -= pets.bird.cost;
+      pets.bird.owned = true;
+      alert('Bird purchased! Harvest gold increased by 15%.');
+      updateUI();
+    }
+  });
+
+  // Day/Night cycle toggle and event triggering
   function toggleDayNight() {
     isDay = !isDay;
     if (isDay) {
       document.body.style.background = '#8bc34a';
       dayNightCycleEl.textContent = 'Day Time';
+      eventMessageEl.textContent = '';
+      // Reset watering status at day start
+      plots.forEach(plot => {
+        if (plot.planted) plot.watered = false;
+      });
+      // Possibly trigger random event
+      tryTriggerEvent();
     } else {
       document.body.style.background = '#264d00';
       dayNightCycleEl.textContent = 'Night Time (Water plants!)';
-      // Water all plants automatically at night start
+      // Water all plants automatically at night start (simulate dew)
       plots.forEach(plot => {
         if (plot.planted) plot.watered = false;
       });
     }
   }
+
+  // Random event system: rain, drought, bonus harvest
+  function tryTriggerEvent() {
+    if (currentEvent !== null) return; // one event at a time
+
+    const roll = Math.random();
+    if (roll < 0.2) {
+      startEvent('rain', 15000, 'It\'s raining! All plants are watered automatically.');
+    } else if (roll < 0.35) {
+      startEvent('drought', 20000, 'Drought! Plant growth is slower.');
+    } else if (roll < 0.45) {
+      startEvent('bonus', 15000, 'Bonus harvest day! Crops sell for 50% more gold.');
+    }
+  }
+
+  function startEvent(name, duration, message) {
+    currentEvent = name;
+    eventMessageEl.textContent = message;
+
+    if (name === 'rain') {
+      // Water all plants immediately
+      plots.forEach(plot => {
+        if (plot.planted) plot.watered = true;
+      });
+      updateUI();
+    }
+
+    eventTimeout = setTimeout(() => {
+      currentEvent = null;
+      eventMessageEl.textContent = '';
+    }, duration);
+  }
+
+  // Pests spawning
+  function spawnPests() {
+    // Only spawn if no current pest on that plot
+    const emptyPlots = plots.filter(p => p.planted && !p.pest && p.growth < crops[p.cropIndex].growTime);
+    if (emptyPlots.length === 0) return;
+
+    const pestChance = 0.15; // 15% chance each spawn cycle
+    if (Math.random() < pestChance) {
+      const chosenPlot = emptyPlots[Math.floor(Math.random() * emptyPlots.length)];
+      chosenPlot.pest = true;
+    }
+  }
+
+  // Ladybug pet auto remove pests every 10 seconds
+  function ladybugAutoRemovePests() {
+    if (!pets.ladybug.owned) return;
+    plots.forEach(plot => {
+      if (plot.pest) plot.pest = false;
+    });
+  }
+
+  // Main intervals
+  setInterval(() => {
+    spawnPests();
+  }, 12000);
+
+  setInterval(() => {
+    ladybugAutoRemovePests();
+  }, 10000);
+
   setInterval(toggleDayNight, DAY_DURATION);
 
-  // Init
+  // Init farm and UI
   createFarmGrid();
   updateUI();
 })();
