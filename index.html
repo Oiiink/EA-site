@@ -3,342 +3,165 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bee Tower Defense with Monsters</title>
+<title>Mini Agar.io</title>
 <style>
-  /* Reset and base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0a0a0a;
-    color: #eee;
+  html, body {
+    margin: 0; padding: 0; overflow: hidden;
+    background: #222;
+    height: 100vh;
+    font-family: Arial, sans-serif;
     user-select: none;
   }
-  .container {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
+  #gameCanvas {
+    display: block;
+    background: #1e1e1e;
+    margin: 0 auto;
+    cursor: crosshair;
+    border: 2px solid #eee;
   }
-
-  /* Left Sidebar */
-  .sidebar-left {
-    width: 250px;
-    background: #111;
-    border-right: 1px solid #333;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-  }
-  .sidebar-left h2 {
-    margin: 0 0 15px 0;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 18px;
-    color: #ffd600;
-    text-align: center;
-  }
-  .tower-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  .tower {
-    background: #222;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  .tower:hover {
-    background: #333;
-  }
-  .tower-icon {
-    width: 48px;
-    height: 48px;
-    background: #444;
-    border-radius: 8px;
-    margin-right: 12px;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 24px;
-    color: #ffd600;
-    box-shadow: 0 0 5px #ffd600aa;
-  }
-  .tower-info {
-    flex-grow: 1;
-  }
-  .tower-name {
-    font-weight: 600;
-    font-size: 16px;
-    margin: 0 0 4px 0;
-  }
-  .tower-cost {
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  /* Main game area */
-  .main-area {
-    flex-grow: 1;
-    background: linear-gradient(135deg, #222 25%, #111 75%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  .game-map {
-    width: 80%;
-    height: 80%;
-    background-color: #0d0d0d;
-    border: 3px solid #444;
-    border-radius: 16px;
-    box-shadow: 0 0 20px #ffd600bb inset;
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, 1fr);
-    gap: 2px;
-    position: relative;
-  }
-  .map-cell {
-    background: #111;
-    border-radius: 6px;
-    border: 1px solid #333;
-    position: relative;
-  }
-
-  /* Monster sprite styling */
-  .monster {
+  #scoreBoard {
     position: absolute;
-    width: 48px;
-    height: 48px;
-    pointer-events: none;
-    animation: float 2.5s ease-in-out infinite;
-  }
-
-  /* Floating animation */
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  /* Right Sidebar */
-  .sidebar-right {
-    width: 280px;
-    background: #111;
-    border-left: 1px solid #333;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    color: #ddd;
-  }
-  .sidebar-right h2 {
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 18px;
-    margin: 0 0 15px 0;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
     color: #ffd600;
-    text-align: center;
-  }
-  .stat {
-    margin-bottom: 12px;
-    font-size: 15px;
-  }
-  .stat span {
-    font-weight: 700;
-    float: right;
-    color: #ffd600;
-  }
-  .wave-bar {
-    height: 20px;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: inset 0 0 10px #ffd600aa;
-  }
-  .wave-progress {
-    height: 100%;
-    width: 35%;
-    background: #ffd600;
-    border-radius: 10px 0 0 10px;
-    transition: width 0.3s ease;
-  }
-
-  /* Bottom bar */
-  .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 250px;
-    right: 280px;
-    height: 60px;
-    background: #111;
-    border-top: 1px solid #333;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    gap: 20px;
-    box-shadow: 0 -3px 15px #ffd600bb inset;
-  }
-  .button {
-    background: #222;
-    color: #ffd600;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 18px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 0 10px #ffd600bb;
-    transition: background 0.3s ease;
-  }
-  .button:hover {
-    background: #333;
-  }
-  .button:active {
-    background: #444;
-  }
-
-  /* Scrollbar styling */
-  .tower-list::-webkit-scrollbar {
-    width: 6px;
-  }
-  .tower-list::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 10px;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 900px) {
-    .container {
-      flex-direction: column;
-    }
-    .sidebar-left, .sidebar-right {
-      width: 100%;
-      height: auto;
-      border: none;
-      border-bottom: 1px solid #333;
-      padding: 10px 5px;
-      display: flex;
-      justify-content: center;
-    }
-    .bottom-bar {
-      left: 0;
-      right: 0;
-      height: 70px;
-      padding: 0 10px;
-      gap: 10px;
-    }
-    .main-area {
-      flex-grow: 1;
-      height: 60vh;
-      width: 100%;
-      padding: 10px 0;
-    }
-    .game-map {
-      width: 95%;
-      height: 100%;
-      grid-template-columns: repeat(8, 1fr);
-      grid-template-rows: repeat(8, 1fr);
-    }
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ffd600aa;
+    user-select: none;
   }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- Left Sidebar -->
-  <aside class="sidebar-left">
-    <h2>Towers</h2>
-    <div class="tower-list" tabindex="0" aria-label="Tower selection list">
-      <div class="tower" role="button" tabindex="0" aria-pressed="false">
-        <div class="tower-icon">🐝</div>
-        <div class="tower-info">
-          <p class="tower-name">Bee Shooter</p>
-          <p class="tower-cost">Cost: 100 Gold</p>
-        </div>
-      </div>
-      <div class="tower" role="button" tabindex="0" aria-pressed="false">
-        <div class="tower-icon">🍯</div>
-        <div class="tower-info">
-          <p class="tower-name">Honey Splash</p>
-          <p class="tower-cost">Cost: 200 Gold</p>
-        </div>
-      </div>
-      <div class="tower" role="button" tabindex="0" aria-pressed="false">
-        <div class="tower-icon">🌸</div>
-        <div class="tower-info">
-          <p class="tower-name">Flower Trap</p>
-          <p class="tower-cost">Cost: 150 Gold</p>
-        </div>
-      </div>
-      <div class="tower" role="button" tabindex="0" aria-pressed="false">
-        <div class="tower-icon">⚡</div>
-        <div class="tower-info">
-          <p class="tower-name">Lightning Buzz</p>
-          <p class="tower-cost">Cost: 300 Gold</p>
-        </div>
-      </div>
-    </div>
-  </aside>
+<div id="scoreBoard">Score: 0</div>
+<canvas id="gameCanvas"></canvas>
 
-  <!-- Main Game Area -->
-  <main class="main-area" role="main" aria-label="Game map and play area">
-    <div class="game-map" aria-label="Tower defense game grid" id="gameMap">
-      <!-- Grid cells -->
-      <script>
-        for(let i=0; i<100; i++) {
-          document.write('<div class="map-cell" aria-label="Map grid cell"></div>');
-        }
-      </script>
-      <!-- Monsters will be added here dynamically -->
-      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 20px; left: 20px;"/>
-      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 100px; left: 70px; animation-delay: 0.6s"/>
-      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 180px; left: 140px; animation-delay: 1.2s"/>
-    </div>
-  </main>
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
 
-  <!-- Right Sidebar -->
-  <aside class="sidebar-right" aria-live="polite">
-    <h2>Game Info</h2>
-    <div class="stat" aria-label="Current Wave">
-      Wave: <span>3 / 10</span>
-    </div>
-    <div class="stat" aria-label="Gold">
-      Gold: <span>450</span>
-    </div>
-    <div class="wave-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="35" aria-label="Wave progress">
-      <div class="wave-progress"></div>
-    </div>
-    <div class="stat" aria-label="Enemies remaining">
-      Enemies Remaining: <span>15</span>
-    </div>
-    <div class="stat" aria-label="Towers built">
-      Towers Built: <span>5</span>
-    </div>
-  </aside>
-</div>
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-<!-- Bottom bar with action buttons -->
-<div class="bottom-bar" role="region" aria-label="Game action controls">
-  <button class="button" type="button">Build Tower</button>
-  <button class="button" type="button">Upgrade Tower</button>
-  <button class="button" type="button">Sell Tower</button>
-  <button class="button" type="button">Start Wave</button>
-</div>
+  // Player properties
+  const player = {
+    x: width / 2,
+    y: height / 2,
+    radius: 20,
+    color: '#ffd600',
+    speed: 3,
+    vx: 0,
+    vy: 0,
+  };
+
+  // Mouse position tracking
+  const mouse = { x: player.x, y: player.y };
+
+  canvas.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  // Food properties
+  const foodCount = 150;
+  const food = [];
+
+  function randomColor() {
+    const colors = ['#ff4444', '#44ff44', '#4444ff', '#ffbb33', '#33ffbb', '#bb33ff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function createFood() {
+    for (let i = 0; i < foodCount; i++) {
+      food.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: 5 + Math.random() * 5,
+        color: randomColor(),
+      });
+    }
+  }
+
+  createFood();
+
+  // Game loop
+  function gameLoop() {
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Move player towards mouse with smooth easing
+    const dx = mouse.x - player.x;
+    const dy = mouse.y - player.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist > 1) {
+      const moveX = (dx / dist) * player.speed;
+      const moveY = (dy / dist) * player.speed;
+      player.x += moveX;
+      player.y += moveY;
+    }
+
+    // Draw and check collision with food
+    for (let i = food.length - 1; i >= 0; i--) {
+      const f = food[i];
+      // Draw food
+      ctx.beginPath();
+      ctx.fillStyle = f.color;
+      ctx.shadowColor = f.color;
+      ctx.shadowBlur = 8;
+      ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Check collision with player
+      const distToPlayer = Math.hypot(f.x - player.x, f.y - player.y);
+      if (distToPlayer < player.radius + f.radius) {
+        // Eat food, grow player
+        player.radius += f.radius * 0.2;
+        food.splice(i, 1);
+        spawnFood();
+      }
+    }
+
+    // Draw player
+    ctx.beginPath();
+    ctx.fillStyle = player.color;
+    ctx.shadowColor = player.color;
+    ctx.shadowBlur = 20;
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Clamp player to canvas bounds
+    player.x = Math.min(Math.max(player.radius, player.x), width - player.radius);
+    player.y = Math.min(Math.max(player.radius, player.y), height - player.radius);
+
+    // Update score display
+    const scoreBoard = document.getElementById('scoreBoard');
+    scoreBoard.textContent = `Score: ${Math.floor(player.radius * player.radius)}`;
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Spawn one new food
+  function spawnFood() {
+    food.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: 5 + Math.random() * 5,
+      color: randomColor(),
+    });
+  }
+
+  gameLoop();
+</script>
 
 </body>
 </html>
