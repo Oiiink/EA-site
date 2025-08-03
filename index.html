@@ -3,372 +3,253 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OiiinkTube</title>
+<title>Mini Stock Market Game</title>
 <style>
   body {
-    margin: 0; font-family: Arial, sans-serif; background: #f9f9f9; color: #222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0; padding: 20px;
+    color: #222;
   }
-  header {
-    background: white; padding: 10px 20px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10;
+  h1 {
+    text-align: center;
+    color: #2c3e50;
   }
-  header h1 {
-    margin: 0; font-weight: bold; color: #cc181e;
+  #balance {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    text-align: center;
   }
-  #searchForm {
-    flex-grow: 1; max-width: 600px; margin-left: 20px;
+  #stocks {
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    border-collapse: collapse;
+    width: 100%;
   }
-  #searchForm input[type="text"] {
-    width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 2px;
-    font-size: 16px;
-  }
-  main {
-    padding: 20px; max-width: 1100px; margin: auto;
-  }
-  .videos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
-    gap: 16px;
-  }
-  .video-card {
-    background: white; border-radius: 6px; box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
-    cursor: pointer; overflow: hidden; display: flex; flex-direction: column;
-  }
-  .thumbnail {
-    width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
-    background: #ddd;
-  }
-  .video-info {
-    padding: 10px 12px; flex-grow: 1;
-  }
-  .video-title {
-    font-weight: bold; font-size: 15px; margin: 0 0 6px 0;
-    line-height: 1.2; color: #111;
-  }
-  .video-channel {
-    font-size: 13px; color: #555;
-    margin-bottom: 4px;
-  }
-  .video-views {
-    font-size: 12px; color: #777;
-  }
-  /* Video player overlay */
-  #playerOverlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.85); display: none; flex-direction: column;
-    align-items: center; justify-content: flex-start; padding-top: 40px;
-    z-index: 20;
-  }
-  #playerContainer {
-    background: #000; width: 80vw; max-width: 960px; aspect-ratio: 16 / 9;
-    position: relative; border-radius: 8px; overflow: hidden;
-  }
-  #closeBtn {
-    position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.8);
-    border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer;
-    font-weight: bold; font-size: 20px; line-height: 28px; text-align: center;
-    color: #333;
-  }
-  iframe {
-    width: 100%; height: 100%; border: none;
-  }
-  /* Comments section */
-  #commentsSection {
-    margin-top: 15px;
-    width: 80vw; max-width: 960px;
-    background: white; border-radius: 8px; padding: 15px;
-    max-height: 300px; overflow-y: auto;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
-  }
-  #commentsSection h3 {
-    margin-top: 0;
-  }
-  .comment {
-    display: flex; margin-bottom: 12px; gap: 10px;
-  }
-  .avatar {
-    width: 40px; height: 40px; border-radius: 50%; background: #ccc;
-    flex-shrink: 0;
-  }
-  .comment-content {
-    flex-grow: 1;
-  }
-  .comment-user {
-    font-weight: bold; font-size: 14px; margin: 0 0 4px 0;
-  }
-  .comment-text {
-    margin: 0; font-size: 14px; white-space: pre-wrap;
-  }
-  #commentForm {
-    display: flex; gap: 10px; margin-top: 10px;
-  }
-  #commentForm select, #commentForm textarea {
-    font-size: 14px;
-    border-radius: 4px;
+  #stocks th, #stocks td {
     border: 1px solid #ccc;
-    padding: 6px 8px;
+    padding: 8px 12px;
+    text-align: center;
   }
-  #commentForm select {
-    width: 120px;
-  }
-  #commentForm textarea {
-    flex-grow: 1;
-    resize: vertical;
-    height: 50px;
-  }
-  #commentForm button {
-    background: #cc181e;
+  #stocks th {
+    background-color: #2980b9;
     color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 15px;
-    cursor: pointer;
-    font-weight: bold;
   }
-  #commentForm button:disabled {
-    background: #999;
-    cursor: not-allowed;
+  button {
+    background-color: #27ae60;
+    border: none;
+    padding: 6px 12px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #1e8449;
+  }
+  input[type=number] {
+    width: 60px;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    text-align: center;
+  }
+  #log {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    height: 140px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 14px;
+    color: #34495e;
   }
 </style>
 </head>
 <body>
-  <header>
-    <h1>OiiinkTube</h1>
-    <form id="searchForm" onsubmit="event.preventDefault(); searchVideos();">
-      <input type="text" id="searchInput" placeholder="Search videos..." />
-    </form>
-  </header>
-
-  <main>
-    <div class="videos" id="videoList"></div>
-  </main>
-
-  <div id="playerOverlay" onclick="closePlayer(event)">
-    <div id="playerContainer" onclick="event.stopPropagation()">
-      <button id="closeBtn" onclick="closePlayer(event)">×</button>
-      <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      <div id="commentsSection">
-        <h3>Comments</h3>
-        <div id="commentsList"></div>
-        <form id="commentForm" onsubmit="submitComment(event)">
-          <select id="userSelect"></select>
-          <textarea id="commentInput" placeholder="Add a comment..." required></textarea>
-          <button type="submit" disabled>Post</button>
-        </form>
-      </div>
-    </div>
-  </div>
+  <h1>Mini Stock Market Simulator</h1>
+  <div id="balance">Cash: $1000.00 | Portfolio Value: $0.00 | Total: $1000.00</div>
+  <table id="stocks">
+    <thead>
+      <tr>
+        <th>Stock</th>
+        <th>Price ($)</th>
+        <th>Your Shares</th>
+        <th>Buy</th>
+        <th>Sell</th>
+      </tr>
+    </thead>
+    <tbody id="stockBody"></tbody>
+  </table>
+  <div id="log"></div>
 
 <script>
-  // Users (profiles)
-  const users = [
-    { id: 1, name: "Oiiink", avatar: "https://i.pravatar.cc/40?u=oiiink" },
-    { id: 2, name: "Friend1", avatar: "https://i.pravatar.cc/40?u=friend1" },
-    { id: 3, name: "Friend2", avatar: "https://i.pravatar.cc/40?u=friend2" },
+  // Initial player money
+  let cash = 1000;
+  // Stocks data - symbol, name, price, owned shares
+  const stocks = [
+    { symbol: "APL", name: "Apple", price: 150, owned: 0 },
+    { symbol: "GGL", name: "Google", price: 2800, owned: 0 },
+    { symbol: "TSL", name: "Tesla", price: 720, owned: 0 },
+    { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0 },
+    { symbol: "MSF", name: "Microsoft", price: 300, owned: 0 },
   ];
 
-  // Your real recent videos from Oiiink's YouTube channel (IDs found publicly)
-  const videos = [
-    {
-      id: "xVrGUThxsXQ",
-      title: "I Won A 100K Game In Minecraft (Hypixel Skyblock)",
-      channel: "Oiiink",
-      views: "1.4M views",
-      thumbnail: "https://img.youtube.com/vi/xVrGUThxsXQ/hqdefault.jpg",
-      comments: [
-        { userId: 2, text: "Insane gameplay!" },
-        { userId: 3, text: "Wow, amazing!" },
-      ],
-    },
-    {
-      id: "Q1-rQ_vTDfw",
-      title: "100K Coins To Spend In Hypixel Skyblock!",
-      channel: "Oiiink",
-      views: "870K views",
-      thumbnail: "https://img.youtube.com/vi/Q1-rQ_vTDfw/hqdefault.jpg",
-      comments: [
-        { userId: 1, text: "That was a lot of fun!" },
-      ],
-    },
-    {
-      id: "Y6s13R1G2Ug",
-      title: "How To Get Rich Fast In Skyblock 2025",
-      channel: "Oiiink",
-      views: "600K views",
-      thumbnail: "https://img.youtube.com/vi/Y6s13R1G2Ug/hqdefault.jpg",
-      comments: [],
-    },
-    {
-      id: "8x1YO8aT0Ow",
-      title: "My Craziest Skyblock Moments",
-      channel: "Oiiink",
-      views: "450K views",
-      thumbnail: "https://img.youtube.com/vi/8x1YO8aT0Ow/hqdefault.jpg",
-      comments: [
-        { userId: 3, text: "Epic moments, keep it up!" },
-      ],
-    },
-    {
-      id: "vK9YolQ_Vjc",
-      title: "Building The Best Skyblock Base",
-      channel: "Oiiink",
-      views: "380K views",
-      thumbnail: "https://img.youtube.com/vi/vK9YolQ_Vjc/hqdefault.jpg",
-      comments: [],
-    },
-  ];
+  const balanceEl = document.getElementById("balance");
+  const stockBody = document.getElementById("stockBody");
+  const log = document.getElementById("log");
 
-  const videoList = document.getElementById("videoList");
-  const playerOverlay = document.getElementById("playerOverlay");
-  const videoPlayer = document.getElementById("videoPlayer");
-  const commentsList = document.getElementById("commentsList");
-  const commentForm = document.getElementById("commentForm");
-  const userSelect = document.getElementById("userSelect");
-  const commentInput = document.getElementById("commentInput");
-  const postBtn = commentForm.querySelector("button");
-
-  let currentVideo = null;
-
-  // Render user options in comment form
-  function renderUserOptions() {
-    userSelect.innerHTML = "";
-    for (const user of users) {
-      const opt = document.createElement("option");
-      opt.value = user.id;
-      opt.textContent = user.name;
-      userSelect.appendChild(opt);
-    }
+  // Format number as currency string
+  function formatMoney(num) {
+    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // Render videos on homepage
-  function renderVideos(list) {
-    videoList.innerHTML = "";
-    for (const video of list) {
-      const card = document.createElement("div");
-      card.className = "video-card";
-      card.onclick = () => playVideo(video.id);
-
-      const thumb = document.createElement("img");
-      thumb.className = "thumbnail";
-      thumb.src = video.thumbnail;
-      thumb.alt = video.title;
-
-      const info = document.createElement("div");
-      info.className = "video-info";
-
-      const title = document.createElement("h3");
-      title.className = "video-title";
-      title.textContent = video.title;
-
-      const channel = document.createElement("div");
-      channel.className = "video-channel";
-      channel.textContent = video.channel;
-
-      const views = document.createElement("div");
-      views.className = "video-views";
-      views.textContent = video.views;
-
-      info.appendChild(title);
-      info.appendChild(channel);
-      info.appendChild(views);
-
-      card.appendChild(thumb);
-      card.appendChild(info);
-      videoList.appendChild(card);
-    }
+  // Update UI balance
+  function updateBalance() {
+    let portfolioValue = stocks.reduce((sum, s) => sum + s.price * s.owned, 0);
+    let total = cash + portfolioValue;
+    balanceEl.textContent = `Cash: $${formatMoney(cash)} | Portfolio Value: $${formatMoney(portfolioValue)} | Total: $${formatMoney(total)}`;
   }
 
-  // Play video and show overlay
-  function playVideo(id) {
-    currentVideo = videos.find(v => v.id === id);
-    videoPlayer.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-    playerOverlay.style.display = "flex";
-    renderComments();
+  // Log event
+  function logEvent(text) {
+    const time = new Date().toLocaleTimeString();
+    log.textContent = `[${time}] ${text}\n` + log.textContent;
   }
 
-  // Close player overlay
-  function closePlayer(e) {
-    e.stopPropagation();
-    videoPlayer.src = "";
-    playerOverlay.style.display = "none";
-    currentVideo = null;
-    commentsList.innerHTML = "";
-    commentInput.value = "";
-    postBtn.disabled = true;
+  // Create row for each stock
+  function createStockRow(stock) {
+    const tr = document.createElement("tr");
+    tr.id = `row-${stock.symbol}`;
+
+    const tdSymbol = document.createElement("td");
+    tdSymbol.textContent = `${stock.name} (${stock.symbol})`;
+
+    const tdPrice = document.createElement("td");
+    tdPrice.id = `price-${stock.symbol}`;
+    tdPrice.textContent = formatMoney(stock.price);
+
+    const tdOwned = document.createElement("td");
+    tdOwned.id = `owned-${stock.symbol}`;
+    tdOwned.textContent = stock.owned;
+
+    // Buy controls
+    const tdBuy = document.createElement("td");
+    const buyInput = document.createElement("input");
+    buyInput.type = "number";
+    buyInput.min = "1";
+    buyInput.value = "1";
+    buyInput.id = `buy-input-${stock.symbol}`;
+    buyInput.style.marginRight = "6px";
+    const buyBtn = document.createElement("button");
+    buyBtn.textContent = "Buy";
+    buyBtn.onclick = () => buyStock(stock.symbol, buyInput.value);
+    tdBuy.appendChild(buyInput);
+    tdBuy.appendChild(buyBtn);
+
+    // Sell controls
+    const tdSell = document.createElement("td");
+    const sellInput = document.createElement("input");
+    sellInput.type = "number";
+    sellInput.min = "1";
+    sellInput.value = "1";
+    sellInput.id = `sell-input-${stock.symbol}`;
+    sellInput.style.marginRight = "6px";
+    const sellBtn = document.createElement("button");
+    sellBtn.textContent = "Sell";
+    sellBtn.onclick = () => sellStock(stock.symbol, sellInput.value);
+    tdSell.appendChild(sellInput);
+    tdSell.appendChild(sellBtn);
+
+    tr.appendChild(tdSymbol);
+    tr.appendChild(tdPrice);
+    tr.appendChild(tdOwned);
+    tr.appendChild(tdBuy);
+    tr.appendChild(tdSell);
+
+    return tr;
   }
 
-  // Render comments for current video
-  function renderComments() {
-    if (!currentVideo) return;
-    commentsList.innerHTML = "";
-    if (currentVideo.comments.length === 0) {
-      commentsList.textContent = "No comments yet. Be the first!";
+  // Render all stocks
+  function renderStocks() {
+    stockBody.innerHTML = "";
+    stocks.forEach(stock => {
+      stockBody.appendChild(createStockRow(stock));
+    });
+  }
+
+  // Buy stock function
+  function buyStock(symbol, amountStr) {
+    const amount = parseInt(amountStr);
+    if (isNaN(amount) || amount < 1) {
+      alert("Enter a valid buy amount");
       return;
     }
-    for (const comment of currentVideo.comments) {
-      const user = users.find(u => u.id === comment.userId);
-      const c = document.createElement("div");
-      c.className = "comment";
-
-      const avatar = document.createElement("img");
-      avatar.className = "avatar";
-      avatar.src = `https://i.pravatar.cc/40?u=${user.id}`;
-      avatar.alt = user.name;
-
-      const content = document.createElement("div");
-      content.className = "comment-content";
-
-      const username = document.createElement("p");
-      username.className = "comment-user";
-      username.textContent = user.name;
-
-      const text = document.createElement("p");
-      text.className = "comment-text";
-      text.textContent = comment.text;
-
-      content.appendChild(username);
-      content.appendChild(text);
-      c.appendChild(avatar);
-      c.appendChild(content);
-      commentsList.appendChild(c);
-    }
-  }
-
-  // Submit new comment
-  function submitComment(e) {
-    e.preventDefault();
-    if (!currentVideo) return;
-    const userId = parseInt(userSelect.value);
-    const text = commentInput.value.trim();
-    if (!text) return;
-    currentVideo.comments.push({ userId, text });
-    commentInput.value = "";
-    postBtn.disabled = true;
-    renderComments();
-  }
-
-  // Enable/disable post button based on input
-  commentInput.addEventListener("input", () => {
-    postBtn.disabled = commentInput.value.trim() === "";
-  });
-
-  // Search videos
-  function searchVideos() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    if (!query) {
-      renderVideos(videos);
+    const stock = stocks.find(s => s.symbol === symbol);
+    const cost = stock.price * amount;
+    if (cost > cash) {
+      alert(`Not enough cash to buy ${amount} shares of ${stock.symbol}`);
       return;
     }
-    const filtered = videos.filter(v =>
-      v.title.toLowerCase().includes(query) ||
-      v.channel.toLowerCase().includes(query)
-    );
-    renderVideos(filtered);
+    stock.owned += amount;
+    cash -= cost;
+    document.getElementById(`owned-${symbol}`).textContent = stock.owned;
+    updateBalance();
+    logEvent(`Bought ${amount} shares of ${stock.symbol} for $${formatMoney(cost)}`);
   }
 
-  renderUserOptions();
-  renderVideos(videos);
+  // Sell stock function
+  function sellStock(symbol, amountStr) {
+    const amount = parseInt(amountStr);
+    if (isNaN(amount) || amount < 1) {
+      alert("Enter a valid sell amount");
+      return;
+    }
+    const stock = stocks.find(s => s.symbol === symbol);
+    if (amount > stock.owned) {
+      alert(`You don't own ${amount} shares of ${stock.symbol}`);
+      return;
+    }
+    const gain = stock.price * amount;
+    stock.owned -= amount;
+    cash += gain;
+    document.getElementById(`owned-${symbol}`).textContent = stock.owned;
+    updateBalance();
+    logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
+  }
+
+  // Randomly fluctuate stock prices every 5 seconds
+  function fluctuatePrices() {
+    stocks.forEach(stock => {
+      // Change price between -5% and +5%
+      const changePercent = (Math.random() * 10 - 5);
+      const changeAmount = stock.price * (changePercent / 100);
+      stock.price += changeAmount;
+
+      // Clamp minimum price to 1
+      if (stock.price < 1) stock.price = 1;
+
+      // Update price UI
+      const priceTd = document.getElementById(`price-${stock.symbol}`);
+      if (priceTd) {
+        priceTd.textContent = formatMoney(stock.price);
+        // Green or red color depending on change
+        priceTd.style.color = changePercent > 0 ? "green" : (changePercent < 0 ? "red" : "#222");
+      }
+    });
+    updateBalance();
+  }
+
+  // Initial setup
+  renderStocks();
+  updateBalance();
+
+  // Start price fluctuations every 5 seconds
+  setInterval(fluctuatePrices, 5000);
 </script>
 </body>
 </html>
