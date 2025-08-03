@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bee Tower Defense</title>
+<title>Bee Tower Defense with Monsters</title>
 <style>
   /* Reset and base */
   * {
@@ -107,11 +107,32 @@
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
     gap: 2px;
+    position: relative;
   }
   .map-cell {
     background: #111;
     border-radius: 6px;
     border: 1px solid #333;
+    position: relative;
+  }
+
+  /* Monster sprite styling */
+  .monster {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    pointer-events: none;
+    animation: float 2.5s ease-in-out infinite;
+  }
+
+  /* Floating animation */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
   }
 
   /* Right Sidebar */
@@ -276,14 +297,17 @@
 
   <!-- Main Game Area -->
   <main class="main-area" role="main" aria-label="Game map and play area">
-    <div class="game-map" aria-label="Tower defense game grid">
-      <!-- Generate 100 map cells -->
+    <div class="game-map" aria-label="Tower defense game grid" id="gameMap">
+      <!-- Grid cells -->
       <script>
-        // This script dynamically generates the map grid cells
         for(let i=0; i<100; i++) {
           document.write('<div class="map-cell" aria-label="Map grid cell"></div>');
         }
       </script>
+      <!-- Monsters will be added here dynamically -->
+      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 20px; left: 20px;"/>
+      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 100px; left: 70px; animation-delay: 0.6s"/>
+      <img src="https://sdmntprwestus2.oaiusercontent.com/files/00000000-39b0-61f8-81b2-9bbdb2a53433/raw?se=2025-08-03T14%3A40%3A19Z&sp=r&sv=2024-08-04&sr=b&scid=45747d6f-8623-5825-88bd-9c07ffede155&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-02T19%3A15%3A03Z&ske=2025-08-03T19%3A15%3A03Z&sks=b&skv=2024-08-04&sig=ahJ06vrSJlJr51nWZE6Cq3/ISvxgSRRYxlA8C%2BVcV50%3D" alt="Bee Monster" class="monster" style="top: 180px; left: 140px; animation-delay: 1.2s"/>
     </div>
   </main>
 
