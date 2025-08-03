@@ -1,141 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Hit Me! - Bus Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Jumper: Memory Loop</title>
   <style>
     body {
       margin: 0;
-      background: #88ccee;
-      font-family: Arial, sans-serif;
       overflow: hidden;
+      background: #111;
+      font-family: sans-serif;
+      color: white;
     }
-    canvas {
-      background: #eee;
+    #canvas {
       display: block;
-      margin: 0 auto;
+      background: linear-gradient(#222, #000);
     }
-    #score {
+    #info {
       position: absolute;
       top: 10px;
       left: 10px;
-      font-size: 24px;
-      background: rgba(0,0,0,0.5);
-      color: white;
+      background: rgba(0, 0, 0, 0.5);
       padding: 10px;
       border-radius: 8px;
     }
   </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="400"></canvas>
-<div id="score">Score: 0</div>
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+  <canvas id="canvas"></canvas>
+  <div id="info">
+    <div>⏱ Time Left: <span id="timer">60</span>s</div>
+    <div>🌀 Loop: <span id="loop">1</span></div>
+    <div>🎯 Goal: Reach the glowing orb!</div>
+  </div>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-let player = {
-  x: 100,
-  y: 300,
-  width: 40,
-  height: 60,
-  color: 'blue',
-  vy: 0,
-  grounded: true,
-  score: 0
-};
+    let player = { x: 100, y: 300, w: 30, h: 30, color: "cyan", vx: 0, vy: 0, history: [] };
+    let gravity = 0.6;
+    let friction = 0.8;
+    let keys = {};
+    let loop = 1;
+    let timeLeft = 60;
+    let ghosts = [];
+    let goal = { x: 900, y: 300, size: 20 };
+    let lastGhosts = [];
 
-let bus = {
-  x: canvas.width,
-  y: 300,
-  width: 120,
-  height: 60,
-  speed: 5,
-  color: 'red'
-};
+    window.addEventListener("keydown", e => keys[e.key] = true);
+    window.addEventListener("keyup", e => keys[e.key] = false);
 
-let gravity = 1;
-let hit = false;
-let keys = {};
+    function update() {
+      // Movement
+      player.vx *= friction;
+      if (keys["ArrowLeft"]) player.vx -= 1.5;
+      if (keys["ArrowRight"]) player.vx += 1.5;
+      if (keys["ArrowUp"] && player.onGround) player.vy = -12;
 
-document.addEventListener('keydown', e => keys[e.code] = true);
-document.addEventListener('keyup', e => keys[e.code] = false);
+      player.vy += gravity;
+      player.x += player.vx;
+      player.y += player.vy;
+      player.onGround = false;
 
-function resetBus() {
-  bus.x = canvas.width + Math.random() * 500;
-  bus.speed = 5 + Math.random() * 5;
-}
+      // Ground
+      if (player.y + player.h > canvas.height - 50) {
+        player.y = canvas.height - 50 - player.h;
+        player.vy = 0;
+        player.onGround = true;
+      }
 
-function update() {
-  // Movement
-  if (keys['ArrowLeft']) player.x -= 5;
-  if (keys['ArrowRight']) player.x += 5;
+      // Store history
+      player.history.push({ x: player.x, y: player.y });
+      if (player.history.length > 3600) player.history.shift();
 
-  // Gravity
-  if (!player.grounded) {
-    player.vy += gravity;
-    player.y += player.vy;
-  }
+      // Ghost collision
+      for (const ghost of ghosts) {
+        if (ghost.frame < ghost.history.length) {
+          const pos = ghost.history[ghost.frame];
+          ghost.x = pos.x;
+          ghost.y = pos.y;
+          ghost.frame++;
+          if (
+            player.x < ghost.x + player.w &&
+            player.x + player.w > ghost.x &&
+            player.y < ghost.y + player.h &&
+            player.y + player.h > ghost.y
+          ) {
+            resetLoop();
+          }
+        }
+      }
 
-  // Ground collision
-  if (player.y >= 300) {
-    player.y = 300;
-    player.vy = 0;
-    player.grounded = true;
-  }
+      // Goal check
+      if (
+        player.x < goal.x + goal.size &&
+        player.x + player.w > goal.x &&
+        player.y < goal.y + goal.size &&
+        player.y + player.h > goal.y
+      ) {
+        alert("You broke the loop! 🎉");
+        location.reload();
+      }
+    }
 
-  // Bus movement
-  bus.x -= bus.speed;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Collision detection
-  if (!hit && player.x < bus.x + bus.width && player.x + player.width > bus.x &&
-      player.y < bus.y + bus.height && player.y + player.height > bus.y) {
-    hit = true;
-    const impact = Math.floor(bus.speed * 100);
-    player.score += impact;
-    document.getElementById('score').innerText = `Score: ${player.score}`;
-    player.vy = -15;
-    player.grounded = false;
-    setTimeout(() => {
-      resetBus();
-      hit = false;
-    }, 1000);
-  }
+      // Ground
+      ctx.fillStyle = "#444";
+      ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
 
-  // Reset bus
-  if (bus.x + bus.width < 0) {
-    resetBus();
-  }
-}
+      // Goal
+      ctx.fillStyle = "gold";
+      ctx.beginPath();
+      ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI * 2);
+      ctx.fill();
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Ghosts
+      for (const ghost of ghosts) {
+        ctx.fillStyle = "rgba(255, 0, 0, 0.4)";
+        ctx.fillRect(ghost.x, ghost.y, player.w, player.h);
+      }
 
-  // Road
-  ctx.fillStyle = '#666';
-  ctx.fillRect(0, 360, canvas.width, 40);
+      // Player
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+    }
 
-  // Player
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+    function loopGame() {
+      update();
+      draw();
+      requestAnimationFrame(loopGame);
+    }
 
-  // Bus
-  ctx.fillStyle = bus.color;
-  ctx.fillRect(bus.x, bus.y, bus.width, bus.height);
+    function startTimer() {
+      setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").textContent = timeLeft;
+        if (timeLeft <= 0) {
+          // Create ghost
+          ghosts.push({ history: [...player.history], frame: 0 });
+          resetLoop();
+        }
+      }, 1000);
+    }
 
-  // Text: "Get Hit By the Bus!"
-  ctx.fillStyle = 'black';
-  ctx.font = '20px Arial';
-  ctx.fillText('Get hit by the bus for points!', 250, 30);
-}
+    function resetLoop() {
+      player.x = 100;
+      player.y = 300;
+      player.vx = 0;
+      player.vy = 0;
+      player.history = [];
+      timeLeft = 60;
+      loop++;
+      document.getElementById("loop").textContent = loop;
+    }
 
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-resetBus();
-gameLoop();
-</script>
+    startTimer();
+    loopGame();
+  </script>
 </body>
+</html>
