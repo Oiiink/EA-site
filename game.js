@@ -1,887 +1,718 @@
-(() => {
-  const canvas = document.getElementById('game-canvas');
-  const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
+// game.js
 
-  // UI Elements
-  const baseHealthDisplay = document.getElementById('base-health');
-  const moneyDisplay = document.getElementById('money');
-  const waveInfoDisplay = document.getElementById('wave-info');
-  const towerInfoDiv = document.getElementById('tower-details');
-  const upgradeButtonsDiv = document.getElementById('upgrade-buttons');
-  const messageDiv = document.getElementById('message');
-  const towerOptions = document.querySelectorAll('.tower-option');
-  const tooltip = document.getElementById('tooltip');
-  const challengePopup = document.getElementById('challenge-popup');
-  const challengeText = document.getElementById('challenge-text');
-  const challengeCloseBtn = document.getElementById('challenge-close-btn');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-  // Game constants
-  const TILE_SIZE = 50;
-  const MAP_ROWS = 10;
-  const MAP_COLS = 18;
-  const BASE_HEALTH_START = 10;
-  const INITIAL_MONEY = 100;
+const moneyDisplay = document.getElementById('money-display');
+const waveDisplay = document.getElementById('wave-display');
+const towerInfo = document.getElementById('tower-info');
+const towerName = document.getElementById('tower-name');
+const towerIcon = document.getElementById('tower-icon');
+const towerDesc = document.getElementById('tower-desc');
+const upgradeBtn = document.getElementById('upgrade-btn');
+const upgradeCostDisplay = document.getElementById('upgrade-cost');
+const messagePopup = document.getElementById('message-popup');
 
-  // Path for enemies (simple zig-zag)
-  const path = [
-    { x: 0, y: 4 },
-    { x: 8, y: 4 },
-    { x: 8, y: 7 },
-    { x: 17, y: 7 }
-  ];
+// New modifiers container
+const gameContainer = document.getElementById('game-container');
+const modifiersPanel = document.createElement('div');
+modifiersPanel.style.position = 'absolute';
+modifiersPanel.style.bottom = '10px';
+modifiersPanel.style.right = '10px';
+modifiersPanel.style.background = 'rgba(255 255 255 / 0.9)';
+modifiersPanel.style.padding = '10px 14px';
+modifiersPanel.style.borderRadius = '12px';
+modifiersPanel.style.color = '#4a3e1d';
+modifiersPanel.style.fontWeight = '700';
+modifiersPanel.style.maxWidth = '250px';
+modifiersPanel.style.fontSize = '14px';
+modifiersPanel.style.boxShadow = 'inset 0 0 10px #c9a200cc';
+modifiersPanel.style.userSelect = 'none';
+modifiersPanel.style.zIndex = '30';
+gameContainer.appendChild(modifiersPanel);
 
-  // Obstacles (blocked tiles)
-  const obstacles = [
-    { x: 4, y: 2 },
-    { x: 5, y: 2 },
-    { x: 12, y: 5 },
-    { x: 13, y: 5 },
-    { x: 10, y: 1 },
-    { x: 11, y: 1 },
-  ];
+let money = 100;
+let wave = 0;
+let enemies = [];
+let towers = [];
+let projectiles = [];
+let selectedTower = null;
+let path = [
+  // Path points (simple path)
+  { x: 50, y: 550 },
+  { x: 50, y: 300 },
+  { x: 200, y: 300 },
+  { x: 200, y: 150 },
+  { x: 400, y: 150 },
+  { x: 400, y: 450 },
+  { x: 700, y: 450 },
+  { x: 850, y: 300 },
+  { x: 850, y: 100 },
+];
+const TILE_SIZE = 40;
 
-  // Tower types with stats and upgrade info
-  const towerTypes = {
-    basic: {
-      name: "Basic Tower",
-      baseCost: 50,
-      range: 120,
-      damage: 10,
-      fireRate: 1000, // ms cooldown
-      upgrades: [
-        { cost: 40, damage: 15, range: 140, fireRate: 900 },
-        { cost: 80, damage: 20, range: 160, fireRate: 800 },
-        { cost: 120, damage: 25, range: 180, fireRate: 700 }
-      ],
-      // No special ability
-    },
-    rapid: {
-      name: "Rapid Fire",
-      baseCost: 80,
-      range: 110,
-      damage: 6,
-      fireRate: 400,
-      upgrades: [
-        { cost: 50, damage: 8, range: 120, fireRate: 350 },
-        { cost: 90, damage: 10, range: 130, fireRate: 300 },
-        { cost: 130, damage: 12, range: 150, fireRate: 250 }
-      ],
-      specialCooldown: 15000, // 15 sec cooldown
-      specialDuration: 5000, // 5 sec rapid burst
-    },
-    slow: {
-      name: "Slowdown",
-      baseCost: 70,
-      range: 130,
-      damage: 4,
-      fireRate: 1500,
-      upgrades: [
-        { cost: 60, damage: 6, range: 140, fireRate: 1300 },
-        { cost: 100, damage: 8, range: 150, fireRate: 1100 },
-        { cost: 150, damage: 10, range: 160, fireRate: 1000 }
-      ],
-      slowEffect: 0.5,
-      slowDuration: 2000,
-      specialCooldown: 20000, // 20 sec cooldown
-      specialDuration: 4000, // 4 sec all slow in range
-    }
-  };
+// Challenge Modifiers data
+const challengeModifiers = [
+  {
+    name: "Swarm Rush",
+    description: "Enemies spawn 50% faster",
+    apply: () => { modifiers.spawnSpeedMultiplier *= 0.66; },
+  },
+  {
+    name: "Iron Hide",
+    description: "Enemies have 30% more HP",
+    apply: () => { modifiers.enemyHpMultiplier *= 1.3; },
+  },
+  {
+    name: "Bee Venom",
+    description: "Enemies deal double damage to towers",
+    apply: () => { modifiers.enemyDamageMultiplier *= 2; },
+  },
+  {
+    name: "Honey Sludge",
+    description: "Towers shoot 20% slower",
+    apply: () => { modifiers.towerFireRateMultiplier *= 1.2; },
+  },
+  {
+    name: "Stingy Bees",
+    description: "Money gained reduced by 30%",
+    apply: () => { modifiers.moneyGainMultiplier *= 0.7; },
+  },
+];
 
-  // Enemy types
-  const enemyTypes = {
-    scout: {
-      name: "Bee Scout",
-      maxHealth: 30,
-      speed: 1.8,
-      reward: 8,
-      color: "#ffdd57",
-      dodgeChance: 0.2 // 20% chance to dodge projectiles
-    },
-    tank: {
-      name: "Bee Tank",
-      maxHealth: 120,
-      speed: 0.8,
-      reward: 20,
-      color: "#b88723",
-      dodgeChance: 0.05
-    },
-    bomber: {
-      name: "Bee Bomber",
-      maxHealth: 50,
-      speed: 1.3,
-      reward: 15,
-      color: "#de354c",
-      dodgeChance: 0.1
-    },
-    worker: {
-      name: "Bee Worker",
-      maxHealth: 70,
-      speed: 1.2,
-      reward: 12,
-      color: "#34a853",
-      dodgeChance: 0.15
-    }
-  };
+let modifiers = {
+  spawnSpeedMultiplier: 1,
+  enemyHpMultiplier: 1,
+  enemyDamageMultiplier: 1,
+  towerFireRateMultiplier: 1,
+  moneyGainMultiplier: 1,
+  activeModifiers: [],
+};
 
-  // Challenge Modifiers, apply effects per wave
-  const challengeModifiers = [
-    {
-      name: "Swarm Speed Up",
-      description: "Enemies move 25% faster this wave!",
-      apply: () => { enemySpeedMultiplier = 1.25; },
-      reset: () => { enemySpeedMultiplier = 1; }
-    },
-    {
-      name: "Tower Tax",
-      description: "All tower upgrades cost 50% more this wave!",
-      apply: () => { upgradeCostMultiplier = 1.5; },
-      reset: () => { upgradeCostMultiplier = 1; }
-    },
-    {
-      name: "Bumper Crop",
-      description: "You earn 25% more money from kills this wave!",
-      apply: () => { moneyRewardMultiplier = 1.25; },
-      reset: () => { moneyRewardMultiplier = 1; }
-    },
-    {
-      name: "Fatigue",
-      description: "Base health regeneration disabled this wave!",
-      apply: () => { baseRegenEnabled = false; },
-      reset: () => { baseRegenEnabled = true; }
-    },
-    {
-      name: "Stingy Bees",
-      description: "Money earned reduced by 30% this wave!",
-      apply: () => { moneyRewardMultiplier = 0.7; },
-      reset: () => { moneyRewardMultiplier = 1; }
-    },
-    {
-      name: "Double Trouble",
-      description: "Twice as many enemies spawn this wave!",
-      apply: () => { enemyCountMultiplier = 2; },
-      reset: () => { enemyCountMultiplier = 1; }
-    },
-    {
-      name: "Berserker Buzz",
-      description: "Enemies have 30% more health this wave!",
-      apply: () => { enemyHealthMultiplier = 1.3; },
-      reset: () => { enemyHealthMultiplier = 1; }
-    },
-    {
-      name: "Fragile Hive",
-      description: "Base health starts 2 lower this wave!",
-      apply: () => { baseHealthModifier = -2; },
-      reset: () => { baseHealthModifier = 0; }
-    }
-  ];
+let lastSpawnTime = 0;
+let spawnInterval = 1500; // base spawn interval ms
 
-  // Game state
-  let baseHealth = BASE_HEALTH_START;
-  let baseHealthModifier = 0; // for challenges
-  let money = INITIAL_MONEY;
-  let waveNumber = 0;
-  let enemies = [];
-  let towers = [];
-  let projectiles = [];
-  let selectedTowerType = null;
-  let selectedTower = null;
-  let placingTower = false;
-  let gameOver = false;
-  let lastEnemySpawn = 0;
-  let enemiesToSpawn = 0;
-  let enemySpawnInterval = 1000;
-  let lastFrameTime = 0;
-  let currentChallenge = null;
+let enemiesPerWave = 10;
+let enemiesSpawnedThisWave = 0;
+let enemiesKilledThisWave = 0;
 
-  // Multipliers for challenges
-  let enemySpeedMultiplier = 1;
-  let upgradeCostMultiplier = 1;
-  let moneyRewardMultiplier = 1;
-  let enemyCountMultiplier = 1;
-  let enemyHealthMultiplier = 1;
-  let baseRegenEnabled = true;
+let messageTimeout = null;
 
-  // Tower placement grid, to check for blocking
-  let towerGrid = new Array(MAP_ROWS).fill(null).map(() => new Array(MAP_COLS).fill(false));
+// Tower types definition
+const TOWER_TYPES = {
+  basic: {
+    name: "Basic Bee Shooter",
+    desc: "Shoots slow but steady honey blobs.",
+    icon: "assets/images/tower_basic.png",
+    cost: 50,
+    baseDamage: 10,
+    baseRange: 120,
+    baseFireRate: 1000, // ms between shots
+    upgradeCost: 40,
+    upgradeDamageMultiplier: 1.3,
+    upgradeRangeMultiplier: 1.1,
+    upgradeFireRateMultiplier: 0.9,
+    maxLevel: 5,
+  },
+  rapid: {
+    name: "Rapid Stinger",
+    desc: "Fast firing but weaker shots.",
+    icon: "assets/images/tower_rapid.png",
+    cost: 70,
+    baseDamage: 6,
+    baseRange: 110,
+    baseFireRate: 400,
+    upgradeCost: 55,
+    upgradeDamageMultiplier: 1.15,
+    upgradeRangeMultiplier: 1.05,
+    upgradeFireRateMultiplier: 0.85,
+    maxLevel: 5,
+  },
+  splash: {
+    name: "Honey Splash",
+    desc: "Shoots honey that slows enemies.",
+    icon: "assets/images/tower_splash.png",
+    cost: 90,
+    baseDamage: 8,
+    baseRange: 100,
+    baseFireRate: 1500,
+    upgradeCost: 70,
+    upgradeDamageMultiplier: 1.2,
+    upgradeRangeMultiplier: 1.1,
+    upgradeFireRateMultiplier: 0.95,
+    maxLevel: 4,
+  },
+  sniper: {
+    name: "Sniper Bee",
+    desc: "Long range high damage single shots.",
+    icon: "assets/images/tower_sniper.png",
+    cost: 120,
+    baseDamage: 30,
+    baseRange: 250,
+    baseFireRate: 2200,
+    upgradeCost: 100,
+    upgradeDamageMultiplier: 1.5,
+    upgradeRangeMultiplier: 1.2,
+    upgradeFireRateMultiplier: 0.85,
+    maxLevel: 3,
+  },
+};
 
-  // Helper functions
-  function pointDistance(x1, y1, x2, y2) {
-    return Math.hypot(x2 - x1, y2 - y1);
+// Enemy types definition
+const ENEMY_TYPES = {
+  basic: {
+    name: "Drone",
+    color: "#a67c00",
+    maxHp: 50,
+    speed: 0.8,
+    damage: 10,
+    reward: 15,
+  },
+  fast: {
+    name: "Worker Bee",
+    color: "#d6b700",
+    maxHp: 35,
+    speed: 1.6,
+    damage: 5,
+    reward: 10,
+  },
+  tank: {
+    name: "Queen's Guard",
+    color: "#8c6000",
+    maxHp: 120,
+    speed: 0.5,
+    damage: 20,
+    reward: 35,
+  },
+  stinger: {
+    name: "Stinger",
+    color: "#ffbb00",
+    maxHp: 40,
+    speed: 1.1,
+    damage: 15,
+    reward: 18,
+  },
+};
+
+// --- Classes ---
+
+class Enemy {
+  constructor(type) {
+    this.type = type;
+    this.color = ENEMY_TYPES[type].color;
+    this.maxHp = ENEMY_TYPES[type].maxHp * modifiers.enemyHpMultiplier;
+    this.hp = this.maxHp;
+    this.speed = ENEMY_TYPES[type].speed * 1.7; // Speed buffed
+    this.damage = ENEMY_TYPES[type].damage * modifiers.enemyDamageMultiplier;
+    this.reward = ENEMY_TYPES[type].reward * modifiers.moneyGainMultiplier;
+    this.x = path[0].x;
+    this.y = path[0].y;
+    this.pathIndex = 0;
+    this.radius = 15;
+    this.isDead = false;
+    this.slowTimer = 0;
+    this.slowFactor = 1;
   }
 
-  // Tooltip handling for tower options
-  towerOptions.forEach(option => {
-    option.addEventListener('mouseenter', e => {
-      const type = e.currentTarget.dataset.type;
-      const ttText = generateTowerTooltip(type);
-      tooltip.textContent = ttText;
-      const rect = e.currentTarget.getBoundingClientRect();
-      tooltip.style.left = rect.left + rect.width/2 + 'px';
-      tooltip.style.top = rect.top - 35 + 'px';
-      tooltip.style.opacity = '1';
-    });
-    option.addEventListener('mouseleave', () => {
-      tooltip.style.opacity = '0';
-    });
+  update(delta) {
+    if (this.isDead) return;
+    // Slow effect decay
+    if (this.slowTimer > 0) {
+      this.slowTimer -= delta;
+      if (this.slowTimer <= 0) {
+        this.slowFactor = 1;
+      }
+    }
 
-    option.addEventListener('click', e => {
-      if(gameOver) return;
-      towerOptions.forEach(opt => opt.classList.remove('selected'));
-      e.currentTarget.classList.add('selected');
-      selectedTowerType = e.currentTarget.dataset.type;
-      selectedTower = null;
-      updateTowerInfo(null);
-      placingTower = true;
-      messageDiv.textContent = "Click on the map to place your " + towerTypes[selectedTowerType].name;
-    });
-  });
-
-  function generateTowerTooltip(type) {
-    const t = towerTypes[type];
-    let specialText = "";
-    if(type === "rapid") specialText = "Special: Burst Mode (5s every 15s)";
-    else if(type === "slow") specialText = "Special: Area Slow (4s every 20s)";
-    return `${t.name}\nDamage: ${t.damage}\nRange: ${t.range}\nFire Rate: ${(t.fireRate/1000).toFixed(2)}s\nCost: $${t.baseCost}\n${specialText}`;
-  }
-
-  // Tower info UI update
-  function updateTowerInfo(tower) {
-    if(!tower) {
-      towerInfoDiv.textContent = 'Select a tower to see details';
-      upgradeButtonsDiv.innerHTML = '';
+    let target = path[this.pathIndex + 1];
+    if (!target) {
+      // Reached end
+      this.isDead = true;
+      // Damage to base logic here (not implemented, just money penalty for example)
+      money -= this.damage;
+      if (money < 0) money = 0;
+      showMessage(`Enemy reached the base! Lost $${Math.floor(this.damage)}`);
+      updateUI();
       return;
     }
-    const typeData = towerTypes[tower.type];
-    let html = `
-      <p><strong>${typeData.name}</strong> (Level ${tower.level + 1})</p>
-      <p>Damage: ${tower.damage}</p>
-      <p>Range: ${tower.range}</p>
-      <p>Fire Rate: ${(tower.fireRate / 1000).toFixed(2)}s</p>
-    `;
+    const dx = target.x - this.x;
+    const dy = target.y - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Show special ability cooldown if any
-    if(typeData.specialCooldown) {
-      const now = Date.now();
-      const cdLeft = tower.specialCooldownEnd ? Math.max(0, tower.specialCooldownEnd - now) : 0;
-      html += `<p>Special Ability: ${cdLeft > 0 ? `Ready in ${(cdLeft/1000).toFixed(1)}s` : 'Ready!'}</p>`;
-    }
-
-    towerInfoDiv.innerHTML = html;
-
-    // Upgrade buttons
-    upgradeButtonsDiv.innerHTML = '';
-    if (tower.level < typeData.upgrades.length) {
-      const nextUpgrade = typeData.upgrades[tower.level];
-      const cost = Math.floor(nextUpgrade.cost * upgradeCostMultiplier);
-
-      const btn = document.createElement('button');
-      btn.textContent = `Upgrade - $${cost}`;
-      btn.className = 'upgrade-btn';
-      btn.disabled = money < cost;
-      btn.onclick = () => {
-        if(money >= cost) {
-          money -= cost;
-          tower.level++;
-          tower.damage = nextUpgrade.damage;
-          tower.range = nextUpgrade.range;
-          tower.fireRate = nextUpgrade.fireRate;
-          updateUI();
-          updateTowerInfo(tower);
-          messageDiv.textContent = `${typeData.name} upgraded!`;
-          placeAbilityEffect(tower.x, tower.y);
-        } else {
-          messageDiv.textContent = "Not enough money to upgrade!";
-        }
-      };
-      upgradeButtonsDiv.appendChild(btn);
+    const moveDist = (this.speed * this.slowFactor) * delta / 16;
+    if (dist < moveDist) {
+      this.x = target.x;
+      this.y = target.y;
+      this.pathIndex++;
     } else {
-      upgradeButtonsDiv.innerHTML = '<p><em>Max level reached</em></p>';
-    }
-
-    // Special ability button if available and ready
-    if (typeData.specialCooldown) {
-      const specialBtn = document.createElement('button');
-      specialBtn.textContent = "Activate Special Ability";
-      specialBtn.className = 'upgrade-btn';
-      const now = Date.now();
-      const cdLeft = tower.specialCooldownEnd ? tower.specialCooldownEnd - now : 0;
-      specialBtn.disabled = cdLeft > 0;
-      specialBtn.onclick = () => {
-        if (cdLeft <= 0) {
-          activateSpecialAbility(tower);
-          tower.specialCooldownEnd = Date.now() + typeData.specialCooldown;
-          updateTowerInfo(tower);
-        }
-      };
-      upgradeButtonsDiv.appendChild(specialBtn);
+      this.x += (dx / dist) * moveDist;
+      this.y += (dy / dist) * moveDist;
     }
   }
 
-  // Visual effect for tower special ability activation
-  function placeAbilityEffect(x, y) {
-    const effect = document.createElement('div');
-    effect.className = 'ability-effect';
-    effect.style.left = `${x - 25}px`;
-    effect.style.top = `${y - 25}px`;
-    effect.style.width = '50px';
-    effect.style.height = '50px';
-    effect.style.border = '3px solid #f8b500';
-    effect.style.boxShadow = '0 0 15px #f8b500aa';
-    document.getElementById('game-container').appendChild(effect);
-    setTimeout(() => {
-      effect.remove();
-    }, 1200);
+  draw(ctx) {
+    if (this.isDead) return;
+    ctx.save();
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y, this.radius * 1.2, this.radius, 0, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw "wings" (bee themed)
+    ctx.fillStyle = '#fff9ccaa';
+    ctx.beginPath();
+    ctx.ellipse(this.x - this.radius / 2, this.y - this.radius / 2, this.radius / 2, this.radius / 3, 0, 0, 2 * Math.PI);
+    ctx.ellipse(this.x + this.radius / 2, this.y - this.radius / 2, this.radius / 2, this.radius / 3, 0, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw health bar above enemy
+    ctx.fillStyle = '#ccc';
+    ctx.fillRect(this.x - this.radius, this.y - this.radius - 10, this.radius * 2, 6);
+    const healthRatio = this.hp / this.maxHp;
+    ctx.fillStyle = healthRatio > 0.5 ? '#4caf50' : healthRatio > 0.2 ? '#ff9800' : '#d32f2f';
+    ctx.fillRect(this.x - this.radius, this.y - this.radius - 10, this.radius * 2 * healthRatio, 6);
+
+    ctx.restore();
   }
 
-  // Activate special ability depending on tower type
-  function activateSpecialAbility(tower) {
-    const typeData = towerTypes[tower.type];
-    if(tower.type === 'rapid') {
-      tower.isBurstMode = true;
-      tower.burstModeEnd = Date.now() + typeData.specialDuration;
-      messageDiv.textContent = `${typeData.name} activated Burst Mode!`;
-      placeAbilityEffect(tower.x, tower.y);
-    }
-    if(tower.type === 'slow') {
-      tower.isAreaSlow = true;
-      tower.areaSlowEnd = Date.now() + typeData.specialDuration;
-      messageDiv.textContent = `${typeData.name} activated Area Slow!`;
-      placeAbilityEffect(tower.x, tower.y);
+  takeDamage(dmg) {
+    this.hp -= dmg;
+    if (this.hp <= 0) {
+      this.isDead = true;
+      enemiesKilledThisWave++;
+      money += this.reward;
+      updateUI();
     }
   }
 
-  // Check if tile can have a tower placed
-  function canPlaceTower(col, row) {
-    if(col < 0 || col >= MAP_COLS || row < 0 || row >= MAP_ROWS) return false;
-    if(towerGrid[row][col]) return false;
-    for(const ob of obstacles) {
-      if(ob.x === col && ob.y === row) return false;
-    }
-    // Check if tile is on path
-    for(const p of path) {
-      if(p.x === col && p.y === row) return false;
-    }
+  applySlow(duration, slowFactor) {
+    this.slowTimer = Math.max(this.slowTimer, duration);
+    this.slowFactor = Math.min(this.slowFactor, slowFactor);
+  }
+}
+
+class Tower {
+  constructor(type, x, y) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+    this.level = 1;
+    this.name = TOWER_TYPES[type].name;
+    this.desc = TOWER_TYPES[type].desc;
+    this.icon = TOWER_TYPES[type].icon;
+    this.cost = TOWER_TYPES[type].cost;
+    this.baseDamage = TOWER_TYPES[type].baseDamage;
+    this.baseRange = TOWER_TYPES[type].baseRange;
+    this.baseFireRate = TOWER_TYPES[type].baseFireRate;
+    this.upgradeCost = TOWER_TYPES[type].upgradeCost;
+    this.upgradeDamageMultiplier = TOWER_TYPES[type].upgradeDamageMultiplier;
+    this.upgradeRangeMultiplier = TOWER_TYPES[type].upgradeRangeMultiplier;
+    this.upgradeFireRateMultiplier = TOWER_TYPES[type].upgradeFireRateMultiplier;
+    this.maxLevel = TOWER_TYPES[type].maxLevel;
+    this.lastShotTime = 0;
+  }
+
+  get damage() {
+    return this.baseDamage * Math.pow(this.upgradeDamageMultiplier, this.level - 1);
+  }
+
+  get range() {
+    return this.baseRange * Math.pow(this.upgradeRangeMultiplier, this.level - 1);
+  }
+
+  get fireRate() {
+    // Adjust fire rate by global modifier too
+    return this.baseFireRate * Math.pow(this.upgradeFireRateMultiplier, this.level - 1) * modifiers.towerFireRateMultiplier;
+  }
+
+  upgrade() {
+    if (this.level >= this.maxLevel) return false;
+    if (money < this.upgradeCost) return false;
+    money -= this.upgradeCost;
+    this.level++;
+    this.upgradeCost = Math.floor(this.upgradeCost * 1.7);
+    updateUI();
     return true;
   }
 
-  // Tower class
-  class Tower {
-    constructor(x, y, type) {
-      this.x = x;
-      this.y = y;
-      this.type = type;
-      const data = towerTypes[type];
-      this.damage = data.damage;
-      this.range = data.range;
-      this.fireRate = data.fireRate;
-      this.level = 0;
-      this.lastShot = 0;
-      this.slowEffect = data.slowEffect || 0;
-      this.slowDuration = data.slowDuration || 0;
-      this.isBurstMode = false;
-      this.burstModeEnd = 0;
-      this.isAreaSlow = false;
-      this.areaSlowEnd = 0;
-      this.specialCooldownEnd = 0;
-    }
+  canShoot(time) {
+    return time - this.lastShotTime >= this.fireRate;
   }
 
-  // Enemy class
-  class Enemy {
-    constructor(type) {
-      this.type = type;
-      const data = enemyTypes[type];
-      this.maxHealth = data.maxHealth * enemyHealthMultiplier;
-      this.health = this.maxHealth;
-      this.speed = data.speed * enemySpeedMultiplier;
-      this.reward = Math.floor(data.reward * moneyRewardMultiplier);
-      this.color = data.color;
-      this.x = path[0].x * TILE_SIZE + TILE_SIZE/2;
-      this.y = path[0].y * TILE_SIZE + TILE_SIZE/2;
-      this.currentPathIndex = 0;
-      this.slowedUntil = 0;
-      this.dodgeChance = data.dodgeChance || 0;
-      this.isDodging = false;
-      this.dodgeEndTime = 0;
-      this.speedBoostEnd = 0;
-    }
-
-    update(dt, currentTime) {
-      if(this.health <= 0) return false;
-
-      // Handle dodge logic (enemy tries to dodge projectiles)
-      if(this.isDodging) {
-        if(currentTime > this.dodgeEndTime) {
-          this.isDodging = false;
-        } else {
-          // Move faster temporarily in dodge direction
-          this.speedBoostEnd = currentTime + 300; // small boost after dodge ends
-        }
-      } else {
-        // Random chance to dodge projectiles if any nearby
-        if(this.canSeeProjectile() && Math.random() < this.dodgeChance * dt * 2) {
-          this.isDodging = true;
-          this.dodgeEndTime = currentTime + 700;
-          messageDiv.textContent = `${enemyTypes[this.type].name} dodged a projectile!`;
-        }
-      }
-
-      let currentSpeed = this.speed;
-
-      // Apply speed boost if dodging or boosted
-      if(this.isDodging || currentTime < this.speedBoostEnd) {
-        currentSpeed *= 2.5;
-      }
-
-      // Apply slow effect if any
-      if(currentTime < this.slowedUntil) {
-        currentSpeed *= 0.5;
-      }
-
-      // Move along path
-      const targetIndex = this.currentPathIndex + 1;
-      if(targetIndex >= path.length) return true; // reached base
-
-      const targetX = path[targetIndex].x * TILE_SIZE + TILE_SIZE/2;
-      const targetY = path[targetIndex].y * TILE_SIZE + TILE_SIZE/2;
-      const dx = targetX - this.x;
-      const dy = targetY - this.y;
-      const dist = Math.hypot(dx, dy);
-      if(dist < currentSpeed * dt) {
-        this.x = targetX;
-        this.y = targetY;
-        this.currentPathIndex++;
-        if(this.currentPathIndex >= path.length - 1) {
-          return true; // reached base
-        }
-      } else {
-        this.x += (dx / dist) * currentSpeed * dt;
-        this.y += (dy / dist) * currentSpeed * dt;
-      }
-      return false;
-    }
-
-    // Check if enemy sees projectile nearby (simple proximity)
-    canSeeProjectile() {
-      for(const p of projectiles) {
-        if(!p.active) continue;
-        const dist = Math.hypot(p.x - this.x, p.y - this.y);
-        if(dist < 70) return true;
-      }
-      return false;
-    }
-
-    draw(ctx) {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.ellipse(this.x, this.y, 16, 12, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Health bar
-      const healthBarWidth = 30;
-      const healthBarHeight = 5;
-      const healthPercent = this.health / this.maxHealth;
-      ctx.fillStyle = 'black';
-      ctx.fillRect(this.x - healthBarWidth/2, this.y - 22, healthBarWidth, healthBarHeight);
-      ctx.fillStyle = '#2ecc71';
-      ctx.fillRect(this.x - healthBarWidth/2, this.y - 22, healthBarWidth * healthPercent, healthBarHeight);
-
-      // If dodging, show a little swirl
-      if(this.isDodging) {
-        ctx.strokeStyle = '#f1c40f';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 20, 0, Math.PI * 1.5);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-    }
+  shoot(target) {
+    this.lastShotTime = Date.now();
+    let projectile = new Projectile(this, target);
+    projectiles.push(projectile);
   }
 
-  // Projectile class
-  class Projectile {
-    constructor(x, y, target, damage, slowEffect = 0, slowDuration = 0) {
-      this.x = x;
-      this.y = y;
-      this.target = target;
-      this.speed = 400;
-      this.damage = damage;
-      this.radius = 5;
-      this.slowEffect = slowEffect;
-      this.slowDuration = slowDuration;
-      this.active = true;
-    }
+  draw(ctx, isSelected) {
+    ctx.save();
 
-    update(dt) {
-      if(!this.active || !this.target) return false;
-
-      // Check if target is dodging; 70% chance to miss if dodging active
-      if(this.target.isDodging && Math.random() < 0.7) {
-        this.active = false; // projectile missed due to dodge
-        return true;
-      }
-
-      const dx = this.target.x - this.x;
-      const dy = this.target.y - this.y;
-      const dist = Math.hypot(dx, dy);
-      if(dist < this.speed * dt) {
-        // Hit target
-        this.target.health -= this.damage;
-        if(this.slowEffect > 0) {
-          this.target.slowedUntil = Date.now() + this.slowDuration;
-        }
-        this.active = false;
-        return true;
-      } else {
-        this.x += (dx / dist) * this.speed * dt;
-        this.y += (dy / dist) * this.speed * dt;
-        return false;
-      }
-    }
-
-    draw(ctx) {
-      if(!this.active) return;
-      ctx.fillStyle = this.slowEffect > 0 ? '#3498db' : '#f1c40f';
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  // Draw grid, obstacles, path
-  function drawMap() {
-    // Grid
-    ctx.strokeStyle = '#b0d6a5';
-    for(let r=0; r<MAP_ROWS; r++) {
-      for(let c=0; c<MAP_COLS; c++) {
-        ctx.strokeRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-      }
-    }
-
-    // Obstacles
-    obstacles.forEach(o => {
-      ctx.fillStyle = '#7c6651';
-      ctx.fillRect(o.x * TILE_SIZE, o.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    });
-
-    // Path
-    ctx.strokeStyle = '#f9d71c';
-    ctx.lineWidth = 8;
+    // Draw tower base circle
+    ctx.fillStyle = '#ffd633';
+    ctx.shadowColor = '#d9b500';
+    ctx.shadowBlur = 15;
     ctx.beginPath();
-    for(let i=0; i<path.length; i++) {
-      const p = path[i];
-      const px = p.x * TILE_SIZE + TILE_SIZE/2;
-      const py = p.y * TILE_SIZE + TILE_SIZE/2;
-      if(i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
+    ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw tower "body"
+    let img = new Image();
+    img.src = this.icon;
+    ctx.drawImage(img, this.x - 20, this.y - 20, 40, 40);
+
+    // Draw range if selected
+    if (isSelected) {
+      ctx.strokeStyle = 'rgba(255, 219, 54, 0.6)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.range, 0, Math.PI * 2);
+      ctx.stroke();
     }
-    ctx.stroke();
-    ctx.lineWidth = 1;
-  }
 
-  // Draw towers
-  function drawTowers() {
-    towers.forEach(t => {
-      // Tower base
-      ctx.fillStyle = '#3a5b35';
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 20, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Tower range circle (light green, transparent)
-      ctx.fillStyle = 'rgba(58, 91, 53, 0.15)';
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, t.range, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Tower center detail - bee icon style circle
-      ctx.fillStyle = '#f1c40f';
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 10, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Show special ability active glow
-      if(t.isBurstMode) {
-        ctx.strokeStyle = '#f1c40f';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-      if(t.isAreaSlow) {
-        ctx.strokeStyle = '#3498db';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-    });
-  }
-
-  // Draw projectiles
-  function drawProjectiles() {
-    projectiles.forEach(p => p.draw(ctx));
-  }
-
-  // Draw enemies
-  function drawEnemies() {
-    enemies.forEach(e => e.draw(ctx));
-  }
-
-  // Update UI
-  function updateUI() {
-    baseHealthDisplay.textContent = `Base Health: ${Math.floor(baseHealth + baseHealthModifier)}`;
-    moneyDisplay.textContent = `Money: ${money}`;
-    waveInfoDisplay.textContent = `Wave: ${waveNumber}`;
-  }
-
-  // Game Over display
-  function displayGameOver() {
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = '#e74c3c';
-    ctx.font = '48px Arial';
+    // Draw level text
+    ctx.fillStyle = '#4a3e1d';
+    ctx.font = 'bold 14px Fredoka One';
     ctx.textAlign = 'center';
-    ctx.fillText('GAME OVER', width/2, height/2);
-    ctx.font = '24px Arial';
-    ctx.fillText('Refresh to play again', width/2, height/2 + 40);
+    ctx.fillText(`Lv.${this.level}`, this.x, this.y + 35);
+
+    ctx.restore();
   }
 
-  // Spawn wave enemies count and type
-  function spawnWave() {
-    waveNumber++;
-    messageDiv.textContent = `Starting wave ${waveNumber}...`;
+  isPointInside(px, py) {
+    const dx = this.x - px;
+    const dy = this.y - py;
+    return dx * dx + dy * dy <= 400; // radius 20 squared
+  }
+}
 
-    // Reset multipliers and apply challenge modifier for this wave
-    resetModifiers();
-    currentChallenge = challengeModifiers[Math.floor(Math.random() * challengeModifiers.length)];
-    currentChallenge.apply();
-
-    showChallengePopup(currentChallenge);
-
-    // Calculate enemies to spawn
-    enemiesToSpawn = Math.floor(5 + waveNumber * 2 * enemyCountMultiplier);
-
-    updateUI();
+class Projectile {
+  constructor(tower, target) {
+    this.tower = tower;
+    this.target = target;
+    this.x = tower.x;
+    this.y = tower.y;
+    this.speed = 8;
+    this.radius = 6;
+    this.damage = tower.damage;
+    this.type = tower.type;
+    this.isDead = false;
+    this.slowEffect = tower.type === "splash" ? { duration: 1200, factor: 0.5 } : null;
   }
 
-  // Show challenge popup
-  function showChallengePopup(challenge) {
-    challengeText.textContent = challenge.description;
-    challengePopup.style.display = 'block';
-  }
-  challengeCloseBtn.addEventListener('click', () => {
-    challengePopup.style.display = 'none';
-    // Apply base health modifier after popup closed
-    baseHealth += baseHealthModifier;
-    updateUI();
-  });
-
-  // Reset multipliers before next wave
-  function resetModifiers() {
-    if(currentChallenge) currentChallenge.reset();
-    enemySpeedMultiplier = 1;
-    upgradeCostMultiplier = 1;
-    moneyRewardMultiplier = 1;
-    enemyCountMultiplier = 1;
-    enemyHealthMultiplier = 1;
-    baseHealthModifier = 0;
-    baseRegenEnabled = true;
-  }
-
-  // Get random enemy type based on wave
-  function getRandomEnemyType() {
-    const rand = Math.random();
-    if(waveNumber < 3) return 'scout';
-    if(waveNumber < 6) {
-      if(rand < 0.6) return 'scout';
-      if(rand < 0.85) return 'worker';
-      return 'bomber';
-    }
-    if(rand < 0.4) return 'scout';
-    if(rand < 0.7) return 'worker';
-    if(rand < 0.85) return 'bomber';
-    return 'tank';
-  }
-
-  // Main update loop
-  function update(time = 0) {
-    if(!lastFrameTime) lastFrameTime = time;
-    const dt = (time - lastFrameTime) / 1000;
-    lastFrameTime = time;
-    if(gameOver) {
-      displayGameOver();
+  update(delta) {
+    if (this.isDead || this.target.isDead) {
+      this.isDead = true;
       return;
     }
-
-    ctx.clearRect(0, 0, width, height);
-    drawMap();
-
-    // Spawn enemies
-    if(enemiesToSpawn > 0 && time - lastEnemySpawn > enemySpawnInterval) {
-      const enemyType = getRandomEnemyType();
-      enemies.push(new Enemy(enemyType));
-      enemiesToSpawn--;
-      lastEnemySpawn = time;
+    let dx = this.target.x - this.x;
+    let dy = this.target.y - this.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < this.speed) {
+      // Hit target
+      this.target.takeDamage(this.damage);
+      if (this.slowEffect) {
+        this.target.applySlow(this.slowEffect.duration, this.slowEffect.factor);
+      }
+      this.isDead = true;
+      return;
     }
-
-    // Update enemies
-    for(let i = enemies.length - 1; i >= 0; i--) {
-      const enemy = enemies[i];
-      const reachedBase = enemy.update(dt, time);
-      if(enemy.health <= 0) {
-        money += enemy.reward;
-        messageDiv.textContent = `Killed ${enemyTypes[enemy.type].name}, +$${enemy.reward}`;
-        enemies.splice(i, 1);
-        updateUI();
-        continue;
-      }
-      if(reachedBase) {
-        baseHealth--;
-        enemies.splice(i, 1);
-        updateUI();
-        messageDiv.textContent = `An enemy reached your base! -1 health`;
-        if(baseHealth <= 0) {
-          gameOver = true;
-          messageDiv.textContent = 'Game Over!';
-        }
-      }
-    }
-
-    // Base health regeneration if enabled (small regen per second)
-    if(baseRegenEnabled && baseHealth < BASE_HEALTH_START + baseHealthModifier) {
-      baseHealth += 0.01;
-      if(baseHealth > BASE_HEALTH_START + baseHealthModifier) baseHealth = BASE_HEALTH_START + baseHealthModifier;
-      updateUI();
-    }
-
-    // Update towers (target and shoot)
-    towers.forEach(tower => {
-      // Handle special abilities duration
-      const now = Date.now();
-      if(tower.isBurstMode && now > tower.burstModeEnd) {
-        tower.isBurstMode = false;
-      }
-      if(tower.isAreaSlow && now > tower.areaSlowEnd) {
-        tower.isAreaSlow = false;
-      }
-
-      // Fire rate modifier if burst mode active
-      const fireRateMod = tower.isBurstMode ? 0.3 : 1;
-      if(time - tower.lastShot > tower.fireRate * fireRateMod) {
-        // Find nearest enemy in range
-        let target = null;
-        let minDist = Infinity;
-        for(const enemy of enemies) {
-          const dist = pointDistance(tower.x, tower.y, enemy.x, enemy.y);
-          if(dist <= tower.range && enemy.health > 0 && dist < minDist) {
-            target = enemy;
-            minDist = dist;
-          }
-        }
-        if(target) {
-          // Shoot projectile
-          let slowEff = 0, slowDur = 0;
-          if(tower.isAreaSlow) {
-            // Apply slow to all enemies in range instantly
-            enemies.forEach(e => {
-              const dist = pointDistance(tower.x, tower.y, e.x, e.y);
-              if(dist <= tower.range) {
-                e.slowedUntil = Date.now() + tower.slowDuration;
-              }
-            });
-            slowEff = tower.slowEffect;
-            slowDur = tower.slowDuration;
-            messageDiv.textContent = `Slowdown tower slowed nearby enemies!`;
-            placeAbilityEffect(tower.x, tower.y);
-            tower.isAreaSlow = false; // reset after applying
-          }
-          const proj = new Projectile(tower.x, tower.y, target, tower.damage, slowEff, slowDur);
-          projectiles.push(proj);
-          tower.lastShot = time;
-        }
-      }
-    });
-
-    // Update projectiles
-    for(let i = projectiles.length - 1; i >= 0; i--) {
-      const proj = projectiles[i];
-      const hit = proj.update(dt);
-      if(hit) projectiles.splice(i, 1);
-    }
-
-    drawTowers();
-    drawEnemies();
-    drawProjectiles();
-
-    requestAnimationFrame(update);
+    this.x += (dx / dist) * this.speed;
+    this.y += (dy / dist) * this.speed;
   }
 
-  // Handle mouse clicks for tower placement and selecting towers
-  canvas.addEventListener('click', e => {
-    if(gameOver) return;
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+  draw(ctx) {
+    if (this.isDead) return;
+    ctx.save();
+    ctx.fillStyle = this.type === "splash" ? "#a08c00" : "#ffb700";
+    ctx.shadowColor = "#ffb700";
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
 
-    const col = Math.floor(mouseX / TILE_SIZE);
-    const row = Math.floor(mouseY / TILE_SIZE);
+// --- Game functions ---
 
-    if(placingTower && selectedTowerType) {
-      if(canPlaceTower(col, row)) {
-        const cost = towerTypes[selectedTowerType].baseCost;
-        if(money >= cost) {
-          money -= cost;
-          const towerX = col * TILE_SIZE + TILE_SIZE / 2;
-          const towerY = row * TILE_SIZE + TILE_SIZE / 2;
-          const tower = new Tower(towerX, towerY, selectedTowerType);
-          towers.push(tower);
-          towerGrid[row][col] = true;
-          placingTower = false;
-          selectedTowerType = null;
-          towerOptions.forEach(opt => opt.classList.remove('selected'));
-          updateUI();
-          messageDiv.textContent = 'Tower placed!';
-        } else {
-          messageDiv.textContent = 'Not enough money to place tower!';
-        }
-      } else {
-        messageDiv.textContent = 'Invalid tower placement!';
-      }
-    } else {
-      // Check if clicked on a tower to select it
-      let foundTower = null;
-      for(const t of towers) {
-        if(pointDistance(mouseX, mouseY, t.x, t.y) < 20) {
-          foundTower = t;
-          break;
-        }
-      }
-      selectedTower = foundTower;
-      updateTowerInfo(selectedTower);
-      placingTower = false;
-      selectedTowerType = null;
-      towerOptions.forEach(opt => opt.classList.remove('selected'));
-      if(!foundTower) messageDiv.textContent = 'No tower selected';
-      else messageDiv.textContent = `Selected ${towerTypes[foundTower.type].name}`;
+function updateUI() {
+  moneyDisplay.textContent = `Money: ${Math.floor(money)}`;
+  waveDisplay.textContent = `Wave: ${wave}`;
+  updateTowerInfo();
+  updateModifiersPanel();
+}
+
+function updateTowerInfo() {
+  if (!selectedTower) {
+    towerName.textContent = "Select a tower";
+    towerIcon.hidden = true;
+    towerDesc.textContent = "Click a tower to see details and upgrades";
+    upgradeBtn.disabled = true;
+    upgradeBtn.setAttribute('aria-disabled', 'true');
+    upgradeCostDisplay.textContent = '';
+    return;
+  }
+  towerName.textContent = selectedTower.name;
+  towerIcon.src = selectedTower.icon;
+  towerIcon.alt = selectedTower.name;
+  towerIcon.hidden = false;
+  towerDesc.textContent = selectedTower.desc + `\nDamage: ${Math.floor(selectedTower.damage)}\nRange: ${Math.floor(selectedTower.range)}\nFire Rate: ${(selectedTower.fireRate / 1000).toFixed(2)}s\nLevel: ${selectedTower.level}/${selectedTower.maxLevel}`;
+
+  if (selectedTower.level >= selectedTower.maxLevel) {
+    upgradeBtn.disabled = true;
+    upgradeBtn.textContent = "Max Level";
+    upgradeBtn.setAttribute('aria-disabled', 'true');
+    upgradeCostDisplay.textContent = '';
+  } else if (money < selectedTower.upgradeCost) {
+    upgradeBtn.disabled = true;
+    upgradeBtn.textContent = "Upgrade";
+    upgradeBtn.setAttribute('aria-disabled', 'true');
+    upgradeCostDisplay.textContent = `Cost: $${selectedTower.upgradeCost}`;
+  } else {
+    upgradeBtn.disabled = false;
+    upgradeBtn.textContent = "Upgrade";
+    upgradeBtn.setAttribute('aria-disabled', 'false');
+    upgradeCostDisplay.textContent = `Cost: $${selectedTower.upgradeCost}`;
+  }
+}
+
+function updateModifiersPanel() {
+  if (modifiers.activeModifiers.length === 0) {
+    modifiersPanel.style.display = 'none';
+    return;
+  }
+  modifiersPanel.style.display = 'block';
+  modifiersPanel.innerHTML = '<strong>Active Challenge Modifiers:</strong><ul style="margin:6px 0 0 18px; padding:0;">' +
+    modifiers.activeModifiers.map(m => `<li title="${m.description}">🐝 ${m.name}</li>`).join('') +
+    '</ul>';
+}
+
+function showMessage(text, duration = 2500) {
+  messagePopup.textContent = text;
+  messagePopup.classList.add('show');
+  if (messageTimeout) clearTimeout(messageTimeout);
+  messageTimeout = setTimeout(() => {
+    messagePopup.classList.remove('show');
+  }, duration);
+}
+
+function placeTower(type, x, y) {
+  if (money < TOWER_TYPES[type].cost) {
+    showMessage("Not enough money to build this tower!");
+    return false;
+  }
+  towers.push(new Tower(type, x, y));
+  money -= TOWER_TYPES[type].cost;
+  updateUI();
+  return true;
+}
+
+function spawnEnemy() {
+  // Random enemy type weighted by wave number (more hard types as wave grows)
+  let enemyType;
+  const rnd = Math.random();
+  if (wave < 3) {
+    enemyType = 'basic';
+  } else if (wave < 6) {
+    enemyType = rnd < 0.6 ? 'basic' : 'fast';
+  } else if (wave < 10) {
+    enemyType = rnd < 0.5 ? 'fast' : 'tank';
+  } else {
+    if (rnd < 0.4) enemyType = 'fast';
+    else if (rnd < 0.8) enemyType = 'tank';
+    else enemyType = 'stinger';
+  }
+  let e = new Enemy(enemyType);
+  enemies.push(e);
+  enemiesSpawnedThisWave++;
+}
+
+function nextWave() {
+  wave++;
+  enemiesPerWave = Math.floor(10 + wave * 2);
+  enemiesSpawnedThisWave = 0;
+  enemiesKilledThisWave = 0;
+
+  // Reset modifiers and randomly add 1-3 new modifiers (stacking possible)
+  modifiers = {
+    spawnSpeedMultiplier: 1,
+    enemyHpMultiplier: 1,
+    enemyDamageMultiplier: 1,
+    towerFireRateMultiplier: 1,
+    moneyGainMultiplier: 1,
+    activeModifiers: [],
+  };
+  const modsCount = Math.floor(Math.random() * 3) + 1;
+  for (let i = 0; i < modsCount; i++) {
+    // 50% chance to add a modifier; allow duplicates for stacking
+    if (Math.random() < 0.5) {
+      const mod = challengeModifiers[Math.floor(Math.random() * challengeModifiers.length)];
+      modifiers.activeModifiers.push(mod);
+      mod.apply();
     }
-  });
+  }
 
-  // Start first wave automatically after challenge popup closes
-  challengeCloseBtn.addEventListener('click', () => {
-    if(!gameOver && enemies.length === 0 && enemiesToSpawn === 0) {
-      spawnWave();
-    }
-  });
+  spawnInterval = 1500 * modifiers.spawnSpeedMultiplier;
 
-  // Start initial wave with challenge popup
-  spawnWave();
+  showMessage(`Wave ${wave} started!`);
 
   updateUI();
-  requestAnimationFrame(update);
-})();
+}
 
+function update(delta) {
+  // Spawn enemies
+  if (enemiesSpawnedThisWave < enemiesPerWave && Date.now() - lastSpawnTime > spawnInterval) {
+    spawnEnemy();
+    lastSpawnTime = Date.now();
+  }
+
+  // Update enemies
+  enemies.forEach(e => e.update(delta));
+
+  // Remove dead enemies from array
+  enemies = enemies.filter(e => !e.isDead);
+
+  // Update towers
+  const now = Date.now();
+  towers.forEach(tower => {
+    // Find closest enemy in range
+    let target = null;
+    let closestDist = 9999;
+    enemies.forEach(enemy => {
+      if (enemy.isDead) return;
+      let dx = enemy.x - tower.x;
+      let dy = enemy.y - tower.y;
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= tower.range && dist < closestDist) {
+        closestDist = dist;
+        target = enemy;
+      }
+    });
+    if (target && tower.canShoot(now)) {
+      tower.shoot(target);
+    }
+  });
+
+  // Update projectiles
+  projectiles.forEach(p => p.update(delta));
+  projectiles = projectiles.filter(p => !p.isDead);
+
+  // If wave finished
+  if (enemiesKilledThisWave >= enemiesPerWave && enemies.length === 0) {
+    showMessage("Wave cleared! Prepare for next wave.");
+    nextWave();
+  }
+
+  updateUI();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw path (honey trail)
+  ctx.save();
+  ctx.strokeStyle = "#d9b500cc";
+  ctx.lineWidth = 24;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(path[0].x, path[0].y);
+  for (let i = 1; i < path.length; i++) {
+    ctx.lineTo(path[i].x, path[i].y);
+  }
+  ctx.stroke();
+
+  // Draw path highlight
+  ctx.strokeStyle = "#fadb36cc";
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(path[0].x, path[0].y);
+  for (let i = 1; i < path.length; i++) {
+    ctx.lineTo(path[i].x, path[i].y);
+  }
+  ctx.stroke();
+
+  ctx.restore();
+
+  // Draw towers
+  towers.forEach(t => {
+    t.draw(ctx, t === selectedTower);
+  });
+
+  // Draw enemies
+  enemies.forEach(e => {
+    e.draw(ctx);
+  });
+
+  // Draw projectiles
+  projectiles.forEach(p => {
+    p.draw(ctx);
+  });
+}
+
+let lastTime = 0;
+function gameLoop(timestamp = 0) {
+  let delta = timestamp - lastTime;
+  lastTime = timestamp;
+
+  update(delta);
+  draw();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// --- Input handling ---
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  // Check if clicked on tower
+  let clickedTower = null;
+  for (let tower of towers) {
+    if (tower.isPointInside(mx, my)) {
+      clickedTower = tower;
+      break;
+    }
+  }
+
+  if (clickedTower) {
+    selectedTower = clickedTower;
+    updateTowerInfo();
+    return;
+  }
+
+  // Else place tower at clicked location (grid snapped)
+  const snappedX = Math.round(mx / TILE_SIZE) * TILE_SIZE;
+  const snappedY = Math.round(my / TILE_SIZE) * TILE_SIZE;
+
+  // Disallow placing on path (check distance to path points < 30)
+  for (let i = 0; i < path.length; i++) {
+    let dx = snappedX - path[i].x;
+    let dy = snappedY - path[i].y;
+    if (Math.sqrt(dx * dx + dy * dy) < 40) {
+      showMessage("Can't build on the path!");
+      return;
+    }
+  }
+
+  // Place a basic tower for now (could add UI later to select type)
+  if (placeTower('basic', snappedX, snappedY)) {
+    selectedTower = towers[towers.length - 1];
+    updateTowerInfo();
+  }
+});
+
+upgradeBtn.addEventListener('click', () => {
+  if (!selectedTower) return;
+  if (selectedTower.upgrade()) {
+    showMessage(`Upgraded ${selectedTower.name} to level ${selectedTower.level}`);
+    updateTowerInfo();
+  } else {
+    showMessage("Cannot upgrade!");
+  }
+});
+
+// Start first wave on load
+nextWave();
+gameLoop();
