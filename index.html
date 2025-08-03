@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mini Stock Market Game</title>
+<title>Stock Market Simulator with Charts</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,11 +17,11 @@
   }
   #balance {
     font-size: 1.2em;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     text-align: center;
   }
   #stocks {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto 20px auto;
     border-collapse: collapse;
     width: 100%;
@@ -30,6 +30,7 @@
     border: 1px solid #ccc;
     padding: 8px 12px;
     text-align: center;
+    vertical-align: middle;
   }
   #stocks th {
     background-color: #2980b9;
@@ -56,7 +57,7 @@
     text-align: center;
   }
   #log {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     background: white;
     padding: 10px;
@@ -68,16 +69,26 @@
     font-size: 14px;
     color: #34495e;
   }
+  canvas.priceChart {
+    display: block;
+    margin: 8px auto 4px auto;
+    width: 260px;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+  }
 </style>
 </head>
 <body>
-  <h1>Mini Stock Market Simulator</h1>
+  <h1>Stock Market Simulator with Charts</h1>
   <div id="balance">Cash: $1000.00 | Portfolio Value: $0.00 | Total: $1000.00</div>
   <table id="stocks">
     <thead>
       <tr>
         <th>Stock</th>
         <th>Price ($)</th>
+        <th>Price Chart</th>
         <th>Your Shares</th>
         <th>Buy</th>
         <th>Sell</th>
@@ -90,13 +101,14 @@
 <script>
   // Initial player money
   let cash = 1000;
-  // Stocks data - symbol, name, price, owned shares
+
+  // Stocks data - symbol, name, current price, owned shares, price history
   const stocks = [
-    { symbol: "APL", name: "Apple", price: 150, owned: 0 },
-    { symbol: "GGL", name: "Google", price: 2800, owned: 0 },
-    { symbol: "TSL", name: "Tesla", price: 720, owned: 0 },
-    { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0 },
-    { symbol: "MSF", name: "Microsoft", price: 300, owned: 0 },
+    { symbol: "APL", name: "Apple", price: 150, owned: 0, history: [] },
+    { symbol: "GGL", name: "Google", price: 2800, owned: 0, history: [] },
+    { symbol: "TSL", name: "Tesla", price: 720, owned: 0, history: [] },
+    { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0, history: [] },
+    { symbol: "MSF", name: "Microsoft", price: 300, owned: 0, history: [] },
   ];
 
   const balanceEl = document.getElementById("balance");
@@ -133,6 +145,15 @@
     tdPrice.id = `price-${stock.symbol}`;
     tdPrice.textContent = formatMoney(stock.price);
 
+    // Price chart canvas
+    const tdChart = document.createElement("td");
+    const canvas = document.createElement("canvas");
+    canvas.className = "priceChart";
+    canvas.id = `chart-${stock.symbol}`;
+    canvas.width = 260;
+    canvas.height = 80;
+    tdChart.appendChild(canvas);
+
     const tdOwned = document.createElement("td");
     tdOwned.id = `owned-${stock.symbol}`;
     tdOwned.textContent = stock.owned;
@@ -167,6 +188,7 @@
 
     tr.appendChild(tdSymbol);
     tr.appendChild(tdPrice);
+    tr.appendChild(tdChart);
     tr.appendChild(tdOwned);
     tr.appendChild(tdBuy);
     tr.appendChild(tdSell);
@@ -222,9 +244,66 @@
     logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
   }
 
-  // Randomly fluctuate stock prices every 5 seconds
+  // Draw price history chart for a stock
+  function drawChart(stock) {
+    const canvas = document.getElementById(`chart-${stock.symbol}`);
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const history = stock.history;
+    if (history.length < 2) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const padding = 5;
+
+    // Find min and max price in history for scaling
+    let minPrice = Math.min(...history);
+    let maxPrice = Math.max(...history);
+    if (minPrice === maxPrice) maxPrice = minPrice + 1; // avoid div by zero
+
+    // Scale helper
+    function scaleX(i) {
+      return padding + (i / (history.length - 1)) * (w - 2 * padding);
+    }
+    function scaleY(price) {
+      return h - padding - ((price - minPrice) / (maxPrice - minPrice)) * (h - 2 * padding);
+    }
+
+    // Draw grid lines horizontally
+    ctx.strokeStyle = "#eee";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(let i=0; i<=4; i++) {
+      const y = padding + i * ( (h - 2 * padding) / 4);
+      ctx.moveTo(padding, y);
+      ctx.lineTo(w - padding, y);
+    }
+    ctx.stroke();
+
+    // Draw line segments colored green if price up, red if down
+    ctx.lineWidth = 2;
+    for(let i=1; i<history.length; i++) {
+      const x1 = scaleX(i-1);
+      const y1 = scaleY(history[i-1]);
+      const x2 = scaleX(i);
+      const y2 = scaleY(history[i]);
+      ctx.strokeStyle = history[i] >= history[i-1] ? "green" : "red";
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+  }
+
+  // Randomly fluctuate stock prices every 5 seconds and update history
   function fluctuatePrices() {
     stocks.forEach(stock => {
+      // Store previous price
+      if (stock.history.length >= 50) stock.history.shift(); // keep history max 50 points
+      stock.history.push(stock.price);
+
       // Change price between -5% and +5%
       const changePercent = (Math.random() * 10 - 5);
       const changeAmount = stock.price * (changePercent / 100);
@@ -237,16 +316,19 @@
       const priceTd = document.getElementById(`price-${stock.symbol}`);
       if (priceTd) {
         priceTd.textContent = formatMoney(stock.price);
-        // Green or red color depending on change
         priceTd.style.color = changePercent > 0 ? "green" : (changePercent < 0 ? "red" : "#222");
       }
+
+      drawChart(stock);
     });
     updateBalance();
   }
 
   // Initial setup
+  stocks.forEach(s => s.history.push(s.price)); // initialize history with starting price
   renderStocks();
   updateBalance();
+  stocks.forEach(drawChart);
 
   // Start price fluctuations every 5 seconds
   setInterval(fluctuatePrices, 5000);
