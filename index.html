@@ -1,157 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flappy Bee</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Arial', sans-serif;
-    }
-
-    canvas {
-      display: block;
-      background: linear-gradient(to bottom, #a6e1fa, #ffffff);
-    }
-
-    #main-menu {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    #main-menu h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #bee-logo {
-      width: 50px;
-      height: 50px;
-      animation: float 2s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .menu-section {
-      margin: 10px 0;
-      text-align: center;
-    }
-
-    input, button, label {
-      font-size: 16px;
-      padding: 10px;
-      margin: 5px;
-    }
-
-    .powerups {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .powerup {
-      text-align: center;
-      max-width: 120px;
-    }
-
-    .powerup img {
-      width: 50px;
-      height: 50px;
-    }
-
-    #game-over {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      font-size: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      display: none;
-      z-index: 20;
-    }
-
-    #play-again-btn {
-      margin-top: 20px;
-      font-size: 20px;
-      padding: 10px 20px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bee Uno - Asynchronous Multiplayer with Ghost Mode</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+  body {
+    margin:0; padding:0; background: #fffbf0;
+    font-family: 'Fredoka One', cursive, sans-serif;
+    color: #4b3b00;
+    user-select: none;
+  }
+  h1 {
+    text-align: center;
+    margin: 20px 0 5px;
+    font-size: 2.8rem;
+  }
+  #game-container {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    padding: 10px;
+  }
+  #status {
+    text-align: center;
+    font-size: 1.4rem;
+    margin: 10px 0 20px;
+    min-height: 32px;
+  }
+  #player-info {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  #hand, #opponent-hand {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 100px;
+  }
+  .card {
+    width: 70px;
+    height: 100px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    background: linear-gradient(145deg, #ffd95e, #f6b93b);
+    color: #4b3b00;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: transform 0.2s ease;
+  }
+  .card:hover:not(.disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 5px 14px rgba(246,185,59,0.8);
+  }
+  .card.disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+  .card .symbol {
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .card .name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0 4px;
+    user-select: none;
+  }
+  .bee-icon {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+  }
+  #discard-pile {
+    margin: 20px auto;
+    width: 80px;
+    height: 120px;
+    border-radius: 14px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+    background: linear-gradient(145deg, #f9d976, #f39c12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem;
+    color: #4b3b00;
+    user-select: none;
+  }
+  #controls {
+    margin: 20px auto;
+    text-align: center;
+  }
+  button {
+    background-color: #f7b731;
+    border: none;
+    color: #4b3b00;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px 18px;
+    margin: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(180,120,10,0.7);
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover:not(:disabled) {
+    background-color: #e1a221;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  textarea {
+    width: 90%;
+    height: 100px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    margin: 10px auto;
+    display: block;
+    resize: vertical;
+  }
+  label {
+    font-weight: 700;
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+  }
+  #input-username {
+    font-size: 1.1rem;
+    width: 250px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 2px solid #f7b731;
+    margin-bottom: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #4b3b00;
+    font-family: 'Fredoka One', cursive, sans-serif;
+  }
+  #instructions {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    background: #fff6cc;
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: #4b3b00;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  /* Bee icon SVG as inline base64 for cards */
+  .bee-icon svg {
+    width: 18px; height: 18px;
+    fill: #f39c12;
+  }
+  /* Tooltip style */
+  .tooltip {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f7b731cc;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #4b3b00;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    user-select: none;
+    z-index: 100;
+  }
+  .card:hover .tooltip {
+    opacity: 1;
+  }
+  /* Opponent hand cards are shown back side */
+  .card.backside {
+    background: linear-gradient(145deg, #d2c07f, #b99926);
+    color: #4b3b00;
+    cursor: default;
+  }
+  .card.backside .symbol,
+  .card.backside .name,
+  .card.backside .bee-icon {
+    visibility: hidden;
+  }
+  /* Container for opponent hand */
+  #opponent-hand-container {
+    margin-bottom: 15px;
+  }
+  #ghost-data-section {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  #ghost-data-section textarea {
+    width: 95%;
+    height: 110px;
+  }
+</style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-  <div id="main-menu">
-    <h1>
-      <img src="assets/images/logo.png" alt="Bee Logo" id="bee-logo" />
-      Flappy Bee
-    </h1>
-
-    <div class="menu-section">
-      <label for="username">Username:</label>
-      <input type="text" id="username" placeholder="Enter name..." />
-    </div>
-
-    <div class="menu-section">
-      <button onclick="startGame(false)">Start Game</button>
-      <button onclick="startGame(true)">Tutorial Mode</button>
-    </div>
-
-    <div class="menu-section">
-      <label><input type="checkbox" id="ghostMode" /> Enable Ghost Mode</label>
-    </div>
-
-    <div class="menu-section">
-      <h3>Power-ups</h3>
-      <div class="powerups">
-        <div class="powerup">
-          <img src="assets/images/shield.png" alt="Shield">
-          <p>Shield: Block one obstacle</p>
-        </div>
-        <div class="powerup">
-          <img src="assets/images/slowmo.png" alt="Slow Motion">
-          <p>SlowMo: Slows pipes briefly</p>
-        </div>
-        <div class="powerup">
-          <img src="assets/images/doublescore.png" alt="Double Score">
-          <p>Double: Double score during effect</p>
-        </div>
-        <div class="powerup">
-          <img src="assets/images/boost.png" alt="Boost">
-          <p>Boost: Launches you upward quickly</p>
-        </div>
-      </div>
-    </div>
+<h1>🐝 Bee Uno</h1>
+<div id="game-container">
+  <div id="player-info">
+    <label for="input-username">Your Player Name:</label>
+    <input id="input-username" maxlength="16" placeholder="Enter your name" />
   </div>
 
-  <div id="game-over">
-    <div>Game Over</div>
-    <button id="play-again-btn" onclick="resetGame()">Play Again</button>
+  <div id="status" aria-live="polite" aria-atomic="true">Enter your name and click Start.</div>
+
+  <div id="opponent-hand-container" style="display:none;">
+    <div><strong>Opponent's Cards:</strong></div>
+    <div id="opponent-hand"></div>
   </div>
 
-  <script src="game.js"></script>
+  <div id="discard-pile" aria-label="Discard pile" role="img" tabindex="0" title="Top card on discard pile">?</div>
+
+  <div><strong>Your Hand:</strong></div>
+  <div id="hand" aria-label="Your hand of cards" role="list"></div>
+
+  <div id="controls">
+    <button id="btn-play" disabled>Play Selected Card</button>
+    <button id="btn-draw" disabled>Draw Card</button>
+    <button id="btn-end-turn" disabled>End Turn (Generate Ghost Code)</button>
+  </div>
+
+  <div id="ghost-data-section" style="display:none;">
+    <label for="ghost-data-textarea">Copy your Ghost Code below and send to your opponent:</label>
+    <textarea id="ghost-data-textarea" readonly></textarea>
+    <button id="btn-copy-ghost">Copy to Clipboard</button>
+    <hr />
+    <label for="ghost-load-textarea">Paste opponent's Ghost Code here and click Load:</label>
+    <textarea id="ghost-load-textarea" placeholder="Paste opponent's ghost code"></textarea>
+    <button id="btn-load-ghost">Load Opponent's Turn</button>
+  </div>
+
+  <div id="instructions">
+    <strong>Instructions:</strong><br>
+    Play cards matching either color or symbol. Special cards have bee-themed abilities:<br>
+    <ul>
+      <li><strong>Buzz</strong> (Skip): Skip opponent's next turn.</li>
+      <li><strong>Sting</strong> (Reverse): Reverse turn order.</li>
+      <li><strong>Hive</strong> (Draw Two): Opponent draws 2 cards.</li>
+      <li><strong>Queen</strong> (Wild): Change color to your choice.</li>
+      <li><strong>Royal Sting</strong> (Wild Draw Four): Opponent draws 4 cards and you pick color.</li>
+    </ul>
+    Take your turn, then generate the ghost code to send. Load opponent's code to continue playing asynchronously!
+  </div>
+</div>
+
+<script>
+(() => {
+  // --- Data Structures and Constants ---
+  const COLORS = ['yellow', 'orange', 'brown', 'black']; // Bee-themed colors replacing classic Uno colors
+  const COLOR_NAMES = {
+    yellow: '🐝 Yellow',
+    orange: '🍯 Orange',
+    brown: '🌰 Brown',
+    black: '🐝 Black',
+  };
+  // Card types and their bee-themed special names
+  const CARD_TYPES = {
+    number: 'number',
+    skip: 'buzz',         // skip
+    reverse: 'sting',     // reverse
+    drawTwo: 'hive',      // draw 2
+    wild: 'queen',        // wild
+    wildDrawFour: 'royalSting' // wild draw 4
+  };
+
+  // The deck card count
+  // For numbers: two copies per number per color except zero (one copy)
+  // For specials: two copies per color except wilds (4 copies)
+  // We'll build deck dynamically
+
+  // Utility: shuffle array
+  function shuffle(arr) {
+    for(let i = arr.length-1; i>0; i--) {
+      let j = Math.floor(Math.random() * (i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Card class (just a JS object)
+  // { color: string|null (wilds), type: string, value: number|string }
+
+  // --- Bee-Themed Card Symbols and Names for display ---
+  // For numbers, show number
+  // For specials:
+  // buzz = Skip (🐝 buzz)
+  // sting = Reverse (🦟 sting)
+  // hive = Draw Two (🏠 hive)
+  // queen = Wild (👑 queen)
+  // royalSting = Wild Draw Four (🐝👑 royal sting)
+
+  // Symbol/emojis for display
+  const SYMBOLS = {
+    number: (n) => n.toString(),
+    buzz: '🐝',
+    sting: '🦟',
+    hive: '🏠',
+    queen: '👑',
+    royalSting: '🐝👑'
+  };
+
+  // --- Game State ---
+  let deck = [];
+  let discardPile = [];
+  let playerHand = [];
+  let opponentHandCount = 0; // Just count, opponent's cards hidden
+  let currentColor = null;
+  let currentType = null;
+  let currentValue = null;
+  let playerTurn = true; // true = your turn; false = opponent's turn
+  let turnDirection = 1; // 1 normal, -1 reverse
+  let skipNext = false; // whether next player is skipped
+  let playerName = '';
+  let opponentName = 'Opponent';
+  let gameActive = false;
+
+  // Selected card index in player's hand
+  let selectedCardIndex = null;
+
+  // UI Elements
+  const handDiv = document.getElementById('hand');
+  const opponentHandDiv = document.getElementById('opponent-hand');
+  const discardPileDiv = document.getElementById('discard-pile');
+  const statusDiv = document.getElementById('status');
+  const btnPlay = document.getElementById('btn-play');
+  const btnDraw = document.getElementById('btn-draw');
+  const btnEndTurn = document.getElementById('btn-end-turn');
+  const inputUsername = document.getElementById('input-username');
+  const ghostDataSection = document.getElementById('ghost-data-section');
+  const ghostDataTextarea = document.getElementById('ghost-data-textarea');
+  const ghostLoadTextarea = document.getElementById('ghost-load-textarea');
+  const btnCopyGhost = document.getElementById('btn-copy-ghost');
+  const btnLoadGhost = document.getElementById('btn-load-ghost');
+  const opponentHandContainer = document.getElementById('opponent-hand-container');
+
+  // --- Build full deck ---
+  function buildDeck() {
+    let d = [];
+    // Number cards
+    for (const color of COLORS) {
+      d.push({color, type: CARD_TYPES.number, value: 0}); // one zero per color
+      for(let n=1; n<=9; n++) {
+        d.push({color, type: CARD_TYPES.number, value: n});
+        d.push({color, type: CARD_TYPES.number, value: n});
+      }
+      // Two of each special per color: buzz, sting, hive
+      for(let i=0; i<2; i++) {
+        d.push({color, type: CARD_TYPES.skip});
+        d.push({color, type: CARD_TYPES.reverse});
+        d.push({color, type: CARD_TYPES.drawTwo});
+      }
+    }
+    // Wild cards: 4 queens and 4 royalSting
+    for(let i=0; i<4; i++) {
+      d.push({color: null, type: CARD_TYPES.wild});
+      d.push({color: null, type: CARD_TYPES.wildDrawFour});
+    }
+    return shuffle(d);
+  }
+
+  // --- Helper: create card HTML element ---
+  function createCardElement(card, disabled=false, backside=false) {
+    const c = document.createElement('div');
+    c.classList.add('card');
+    if(disabled) c.classList.add('disabled');
+    if(backside) c.classList.add('backside');
+
+    // Background color by card color
+    if(card.color) {
+      // Bee-themed color background
+      const bgMap = {
+        yellow: 'linear-gradient(145deg, #f6e27f, #f7d54c)',
+        orange: 'linear-gradient(145deg, #f6c77f, #f5a51c)',
+        brown: 'linear-gradient(145deg, #b3925d, #876d31)',
+        black: 'linear-gradient(145deg, #3a372f, #1c1a14)'
+      };
+      c.style.background = bgMap[card.color] || '#fff';
+      c.style.color = (card.color === 'black' || card.color === 'brown') ? '#f8e9b3' : '#4b3b00';
+    } else {
+      // Wild card background
+      c.style.background = 'linear-gradient(145deg, #f9d976, #f39c12)';
+      c.style.color = '#4b3b00';
+    }
+
+    // Symbol line
+    const symbolSpan = document.createElement('div');
+    symbolSpan.classList.add('symbol');
+    if(card.type === CARD_TYPES.number) {
+      symbolSpan.textContent = SYMBOLS.number(card.value);
+    } else {
+      symbolSpan.textContent = SYMBOLS[card.type] || '?';
+    }
+    c.appendChild(symbolSpan);
+
+    // Name line
+    const nameSpan = document.createElement('div');
+    nameSpan.classList.add('name');
+    if(card.type === CARD_TYPES.number) {
+      nameSpan.textContent = card.value.toString();
+    } else {
+      // Capitalize first letter + rest lowercase for bee names
+      const displayNameMap = {
+        buzz: 'Buzz (Skip)',
+        sting: 'Sting (Reverse)',
+        hive: 'Hive (Draw 2)',
+        queen: 'Queen (Wild)',
+        royalSting: 'Royal Sting (Wild Draw 4)'
+      };
+      nameSpan.textContent = displayNameMap[card.type] || card.type;
+    }
+    c.appendChild(nameSpan);
+
+    // Bee icon for special cards (except number)
+    if(card.type !== CARD_TYPES.number) {
+      const beeIcon = document.createElement('div');
+      beeIcon.classList.add('bee-icon');
+      beeIcon.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M12 2c-1 0-1 1-1 1v1H9v2h1v3l-1 1v2h6v-2l-1-1v-3h1V4h-2V3s0-1-1-1zM9 17v3h6v-3h-6z"/>
+      </svg>`;
+      c.appendChild(beeIcon);
+    }
+
+    return c;
+  }
+
+  // --- Render player's hand ---
+  function renderHand() {
+    handDiv.innerHTML = '';
+    playerHand.forEach((card, idx) => {
+      const disabled = !playerTurn || !canPlayCard(card);
+      const cardEl = createCardElement(card, disabled);
+      cardEl.setAttribute('role', 'listitem');
+      cardEl.setAttribute('tabindex', disabled ? '-1' : '0');
+      cardEl.setAttribute('aria-label', `${card.color ? COLOR_NAMES[card.color] : 'Wild'} ${card.type === CARD_TYPES.number ? card.value : card.type}`);
+
+      cardEl.onclick = () => {
+        if(disabled) return;
+        if(selectedCardIndex === idx) {
+          selectedCardIndex = null;
+          cardEl.style.outline = '';
+        } else {
+          selectedCardIndex = idx;
+          // Remove outlines from all
+          Array.from(handDiv.children).forEach(c => c.style.outline = '');
+          cardEl.style.outline = '3px solid #f39c12';
+        }
+        updateButtons();
+      };
+      cardEl.onkeydown = (e) => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          cardEl.click();
+        }
+      };
+      handDiv.appendChild(cardEl);
+    });
+  }
+
+  // --- Render opponent's hand (only backs) ---
+  function renderOpponentHand() {
+    opponentHandDiv.innerHTML = '';
+    for(let i=0; i<opponentHandCount; i++) {
+      const cardEl = createCardElement({type: 'number', color: 'black', value: 0}, true, true);
+      opponentHandDiv.appendChild(cardEl);
+    }
+  }
+
+  // --- Render discard pile top card ---
+  function renderDiscard() {
+    if(discardPile.length === 0) {
+      discardPileDiv.textContent = '?';
+      discardPileDiv.style.background = 'linear-gradient(145deg, #f9d976, #f39c12)';
+      discardPileDiv.setAttribute('aria-label', 'Discard pile empty');
+      return;
+    }
+    const top = discardPile[discardPile.length-1];
+    discardPileDiv.innerHTML = '';
+    const cardEl = createCardElement(top, true);
+    cardEl.style.margin = 'auto';
+    cardEl.style.cursor = 'default';
+    discardPileDiv.appendChild(cardEl);
+    discardPileDiv.setAttribute('aria-label', `Top discard card is ${top.color ? COLOR_NAMES[top.color] : 'Wild'} ${top.type === CARD_TYPES.number ? top.value : top.type}`);
+  }
+
+  // --- Can play card on top of discard pile? ---
+  function canPlayCard(card) {
+    if(!playerTurn) return false;
+    if(discardPile.length === 0) return true; // first move
+
+    const top = discardPile[discardPile.length-1];
+    // Wilds can always be played
+    if(card.type === CARD_TYPES.wild || card.type === CARD_TYPES.wildDrawFour) return true;
+
+    // Match color or number/type
+    if(card.color === currentColor) return true;
+
+    if(card.type === CARD_TYPES.number && top.type === CARD_TYPES.number) {
+      return card.value === currentValue;
+    }
+    return card.type === top.type;
+  }
+
+  // --- Draw one card ---
+  function drawCard() {
+    if(deck.length === 0) reshuffleDiscardIntoDeck();
+    if(deck.length === 0) return null; // no cards left
+    return deck.pop();
+  }
+
+  // --- Reshuffle discard pile into deck except top card ---
+  function reshuffleDiscardIntoDeck() {
+    if(discardPile.length <= 1) return;
+    const top = discardPile.pop();
+    deck = shuffle(discardPile);
+    discardPile = [top];
+  }
+
+  // --- Start game ---
+  function startGame() {
+    playerName = inputUsername.value.trim() || 'Player 1';
+    opponentName = 'Opponent';
+    deck = buildDeck();
+    discardPile = [];
+    playerHand = [];
+    opponentHandCount = 7;
+    currentColor = null;
+    currentType = null;
+    currentValue = null;
+    playerTurn = true;
+    turnDirection = 1;
+    skipNext = false;
+    selectedCardIndex = null;
+    gameActive = true;
+
+    // Draw 7 cards for player
+    for(let i=0; i<7; i++) {
+      playerHand.push(drawCard());
+    }
+    // Flip first discard card that is not wild
+    while(true) {
+      const card = drawCard();
+      if(card.type === CARD_TYPES.wild || card.type === CARD_TYPES.wildDrawFour) {
+        deck.unshift(card); // Put back wild to deck bottom
+        shuffle(deck);
+        continue;
+      }
+      discardPile.push(card);
+      currentColor = card.color;
+      currentType = card.type;
+      currentValue = card.value;
+      break;
+    }
+
+    // Show opponent hand container
+    opponentHandContainer.style.display = 'block';
+
+    renderAll();
+    updateStatus(`${playerName}, it's your turn! Select a card or draw.`);
+    updateButtons();
+    ghostDataSection.style.display = 'none';
+  }
+
+  // --- Update status text ---
+  function updateStatus(text) {
+    statusDiv.textContent = text;
+  }
+
+  // --- Render everything ---
+  function renderAll() {
+    renderHand();
+    renderOpponentHand();
+    renderDiscard();
+  }
+
+  // --- Play selected card ---
+  function playSelectedCard() {
+    if(selectedCardIndex === null) return;
+    const card = playerHand[selectedCardIndex];
+    if(!canPlayCard(card)) {
+      alert("You can't play that card now!");
+      return;
+    }
+
+    // Play card
+    playerHand.splice(selectedCardIndex,1);
+    discardPile.push(card);
+    currentColor = card.color || currentColor; // wild cards will choose color soon
+    currentType = card.type;
+    currentValue = card.type === CARD_TYPES.number ? card.value : null;
+
+    // Clear selection
+    selectedCardIndex = null;
+
+    // Handle special effects for bee-themed cards
+    handleCardEffect(card, true);
+
+    renderAll();
+    updateButtons();
+
+    // Check for win
+    if(playerHand.length === 0) {
+      updateStatus(`${playerName} wins! 🎉🐝`);
+      endGame();
+      return;
+    }
+
+    updateStatus(`${playerName} played a ${describeCard(card)}. Now generate ghost code and send to opponent.`);
+  }
+
+  // --- Describe card text ---
+  function describeCard(card) {
+    if(card.type === CARD_TYPES.number) return `${card.value} ${COLOR_NAMES[card.color]}`;
+    const names = {
+      buzz: 'Buzz (Skip)',
+      sting: 'Sting (Reverse)',
+      hive: 'Hive (Draw 2)',
+      queen: 'Queen (Wild)',
+      royalSting: 'Royal Sting (Wild Draw 4)'
+    };
+    const colorName = card.color ? COLOR_NAMES[card.color] : 'Wild';
+    return `${names[card.type]} (${colorName})`;
+  }
+
+  // --- Handle special card effects ---
+  function handleCardEffect(card, isPlayer) {
+    // Only apply effects if it is the player's turn and they just played the card
+    if(!isPlayer) return;
+
+    switch(card.type) {
+      case CARD_TYPES.skip:
+        skipNext = true;
+        break;
+      case CARD_TYPES.reverse:
+        turnDirection *= -1;
+        break;
+      case CARD_TYPES.drawTwo:
+        opponentHandCount += 2;
+        break;
+      case CARD_TYPES.wild:
+        // Prompt player to choose color
+        chooseColor().then(color => {
+          currentColor = color;
+          updateStatus(`${playerName} chose ${COLOR_NAMES[color]}. Now generate ghost code.`);
+          renderDiscard();
+        });
+        break;
+      case CARD_TYPES.wildDrawFour:
+        opponentHandCount += 4;
+        chooseColor().then(color => {
+          currentColor = color;
+          updateStatus(`${playerName} chose ${COLOR_NAMES[color]}. Now generate ghost code.`);
+          renderDiscard();
+        });
+        break;
+    }
+  }
+
+  // --- Color chooser prompt for wild cards ---
+  function chooseColor() {
+    return new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.background = 'rgba(0,0,0,0.6)';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.zIndex = '9999';
+
+      const box = document.createElement('div');
+      box.style.background = '#fff7bb';
+      box.style.borderRadius = '14px';
+      box.style.padding = '20px';
+      box.style.textAlign = 'center';
+      box.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+      box.innerHTML = '<h2>Choose a color</h2>';
+
+      COLORS.forEach(color => {
+        const btn = document.createElement('button');
+        btn.textContent = COLOR_NAMES[color];
+        btn.style.margin = '8px';
+        btn.style.background = `linear-gradient(145deg, ${getColorGradient(color)[0]}, ${getColorGradient(color)[1]})`;
+        btn.style.color = (color === 'black' || color === 'brown') ? '#f8e9b3' : '#4b3b00';
+        btn.style.fontWeight = 'bold';
+        btn.onclick = () => {
+          document.body.removeChild(overlay);
+          resolve(color);
+        };
+        box.appendChild(btn);
+      });
+
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    });
+  }
+
+  // Helper: get color gradient for button backgrounds
+  function getColorGradient(color) {
+    const map = {
+      yellow: ['#f6e27f', '#f7d54c'],
+      orange: ['#f6c77f', '#f5a51c'],
+      brown: ['#b3925d', '#876d31'],
+      black: ['#3a372f', '#1c1a14'],
+    };
+    return map[color] || ['#fff','#ddd'];
+  }
+
+  // --- Draw card button action ---
+  function drawCardAction() {
+    if(!playerTurn) return;
+    const card = drawCard();
+    if(!card) {
+      alert('No cards left to draw!');
+      return;
+    }
+    playerHand.push(card);
+    updateStatus(`${playerName} drew a card.`);
+    renderAll();
+    updateButtons();
+  }
+
+  // --- End turn: generate ghost code ---
+  function endTurnAction() {
+    if(!playerTurn) return;
+    // Create ghost data with current game state relevant to opponent
+    // We'll send: playerHand count, discard pile top card, current color, turnDirection, skipNext, opponentHandCount (which is us now)
+    // And all cards in player hand (to reconstruct on opponent side)
+
+    // For security: only send card types and colors, no player personal info
+
+    // Pack the game state after player's turn into a JSON string, then base64 encode it for sharing
+    const ghostData = {
+      discardTop: discardPile[discardPile.length-1],
+      currentColor,
+      turnDirection,
+      skipNext,
+      opponentHandCount: playerHand.length, // opponent will be us now
+      playerHandCount: opponentHandCount,   // opponent's hand count is our previous opponent count
+      // Send playerHand as array of card objects
+      playerHand,
+    };
+
+    const json = JSON.stringify(ghostData);
+    const base64 = btoa(json);
+
+    ghostDataTextarea.value = base64;
+    ghostDataSection.style.display = 'block';
+
+    updateStatus(`${playerName} ended turn. Send ghost code to your opponent.`);
+    playerTurn = false;
+
+    // Reset selection and buttons
+    selectedCardIndex = null;
+    updateButtons();
+
+    // Hide hand (disabled)
+    renderAll();
+  }
+
+  // --- Load opponent ghost code ---
+  function loadGhostCode() {
+    const code = ghostLoadTextarea.value.trim();
+    if(!code) {
+      alert('Please paste a ghost code.');
+      return;
+    }
+    try {
+      const json = atob(code);
+      const ghostData = JSON.parse(json);
+
+      // Now update the game state from ghostData to our side as if opponent played their turn
+
+      // Opponent hand count
+      opponentHandCount = ghostData.opponentHandCount || 7;
+
+      // Player hand count (our cards)
+      playerHand = ghostData.playerHand || playerHand;
+
+      // Update discard pile top card & current color
+      if(ghostData.discardTop) {
+        discardPile.push(ghostData.discardTop);
+        currentColor = ghostData.currentColor;
+        turnDirection = ghostData.turnDirection || 1;
+        skipNext = ghostData.skipNext || false;
+      } else {
+        alert('Invalid ghost data: discard top card missing.');
+        return;
+      }
+
+      // Switch turn to player
+      playerTurn = true;
+      selectedCardIndex = null;
+      ghostDataSection.style.display = 'none';
+      ghostLoadTextarea.value = '';
+
+      renderAll();
+      updateStatus(`${playerName}, it's your turn! Play your cards.`);
+      updateButtons();
+    } catch(e) {
+      alert('Failed to parse ghost code. Make sure you pasted it correctly.');
+    }
+  }
+
+  // --- Update buttons state ---
+  function updateButtons() {
+    btnPlay.disabled = !playerTurn || selectedCardIndex === null || !canPlayCard(playerHand[selectedCardIndex]);
+    btnDraw.disabled = !playerTurn;
+    btnEndTurn.disabled = !playerTurn;
+  }
+
+  // --- End the game ---
+  function endGame() {
+    gameActive = false;
+    btnPlay.disabled = true;
+    btnDraw.disabled = true;
+    btnEndTurn.disabled = true;
+    updateStatus('Game Over. Refresh page to play again.');
+  }
+
+  // --- Event listeners ---
+  btnPlay.onclick = () => {
+    playSelectedCard();
+  };
+  btnDraw.onclick = () => {
+    drawCardAction();
+  };
+  btnEndTurn.onclick = () => {
+    if(playerTurn) {
+      endTurnAction();
+    }
+  };
+  btnCopyGhost.onclick = () => {
+    ghostDataTextarea.select();
+    document.execCommand('copy');
+    btnCopyGhost.textContent = 'Copied!';
+    setTimeout(() => btnCopyGhost.textContent = 'Copy to Clipboard', 2000);
+  };
+  btnLoadGhost.onclick = () => {
+    loadGhostCode();
+  };
+
+  // Start game automatically when username entered and pressed Enter
+  inputUsername.onkeydown = e => {
+    if(e.key === 'Enter' && inputUsername.value.trim() !== '') {
+      startGame();
+      inputUsername.disabled = true;
+    }
+  };
+
+  // On page load focus username input
+  window.onload = () => {
+    inputUsername.focus();
+  };
+})();
+</script>
+
 </body>
 </html>
