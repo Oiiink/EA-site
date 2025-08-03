@@ -10,7 +10,7 @@
       transition: background-color 0.3s, border-color 0.3s;
     }
     .key {
-      background-color: #374151; /* gray-700 */
+      background-color: #374151; /* dark gray */
       color: white;
       padding: 0.5rem 0.5rem;
       border-radius: 0.375rem;
@@ -35,7 +35,7 @@
       margin-bottom: 0.5rem;
     }
     .key-row.second-row .key {
-      margin-left: 0.375rem; /* ~6px */
+      margin-left: 0.375rem;
     }
     .key.wide {
       width: 4.5rem;
@@ -61,10 +61,68 @@
   </main>
 
   <script>
-    // Words encoded (you can expand this list if you want)
-    const encoded = "YXBwbGUsZXZlbnQsbW9kZW0sc2tlcHAsdXRpbHMsYWxlcnQsdHJhY2ssZmlnaHQsZ2FtZXMscGFydHk=";
-    const WORDS = atob(encoded).split(",");
-    const targetWord = WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
+    const WORDS = [
+      "ALERT",
+      "EVENT",
+      "FLASH",
+      "SIREN",
+      "ALARM",
+      "BEEPY",
+      "NOTIF",
+      "BREAK",
+      "PULSE",
+      "RADAR",
+      "REACT",
+      "SOUND",
+      "STORM",
+      "VIGIL",
+      "WATCH",
+      "BLINK",
+      "BRIEF",
+      "SPEED",
+      "SWEEP",
+      "TRACE",
+      "CHAOS",
+      "CLASH",
+      "DRILL",
+      "FAULT",
+      "FOCUS",
+      "GAUGE",
+      "HASTE",
+      "HINTS",
+      "KNOCK",
+      "LIMIT",
+      "NOISE",
+      "OCCUR",
+      "PHASE",
+      "QUICK",
+      "RALLY",
+      "RISKS",
+      "SCALE",
+      "SHIFT",
+      "SIGNS",
+      "SPEAK",
+      "STAND",
+      "START",
+      "SURGE",
+      "TIMER",
+      "TRACK",
+      "TRIAL",
+      "TROOP",
+      "TURNS",
+      "UPSET",
+      "VISTA",
+      "VOICE",
+      "WAGER",
+      "WAVED",
+      "WRONG",
+      "YIELD",
+      "ZONES"
+    ];
+
+    const VALID_WORDS = WORDS.filter(w => w.length === 5).map(w => w.toUpperCase());
+
+    const targetWord = VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)];
     const MAX_GUESSES = 6;
 
     let currentGuess = "";
@@ -72,12 +130,10 @@
     let guessHistory = [];
     const date = new Date().toISOString().slice(0, 10);
 
-    // Keyboard letter states: 'correct' (green), 'present' (yellow), 'absent' (gray)
     const keyboardState = {};
 
     const game = document.getElementById("wordle-game");
 
-    // Create board rows and tiles
     for (let r = 0; r < MAX_GUESSES; r++) {
       const row = document.createElement("div");
       row.className = "flex justify-center gap-2";
@@ -89,7 +145,6 @@
       game.appendChild(row);
     }
 
-    // Create keyboard buttons properly
     const keyboardLayout = [
       "QWERTYUIOP",
       "ASDFGHJKL",
@@ -105,7 +160,6 @@
       keyboardLayout.forEach((rowLetters, idx) => {
         const rowEl = rows[idx];
         if (idx === 2) {
-          // Add ENTER at start
           const enterKey = document.createElement("button");
           enterKey.textContent = "↵";
           enterKey.setAttribute("data-key", "ENTER");
@@ -122,7 +176,6 @@
         }
 
         if (idx === 2) {
-          // Add BACKSPACE at end
           const backspaceKey = document.createElement("button");
           backspaceKey.textContent = "⌫";
           backspaceKey.setAttribute("data-key", "BACKSPACE");
@@ -140,8 +193,8 @@
         const cell = row.children[i];
         cell.textContent = currentGuess[i] || "";
         cell.classList.remove("revealed");
-        cell.style.backgroundColor = "#1f2937"; // bg-gray-800
-        cell.style.borderColor = "#4b5563"; // border-gray-600
+        cell.style.backgroundColor = "#1f2937";
+        cell.style.borderColor = "#4b5563";
       }
     }
 
@@ -179,16 +232,16 @@
           cell.classList.add("revealed");
 
           if (letter === targetWord[i]) {
-            cell.style.backgroundColor = "#16a34a"; // green-600
+            cell.style.backgroundColor = "#16a34a"; // green
             cell.style.borderColor = "#16a34a";
             keyboardState[letter] = "correct";
           } else if (used.includes(letter)) {
-            cell.style.backgroundColor = "#eab308"; // yellow-400
+            cell.style.backgroundColor = "#eab308"; // yellow
             cell.style.borderColor = "#eab308";
             if (keyboardState[letter] !== "correct") keyboardState[letter] = "present";
             used[used.indexOf(letter)] = null;
           } else {
-            cell.style.backgroundColor = "#374151"; // gray-700
+            cell.style.backgroundColor = "#374151"; // dark gray
             cell.style.borderColor = "#374151";
             if (!keyboardState[letter]) keyboardState[letter] = "absent";
           }
@@ -222,17 +275,17 @@
       keys.forEach(key => {
         const k = key.getAttribute("data-key");
         if (keyboardState[k] === "correct") {
-          key.style.backgroundColor = "#16a34a"; // green-600
+          key.style.backgroundColor = "#16a34a"; // green
           key.style.color = "white";
         } else if (keyboardState[k] === "present") {
-          key.style.backgroundColor = "#eab308"; // yellow-400
+          key.style.backgroundColor = "#eab308"; // yellow
           key.style.color = "black";
         } else if (keyboardState[k] === "absent") {
-          key.style.backgroundColor = "#374151"; // gray-700
+          key.style.backgroundColor = "#374151"; // dark gray
           key.style.color = "white";
         } else {
           // Default
-          key.style.backgroundColor = "#374151"; // gray-700
+          key.style.backgroundColor = "#374151"; // dark gray
           key.style.color = "white";
         }
       });
@@ -272,7 +325,6 @@
     });
 
     function showShareButton(failed = false) {
-      // Remove old share box if any
       const oldBox = document.querySelector(".share-box");
       if (oldBox) oldBox.remove();
 
