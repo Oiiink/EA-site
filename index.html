@@ -1,169 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stick Fighting Game</title>
+  <meta charset="UTF-8">
+  <title>Hit Me! - Bus Game</title>
   <style>
-    body, html {
+    body {
       margin: 0;
-      padding: 0;
+      background: #88ccee;
+      font-family: Arial, sans-serif;
       overflow: hidden;
-      background: #111;
-      font-family: sans-serif;
     }
     canvas {
+      background: #eee;
       display: block;
-      background: url('https://i.imgur.com/Vz3bxrk.jpg') no-repeat center center;
-      background-size: cover;
+      margin: 0 auto;
     }
-    #ui {
+    #score {
       position: absolute;
       top: 10px;
       left: 10px;
+      font-size: 24px;
+      background: rgba(0,0,0,0.5);
       color: white;
-      z-index: 1;
+      padding: 10px;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <div id="ui">
-    <div>Player Health: <span id="p1hp">100</span></div>
-    <div>AI Health: <span id="p2hp">100</span></div>
-  </div>
-  <canvas id="game" width="800" height="400"></canvas>
-  <script>
-    const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
+<canvas id="gameCanvas" width="800" height="400"></canvas>
+<div id="score">Score: 0</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-    class Fighter {
-      constructor(x, color, isAI = false) {
-        this.x = x;
-        this.y = 300;
-        this.vx = 0;
-        this.vy = 0;
-        this.width = 30;
-        this.height = 60;
-        this.color = color;
-        this.health = 100;
-        this.isAI = isAI;
-        this.facing = 1;
-        this.onGround = true;
-        this.energy = 100;
-        this.stunned = 0;
-      }
+let player = {
+  x: 100,
+  y: 300,
+  width: 40,
+  height: 60,
+  color: 'blue',
+  vy: 0,
+  grounded: true,
+  score: 0
+};
 
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
-      }
+let bus = {
+  x: canvas.width,
+  y: 300,
+  width: 120,
+  height: 60,
+  speed: 5,
+  color: 'red'
+};
 
-      update() {
-        if (this.stunned > 0) this.stunned--;
-        this.vy += 0.8; // gravity
-        this.y += this.vy;
-        this.x += this.vx;
+let gravity = 1;
+let hit = false;
+let keys = {};
 
-        // ground
-        if (this.y > 300) {
-          this.y = 300;
-          this.vy = 0;
-          this.onGround = true;
-        } else {
-          this.onGround = false;
-        }
+document.addEventListener('keydown', e => keys[e.code] = true);
+document.addEventListener('keyup', e => keys[e.code] = false);
 
-        // screen bounds
-        this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
-      }
+function resetBus() {
+  bus.x = canvas.width + Math.random() * 500;
+  bus.speed = 5 + Math.random() * 5;
+}
 
-      punch(target) {
-        if (this.stunned > 0) return;
-        if (Math.abs(this.x - target.x) < 40 && Math.abs(this.y - target.y) < 60) {
-          target.health -= 10;
-          target.vx = 5 * this.facing;
-          target.stunned = 20;
-        }
-      }
+function update() {
+  // Movement
+  if (keys['ArrowLeft']) player.x -= 5;
+  if (keys['ArrowRight']) player.x += 5;
 
-      powerMove(target) {
-        if (this.energy >= 50) {
-          this.energy -= 50;
-          if (Math.abs(this.x - target.x) < 60) {
-            target.health -= 25;
-            target.vx = 10 * this.facing;
-            target.stunned = 40;
-          }
-        }
-      }
+  // Gravity
+  if (!player.grounded) {
+    player.vy += gravity;
+    player.y += player.vy;
+  }
 
-      dash() {
-        if (this.energy >= 20) {
-          this.energy -= 20;
-          this.vx += 10 * this.facing;
-        }
-      }
-    }
+  // Ground collision
+  if (player.y >= 300) {
+    player.y = 300;
+    player.vy = 0;
+    player.grounded = true;
+  }
 
-    const player = new Fighter(100, "cyan");
-    const ai = new Fighter(600, "red", true);
+  // Bus movement
+  bus.x -= bus.speed;
 
-    const keys = {};
-    document.addEventListener("keydown", e => keys[e.key] = true);
-    document.addEventListener("keyup", e => keys[e.key] = false);
+  // Collision detection
+  if (!hit && player.x < bus.x + bus.width && player.x + player.width > bus.x &&
+      player.y < bus.y + bus.height && player.y + player.height > bus.y) {
+    hit = true;
+    const impact = Math.floor(bus.speed * 100);
+    player.score += impact;
+    document.getElementById('score').innerText = `Score: ${player.score}`;
+    player.vy = -15;
+    player.grounded = false;
+    setTimeout(() => {
+      resetBus();
+      hit = false;
+    }, 1000);
+  }
 
-    function aiLogic() {
-      if (ai.stunned > 0) return;
-      const dx = player.x - ai.x;
-      ai.facing = dx > 0 ? 1 : -1;
+  // Reset bus
+  if (bus.x + bus.width < 0) {
+    resetBus();
+  }
+}
 
-      if (Math.abs(dx) > 60) {
-        ai.vx = 2 * ai.facing;
-      } else {
-        ai.vx = 0;
-        if (Math.random() < 0.02) ai.punch(player);
-        if (Math.random() < 0.01) ai.powerMove(player);
-      }
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (ai.onGround && Math.random() < 0.01) {
-        ai.vy = -12;
-      }
-    }
+  // Road
+  ctx.fillStyle = '#666';
+  ctx.fillRect(0, 360, canvas.width, 40);
 
-    function update() {
-      if (player.stunned <= 0) {
-        player.vx = 0;
-        if (keys["a"]) player.vx = -4;
-        if (keys["d"]) player.vx = 4;
-        if (keys["w"] && player.onGround) player.vy = -12;
-        if (keys["j"]) player.punch(ai);
-        if (keys["k"]) player.powerMove(ai);
-        if (keys["l"]) player.dash();
-      }
+  // Player
+  ctx.fillStyle = player.color;
+  ctx.fillRect(player.x, player.y, player.width, player.height);
 
-      player.energy = Math.min(100, player.energy + 0.5);
-      ai.energy = Math.min(100, ai.energy + 0.5);
+  // Bus
+  ctx.fillStyle = bus.color;
+  ctx.fillRect(bus.x, bus.y, bus.width, bus.height);
 
-      player.update();
-      ai.update();
-      if (ai.isAI) aiLogic();
+  // Text: "Get Hit By the Bus!"
+  ctx.fillStyle = 'black';
+  ctx.font = '20px Arial';
+  ctx.fillText('Get hit by the bus for points!', 250, 30);
+}
 
-      document.getElementById("p1hp").textContent = Math.max(0, Math.floor(player.health));
-      document.getElementById("p2hp").textContent = Math.max(0, Math.floor(ai.health));
-    }
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      player.draw();
-      ai.draw();
-    }
-
-    function loop() {
-      update();
-      draw();
-      requestAnimationFrame(loop);
-    }
-    loop();
-  </script>
+resetBus();
+gameLoop();
+</script>
 </body>
-</html>
