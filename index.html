@@ -1,97 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Alerts Wrapped</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #1a1a1a;
-            color: #fff;
-        }
-        header {
-            background: #ff7a00;
-            padding: 20px;
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-        .section {
-            background: #232323;
-            border-left: 6px solid #ff7a00;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.4);
-        }
-        .section h2 {
-            margin-top: 0;
-            color: #ff7a00;
-        }
-        .stat {
-            margin: 10px 0;
-            font-size: 1.2rem;
-        }
-        .highlight {
-            color: #ffae52;
-            font-weight: bold;
-        }
-        /* Category Styling */
-        .category-header {
-            font-size: 1.6rem;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            margin-bottom: 10px;
-            color: #ffa64d;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Alerts Wrapped</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #0e0e0e;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .page {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: 0.8s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .active {
+      opacity: 1 !important;
+      transform: translateY(0px) !important;
+      position: absolute;
+    }
+
+    .title {
+      font-size: 3rem;
+      color: #ff8a22;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1.4rem;
+      opacity: 0.8;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 2px solid #ff8a22;
+      padding: 25px 35px;
+      border-radius: 18px;
+      box-shadow: 0 0 20px rgba(255, 140, 0, 0.25);
+      font-size: 1.3rem;
+      margin: 8px 0;
+      min-width: 380px;
+      text-align: center;
+    }
+
+    .next-btn {
+      margin-top: 40px;
+      padding: 12px 28px;
+      background: #ff8a22;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 600;
+      color: black;
+    }
+
+    .next-btn:hover {
+      transform: scale(1.05);
+      background: #ffa64d;
+    }
+
+  </style>
 </head>
 <body>
-    <header>Event Alerts Wrapped</header>
 
-    <div class="container">
+  <div class="page active" id="page1">
+    <div class="title">Event Alerts Wrapped</div>
+    <div class="subtitle">Your year in events</div>
+    <button class="next-btn" onclick="nextPage()">Start</button>
+  </div>
 
-        <!-- PLAYER WRAPPED -->
-        <div class="section">
-            <div class="category-header">Player Stats</div>
-            <h2>Event Alerts Player Wrapped</h2>
-            <p class="stat">Events Played: <span class="highlight" id="eventsPlayed">0</span></p>
-            <p class="stat">Events Won: <span class="highlight" id="eventsWon">0</span></p>
-            <p class="stat">Your favorite event server is <span class="highlight" id="favoriteServer">N/A</span>, you've joined <span class="highlight" id="serverJoins">0</span> times.</p>
-        </div>
+  <div class="page" id="page2">
+    <div class="title">Player Stats</div>
+    <div class="card">Events Played: <b id="eventsPlayed">0</b></div>
+    <div class="card">Events Won: <b id="eventsWon">0</b></div>
+    <div class="card">Favorite Server: <b id="favoriteServer">N/A</b></div>
+    <div class="card">Times Joined: <b id="serverJoins">0</b></div>
+    <button class="next-btn" onclick="nextPage()">Next</button>
+  </div>
 
-        <!-- HOST WRAPPED -->
-        <div class="section">
-            <div class="category-header">Hosting Stats</div>
-            <h2>Event Alerts Host Wrapped</h2>
-            <p class="stat">Events Hosted: <span class="highlight" id="eventsHosted">0</span></p>
-            <p class="stat">Most Popular Month: <span class="highlight" id="popularMonth">N/A</span></p>
-            <p class="stat">Money Given: <span class="highlight" id="moneyGiven">$0</span></p>
-            <p class="stat">You're part of the top <span class="highlight" id="hostPercent">0%</span> of event hosts.</p>
-            <p class="stat">Fun Fact: Players hosting at <span class="highlight" id="bestTime">N/A</span> saw a <span class="highlight" id="popIncrease">0%</span> increase in players.</p>
-        </div>
+  <div class="page" id="page3">
+    <div class="title">Hosting Stats</div>
+    <div class="card">Events Hosted: <b id="eventsHosted">0</b></div>
+    <div class="card">Most Popular Month: <b id="popularMonth">N/A</b></div>
+    <div class="card">Money Given: <b id="moneyGiven">$0</b></div>
+    <div class="card">Top Host Percentile: <b id="hostPercent">0%</b></div>
+    <div class="card">Best Time Boost: <b id="popIncrease">0%</b> at <b id="bestTime">N/A</b></div>
+    <button class="next-btn" onclick="nextPage()">Next</button>
+  </div>
 
-        <!-- COMMUNITY WRAPPED -->
-        <div class="section">
-            <div class="category-header">Overall Stats</div>
-            <h2>Event Alerts Community Wrapped</h2>
-            <p class="stat">Community Events Hosted: <span class="highlight" id="communityHosted">0</span></p>
-            <p class="stat">Partner Events Hosted: <span class="highlight" id="partnerHosted">0</span></p>
-            <p class="stat">Total Event Hosts This Year: <span class="highlight" id="totalHosts">0</span></p>
-            <p class="stat">Total Money Given Away: <span class="highlight" id="totalMoney">$0</span></p>
-            <p class="stat">Most Active Community Event Host: <span class="highlight" id="topCommunityHost">N/A</span></p>
-            <p class="stat">Most Active Partner Event Host: <span class="highlight" id="topPartnerHost">N/A</span></p>
-            <p class="stat">Most Active Money Event Host: <span class="highlight" id="topMoneyHost">N/A</span></p>
-        </div>
+  <div class="page" id="page4">
+    <div class="title">Overall Stats</div>
+    <div class="card">Community Events: <b id="communityHosted">0</b></div>
+    <div class="card">Partner Events: <b id="partnerHosted">0</b></div>
+    <div class="card">Total Hosts: <b id="totalHosts">0</b></div>
+    <div class="card">Money Given Away: <b id="totalMoney">$0</b></div>
+    <div class="card">Top Community Host: <b id="topCommunityHost">N/A</b></div>
+    <div class="card">Top Partner Host: <b id="topPartnerHost">N/A</b></div>
+    <div class="card">Top Money Host: <b id="topMoneyHost">N/A</b></div>
+    <button class="next-btn" onclick="nextPage()">Finish</button>
+  </div>
 
-    </div>
+  <div class="page" id="page5">
+    <div class="title">Thanks for an awesome year!</div>
+    <div class="subtitle">See you in the next one 🎉</div>
+  </div>
+
+  <script>
+    let current = 1;
+    function nextPage() {
+      const currentPage = document.getElementById(`page${current}`);
+      const next = document.getElementById(`page${current + 1}`);
+      if (!next) return;
+      currentPage.classList.remove('active');
+      next.classList.add('active');
+      current++;
+    }
+  </script>
 
 </body>
 </html>
