@@ -1,859 +1,455 @@
-<!DOCTYPE html>
-<html lang="en" >
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stock Market Simulator - One Stock & Scheduled Orders</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Event Alerts • Wrapped</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Event Alerts Wrapped — your highlights from event servers this year.">
   <style>
-    * {
-      box-sizing: border-box;
+    :root{
+      --bg1:#0f172a;
+      --bg2:#071235;
+      --card:#0b1220cc;
+      --accent:#7c5cff;
+      --muted:#9aa4c0;
+      --glass: rgba(255,255,255,0.04);
+      --glass-strong: rgba(255,255,255,0.06);
     }
-    body {
-      margin: 0;
-      background: #1e1e1e;
-      color: #eee;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      user-select: none;
-      overflow-x: hidden;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1000px 600px at 10% 10%, rgba(124,92,255,0.12), transparent 10%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-    h1 {
-      text-align: center;
-      margin: 15px 0 8px 0;
-      font-weight: 600;
-      color: #f5f5f5;
+    .container{
+      width:100%;
+      max-width:980px;
+      border-radius:20px;
+      padding:28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+      position:relative;
+      overflow:hidden;
     }
-    #tabs {
-      max-width: 1100px;
-      margin: 0 auto 15px;
-      display: flex;
-      justify-content: center;
-      gap: 24px;
+
+    header {
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
     }
-    .tab {
-      padding: 8px 20px;
-      cursor: pointer;
-      border-radius: 8px 8px 0 0;
-      background: #333;
-      font-weight: 700;
-      user-select: none;
-      color: #ccc;
-      transition: background-color 0.3s ease, color 0.3s ease;
+    .logo {
+      width:72px;
+      height:72px;
+      border-radius:14px;
+      background: linear-gradient(135deg,var(--accent), #3dd1ff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:20px;
+      color:white;
+      box-shadow: 0 6px 22px rgba(124,92,255,0.12), inset 0 -6px 18px rgba(0,0,0,0.2);
     }
-    .tab.active {
-      background: #0a84ff;
-      color: white;
-      box-shadow: 0 4px 8px rgba(10,132,255,0.6);
+    h1{margin:0;font-size:24px}
+    p.lead{margin:0;color:var(--muted)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
     }
-    #container {
-      max-width: 1100px;
-      margin: 0 auto 40px;
-      background: #252526;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.7);
-      min-height: 450px;
+
+    .card{
+      background:linear-gradient(180deg,var(--glass), var(--glass-strong));
+      border-radius:14px;
+      padding:18px;
+      backdrop-filter: blur(6px) saturate(1.1);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.4);
     }
-    #balance {
-      text-align: center;
-      font-size: 1.2rem;
-      margin-bottom: 18px;
-      font-weight: 600;
-      color: #ddd;
-      user-select: text;
+
+    .main-card{
+      min-height:420px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 25px;
+
+    .hero{
+      display:flex;
+      gap:16px;
+      align-items:center;
     }
-    th, td {
-      text-align: center;
-      padding: 10px 8px;
-      border-bottom: 1px solid #444;
-      vertical-align: middle;
-      user-select: text;
+    .avatar{
+      width:96px;
+      height:96px;
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:36px;
+      font-weight:700;
+      color:white;
+      box-shadow: inset 0 -8px 24px rgba(0,0,0,0.25);
     }
-    th {
-      background: #3c3c3c;
-      font-weight: 700;
-      font-size: 14px;
-      color: #ccc;
+    .stats{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:6px;
     }
-    td {
-      font-size: 13px;
-      color: #bbb;
+    .stat{
+      padding:12px;
+      border-radius:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      min-width:120px;
+      text-align:center;
     }
-    .price-up {
-      color: #4caf50;
-      font-weight: 600;
+    .stat .value{font-weight:800;font-size:20px}
+    .stat .label{font-size:12px;color:var(--muted)}
+
+    .sidebar { display:flex; flex-direction:column; gap:12px; }
+    .top-list{ list-style:none;padding:0;margin:0; display:flex; flex-direction:column; gap:8px;}
+    .top-item{display:flex; gap:12px; align-items:center}
+    .top-item .badge{width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#3dd1ff);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .top-item .meta{display:flex;flex-direction:column}
+    .top-item .meta .title{font-weight:700}
+    .top-item .meta .sub{font-size:12px;color:var(--muted)}
+
+    .footer {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:16px;
     }
-    .price-down {
-      color: #f44336;
-      font-weight: 600;
-    }
-    input[type=number] {
-      width: 60px;
-      padding: 6px;
-      border-radius: 4px;
+    .btn {
+      background: linear-gradient(90deg,var(--accent), #3dd1ff);
       border: none;
-      background: #333;
-      color: #eee;
-      font-weight: 600;
-      font-size: 13px;
-      text-align: center;
-      outline: none;
-      transition: background-color 0.2s ease;
-      user-select: text;
+      color:white;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 8px 24px rgba(60,40,140,0.12);
     }
-    input[type=number]:focus {
-      background: #444;
+    .btn.ghost{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-weight:600;
     }
-    button {
-      background-color: #0a84ff;
-      border: none;
-      padding: 6px 12px;
-      color: white;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 13px;
-      transition: background-color 0.3s ease;
-      user-select: none;
+
+    /* decorative */
+    .confetti-canvas { position:absolute; inset:0; pointer-events:none; z-index:0; }
+    .content { position:relative; z-index:1; }
+
+    /* Responsive */
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr; }
+      .sidebar{order:2}
+      .main-card{order:1}
     }
-    button:hover {
-      background-color: #006edc;
-    }
-    #log {
-      max-width: 1100px;
-      margin: 0 auto;
-      background: #181818;
-      padding: 10px 15px;
-      border-radius: 6px;
-      box-shadow: inset 0 0 15px rgba(255,255,255,0.05);
-      height: 140px;
-      overflow-y: auto;
-      font-family: monospace;
-      font-size: 14px;
-      color: #bbb;
-      user-select: text;
-    }
-    canvas.chartCanvas {
-      display: block;
-      margin: 10px auto 8px auto;
-      background: #121212;
-      border: 1px solid #333;
-      border-radius: 6px;
-      cursor: grab;
-    }
-    #chartContainer {
-      user-select: none;
-      position: relative;
-    }
-    #tooltip {
-      position: absolute;
-      pointer-events: none;
-      background: rgba(30, 30, 30, 0.9);
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-family: monospace;
-      color: #eee;
-      display: none;
-      white-space: nowrap;
-      box-shadow: 0 0 6px rgba(0,0,0,0.8);
-      z-index: 10;
-      border: 1px solid #444;
-      user-select: none;
-    }
-    /* Pending order badge */
-    .pending-order {
-      position: relative;
-      display: inline-block;
-      margin-left: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #0af;
-      background: rgba(10, 132, 255, 0.15);
-      border-radius: 10px;
-      padding: 2px 6px;
-      user-select: none;
-      font-family: monospace;
-    }
+
+    /* small helper inputs */
+    .controls{display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap}
+    .controls input[type="text"]{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .brandline{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
-  <h1>Stock Market Simulator</h1>
-  <div id="tabs">
-    <div id="tab-market" class="tab active">Market</div>
-    <div id="tab-portfolio" class="tab">Portfolio Summary</div>
+  <div class="container" id="wrapped-root" aria-live="polite">
+    <canvas id="confetti" class="confetti-canvas"></canvas>
+    <div class="content">
+      <header>
+        <div class="logo">EA</div>
+        <div>
+          <h1>Event Alerts — Wrapped</h1>
+          <p class="lead">Your Event Highlights — a visual summary of servers, playtime, and top moments.</p>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="card main-card">
+          <div class="controls">
+            <input id="nameInput" type="text" placeholder="Enter a username (or leave blank)" />
+            <button class="btn" id="generateBtn">Generate Wrapped</button>
+            <button class="btn ghost" id="randomBtn">Random demo</button>
+            <div style="margin-left:auto" class="brandline">Generated with ♥ for Event Alerts</div>
+          </div>
+
+          <div id="heroWrap" class="hero" aria-hidden="false">
+            <div class="avatar" id="avatar">OY</div>
+            <div>
+              <div style="display:flex; gap:12px; align-items:baseline;">
+                <div>
+                  <div id="displayName" style="font-size:20px;font-weight:800">Oiiink YT</div>
+                  <div id="subtitle" style="font-size:13px;color:var(--muted)">Top Event Alert Subscriber</div>
+                </div>
+              </div>
+              <div class="stats" style="margin-top:12px">
+                <div class="stat">
+                  <div class="value" id="stat-servers">0</div>
+                  <div class="label">Unique servers joined</div>
+                </div>
+                <div class="stat">
+                  <div class="value" id="stat-events">0</div>
+                  <div class="label">Events attended</div>
+                </div>
+                <div class="stat">
+                  <div class="value" id="stat-hours">0h</div>
+                  <div class="label">Approx. playtime</div>
+                </div>
+                <div class="stat">
+                  <div class="value" id="stat-topserver">—</div>
+                  <div class="label">Top server</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1; display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px" class="card">
+              <h3 style="margin:0 0 8px 0">Top Events</h3>
+              <ul id="topEventsList" style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px"></ul>
+            </div>
+
+            <div style="flex:1;min-width:220px" class="card">
+              <h3 style="margin:0 0 8px 0">Memorable Moments</h3>
+              <div id="moments" style="display:flex;flex-direction:column;gap:8px"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <div class="footer">
+              <div style="font-size:12px;color:var(--muted)">Tip: Replace the demo data with your Event Alerts API to generate real wrapped images.</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn ghost" id="shareTwitter">Share</button>
+                <button class="btn" id="downloadBtn">Download Image</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <aside class="sidebar">
+          <div class="card">
+            <h3 style="margin:0 0 8px 0">Top servers you visited</h3>
+            <ul class="top-list" id="topServers"></ul>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 8px 0">About</h3>
+            <p class="brandline" style="margin:0">
+              Event Alerts Wrapped is a sharable summary of a user's event activity. Use it for sharing on social or in your profile.
+            </p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
   </div>
 
-  <div id="container">
-    <div id="balance">Cash: $1000.00 | Portfolio Value: $0.00 | Total: $1000.00</div>
-
-    <div id="market-view">
-      <table>
-        <thead>
-          <tr>
-            <th>Select</th>
-            <th>Stock</th>
-            <th>Price ($)</th>
-            <th>Chart & Volume</th>
-            <th>Your Shares</th>
-            <th>Buy</th>
-            <th>Sell</th>
-          </tr>
-        </thead>
-        <tbody id="stockBody"></tbody>
-      </table>
-    </div>
-
-    <div id="portfolio-view" style="display:none;">
-      <table>
-        <thead>
-          <tr>
-            <th>Stock</th>
-            <th>Shares Owned</th>
-            <th>Current Price</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody id="portfolioBody"></tbody>
-      </table>
-      <div style="text-align:center; margin-top: 10px; font-size: 1.1rem; color: #ddd;">
-        <strong>Total Portfolio Value:</strong> $<span id="portfolioTotal">0.00</span><br/>
-        <strong>Cash:</strong> $<span id="portfolioCash">0.00</span><br/>
-        <strong>Overall Total:</strong> $<span id="portfolioOverall">0.00</span>
-      </div>
-      <div style="margin-top: 15px; font-size: 14px; color: #aaa; user-select: text;">
-        <h3>Pending Orders</h3>
-        <ul id="pendingOrdersList" style="list-style:none; padding-left:0; max-height:150px; overflow-y:auto;"></ul>
-      </div>
-    </div>
-  </div>
-
-  <div id="log"></div>
-
-<script>
-  // -- DATA SETUP --
-
-  let cash = 1000;
-
-  // Only one stock can be selected for investing
-  let selectedStockSymbol = null;
-
-  const stocks = [
-    { symbol: "APL", name: "Apple", price: 150, owned: 0, history: [] },
-    { symbol: "GGL", name: "Google", price: 2800, owned: 0, history: [] },
-    { symbol: "TSL", name: "Tesla", price: 720, owned: 0, history: [] },
-    { symbol: "AMZ", name: "Amazon", price: 3400, owned: 0, history: [] },
-    { symbol: "MSF", name: "Microsoft", price: 300, owned: 0, history: [] },
-  ];
-
-  const balanceEl = document.querySelector("#balance");
-  const stockBody = document.querySelector("#stockBody");
-  const portfolioBody = document.querySelector("#portfolioBody");
-  const portfolioTotalEl = document.querySelector("#portfolioTotal");
-  const portfolioCashEl = document.querySelector("#portfolioCash");
-  const portfolioOverallEl = document.querySelector("#portfolioOverall");
-  const pendingOrdersList = document.querySelector("#pendingOrdersList");
-  const log = document.querySelector("#log");
-
-  // -- PENDING ORDERS --
-
-  let pendingOrders = []; // {id, type:'buy'|'sell', stockSymbol, shares, executeTime (Date)}
-
-  // -- UTILS --
-
-  function formatMoney(num) {
-    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  function logEvent(text) {
-    const time = new Date().toLocaleTimeString();
-    log.textContent = `[${time}] ${text}\n` + log.textContent;
-  }
-
-  // -- CHART CONSTANTS --
-
-  const CHART_WIDTH = 300;
-  const CHART_HEIGHT = 150;
-  const VOLUME_HEIGHT = 40;
-  const PADDING = 30;
-
-  // -- STOCK ROW + CANVAS CREATION --
-
-  function createStockRow(stock) {
-    const tr = document.createElement("tr");
-    tr.id = `row-${stock.symbol}`;
-
-    // Selection radio - only one stock allowed to invest in
-    const tdSelect = document.createElement("td");
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "select-stock";
-    radio.value = stock.symbol;
-    radio.checked = stock.symbol === selectedStockSymbol;
-    radio.onchange = () => {
-      selectedStockSymbol = stock.symbol;
-      renderStocks();
-      updateBalance();
-      logEvent(`Selected stock for investment: ${stock.symbol}`);
+  <!-- small libraries via CDN -->
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // ---------- Demo / Replace with your real data flow ----------
+    // Example structure you might fetch from your backend:
+    const demoWrapped = {
+      username: "Oiiink YT",
+      displayInitials: "OY",
+      subtitle: "Top Event Alerts Subscriber",
+      uniqueServers: 18,
+      eventsAttended: 72,
+      hours: 124,
+      topServer: "SkyBlock Royale",
+      topServers: [
+        {name:"SkyBlock Royale", visits:24},
+        {name:"PixelEvents", visits:18},
+        {name:"Parkour Party", visits:12}
+      ],
+      topEvents: [
+        {name:"Halloween Bash", count:8},
+        {name:"Build Battle", count:6},
+        {name:"Spleef Tournament", count:5}
+      ],
+      moments: [
+        "Won the Halloween Boss with 1 HP left",
+        "Hosted an impromptu community event",
+        "Reached 1,000 total event joins"
+      ]
     };
-    tdSelect.appendChild(radio);
 
-    const tdSymbol = document.createElement("td");
-    tdSymbol.textContent = `${stock.name} (${stock.symbol})`;
+    // wrappedData should come from your server / API
+    let wrappedData = demoWrapped;
 
-    const tdPrice = document.createElement("td");
-    tdPrice.id = `price-${stock.symbol}`;
-    tdPrice.textContent = formatMoney(stock.price);
+    // ---------- helpers ----------
+    function el(id){ return document.getElementById(id); }
+    function setText(id, txt){ const e = el(id); if(e) e.textContent = txt; }
 
-    const tdChart = document.createElement("td");
-    tdChart.style.minWidth = CHART_WIDTH + "px";
-    tdChart.style.userSelect = "none";
-    tdChart.style.position = "relative";
+    function renderWrapped(data){
+      setText('displayName', data.username);
+      setText('subtitle', data.subtitle || '');
+      el('avatar').textContent = (data.displayInitials || data.username.split(' ').map(s=>s[0]).slice(0,2).join('')).toUpperCase();
+      setText('stat-servers', data.uniqueServers);
+      setText('stat-events', data.eventsAttended);
+      setText('stat-hours', (data.hours && data.hours + "h") || '0h');
+      setText('stat-topserver', data.topServer || '—');
 
-    // Chart container + canvas + tooltip
-    const chartContainer = document.createElement("div");
-    chartContainer.style.position = "relative";
-    chartContainer.id = `chartContainer-${stock.symbol}`;
-
-    const canvas = document.createElement("canvas");
-    canvas.className = "chartCanvas";
-    canvas.width = CHART_WIDTH;
-    canvas.height = CHART_HEIGHT + VOLUME_HEIGHT;
-    canvas.id = `chart-${stock.symbol}`;
-
-    const tooltip = document.createElement("div");
-    tooltip.id = `tooltip-${stock.symbol}`;
-    tooltip.style.position = "absolute";
-    tooltip.style.pointerEvents = "none";
-    tooltip.style.display = "none";
-    tooltip.style.background = "rgba(30,30,30,0.9)";
-    tooltip.style.color = "#eee";
-    tooltip.style.padding = "6px 10px";
-    tooltip.style.fontSize = "12px";
-    tooltip.style.borderRadius = "6px";
-    tooltip.style.border = "1px solid #444";
-    tooltip.style.whiteSpace = "nowrap";
-    tooltip.style.userSelect = "none";
-
-    chartContainer.appendChild(canvas);
-    chartContainer.appendChild(tooltip);
-    tdChart.appendChild(chartContainer);
-
-    const tdOwned = document.createElement("td");
-    tdOwned.id = `owned-${stock.symbol}`;
-    tdOwned.textContent = stock.owned;
-
-    // Buy input & button + pending order indicator
-    const tdBuy = document.createElement("td");
-    const buyInput = document.createElement("input");
-    buyInput.type = "number";
-    buyInput.min = "1";
-    buyInput.value = "1";
-    buyInput.id = `buy-input-${stock.symbol}`;
-    buyInput.style.marginRight = "6px";
-
-    const buyBtn = document.createElement("button");
-    buyBtn.textContent = "Buy";
-    buyBtn.onclick = () => scheduleOrder(stock.symbol, 'buy', buyInput.value);
-    tdBuy.appendChild(buyInput);
-    tdBuy.appendChild(buyBtn);
-
-    const buyPendingSpan = document.createElement("span");
-    buyPendingSpan.id = `pending-buy-${stock.symbol}`;
-    buyPendingSpan.className = "pending-order";
-    buyPendingSpan.style.display = "none";
-    tdBuy.appendChild(buyPendingSpan);
-
-    // Sell input & button + pending order indicator
-    const tdSell = document.createElement("td");
-    const sellInput = document.createElement("input");
-    sellInput.type = "number";
-    sellInput.min = "1";
-    sellInput.value = "1";
-    sellInput.id = `sell-input-${stock.symbol}`;
-    sellInput.style.marginRight = "6px";
-
-    const sellBtn = document.createElement("button");
-    sellBtn.textContent = "Sell";
-    sellBtn.onclick = () => scheduleOrder(stock.symbol, 'sell', sellInput.value);
-    tdSell.appendChild(sellInput);
-    tdSell.appendChild(sellBtn);
-
-    const sellPendingSpan = document.createElement("span");
-    sellPendingSpan.id = `pending-sell-${stock.symbol}`;
-    sellPendingSpan.className = "pending-order";
-    sellPendingSpan.style.display = "none";
-    tdSell.appendChild(sellPendingSpan);
-
-    tr.appendChild(tdSelect);
-    tr.appendChild(tdSymbol);
-    tr.appendChild(tdPrice);
-    tr.appendChild(tdChart);
-    tr.appendChild(tdOwned);
-    tr.appendChild(tdBuy);
-    tr.appendChild(tdSell);
-
-    return tr;
-  }
-
-  // -- RENDER STOCKS --
-
-  function renderStocks() {
-    stockBody.innerHTML = "";
-    stocks.forEach(stock => {
-      stockBody.appendChild(createStockRow(stock));
-      drawChart(stock);
-      setupTooltip(stock);
-      setupZoomPan(stock);
-    });
-  }
-
-  // -- BUY & SELL LOGIC (Immediate execution) --
-
-  function buyStock(symbol, amount) {
-    const stock = stocks.find(s => s.symbol === symbol);
-    const cost = stock.price * amount;
-    if (cost > cash) {
-      alert(`Not enough cash to buy ${amount} shares of ${stock.symbol}`);
-      return false;
-    }
-    stock.owned += amount;
-    cash -= cost;
-    logEvent(`Bought ${amount} shares of ${stock.symbol} for $${formatMoney(cost)}`);
-    return true;
-  }
-
-  function sellStock(symbol, amount) {
-    const stock = stocks.find(s => s.symbol === symbol);
-    if (amount > stock.owned) {
-      alert(`You don't own ${amount} shares of ${stock.symbol}`);
-      return false;
-    }
-    const gain = stock.price * amount;
-    stock.owned -= amount;
-    cash += gain;
-    logEvent(`Sold ${amount} shares of ${stock.symbol} for $${formatMoney(gain)}`);
-    return true;
-  }
-
-  // -- SCHEDULED ORDERS --
-
-  let orderIdCounter = 0;
-
-  function scheduleOrder(symbol, type, amountStr) {
-    if (selectedStockSymbol !== symbol) {
-      alert("You can only invest in the selected stock.");
-      return;
-    }
-    const amount = parseInt(amountStr);
-    if (isNaN(amount) || amount < 1) {
-      alert("Enter a valid amount");
-      return;
-    }
-    const stock = stocks.find(s => s.symbol === symbol);
-
-    // For buys, check if you have enough cash now (allow negative so they can try, or block?)
-    if (type === 'buy' && stock.price * amount > cash) {
-      alert("You do not have enough cash now to buy that amount.");
-      return;
-    }
-    if (type === 'sell' && amount > stock.owned) {
-      alert("You do not own enough shares to sell that amount.");
-      return;
-    }
-
-    // Prompt user for delay in minutes
-    let minutesStr = prompt(`Enter delay in minutes for this ${type} order (e.g. 0 for immediate):`, "0");
-    if (minutesStr === null) return; // cancelled
-    const delayMinutes = parseFloat(minutesStr);
-    if (isNaN(delayMinutes) || delayMinutes < 0) {
-      alert("Enter a valid non-negative number of minutes");
-      return;
-    }
-
-    const executeTime = Date.now() + delayMinutes * 60000;
-    const order = {
-      id: orderIdCounter++,
-      type,
-      stockSymbol: symbol,
-      shares: amount,
-      executeTime,
-      status: 'pending'
-    };
-    pendingOrders.push(order);
-    updatePendingIndicators();
-    logEvent(`Scheduled ${type} order for ${amount} shares of ${symbol} in ${delayMinutes} minute(s).`);
-
-    if(delayMinutes === 0) {
-      // Immediate execution on next tick
-      processPendingOrders();
-    }
-  }
-
-  function updatePendingIndicators() {
-    stocks.forEach(stock => {
-      const buyPending = pendingOrders.some(o => o.stockSymbol === stock.symbol && o.type === 'buy' && o.status === 'pending');
-      const sellPending = pendingOrders.some(o => o.stockSymbol === stock.symbol && o.type === 'sell' && o.status === 'pending');
-
-      const buySpan = document.getElementById(`pending-buy-${stock.symbol}`);
-      const sellSpan = document.getElementById(`pending-sell-${stock.symbol}`);
-
-      if (buyPending) {
-        buySpan.style.display = "inline-block";
-        buySpan.textContent = "Pending";
-      } else {
-        buySpan.style.display = "none";
-      }
-      if (sellPending) {
-        sellSpan.style.display = "inline-block";
-        sellSpan.textContent = "Pending";
-      } else {
-        sellSpan.style.display = "none";
-      }
-    });
-  }
-
-  // -- PROCESS PENDING ORDERS --
-
-  function processPendingOrders() {
-    const now = Date.now();
-    let changed = false;
-    for (let order of pendingOrders) {
-      if (order.status === 'pending' && order.executeTime <= now) {
-        if (order.type === 'buy') {
-          // Check cash again (maybe price changed)
-          const stock = stocks.find(s => s.symbol === order.stockSymbol);
-          const cost = stock.price * order.shares;
-          if (cost <= cash) {
-            stock.owned += order.shares;
-            cash -= cost;
-            logEvent(`Executed BUY order: ${order.shares} shares of ${order.stockSymbol} at $${formatMoney(stock.price)} each, total $${formatMoney(cost)}`);
-            order.status = 'executed';
-          } else {
-            logEvent(`BUY order for ${order.shares} shares of ${order.stockSymbol} failed due to insufficient cash.`);
-            order.status = 'failed';
-          }
-        } else if (order.type === 'sell') {
-          const stock = stocks.find(s => s.symbol === order.stockSymbol);
-          if (order.shares <= stock.owned) {
-            const gain = stock.price * order.shares;
-            stock.owned -= order.shares;
-            cash += gain;
-            logEvent(`Executed SELL order: ${order.shares} shares of ${order.stockSymbol} at $${formatMoney(stock.price)} each, total $${formatMoney(gain)}`);
-            order.status = 'executed';
-          } else {
-            logEvent(`SELL order for ${order.shares} shares of ${order.stockSymbol} failed due to insufficient shares.`);
-            order.status = 'failed';
-          }
-        }
-        changed = true;
-      }
-    }
-    if (changed) {
-      // Remove executed/failed orders after showing
-      pendingOrders = pendingOrders.filter(o => o.status === 'pending');
-      updatePendingIndicators();
-      updateBalance();
-      renderPortfolio();
-    }
-  }
-
-  // -- RENDER PORTFOLIO --
-
-  function renderPortfolio() {
-    portfolioBody.innerHTML = "";
-    let totalValue = 0;
-    stocks.forEach(stock => {
-      if (stock.owned > 0) {
-        const row = document.createElement("tr");
-
-        const tdSymbol = document.createElement("td");
-        tdSymbol.textContent = `${stock.name} (${stock.symbol})`;
-
-        const tdOwned = document.createElement("td");
-        tdOwned.textContent = stock.owned;
-
-        const tdPrice = document.createElement("td");
-        tdPrice.textContent = formatMoney(stock.price);
-
-        const tdValue = document.createElement("td");
-        const value = stock.price * stock.owned;
-        tdValue.textContent = formatMoney(value);
-        totalValue += value;
-
-        row.appendChild(tdSymbol);
-        row.appendChild(tdOwned);
-        row.appendChild(tdPrice);
-        row.appendChild(tdValue);
-        portfolioBody.appendChild(row);
-      }
-    });
-    portfolioTotalEl.textContent = formatMoney(totalValue);
-    portfolioCashEl.textContent = formatMoney(cash);
-    portfolioOverallEl.textContent = formatMoney(totalValue + cash);
-
-    // Pending orders list
-    pendingOrdersList.innerHTML = "";
-    if (pendingOrders.length === 0) {
-      pendingOrdersList.innerHTML = "<li>No pending orders.</li>";
-    } else {
-      pendingOrders.forEach(order => {
-        const li = document.createElement("li");
-        const inSeconds = Math.max(0, Math.round((order.executeTime - Date.now()) / 1000));
-        const mins = Math.floor(inSeconds / 60);
-        const secs = inSeconds % 60;
-        li.textContent = `${order.type.toUpperCase()} ${order.shares} shares of ${order.stockSymbol} in ${mins}m ${secs}s`;
-        pendingOrdersList.appendChild(li);
+      const topServers = el('topServers'); topServers.innerHTML = '';
+      (data.topServers || []).forEach((s, i)=> {
+        const li = document.createElement('li'); li.className = 'top-item';
+        li.innerHTML = `<div class="badge">${i+1}</div>
+                        <div class="meta"><div class="title">${s.name}</div><div class="sub">${s.visits} visits</div></div>`;
+        topServers.appendChild(li);
       });
-    }
-  }
 
-  // -- BALANCE DISPLAY --
-
-  function updateBalance() {
-    const portfolioValue = stocks.reduce((acc, s) => acc + s.price * s.owned, 0);
-    balanceEl.textContent = `Cash: $${formatMoney(cash)} | Portfolio Value: $${formatMoney(portfolioValue)} | Total: $${formatMoney(cash + portfolioValue)}`;
-
-    // Update owned shares count in stock list
-    stocks.forEach(stock => {
-      const tdOwned = document.getElementById(`owned-${stock.symbol}`);
-      if (tdOwned) tdOwned.textContent = stock.owned;
-      const tdPrice = document.getElementById(`price-${stock.symbol}`);
-      if (tdPrice) tdPrice.textContent = formatMoney(stock.price);
-    });
-  }
-
-  // -- CHART RENDERING --
-
-  // We'll keep zoom & pan disabled for simplicity now
-
-  function drawChart(stock) {
-    const canvas = document.getElementById(`chart-${stock.symbol}`);
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const width = canvas.width;
-    const height = canvas.height;
-
-    ctx.clearRect(0, 0, width, height);
-
-    const priceHeight = CHART_HEIGHT - PADDING;
-    const volumeHeight = VOLUME_HEIGHT;
-    const padding = PADDING;
-
-    // Use history data
-    const candles = stock.history;
-    if (candles.length < 2) return;
-
-    const candleCount = candles.length;
-    const candleWidth = (width - 2 * padding) / candleCount * 0.7;
-    const candleStep = (width - 2 * padding) / candleCount;
-
-    // Price scale
-    let minPrice = Math.min(...candles.map(c => c.low));
-    let maxPrice = Math.max(...candles.map(c => c.high));
-    if (minPrice === maxPrice) maxPrice += 1;
-
-    // Volume scale
-    let maxVolume = Math.max(...candles.map(c => c.volume || 0));
-    if (maxVolume === 0) maxVolume = 1;
-
-    function scalePrice(y) {
-      return priceHeight - ((y - minPrice) / (maxPrice - minPrice)) * priceHeight + padding;
-    }
-    function scaleVolume(v) {
-      return volumeHeight * (v / maxVolume);
-    }
-
-    // Draw background grid lines for price
-    ctx.strokeStyle = "#444";
-    ctx.lineWidth = 1;
-    ctx.font = "10px monospace";
-    ctx.fillStyle = "#888";
-    ctx.textAlign = "right";
-
-    for (let i = 0; i <= 4; i++) {
-      let p = minPrice + (maxPrice - minPrice) * i / 4;
-      let y = scalePrice(p);
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(width - padding, y);
-      ctx.stroke();
-      ctx.fillText(p.toFixed(2), padding - 5, y + 3);
-    }
-
-    // Draw volume label
-    ctx.fillStyle = "#555";
-    ctx.textAlign = "left";
-    ctx.font = "9px monospace";
-    ctx.fillText("Vol", padding, priceHeight + padding + 12);
-
-    // Draw candles & volume bars
-    candles.forEach((candle, i) => {
-      const x = padding + i * candleStep + (candleStep - candleWidth) / 2;
-
-      const up = candle.close >= candle.open;
-      const color = up ? "#4caf50" : "#f44336";
-
-      // Candle wick (high-low)
-      const yHigh = scalePrice(candle.high);
-      const yLow = scalePrice(candle.low);
-      const yOpen = scalePrice(candle.open);
-      const yClose = scalePrice(candle.close);
-      const bodyTop = Math.min(yOpen, yClose);
-      const bodyHeight = Math.max(1, Math.abs(yClose - yOpen));
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x + candleWidth / 2, yHigh);
-      ctx.lineTo(x + candleWidth / 2, yLow);
-      ctx.stroke();
-
-      // Candle body
-      ctx.fillStyle = color;
-      ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
-
-      // Volume bar
-      if (candle.volume) {
-        const volHeight = scaleVolume(candle.volume);
-        ctx.fillStyle = color + "aa";
-        ctx.fillRect(x, priceHeight + padding + volumeHeight - volHeight, candleWidth, volHeight);
-      }
-    });
-  }
-
-  // -- TOOLTIP --
-
-  function setupTooltip(stock) {
-    const canvas = document.getElementById(`chart-${stock.symbol}`);
-    const tooltip = document.getElementById(`tooltip-${stock.symbol}`);
-
-    canvas.onmousemove = function(e) {
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const priceHeight = CHART_HEIGHT - PADDING;
-      const volumeHeight = VOLUME_HEIGHT;
-      const padding = PADDING;
-
-      const candles = stock.history;
-
-      const candleStep = (canvas.width - 2 * padding) / candles.length;
-      const candleIndex = Math.floor((mouseX - padding) / candleStep);
-
-      if (candleIndex < 0 || candleIndex >= candles.length) {
-        tooltip.style.display = "none";
-        return;
-      }
-      const candle = candles[candleIndex];
-
-      const dateStr = `Candle ${candleIndex + 1}`;
-      const o = candle.open.toFixed(2);
-      const h = candle.high.toFixed(2);
-      const l = candle.low.toFixed(2);
-      const c = candle.close.toFixed(2);
-      const v = candle.volume ? candle.volume.toLocaleString() : "N/A";
-
-      tooltip.style.left = (mouseX + 15) + "px";
-      tooltip.style.top = (mouseY + 15) + "px";
-      tooltip.style.display = "block";
-
-      tooltip.innerHTML = `
-        <b>${stock.symbol} - ${dateStr}</b><br/>
-        Open: $${o}<br/>
-        High: $${h}<br/>
-        Low: $${l}<br/>
-        Close: $${c}<br/>
-        Volume: ${v}
-      `;
-    };
-
-    canvas.onmouseleave = () => {
-      tooltip.style.display = "none";
-    };
-  }
-
-  // -- PRICE FLUCTUATION --
-
-  function fluctuatePrices() {
-    stocks.forEach(stock => {
-      const last = stock.history[stock.history.length - 1];
-      if (!last) return;
-
-      // New candle
-      let open = last.close;
-      let change = (Math.random() - 0.5) * (stock.price * 0.02); // ~±2%
-      let close = Math.max(1, open + change);
-      let high = Math.max(open, close) + Math.random() * (stock.price * 0.01);
-      let low = Math.min(open, close) - Math.random() * (stock.price * 0.01);
-      high = Math.max(high, open, close);
-      low = Math.min(low, open, close);
-
-      const volume = Math.floor(100 + Math.random() * 1000);
-
-      stock.price = close;
-      stock.history.push({ open, high, low, close, volume });
-
-      // Limit history length
-      if (stock.history.length > 50) stock.history.shift();
-    });
-    renderStocks();
-    renderPortfolio();
-    updateBalance();
-  }
-
-  // -- TAB SWITCHING --
-
-  const tabMarket = document.getElementById("tab-market");
-  const tabPortfolio = document.getElementById("tab-portfolio");
-  const marketView = document.getElementById("market-view");
-  const portfolioView = document.getElementById("portfolio-view");
-
-  tabMarket.onclick = () => {
-    tabMarket.classList.add("active");
-    tabPortfolio.classList.remove("active");
-    marketView.style.display = "block";
-    portfolioView.style.display = "none";
-  };
-  tabPortfolio.onclick = () => {
-    tabPortfolio.classList.add("active");
-    tabMarket.classList.remove("active");
-    marketView.style.display = "none";
-    portfolioView.style.display = "block";
-    renderPortfolio();
-  };
-
-  // -- INITIALIZATION --
-
-  // Seed initial history
-  stocks.forEach(stock => {
-    for (let i = 0; i < 50; i++) {
-      const base = stock.price;
-      stock.history.push({
-        open: base,
-        high: base,
-        low: base,
-        close: base,
-        volume: 100 + Math.random() * 500
+      const topEventsList = el('topEventsList'); topEventsList.innerHTML = '';
+      (data.topEvents || []).forEach(ev=>{
+        const li = document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between';
+        li.innerHTML = `<div style="font-weight:700">${ev.name}</div><div style="color:var(--muted)">${ev.count}x</div>`;
+        topEventsList.appendChild(li);
       });
+
+      const moments = el('moments'); moments.innerHTML = '';
+      (data.moments || []).forEach(m=>{
+        const d = document.createElement('div');
+        d.textContent = "• " + m;
+        d.style.color = 'var(--muted)';
+        moments.appendChild(d);
+      });
+
+      // sprinkle a little accent glow depending on top server
+      document.documentElement.style.setProperty('--accent', pickAccent(data.topServer));
+      triggerConfetti();
     }
-  });
 
-  renderStocks();
-  updateBalance();
+    // small accent color picker
+    function pickAccent(name){
+      if(!name) return '#7c5cff';
+      const hash = [...name].reduce((a,c)=>a + c.charCodeAt(0),0);
+      const palette = ['#7c5cff','#ff7cb6','#3dd1ff','#ffd36b','#6cf58a','#b28cff'];
+      return palette[hash % palette.length];
+    }
 
-  // Update prices every 4 seconds
-  setInterval(() => {
-    fluctuatePrices();
-    processPendingOrders();
-  }, 4000);
+    // ---------- generate / share / download ----------
+    document.getElementById('generateBtn').addEventListener('click', ()=> {
+      const name = document.getElementById('nameInput').value.trim();
+      // In production, call your backend API: fetch(`/api/wrapped?user=${encodeURIComponent(name)}`).then(...)
+      // For now we use demo and override username if provided:
+      const payload = {...demoWrapped};
+      if(name) payload.username = name;
+      wrappedData = payload;
+      renderWrapped(wrappedData);
+    });
 
-</script>
+    document.getElementById('randomBtn').addEventListener('click', ()=>{
+      // quick random demo values
+      const rndName = ['PixelFan','EventMaster','PlayTimePro','Oiiink'][Math.floor(Math.random()*4)];
+      wrappedData = {...demoWrapped, username:rndName, uniqueServers: Math.floor(Math.random()*40)+1, eventsAttended: Math.floor(Math.random()*300)};
+      renderWrapped(wrappedData);
+    });
 
+    document.getElementById('downloadBtn').addEventListener('click', ()=> {
+      // hide controls for a clean screenshot
+      const controls = document.querySelector('.controls');
+      controls.style.visibility = 'hidden';
+      const root = document.getElementById('wrapped-root');
+
+      html2canvas(root, {scale:2, useCORS:true}).then(canvas=>{
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (wrappedData.username || 'wrapped') + '-event-alerts-wrapped.png';
+        document.body.appendChild(a); a.click(); a.remove();
+      }).finally(()=>{ controls.style.visibility = 'visible'; });
+    });
+
+    document.getElementById('shareTwitter').addEventListener('click', ()=>{
+      // simple twitter share linking to the repo/page, or instruct user to upload image
+      const text = encodeURIComponent(`Check out my Event Alerts Wrapped — ${wrappedData.username} — see yours at`);
+      const url = encodeURIComponent(location.href);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+    });
+
+    // ---------- confetti (very small, drop-in) ----------
+    const confettiCanvas = document.getElementById('confetti');
+    confettiCanvas.width = confettiCanvas.clientWidth;
+    confettiCanvas.height = confettiCanvas.clientHeight;
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+
+    function resizeCanvas(){
+      confettiCanvas.width = confettiCanvas.clientWidth;
+      confettiCanvas.height = confettiCanvas.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function triggerConfetti(){
+      confettiPieces = [];
+      const count = 60;
+      for(let i=0;i<count;i++){
+        confettiPieces.push({
+          x: Math.random()*confettiCanvas.width,
+          y: Math.random()*confettiCanvas.height - confettiCanvas.height,
+          r: Math.random()*8+4,
+          d: Math.random()*30+10,
+          tilt: Math.floor(Math.random()*10)-10,
+          color: randomConfettiColor()
+        });
+      }
+      requestAnimationFrame(animateConfetti);
+      setTimeout(()=>{ confettiPieces = []; clearCanvas(); }, 4000);
+    }
+
+    function randomConfettiColor(){
+      const base = getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#7c5cff';
+      const extras = ['#ff7cb6','#ffd36b','#6cf58a','#3dd1ff'];
+      return [base.trim(), extras[Math.floor(Math.random()*extras.length)]][Math.floor(Math.random()*2)];
+    }
+
+    function animateConfetti(){
+      ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+      for(let i=0;i<confettiPieces.length;i++){
+        const p = confettiPieces[i];
+        p.y += Math.cos(p.d) + 2 + p.r/4;
+        p.x += Math.sin(p.d);
+        p.tilt += 0.1;
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.tilt * 0.1);
+        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+        ctx.restore();
+        ctx.closePath();
+      }
+      if(confettiPieces.length) requestAnimationFrame(animateConfetti);
+    }
+    function clearCanvas(){ ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }
+
+    // ---------- bootstrap demo render ----------
+    renderWrapped(wrappedData);
+
+    // Optional: fetch real data example (commented)
+    /*
+    fetch('/api/wrapped?user=someid')
+      .then(r=>r.json())
+      .then(data => {
+         wrappedData = data;
+         renderWrapped(wrappedData);
+      });
+    */
+  </script>
 </body>
 </html>
