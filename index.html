@@ -1,646 +1,194 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Event Alerts — Wrapped</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<meta name="description" content="Event Alerts Wrapped — your year in events.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Alerts Wrapped</title>
 
-<style>
-  :root{
-    --bg1: #0b0b0c;
-    --bg2: #140e0a;
-    --card:#100a08;
-    --accent:#ff8a22;
-    --accent-2:#ffb06a;
-    --muted: #bdb6b1;
-    --glass: rgba(255,255,255,0.03);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    color:#fff;
-    background:
-      radial-gradient(800px 500px at 10% 10%, rgba(255,138,34,0.08), transparent 8%),
-      linear-gradient(180deg,var(--bg1),var(--bg2));
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    overflow:hidden;
-  }
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
-  /* app shell */
-  .app {
-    width:100%;
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px;
-  }
+    :root {
+      --accent: #ff8a22;
+      --accent-glow: rgba(255, 140, 40, 0.55);
+      --bg: #0c0c0e;
+      --panel: rgba(255, 255, 255, 0.05);
+    }
 
-  .stage {
-    width:100%;
-    max-width:1100px;
-    height:80vh;
-    border-radius:18px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: 0 20px 80px rgba(0,0,0,0.6);
-    overflow:hidden;
-    position:relative;
-    display:flex;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
 
-  /* left big preview + right side controls */
-  .left {
-    flex:1.45;
-    padding:34px;
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .right {
-    width:360px;
-    border-left:1px solid rgba(255,255,255,0.03);
-    padding:28px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.015), transparent);
-  }
+    body {
+      background: var(--bg);
+      overflow: hidden;
+      color: white;
+    }
 
-  /* pages area */
-  .pages {
-    width:100%;
-    height:100%;
-    position:relative;
-    overflow:hidden;
-  }
-  .page {
-    position:absolute;
-    inset:0;
-    padding:36px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    transform: translateX(120%);
-    opacity:0;
-    transition: transform 700ms cubic-bezier(.2,.9,.25,1), opacity 500ms ease;
-  }
-  .page.active {
-    transform: translateX(0);
-    opacity:1;
-  }
-  .page.prev {
-    transform: translateX(-120%);
-    opacity:0;
-  }
+    /* Full-screen slide */
+    .slide {
+      position: absolute;
+      height: 100vh;
+      width: 100vw;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      opacity: 0;
+      transform: translateX(120px);
+      transition: 0.8s ease;
+    }
 
-  /* hero card inside pages */
-  .hero-card {
-    width:100%;
-    max-width:680px;
-    border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:28px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 40px rgba(255,138,34,0.05) inset;
-    display:grid;
-    grid-template-columns: 1fr 220px;
-    gap:18px;
-    align-items:center;
-  }
+    .active {
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+    }
 
-  .hero-left {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .title {
-    font-size:26px;
-    font-weight:800;
-    letter-spacing: -0.02em;
-    color:var(--accent);
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .subtitle {
-    color:var(--muted);
-    font-size:13px;
-  }
-  .big-number {
-    font-size:42px;
-    font-weight:800;
-    margin-top:6px;
-    color:white;
-  }
-  .meta {
-    color:var(--muted);
-    font-size:13px;
-  }
+    /* Orange gradient swooshes like Lunar */
+    .bg-swoosh {
+      position: absolute;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(circle at 70% 30%, var(--accent-glow), transparent 60%);
+      filter: blur(160px);
+      z-index: -2;
+    }
 
-  .hero-right {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    align-items:center;
-    justify-content:center;
-  }
-  .pill {
-    padding:10px 14px;
-    border-radius:12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    font-weight:700;
-    border: 1px solid rgba(255,255,255,0.04);
-    color:var(--accent-2);
-    font-size:14px;
-  }
+    .bg-accent-line {
+      position: absolute;
+      width: 110%;
+      height: 5px;
+      top: 50%;
+      left: -5%;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      filter: blur(8px);
+      transform: rotate(-6deg);
+      opacity: 0.45;
+      z-index: -1;
+    }
 
-  /* small stat list used on pages */
-  .stat-grid {
-    margin-top:14px;
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-  .stat {
-    min-width:150px;
-    background: rgba(255,255,255,0.018);
-    padding:12px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.03);
-  }
-  .stat .label { color:var(--muted); font-size:12px; }
-  .stat .value { font-weight:800; font-size:20px; margin-top:6px; color:white; }
+    /* Title */
+    .title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      text-shadow: 0 0 25px var(--accent-glow);
+    }
 
-  /* right controls */
-  .progress {
-    height:8px;
-    background: rgba(255,255,255,0.03);
-    border-radius:8px;
-    overflow:hidden;
-    margin-top:8px;
-  }
-  .progress > div {
-    height:100%;
-    width:0%;
-    background: linear-gradient(90deg,var(--accent),var(--accent-2));
-    transition: width 700ms cubic-bezier(.2,.9,.25,1);
-  }
-  .controls-top { display:flex; gap:8px; align-items:center; justify-content:space-between; }
-  .controls-top .mini-title { font-weight:800; color:var(--accent); }
-  .controls-bottom { margin-top:auto; display:flex; gap:8px; justify-content:space-between; align-items:center; }
-  .btn {
-    padding:10px 14px;
-    border-radius:10px;
-    border:none;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .btn.primary { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#111; box-shadow: 0 10px 30px rgba(255,138,34,0.12); }
-  .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
+    /* Logo */
+    .logo {
+      width: 160px;
+      opacity: 0.95;
+      margin-bottom: 10px;
+    }
 
-  /* small footer */
-  .footer-note { font-size:12px; color:var(--muted); text-align:center; margin-top:12px; }
+    /* Stat Card */
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 22px 30px;
+      width: 420px;
+      text-align: center;
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+      font-size: 1.25rem;
+      box-shadow: 0 0 20px rgba(255, 140, 40, 0.2);
+    }
 
-  /* confetti canvas */
-  #confetti { position:absolute; inset:0; pointer-events:none; z-index:2 }
+    .highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
 
-  /* responsive */
-  @media (max-width:1000px){
-    .stage { height:90vh }
-    .hero-card { grid-template-columns: 1fr; }
-    .right { display:none; }
-  }
+    /* Button */
+    .next-btn {
+      margin-top: 30px;
+      font-size: 1.3rem;
+      padding: 12px 32px;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #000;
+      box-shadow: 0 0 18px var(--accent-glow);
+      transition: 0.25s;
+    }
 
-</style>
+    .next-btn:hover {
+      transform: scale(1.06);
+      filter: brightness(1.2);
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-  <div class="stage" id="stage">
-    <canvas id="confetti"></canvas>
 
-    <div class="left">
-      <div class="pages" id="pages">
-        <!-- Intro -->
-        <section class="page active" data-index="0">
-          <div class="hero-card" style="grid-template-columns:1fr">
-            <div class="hero-left" style="align-items:center">
-              <div class="title">Event Alerts — Wrapped</div>
-              <div class="subtitle">A sharable summary of your year in events</div>
-              <div class="big-number" style="font-size:34px">Thanks for being part of the community 🎉</div>
-              <div class="meta">Click Next to reveal your Player, Host and Community highlights.</div>
-            </div>
-          </div>
-        </section>
+  <div class="bg-swoosh"></div>
+  <div class="bg-accent-line"></div>
 
-        <!-- Player -->
-        <section class="page" data-index="1">
-          <div class="hero-card">
-            <div class="hero-left">
-              <div class="title">Player Stats <span style="font-size:14px; color:var(--muted); font-weight:600">(Community / Partner / Skeppy)</span></div>
-              <div class="subtitle">Your most-played events and highlights</div>
-
-              <div class="stat-grid" id="player-stats">
-                <div class="stat">
-                  <div class="label">Events Played</div>
-                  <div class="value" id="eventsPlayed">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Events Won</div>
-                  <div class="value" id="eventsWon">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Favorite Server</div>
-                  <div class="value" id="favoriteServer">—</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Times Joined</div>
-                  <div class="value" id="serverJoins">0</div>
-                </div>
-              </div>
-
-            </div>
-            <div class="hero-right">
-              <div class="pill" id="player-rank">Player</div>
-              <div style="font-size:12px;color:var(--muted);text-align:center;padding:6px">Tip: top players may receive cosmetic rewards.</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Host -->
-        <section class="page" data-index="2">
-          <div class="hero-card">
-            <div class="hero-left">
-              <div class="title">Hosting Stats</div>
-              <div class="subtitle">How your hosted events performed</div>
-
-              <div class="stat-grid" id="host-stats">
-                <div class="stat">
-                  <div class="label">Events Hosted</div>
-                  <div class="value" id="eventsHosted">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Most Popular Month</div>
-                  <div class="value" id="popularMonth">—</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Money Given</div>
-                  <div class="value" id="moneyGiven">$0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Host Percentile</div>
-                  <div class="value" id="hostPercent">0%</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Best Time Boost</div>
-                  <div class="value" id="popIncrease">0% <div style="font-size:11px;color:var(--muted)">at <b id="bestTime">—</b></div></div>
-                </div>
-              </div>
-
-            </div>
-            <div class="hero-right">
-              <div class="pill" id="host-rank">Host</div>
-              <div style="font-size:12px;color:var(--muted);text-align:center;padding:6px">Fun fact: Players hosting at certain times see boosts — use that!</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Community / Overall -->
-        <section class="page" data-index="3">
-          <div class="hero-card" style="grid-template-columns:1fr">
-            <div class="hero-left">
-              <div class="title">Community Wrapped — Overall Stats</div>
-              <div class="subtitle">Big-picture community metrics this timeframe</div>
-
-              <div class="stat-grid" id="community-stats" style="margin-top:18px">
-                <div class="stat">
-                  <div class="label">Community Events Hosted</div>
-                  <div class="value" id="communityHosted">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Partner Events Hosted</div>
-                  <div class="value" id="partnerHosted">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">People Who Hosted</div>
-                  <div class="value" id="totalHosts">0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Money Given Away</div>
-                  <div class="value" id="totalMoney">$0</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Most Active Community Event</div>
-                  <div class="value" id="mostActiveCommunity">—</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Most Active Partner Event</div>
-                  <div class="value" id="mostActivePartner">—</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Top Money Host</div>
-                  <div class="value" id="topMoneyHost">—</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        <!-- Finale -->
-        <section class="page" data-index="4">
-          <div class="hero-card" style="grid-template-columns:1fr">
-            <div class="hero-left" style="align-items:center">
-              <div class="title">That's a wrap 🎉</div>
-              <div class="subtitle">Share your Wrapped or download a PNG to post on socials.</div>
-              <div class="big-number" id="final-summary" style="font-size:28px">You joined <span id="final-joins">0</span> events and hosted <span id="final-hosts">0</span>.</div>
-              <div class="meta" style="margin-top:10px">Top performers may receive rewards — keep grinding 💀</div>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </div>
-
-    <!-- right panel controls -->
-    <aside class="right">
-      <div class="controls-top">
-        <div>
-          <div class="mini-title">Event Alerts Wrapped</div>
-          <div style="font-size:12px;color:var(--muted)">Demo mode — replace demoData with API</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-weight:800;font-size:14px;color:var(--accent)">2025</div>
-          <div style="font-size:12px;color:var(--muted)">Snapshot</div>
-        </div>
-      </div>
-
-      <div class="progress" title="progress">
-        <div id="progressBar"></div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn ghost" id="prevBtn">Prev</button>
-        <button class="btn primary" id="nextBtn">Next</button>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <input id="usernameInput" placeholder="Enter username (demo)" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:white" />
-        <button class="btn ghost" id="loadDemo">Load</button>
-      </div>
-
-      <div style="display:flex;gap:8px">
-        <button class="btn primary" id="downloadBtn">Download PNG</button>
-        <button class="btn ghost" id="shareBtn">Share</button>
-      </div>
-
-      <div class="footer-note">Tip: Swap the `demoData` object in the script with your API response to auto-fill stats.</div>
-    </aside>
-
+  <!-- Page 1 -->
+  <div class="slide active" id="slide1">
+    <img src="assets/images/logo.png" class="logo" />
+    <div class="title">Event Alerts Wrapped</div>
+    <button class="next-btn" onclick="nextSlide()">Begin</button>
   </div>
-</div>
 
-<!-- html2canvas -->
-<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- Player Stats -->
+  <div class="slide" id="slide2">
+    <div class="title">Player Stats</div>
+    <div class="card">Events Played: <span class="highlight" id="eventsPlayed">0</span></div>
+    <div class="card">Events Won: <span class="highlight" id="eventsWon">0</span></div>
+    <div class="card">Favorite Server: <span class="highlight" id="favoriteServer">N/A</span></div>
+    <div class="card">Joins: <span class="highlight" id="serverJoins">0</span></div>
+    <button class="next-btn" onclick="nextSlide()">Next</button>
+  </div>
 
-<script>
-/* ---- Demo data (replace with your API payload) ---- */
-const demoData = {
-  username: "Oiiink YT",
-  player: {
-    eventsPlayed: 124,
-    eventsWon: 9,
-    favoriteServer: "SkyBlock Royale",
-    serverJoins: 24
-  },
-  host: {
-    eventsHosted: 37,
-    popularMonth: "June",
-    moneyGiven: 1240,
-    hostPercentile: 86,
-    bestTime: "19:00 UTC",
-    popIncrease: 22
-  },
-  community: {
-    communityHosted: 392,
-    partnerHosted: 128,
-    totalHosts: 214,
-    totalMoney: 54000,
-    mostActiveCommunity: "Community Build-Off",
-    mostActivePartner: "PixelEvents Championship",
-    topMoneyHost: "BigDonor123"
-  }
-};
+  <!-- Hosting Stats -->
+  <div class="slide" id="slide3">
+    <div class="title">Hosting Stats</div>
+    <div class="card">Events Hosted: <span class="highlight" id="eventsHosted">0</span></div>
+    <div class="card">Most Popular Month: <span class="highlight" id="popularMonth">N/A</span></div>
+    <div class="card">Money Given: <span class="highlight" id="moneyGiven">$0</span></div>
+    <div class="card">Top Percentile: <span class="highlight" id="hostPercent">0%</span></div>
+    <div class="card">Best Time: <span class="highlight" id="bestTime">N/A</span> (+<span class="highlight" id="popIncrease">0%</span>)</div>
+    <button class="next-btn" onclick="nextSlide()">Next</button>
+  </div>
 
-/* ---- Page / nav logic ---- */
-const pages = Array.from(document.querySelectorAll('.page'));
-let index = 0;
-const total = pages.length;
-const progressBar = document.getElementById('progressBar');
+  <!-- Overall Stats -->
+  <div class="slide" id="slide4">
+    <div class="title">Overall Stats</div>
+    <div class="card">Community Events: <span class="highlight" id="communityHosted">0</span></div>
+    <div class="card">Partner Events: <span class="highlight" id="partnerHosted">0</span></div>
+    <div class="card">Total Hosts: <span class="highlight" id="totalHosts">0</span></div>
+    <div class="card">Money Given: <span class="highlight" id="totalMoney">$0</span></div>
+    <div class="card">Top Community Host: <span class="highlight" id="topCommunityHost">N/A</span></div>
+    <div class="card">Top Partner Host: <span class="highlight" id="topPartnerHost">N/A</span></div>
+    <div class="card">Top Money Host: <span class="highlight" id="topMoneyHost">N/A</span></div>
+    <button class="next-btn" onclick="nextSlide()">Finish</button>
+  </div>
 
-function setActive(i){
-  pages.forEach((p, idx) => {
-    p.classList.remove('active','prev');
-    if(idx === i) p.classList.add('active');
-    if(idx < i) p.classList.add('prev');
-  });
-  index = i;
-  updateProgress();
-  if(index === total - 1) triggerFinalConfetti();
-}
+  <!-- Final Page -->
+  <div class="slide" id="slide5">
+    <div class="title">Thanks for an Amazing Year</div>
+    <div style="opacity:0.7;font-size:1.4rem;">See you in the next one 🎉</div>
+  </div>
 
-function nextPage(){
-  if(index < total-1) setActive(index+1);
-}
-function prevPage(){
-  if(index > 0) setActive(index-1);
-}
-document.getElementById('nextBtn').addEventListener('click', nextPage);
-document.getElementById('prevBtn').addEventListener('click', prevPage);
+  <script>
+    let slide = 1;
+    function nextSlide() {
+      const current = document.getElementById(`slide${slide}`);
+      const next = document.getElementById(`slide${slide + 1}`);
+      if (!next) return;
+      current.classList.remove('active');
+      next.classList.add('active');
+      slide++;
+    }
+  </script>
 
-/* progress width */
-function updateProgress(){
-  const pct = Math.round(((index) / (total-1)) * 100);
-  progressBar.style.width = pct + '%';
-}
-
-/* keyboard nav (left/right) */
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'ArrowRight') nextPage();
-  if(e.key === 'ArrowLeft') prevPage();
-});
-
-/* ---- Animated counters ---- */
-function animateValue(el, to, duration=900){
-  const start = Number(el.textContent.replace(/[^0-9.-]/g,'')) || 0;
-  const range = to - start;
-  const startTime = performance.now();
-  function frame(now){
-    const progress = Math.min((now - startTime) / duration, 1);
-    const value = Math.round(start + (range * easeOutCubic(progress)));
-    el.textContent = Intl.NumberFormat().format(value);
-    if(progress < 1) requestAnimationFrame(frame);
-    else el.textContent = Intl.NumberFormat().format(to);
-  }
-  requestAnimationFrame(frame);
-}
-function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
-
-/* ---- Render data into DOM ---- */
-function render(data){
-  // Player
-  animateValue(document.getElementById('eventsPlayed'), data.player.eventsPlayed);
-  animateValue(document.getElementById('eventsWon'), data.player.eventsWon);
-  document.getElementById('favoriteServer').textContent = data.player.favoriteServer || '—';
-  animateValue(document.getElementById('serverJoins'), data.player.serverJoins);
-
-  // Host
-  animateValue(document.getElementById('eventsHosted'), data.host.eventsHosted);
-  document.getElementById('popularMonth').textContent = data.host.popularMonth || '—';
-  document.getElementById('moneyGiven').textContent = '$' + Intl.NumberFormat().format(data.host.moneyGiven || 0);
-  document.getElementById('hostPercent').textContent = (data.host.hostPercentile || 0) + '%';
-  document.getElementById('bestTime').textContent = data.host.bestTime || '—';
-  document.getElementById('popIncrease').textContent = (data.host.popIncrease || 0) + '%';
-
-  // Community
-  animateValue(document.getElementById('communityHosted'), data.community.communityHosted);
-  animateValue(document.getElementById('partnerHosted'), data.community.partnerHosted);
-  animateValue(document.getElementById('totalHosts'), data.community.totalHosts);
-  document.getElementById('totalMoney').textContent = '$' + Intl.NumberFormat().format(data.community.totalMoney || 0);
-  document.getElementById('mostActiveCommunity').textContent = data.community.mostActiveCommunity || '—';
-  document.getElementById('mostActivePartner').textContent = data.community.mostActivePartner || '—';
-  document.getElementById('topMoneyHost').textContent = data.community.topMoneyHost || '—';
-
-  // finale text
-  document.getElementById('final-joins').textContent = data.player.eventsPlayed;
-  document.getElementById('final-hosts').textContent = data.host.eventsHosted;
-}
-
-/* ---- Load demo / custom username button ---- */
-document.getElementById('loadDemo').addEventListener('click', ()=>{
-  const u = document.getElementById('usernameInput').value.trim();
-  // In production: fetch `/api/wrapped?user=${u}` and call render(fetchResult)
-  // For demo: slightly randomize numbers if username provided
-  const d = JSON.parse(JSON.stringify(demoData));
-  if(u){
-    d.player.eventsPlayed = demoData.player.eventsPlayed + Math.floor(Math.random()*60);
-    d.host.eventsHosted = demoData.host.eventsHosted + Math.floor(Math.random()*20);
-    d.community.totalMoney = demoData.community.totalMoney + Math.floor(Math.random()*20000);
-    d.player.favoriteServer = ['SkyBlock Royale','PixelEvents','Parkour Party'][Math.floor(Math.random()*3)];
-  }
-  render(d);
-  setActive(1);
-});
-
-/* load initial demo on start */
-render(demoData);
-
-/* ---- Download PNG (html2canvas) ---- */
-document.getElementById('downloadBtn').addEventListener('click', async ()=>{
-  // hide controls for clean shot
-  const right = document.querySelector('.right');
-  right.style.visibility = 'hidden';
-  // snapshot left stage
-  const stage = document.querySelector('.left');
-  await html2canvas(stage, {scale:2, useCORS:true}).then(canvas=>{
-    const a = document.createElement('a');
-    a.href = canvas.toDataURL('image/png');
-    a.download = (demoData.username || 'wrapped') + '-event-alerts-wrapped.png';
-    document.body.appendChild(a); a.click(); a.remove();
-  }).catch(err=>{
-    alert('Error generating image: ' + err.message);
-  });
-  right.style.visibility = 'visible';
-});
-
-/* share button opens twitter intent (user can attach image manually) */
-document.getElementById('shareBtn').addEventListener('click', ()=>{
-  const text = encodeURIComponent(`Check out my Event Alerts Wrapped — ${demoData.username}`);
-  window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-});
-
-/* prev/next on right panel too */
-document.getElementById('nextBtn').addEventListener('click', ()=> {
-  nextPage();
-  // animate numbers when entering new page
-  setTimeout(()=> {
-    // trigger subtle animations per page if needed (numbers already animate when render runs)
-  }, 200);
-});
-
-/* ---- Simple Confetti for finale ---- */
-const confettiCanvas = document.getElementById('confetti');
-const ctx = confettiCanvas.getContext('2d');
-let confettiPieces = [];
-
-function resizeConfetti(){
-  confettiCanvas.width = confettiCanvas.clientWidth;
-  confettiCanvas.height = confettiCanvas.clientHeight;
-}
-window.addEventListener('resize', resizeConfetti);
-resizeConfetti();
-
-function triggerFinalConfetti(){
-  confettiPieces = [];
-  const count = 80;
-  for(let i=0;i<count;i++){
-    confettiPieces.push({
-      x: Math.random() * confettiCanvas.width,
-      y: Math.random() * -confettiCanvas.height,
-      r: Math.random()*8 + 4,
-      d: Math.random()*60 + 20,
-      tilt: Math.random()*10 - 5,
-      color: pickColor()
-    });
-  }
-  requestAnimationFrame(drawConfetti);
-  setTimeout(()=> { confettiPieces = []; ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }, 5000);
-}
-function pickColor(){
-  const base = ['#ff8a22','#ffb06a','#ffd9b3','#ff6f3c'];
-  return base[Math.floor(Math.random()*base.length)];
-}
-function drawConfetti(){
-  ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-  confettiPieces.forEach((p, i) => {
-    p.y += Math.cos(p.d) + 3 + p.r/4;
-    p.x += Math.sin(p.d) * 0.5;
-    p.tilt += 0.05;
-    ctx.save();
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.tilt);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-    ctx.restore();
-  });
-  if(confettiPieces.length) requestAnimationFrame(drawConfetti);
-}
-
-/* small helper: trigger confetti when hitting last page via buttons too */
-pages.forEach(p => {
-  p.addEventListener('transitionend', ()=>{
-    const idx = Number(p.dataset.index);
-    if(idx === pages.length - 1 && p.classList.contains('active')) triggerFinalConfetti();
-  });
-});
-
-/* expose functions for buttons */
-window.nextPage = nextPage;
-window.prevPage = prevPage;
-
-/* Accessibility: allow clicking on stage to advance (optional) */
-document.querySelector('.left').addEventListener('click', (e)=>{
-  // ignore clicks if clicking interactive elements (like inside buttons on right)
-  if(e.target.tagName.toLowerCase() === 'button') return;
-  if(index < total - 1) nextPage();
-});
-
-/* ---- End script ---- */
-</script>
 </body>
 </html>
