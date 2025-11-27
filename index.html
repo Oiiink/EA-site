@@ -1,455 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Event Alerts • Wrapped</title>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <meta name="description" content="Event Alerts Wrapped — your highlights from event servers this year.">
-  <style>
-    :root{
-      --bg1:#0f172a;
-      --bg2:#071235;
-      --card:#0b1220cc;
-      --accent:#7c5cff;
-      --muted:#9aa4c0;
-      --glass: rgba(255,255,255,0.04);
-      --glass-strong: rgba(255,255,255,0.06);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background: radial-gradient(1000px 600px at 10% 10%, rgba(124,92,255,0.12), transparent 10%),
-                  linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#e6eef8;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:32px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .container{
-      width:100%;
-      max-width:980px;
-      border-radius:20px;
-      padding:28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
-      position:relative;
-      overflow:hidden;
-    }
-
-    header {
-      display:flex;
-      gap:16px;
-      align-items:center;
-      margin-bottom:18px;
-    }
-    .logo {
-      width:72px;
-      height:72px;
-      border-radius:14px;
-      background: linear-gradient(135deg,var(--accent), #3dd1ff);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:800;
-      font-size:20px;
-      color:white;
-      box-shadow: 0 6px 22px rgba(124,92,255,0.12), inset 0 -6px 18px rgba(0,0,0,0.2);
-    }
-    h1{margin:0;font-size:24px}
-    p.lead{margin:0;color:var(--muted)}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:18px;
-    }
-
-    .card{
-      background:linear-gradient(180deg,var(--glass), var(--glass-strong));
-      border-radius:14px;
-      padding:18px;
-      backdrop-filter: blur(6px) saturate(1.1);
-      box-shadow: 0 6px 18px rgba(2,6,23,0.4);
-    }
-
-    .main-card{
-      min-height:420px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    .hero{
-      display:flex;
-      gap:16px;
-      align-items:center;
-    }
-    .avatar{
-      width:96px;
-      height:96px;
-      border-radius:16px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:36px;
-      font-weight:700;
-      color:white;
-      box-shadow: inset 0 -8px 24px rgba(0,0,0,0.25);
-    }
-    .stats{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:6px;
-    }
-    .stat{
-      padding:12px;
-      border-radius:10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      min-width:120px;
-      text-align:center;
-    }
-    .stat .value{font-weight:800;font-size:20px}
-    .stat .label{font-size:12px;color:var(--muted)}
-
-    .sidebar { display:flex; flex-direction:column; gap:12px; }
-    .top-list{ list-style:none;padding:0;margin:0; display:flex; flex-direction:column; gap:8px;}
-    .top-item{display:flex; gap:12px; align-items:center}
-    .top-item .badge{width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#3dd1ff);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .top-item .meta{display:flex;flex-direction:column}
-    .top-item .meta .title{font-weight:700}
-    .top-item .meta .sub{font-size:12px;color:var(--muted)}
-
-    .footer {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-top:16px;
-    }
-    .btn {
-      background: linear-gradient(90deg,var(--accent), #3dd1ff);
-      border: none;
-      color:white;
-      padding:10px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:700;
-      box-shadow: 0 8px 24px rgba(60,40,140,0.12);
-    }
-    .btn.ghost{
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.06);
-      color:var(--muted);
-      font-weight:600;
-    }
-
-    /* decorative */
-    .confetti-canvas { position:absolute; inset:0; pointer-events:none; z-index:0; }
-    .content { position:relative; z-index:1; }
-
-    /* Responsive */
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr; }
-      .sidebar{order:2}
-      .main-card{order:1}
-    }
-
-    /* small helper inputs */
-    .controls{display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap}
-    .controls input[type="text"]{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-    .brandline{font-size:12px;color:var(--muted)}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Alerts Wrapped</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        header {
+            background: #ff7a00;
+            padding: 20px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .section {
+            background: #232323;
+            border-left: 6px solid #ff7a00;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #ff7a00;
+        }
+        .stat {
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        .highlight {
+            color: #ffae52;
+            font-weight: bold;
+        }
+        /* Category Styling */
+        .category-header {
+            font-size: 1.6rem;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            margin-bottom: 10px;
+            color: #ffa64d;
+        }
+    </style>
 </head>
 <body>
-  <div class="container" id="wrapped-root" aria-live="polite">
-    <canvas id="confetti" class="confetti-canvas"></canvas>
-    <div class="content">
-      <header>
-        <div class="logo">EA</div>
-        <div>
-          <h1>Event Alerts — Wrapped</h1>
-          <p class="lead">Your Event Highlights — a visual summary of servers, playtime, and top moments.</p>
-        </div>
-      </header>
+    <header>Event Alerts Wrapped</header>
 
-      <div class="grid">
-        <div class="card main-card">
-          <div class="controls">
-            <input id="nameInput" type="text" placeholder="Enter a username (or leave blank)" />
-            <button class="btn" id="generateBtn">Generate Wrapped</button>
-            <button class="btn ghost" id="randomBtn">Random demo</button>
-            <div style="margin-left:auto" class="brandline">Generated with ♥ for Event Alerts</div>
-          </div>
+    <div class="container">
 
-          <div id="heroWrap" class="hero" aria-hidden="false">
-            <div class="avatar" id="avatar">OY</div>
-            <div>
-              <div style="display:flex; gap:12px; align-items:baseline;">
-                <div>
-                  <div id="displayName" style="font-size:20px;font-weight:800">Oiiink YT</div>
-                  <div id="subtitle" style="font-size:13px;color:var(--muted)">Top Event Alert Subscriber</div>
-                </div>
-              </div>
-              <div class="stats" style="margin-top:12px">
-                <div class="stat">
-                  <div class="value" id="stat-servers">0</div>
-                  <div class="label">Unique servers joined</div>
-                </div>
-                <div class="stat">
-                  <div class="value" id="stat-events">0</div>
-                  <div class="label">Events attended</div>
-                </div>
-                <div class="stat">
-                  <div class="value" id="stat-hours">0h</div>
-                  <div class="label">Approx. playtime</div>
-                </div>
-                <div class="stat">
-                  <div class="value" id="stat-topserver">—</div>
-                  <div class="label">Top server</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style="flex:1; display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
-            <div style="flex:1;min-width:220px" class="card">
-              <h3 style="margin:0 0 8px 0">Top Events</h3>
-              <ul id="topEventsList" style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px"></ul>
-            </div>
-
-            <div style="flex:1;min-width:220px" class="card">
-              <h3 style="margin:0 0 8px 0">Memorable Moments</h3>
-              <div id="moments" style="display:flex;flex-direction:column;gap:8px"></div>
-            </div>
-          </div>
-
-          <div style="margin-top:12px;">
-            <div class="footer">
-              <div style="font-size:12px;color:var(--muted)">Tip: Replace the demo data with your Event Alerts API to generate real wrapped images.</div>
-              <div style="display:flex;gap:8px">
-                <button class="btn ghost" id="shareTwitter">Share</button>
-                <button class="btn" id="downloadBtn">Download Image</button>
-              </div>
-            </div>
-          </div>
-
+        <!-- PLAYER WRAPPED -->
+        <div class="section">
+            <div class="category-header">Player Stats</div>
+            <h2>Event Alerts Player Wrapped</h2>
+            <p class="stat">Events Played: <span class="highlight" id="eventsPlayed">0</span></p>
+            <p class="stat">Events Won: <span class="highlight" id="eventsWon">0</span></p>
+            <p class="stat">Your favorite event server is <span class="highlight" id="favoriteServer">N/A</span>, you've joined <span class="highlight" id="serverJoins">0</span> times.</p>
         </div>
 
-        <aside class="sidebar">
-          <div class="card">
-            <h3 style="margin:0 0 8px 0">Top servers you visited</h3>
-            <ul class="top-list" id="topServers"></ul>
-          </div>
+        <!-- HOST WRAPPED -->
+        <div class="section">
+            <div class="category-header">Hosting Stats</div>
+            <h2>Event Alerts Host Wrapped</h2>
+            <p class="stat">Events Hosted: <span class="highlight" id="eventsHosted">0</span></p>
+            <p class="stat">Most Popular Month: <span class="highlight" id="popularMonth">N/A</span></p>
+            <p class="stat">Money Given: <span class="highlight" id="moneyGiven">$0</span></p>
+            <p class="stat">You're part of the top <span class="highlight" id="hostPercent">0%</span> of event hosts.</p>
+            <p class="stat">Fun Fact: Players hosting at <span class="highlight" id="bestTime">N/A</span> saw a <span class="highlight" id="popIncrease">0%</span> increase in players.</p>
+        </div>
 
-          <div class="card">
-            <h3 style="margin:0 0 8px 0">About</h3>
-            <p class="brandline" style="margin:0">
-              Event Alerts Wrapped is a sharable summary of a user's event activity. Use it for sharing on social or in your profile.
-            </p>
-          </div>
-        </aside>
+        <!-- COMMUNITY WRAPPED -->
+        <div class="section">
+            <div class="category-header">Overall Stats</div>
+            <h2>Event Alerts Community Wrapped</h2>
+            <p class="stat">Community Events Hosted: <span class="highlight" id="communityHosted">0</span></p>
+            <p class="stat">Partner Events Hosted: <span class="highlight" id="partnerHosted">0</span></p>
+            <p class="stat">Total Event Hosts This Year: <span class="highlight" id="totalHosts">0</span></p>
+            <p class="stat">Total Money Given Away: <span class="highlight" id="totalMoney">$0</span></p>
+            <p class="stat">Most Active Community Event Host: <span class="highlight" id="topCommunityHost">N/A</span></p>
+            <p class="stat">Most Active Partner Event Host: <span class="highlight" id="topPartnerHost">N/A</span></p>
+            <p class="stat">Most Active Money Event Host: <span class="highlight" id="topMoneyHost">N/A</span></p>
+        </div>
 
-      </div>
     </div>
-  </div>
 
-  <!-- small libraries via CDN -->
-  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script>
-    // ---------- Demo / Replace with your real data flow ----------
-    // Example structure you might fetch from your backend:
-    const demoWrapped = {
-      username: "Oiiink YT",
-      displayInitials: "OY",
-      subtitle: "Top Event Alerts Subscriber",
-      uniqueServers: 18,
-      eventsAttended: 72,
-      hours: 124,
-      topServer: "SkyBlock Royale",
-      topServers: [
-        {name:"SkyBlock Royale", visits:24},
-        {name:"PixelEvents", visits:18},
-        {name:"Parkour Party", visits:12}
-      ],
-      topEvents: [
-        {name:"Halloween Bash", count:8},
-        {name:"Build Battle", count:6},
-        {name:"Spleef Tournament", count:5}
-      ],
-      moments: [
-        "Won the Halloween Boss with 1 HP left",
-        "Hosted an impromptu community event",
-        "Reached 1,000 total event joins"
-      ]
-    };
-
-    // wrappedData should come from your server / API
-    let wrappedData = demoWrapped;
-
-    // ---------- helpers ----------
-    function el(id){ return document.getElementById(id); }
-    function setText(id, txt){ const e = el(id); if(e) e.textContent = txt; }
-
-    function renderWrapped(data){
-      setText('displayName', data.username);
-      setText('subtitle', data.subtitle || '');
-      el('avatar').textContent = (data.displayInitials || data.username.split(' ').map(s=>s[0]).slice(0,2).join('')).toUpperCase();
-      setText('stat-servers', data.uniqueServers);
-      setText('stat-events', data.eventsAttended);
-      setText('stat-hours', (data.hours && data.hours + "h") || '0h');
-      setText('stat-topserver', data.topServer || '—');
-
-      const topServers = el('topServers'); topServers.innerHTML = '';
-      (data.topServers || []).forEach((s, i)=> {
-        const li = document.createElement('li'); li.className = 'top-item';
-        li.innerHTML = `<div class="badge">${i+1}</div>
-                        <div class="meta"><div class="title">${s.name}</div><div class="sub">${s.visits} visits</div></div>`;
-        topServers.appendChild(li);
-      });
-
-      const topEventsList = el('topEventsList'); topEventsList.innerHTML = '';
-      (data.topEvents || []).forEach(ev=>{
-        const li = document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between';
-        li.innerHTML = `<div style="font-weight:700">${ev.name}</div><div style="color:var(--muted)">${ev.count}x</div>`;
-        topEventsList.appendChild(li);
-      });
-
-      const moments = el('moments'); moments.innerHTML = '';
-      (data.moments || []).forEach(m=>{
-        const d = document.createElement('div');
-        d.textContent = "• " + m;
-        d.style.color = 'var(--muted)';
-        moments.appendChild(d);
-      });
-
-      // sprinkle a little accent glow depending on top server
-      document.documentElement.style.setProperty('--accent', pickAccent(data.topServer));
-      triggerConfetti();
-    }
-
-    // small accent color picker
-    function pickAccent(name){
-      if(!name) return '#7c5cff';
-      const hash = [...name].reduce((a,c)=>a + c.charCodeAt(0),0);
-      const palette = ['#7c5cff','#ff7cb6','#3dd1ff','#ffd36b','#6cf58a','#b28cff'];
-      return palette[hash % palette.length];
-    }
-
-    // ---------- generate / share / download ----------
-    document.getElementById('generateBtn').addEventListener('click', ()=> {
-      const name = document.getElementById('nameInput').value.trim();
-      // In production, call your backend API: fetch(`/api/wrapped?user=${encodeURIComponent(name)}`).then(...)
-      // For now we use demo and override username if provided:
-      const payload = {...demoWrapped};
-      if(name) payload.username = name;
-      wrappedData = payload;
-      renderWrapped(wrappedData);
-    });
-
-    document.getElementById('randomBtn').addEventListener('click', ()=>{
-      // quick random demo values
-      const rndName = ['PixelFan','EventMaster','PlayTimePro','Oiiink'][Math.floor(Math.random()*4)];
-      wrappedData = {...demoWrapped, username:rndName, uniqueServers: Math.floor(Math.random()*40)+1, eventsAttended: Math.floor(Math.random()*300)};
-      renderWrapped(wrappedData);
-    });
-
-    document.getElementById('downloadBtn').addEventListener('click', ()=> {
-      // hide controls for a clean screenshot
-      const controls = document.querySelector('.controls');
-      controls.style.visibility = 'hidden';
-      const root = document.getElementById('wrapped-root');
-
-      html2canvas(root, {scale:2, useCORS:true}).then(canvas=>{
-        const url = canvas.toDataURL('image/png');
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = (wrappedData.username || 'wrapped') + '-event-alerts-wrapped.png';
-        document.body.appendChild(a); a.click(); a.remove();
-      }).finally(()=>{ controls.style.visibility = 'visible'; });
-    });
-
-    document.getElementById('shareTwitter').addEventListener('click', ()=>{
-      // simple twitter share linking to the repo/page, or instruct user to upload image
-      const text = encodeURIComponent(`Check out my Event Alerts Wrapped — ${wrappedData.username} — see yours at`);
-      const url = encodeURIComponent(location.href);
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank');
-    });
-
-    // ---------- confetti (very small, drop-in) ----------
-    const confettiCanvas = document.getElementById('confetti');
-    confettiCanvas.width = confettiCanvas.clientWidth;
-    confettiCanvas.height = confettiCanvas.clientHeight;
-    const ctx = confettiCanvas.getContext('2d');
-    let confettiPieces = [];
-
-    function resizeCanvas(){
-      confettiCanvas.width = confettiCanvas.clientWidth;
-      confettiCanvas.height = confettiCanvas.clientHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-
-    function triggerConfetti(){
-      confettiPieces = [];
-      const count = 60;
-      for(let i=0;i<count;i++){
-        confettiPieces.push({
-          x: Math.random()*confettiCanvas.width,
-          y: Math.random()*confettiCanvas.height - confettiCanvas.height,
-          r: Math.random()*8+4,
-          d: Math.random()*30+10,
-          tilt: Math.floor(Math.random()*10)-10,
-          color: randomConfettiColor()
-        });
-      }
-      requestAnimationFrame(animateConfetti);
-      setTimeout(()=>{ confettiPieces = []; clearCanvas(); }, 4000);
-    }
-
-    function randomConfettiColor(){
-      const base = getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#7c5cff';
-      const extras = ['#ff7cb6','#ffd36b','#6cf58a','#3dd1ff'];
-      return [base.trim(), extras[Math.floor(Math.random()*extras.length)]][Math.floor(Math.random()*2)];
-    }
-
-    function animateConfetti(){
-      ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-      for(let i=0;i<confettiPieces.length;i++){
-        const p = confettiPieces[i];
-        p.y += Math.cos(p.d) + 2 + p.r/4;
-        p.x += Math.sin(p.d);
-        p.tilt += 0.1;
-        ctx.beginPath();
-        ctx.fillStyle = p.color;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.tilt * 0.1);
-        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-        ctx.restore();
-        ctx.closePath();
-      }
-      if(confettiPieces.length) requestAnimationFrame(animateConfetti);
-    }
-    function clearCanvas(){ ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }
-
-    // ---------- bootstrap demo render ----------
-    renderWrapped(wrappedData);
-
-    // Optional: fetch real data example (commented)
-    /*
-    fetch('/api/wrapped?user=someid')
-      .then(r=>r.json())
-      .then(data => {
-         wrappedData = data;
-         renderWrapped(wrappedData);
-      });
-    */
-  </script>
 </body>
 </html>
