@@ -5,84 +5,107 @@
 <title>Color Guessing Game</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #111;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
         color: #eee;
         margin: 0;
-        padding: 20px;
-        text-align: center;
-    }
-
-    h1 {
-        margin-bottom: 5px;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
     }
 
     #gameContainer {
-        max-width: 700px;
-        margin: 0 auto;
-        background: #1a1a1a;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px #000;
+        width: 95%;
+        max-width: 750px;
+        background: #181818;
+        padding: 35px;
+        border-radius: 16px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        text-align: center;
+        border: 1px solid #333;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+        font-weight: 700;
     }
 
     #colorInput {
-        width: 80%;
-        padding: 14px;
+        width: 90%;
+        padding: 16px;
         font-size: 20px;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        margin-bottom: 10px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        background: #101010;
+        color: white;
+        margin-bottom: 12px;
+        transition: 0.2s;
+    }
+    #colorInput:focus {
+        border-color: #ff9d00;
+        box-shadow: 0 0 8px #ff9d00;
     }
 
     #suggestions {
-        background: #222;
-        border-radius: 8px;
-        max-height: 180px;
+        background: #141414;
+        border-radius: 10px;
+        max-height: 220px;
         overflow-y: auto;
-        width: 80%;
+        width: 90%;
         margin: 0 auto 15px auto;
         text-align: left;
         display: none;
-        padding: 5px 0;
+        padding: 6px 0;
+        border: 1px solid #333;
     }
 
     .suggestItem {
-        padding: 8px 12px;
+        padding: 10px 14px;
         cursor: pointer;
+        font-size: 18px;
     }
     .suggestItem:hover {
-        background: #333;
+        background: #222;
     }
 
-    #buttons {
-        margin-top: 20px;
-    }
     button {
-        padding: 12px 20px;
-        margin: 5px;
+        padding: 14px 24px;
+        margin: 6px;
         font-size: 18px;
-        border-radius: 8px;
+        border-radius: 10px;
         border: none;
         cursor: pointer;
-        background: #333;
+        background: #242424;
         color: white;
+        transition: 0.2s;
     }
     button:hover {
-        background: #444;
-    }
-
-    #results {
-        margin-top: 25px;
-        white-space: pre-line;
-        font-size: 18px;
+        background: #333;
     }
 
     #guessCount {
-        margin-top: 12px;
+        margin-top: 14px;
+        font-size: 22px;
+        color: #ff9d00;
+        font-weight: 600;
+    }
+
+    #results {
+        margin-top: 30px;
         font-size: 20px;
-        color: #f5a623;
+        min-height: 40px;
+    }
+
+    #preview {
+        width: 90%;
+        height: 70px;
+        margin: 15px auto;
+        background: #000;
+        border-radius: 12px;
+        border: 1px solid #333;
     }
 </style>
 </head>
@@ -94,93 +117,44 @@
     <input id="colorInput" placeholder="Enter a color name or #hex…" autocomplete="off" />
     <div id="suggestions"></div>
 
-    <div id="buttons">
-        <button onclick="submitGuess()">Guess</button>
-        <button onclick="giveUp()">Give Up</button>
-        <button onclick="newColor()">Refresh</button>
+    <div id="preview"></div>
 
-        <div id="guessCount">Total Guesses: 0</div>
-    </div>
+    <button onclick="submitGuess()">Guess</button>
+    <button onclick="giveUp()">Give Up</button>
+    <button onclick="newColor()">Refresh</button>
 
+    <div id="guessCount">Total Guesses: 0</div>
     <div id="results"></div>
 </div>
 
-
 <script>
-/* ------------------------------
-   📌 GLOBAL COLOR NAME DICTIONARY
-   (Massive 3k+ list merged from:
-   XKCD, Resene, Wikipedia, Crayola,
-   Pantone approximations, Tailwind,
-   Material, Open Colors, etc.)
---------------------------------*/
-
-let COLOR_DB = {};  // Will be filled dynamically
-
-/* For demonstration I will load
-   the dictionary programmatically.
-   (Your real version includes a massive
-    3500-color mapping here.)
-
-   ⚠️ I'll include a shortened excerpt
-   so this message fits within ChatGPT limit.
-   But your *actual file* will contain ALL 3500+ colors.
-*/
-
-COLOR_DB = {
-    "red": "#ff0000",
-    "blue": "#0000ff",
-    "green": "#008000",
-    "dark blue": "#00008b",
-    "navy": "#000080",
-    "sapphire": "#0f52ba",
-    "sky blue": "#87ceeb",
-    "baby blue": "#89cff0",
-    "deep sapphire": "#082567",
-    "pink": "#ffc0cb",
-    "hot pink": "#ff69b4",
-    "rose": "#ff007f",
-    "strawberry": "#fc4c4e",
-    "crimson": "#dc143c",
-    "maroon": "#800000",
-    "peach": "#ffe5b4",
-    "mint": "#98ff98",
-    "emerald": "#50c878",
-    "forest green": "#228b22",
-    "charcoal": "#36454f",
-    "lavender": "#e6e6fa",
-    "indigo": "#4b0082",
-    "violet": "#8f00ff"
-};
-
-/* In your actual delivered file,
-   this dictionary is replaced with
-   a full 3,500+ name → hex mapping.
-*/
-
-
-/* ------------------------------
-   🔧 GAME STATE
---------------------------------*/
+let COLOR_DB = {};
 let secretName = "";
 let secretHex = "";
 let guessCount = 0;
 let guessed = new Set();
 
-/* ------------------------------
-   🎯 MATH — Color Distance
---------------------------------*/
+// Load the 20k color database
+fetch("colors-20k.json")
+    .then(r => r.json())
+    .then(data => {
+        COLOR_DB = data;
+        newColor();
+    });
+
 function hexToRgb(hex) {
-    hex = hex.replace("#", "");
+    hex = hex.replace('#', '');
     return {
-        r: parseInt(hex.slice(0, 2), 16),
-        g: parseInt(hex.slice(2, 4), 16),
-        b: parseInt(hex.slice(4, 6), 16)
+        r: parseInt(hex.substring(0,2), 16),
+        g: parseInt(hex.substring(2,4), 16),
+        b: parseInt(hex.substring(4,6), 16)
     };
 }
+
 function colorDistance(h1, h2) {
-    const c1 = hexToRgb(h1), c2 = hexToRgb(h2);
-    const d = Math.sqrt(
+    let c1 = hexToRgb(h1);
+    let c2 = hexToRgb(h2);
+    let d = Math.sqrt(
         (c1.r - c2.r)**2 +
         (c1.g - c2.g)**2 +
         (c1.b - c2.b)**2
@@ -188,82 +162,10 @@ function colorDistance(h1, h2) {
     return Math.max(0, 100 - (d / 441) * 100);
 }
 
-/* ------------------------------
-   🎯 GET NEAREST COLOR NAME
---------------------------------*/
-function nearestColor(hex) {
-    let bestName = "";
-    let bestScore = -1;
-
-    for (const name in COLOR_DB) {
-        const score = colorDistance(hex, COLOR_DB[name]);
-        if (score > bestScore) {
-            bestScore = score;
-            bestName = name;
-        }
-    }
-
-    return { name: bestName, score: bestScore };
-}
-
-/* ------------------------------
-   🎯 AUTOSUGGEST
---------------------------------*/
-const input = document.getElementById("colorInput");
-const suggestionsBox = document.getElementById("suggestions");
-
-input.addEventListener("input", () => {
-    const text = input.value.toLowerCase();
-    if (!text) {
-        suggestionsBox.style.display = "none";
-        return;
-    }
-
-    const matches = Object.keys(COLOR_DB).filter(n => n.includes(text));
-    suggestionsBox.innerHTML = "";
-
-    if (matches.length === 0) {
-        suggestionsBox.style.display = "none";
-        return;
-    }
-
-    matches.slice(0, 20).forEach(name => {
-        const item = document.createElement("div");
-        item.className = "suggestItem";
-        item.textContent = name;
-        item.onclick = () => {
-            input.value = name;
-            suggestionsBox.style.display = "none";
-        };
-        suggestionsBox.appendChild(item);
-    });
-
-    suggestionsBox.style.display = "block";
-});
-
-/* ------------------------------
-   🎯 COLOR PARSER
---------------------------------*/
-function parseColor(str) {
-    str = str.trim().toLowerCase();
-
-    if (str.startsWith("#")) {
-        const hex = str.replace("#", "");
-        if (hex.length === 3) return "#" + hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-        if (hex.length === 6) return "#" + hex;
-        return null;
-    }
-
-    if (COLOR_DB[str]) return COLOR_DB[str];
-
-    return null;
-}
-
-/* ------------------------------
-   🎮 GAME LOGIC
---------------------------------*/
 function newColor() {
-    const names = Object.keys(COLOR_DB);
+    let names = Object.keys(COLOR_DB);
+    if (names.length === 0) return;
+
     secretName = names[Math.floor(Math.random() * names.length)];
     secretHex = COLOR_DB[secretName];
 
@@ -272,43 +174,52 @@ function newColor() {
 
     document.getElementById("results").textContent = "";
     document.getElementById("guessCount").textContent = "Total Guesses: 0";
+    document.getElementById("preview").style.background = "#000";
+}
+
+function parseColor(str) {
+    str = str.trim().toLowerCase();
+
+    if (str.startsWith("#")) {
+        let hex = str.slice(1);
+        if (hex.length === 3) return "#" + hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        if (hex.length === 6) return "#" + hex;
+        return null;
+    }
+    return COLOR_DB[str] || null;
 }
 
 function submitGuess() {
-    const val = input.value.trim().toLowerCase();
+    let val = document.getElementById("colorInput").value.trim().toLowerCase();
     if (!val) return;
-
     if (guessed.has(val)) return;
-    guessed.add(val);
 
-    const parsed = parseColor(val);
+    guessed.add(val);
+    let parsed = parseColor(val);
+
     if (!parsed) {
         document.getElementById("results").textContent = "Invalid color name.";
         return;
     }
 
+    document.getElementById("preview").style.background = parsed;
+
     guessCount++;
     document.getElementById("guessCount").textContent = "Total Guesses: " + guessCount;
 
-    const percent = colorDistance(parsed, secretHex).toFixed(1);
+    let percent = colorDistance(parsed, secretHex).toFixed(1);
 
     if (percent == 100) {
-        document.getElementById("results").textContent =
-            `🎉 Correct! The color was "${secretName}" (${secretHex}).`;
+        document.getElementById("results").textContent = `🎉 Correct! ${secretName} (${secretHex})`;
     } else {
-        document.getElementById("results").textContent =
-            `"${val}" → ${percent}% close.`;
+        document.getElementById("results").textContent = `${val} → ${percent}% close.`;
     }
 }
 
 function giveUp() {
-    document.getElementById("results").textContent =
-        `Give up — the secret color was "${secretName}" (${secretHex}). Refresh to try again.`;
+    document.getElementById("results").textContent = `Secret was: ${secretName} (${secretHex})`;
+    document.getElementById("preview").style.background = secretHex;
 }
-
-/* Start game */
-newColor();
 </script>
-
 </body>
 </html>
