@@ -1,177 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Color Wordle+</title>
-
+<meta charset="utf-8" />
+<title>Color Wordle — Fixed</title>
 <style>
+    :root { --bg: #0f0f0f; --card: #1c1c1c; --accent: #ffa500; color-scheme: dark; }
+    html,body{height:100%}
     body {
-        font-family: Arial, sans-serif;
-        background: #0f0f0f;
-        color: white;
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: #fff;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 40px;
+        align-items: start;
+        justify-content: center;
+        padding: 36px;
+        box-sizing: border-box;
     }
-
+    .app {
+        width: 420px;
+    }
     h1 {
-        font-size: 40px;
-        margin-bottom: 10px;
-        color: #ffa500;
+        margin: 0 0 8px 0;
+        color: var(--accent);
+        font-size: 28px;
+        letter-spacing: -0.5px;
     }
-
-    input {
-        padding: 10px;
-        font-size: 18px;
-        width: 240px;
-        border-radius: 6px;
-        border: none;
-        margin-bottom: 10px;
+    p.lead { margin: 6px 0 18px 0; color: #ccc; }
+    .controls {
+        display:flex;
+        gap:8px;
+        align-items:center;
+        margin-bottom:14px;
+    }
+    input[type="text"]{
+        flex:1;
+        padding:10px 12px;
+        border-radius:8px;
+        border:1px solid #333;
+        background:#0b0b0b;
+        color:#fff;
         outline: none;
+        font-size:15px;
     }
-
     button {
-        padding: 10px 20px;
-        font-size: 18px;
+        padding:10px 14px;
+        background:var(--accent);
+        color:#000;
         border: none;
-        border-radius: 6px;
-        background: #ffa500;
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:600;
     }
+    #resultMsg { margin-top: 12px; font-weight:600; min-height:26px; color:#fff; }
 
     #guessList {
-        margin-top: 25px;
-        width: 350px;
+        margin-top: 18px;
+        display:flex;
+        flex-direction:column;
+        gap:8px;
     }
 
-    .guessItem {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #1c1c1c;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        border: 1px solid #333;
+    .guessItem{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        background:var(--card);
+        padding:10px;
+        border-radius:8px;
+        border:1px solid #2a2a2a;
     }
-
+    .left {
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
     .swatch {
-        width: 40px;
-        height: 40px;
-        border-radius: 6px;
-        border: 2px solid #555;
+        width:44px;
+        height:44px;
+        border-radius:6px;
+        border:2px solid rgba(255,255,255,0.06);
+        flex-shrink:0;
     }
+    .meta { font-size:14px; color:#ddd; }
+    .similarity { font-weight:700; min-width:72px; text-align:right; color:#fff; }
 
     .correct {
-        border-color: #0f0;
-        box-shadow: 0 0 10px #0f0;
+        box-shadow: 0 0 14px 3px rgba(0,255,80,0.12);
+        border-color: #19d119;
     }
+
+    .hint { color:#bbb; font-size:13px; margin-top:8px; }
+    footer { margin-top:18px; font-size:12px; color:#888; }
 </style>
 </head>
 <body>
+<div class="app">
+    <h1>Color Wordle</h1>
+    <p class="lead">Type any color name or hex (e.g. <code>red</code>, <code>light pink</code>, <code>#3498db</code>). Guess until you match the secret color.</p>
 
-<h1>Color Wordle</h1>
-<p>Type any color (hex or name). Try to match the secret color!</p>
+    <div class="controls">
+        <input id="colorInput" placeholder="Try: red, light pink, skyblue, #ff22aa" autofocus>
+        <button id="guessBtn">Guess</button>
+    </div>
 
-<input id="colorInput" placeholder="Example: light pink, #3498db">
-<button onclick="makeGuess()">Guess</button>
+    <div id="resultMsg"></div>
+    <div class="hint" id="hintLine">Tip: press Enter to submit. Invalid names will show a message.</div>
 
-<div id="guessList"></div>
+    <div id="guessList"></div>
 
-<p id="resultMsg" style="font-size: 22px; margin-top: 20px;"></p>
+    <footer>Secret color is randomly chosen each reload. (Secret logged to console for debugging.)</footer>
+</div>
 
 <script>
+/* ---------- Utilities ---------- */
 
-// 🎨 Pick random secret color
-function randomColor() {
-    return "#" + Math.floor(Math.random() * 16777215)
-        .toString(16).padStart(6, '0');
+// pick a random hex color for secret
+function randomHex() {
+    return "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0");
+}
+let secret = randomHex();
+console.log("DEBUG: secret color ->", secret);
+
+// Is the given string a parseable CSS color?
+function isValidCssColor(input) {
+    // Use a temporary option element's style (fast and reliable)
+    const s = new Option().style;
+    s.color = input;
+    // If the browser couldn't parse it, s.color will be an empty string
+    if (!s.color) return false;
+    return true;
 }
 
-let secret = randomColor();
-console.log("Secret color:", secret); // debug
-
-// 🎨 Convert any color string → full rgb() format
-function normalizedColor(color) {
-    let ctx = document.createElement("canvas").getContext("2d");
-    ctx.fillStyle = color;
-    return ctx.fillStyle; // browser auto-converts
+// Normalize a color string into a value the browser will render (usually rgb(...) or #hex)
+function normalizedColor(colorStr) {
+    const ctx = document.createElement("canvas").getContext("2d");
+    ctx.fillStyle = colorStr;
+    return ctx.fillStyle; // browser-normalized color
 }
 
-// 🎨 Convert rgb(...) → {r,g,b}
-function rgbObj(color) {
-    color = normalizedColor(color);
-    let m = color.match(/rgba?\((\d+), (\d+), (\d+)/);
-    return {r:+m[1], g:+m[2], b:+m[3]};
+// Convert normalized color (like "rgb(255,0,0)" or "#ff0000") to {r,g,b}
+function rgbObj(normalized) {
+    // normalized is often "rgb(r,g,b)" or "#rrggbb"
+    // create a tiny element and ask computed style for rgb value to be consistent
+    const el = document.createElement("div");
+    el.style.color = normalized;
+    document.body.appendChild(el);
+    const cs = getComputedStyle(el).color;
+    document.body.removeChild(el);
+    const m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (!m) return {r:0,g:0,b:0};
+    return { r: +m[1], g: +m[2], b: +m[3] };
 }
 
-// 🎯 Return % similarity
+// distance -> similarity %
 function colorSimilarity(a, b) {
-    let r = a.r - b.r;
-    let g = a.g - b.g;
-    let bDiff = a.b - b.b;
-    let dist = Math.sqrt(r*r + g*g + bDiff*bDiff);
-    let max = Math.sqrt(255*255*3);
-    return Math.round((1 - dist/max) * 100);
+    const dr = a.r - b.r;
+    const dg = a.g - b.g;
+    const db = a.b - b.b;
+    const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+    const max = Math.sqrt(3 * 255 * 255);
+    const pct = Math.round((1 - (dist / max)) * 100);
+    return Math.max(0, Math.min(100, pct));
 }
 
-// 🧠 When the user guesses a color
-function makeGuess() {
-    let input = document.getElementById("colorInput");
-    let guess = input.value.trim().toLowerCase();
-    if (!guess) return;
+/* ---------- UI ---------- */
 
-    // Try normalizing — if browser can parse it, it's valid
-    let normalized;
-    try {
-        normalized = normalizedColor(guess);
-    } catch {
-        alert("Invalid color name or format!");
-        return;
+const input = document.getElementById("colorInput");
+const btn = document.getElementById("guessBtn");
+const list = document.getElementById("guessList");
+const resultMsg = document.getElementById("resultMsg");
+const hintLine = document.getElementById("hintLine");
+
+// Ensure secret is valid color (it is) and get rgb for comparisons
+const secretNorm = normalizedColor(secret);
+const secretRGB = rgbObj(secretNorm);
+
+// handle a guess string (raw user input)
+function handleGuessRaw(raw) {
+    const typed = raw.trim();
+    if (typed === "") return;
+    // Try to accept names with a space (e.g., "light pink") by trying as-is first,
+    // then also trying to remove spaces (some browsers accept "lightpink").
+    let candidate = typed;
+    if (!isValidCssColor(candidate)) {
+        // Try collapsed (remove extra spaces)
+        const collapsed = candidate.replace(/\s+/g, "");
+        if (isValidCssColor(collapsed)) candidate = collapsed;
+        else {
+            // Try a few fallbacks: common synonyms (optional)
+            // For now: tell the user it's invalid
+            resultMsg.textContent = `Invalid color: "${typed}". Try a CSS color name or hex like #RRGGBB.`;
+            return;
+        }
     }
 
-    let guessRGB = rgbObj(normalized);
-    let secretRGB = rgbObj(secret);
-    let similarity = colorSimilarity(guessRGB, secretRGB);
+    // Normalize for swatch + reliable parsing
+    const norm = normalizedColor(candidate);
+    const guessRGB = rgbObj(norm);
+    const similarity = colorSimilarity(guessRGB, secretRGB);
 
-    // Add the guess to the list visually
-    addGuessToList(normalized, similarity);
+    addGuessToList(typed, norm, similarity);
 
-    // Check correct
+    // update result message
     if (similarity === 100) {
-        document.getElementById("resultMsg").innerHTML =
-            `🎉 Correct! The secret color was <b>${secret}</b>. Refresh to play again!`;
+        resultMsg.innerHTML = `🎉 <strong>Correct!</strong> The secret color was <code>${secret}</code>. Refresh to play again.`;
+    } else {
+        resultMsg.textContent = `You're ${similarity}% close to the secret color. Keep trying!`;
     }
-
-    input.value = "";
 }
 
-// 📌 Add guess to the guess history list
-function addGuessToList(color, similarity) {
-    let list = document.getElementById("guessList");
-
-    let item = document.createElement("div");
+// add a visual guess entry
+function addGuessToList(typedText, normalizedColorStr, similarity) {
+    const item = document.createElement("div");
     item.className = "guessItem";
 
-    let swatch = document.createElement("div");
-    swatch.className = "swatch";
-    swatch.style.background = color;
+    const left = document.createElement("div");
+    left.className = "left";
 
-    if (similarity === 100) swatch.classList.add("correct");
+    const sw = document.createElement("div");
+    sw.className = "swatch";
+    sw.style.background = normalizedColorStr;
 
-    let text = document.createElement("div");
-    text.textContent = `${color} — ${similarity}%`;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    // show the typed text first and the normalized color (hex/rgb) underneath lightly
+    const typedEl = document.createElement("div");
+    typedEl.textContent = typedText;
+    const normEl = document.createElement("div");
+    normEl.textContent = normalizedColorStr;
+    normEl.style.fontSize = "12px";
+    normEl.style.opacity = "0.8";
+    normEl.style.marginTop = "4px";
+    meta.appendChild(typedEl);
+    meta.appendChild(normEl);
 
-    item.appendChild(text);
-    item.appendChild(swatch);
+    left.appendChild(sw);
+    left.appendChild(meta);
 
-    list.prepend(item); // newest guess on top
+    const sim = document.createElement("div");
+    sim.className = "similarity";
+    sim.textContent = similarity + "%";
+
+    item.appendChild(left);
+    item.appendChild(sim);
+
+    if (similarity === 100) {
+        item.classList.add("correct");
+    }
+
+    // newest at top
+    list.prepend(item);
 }
 
-</script>
+/* ---------- Events ---------- */
 
+btn.addEventListener("click", () => {
+    handleGuessRaw(input.value);
+    input.value = "";
+    input.focus();
+});
+
+input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleGuessRaw(input.value);
+        input.value = "";
+    }
+});
+
+// for convenience: allow clicking a swatch to copy its normalized color (bonus)
+list.addEventListener("click", (ev) => {
+    const sw = ev.target.closest(".swatch");
+    if (!sw) return;
+    const color = sw.style.background;
+    navigator.clipboard?.writeText(color).then(() => {
+        hintLine.textContent = `Copied ${color} to clipboard`;
+        setTimeout(()=> hintLine.textContent = "Tip: press Enter to submit. Invalid names will show a message.", 1400);
+    }).catch(()=>{});
+});
+</script>
 </body>
 </html>
