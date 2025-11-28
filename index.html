@@ -1,285 +1,511 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Color Wordle — Fixed</title>
+<title>Color Wordle — Autosuggest + Hex→Name</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-    :root { --bg: #0f0f0f; --card: #1c1c1c; --accent: #ffa500; color-scheme: dark; }
-    html,body{height:100%}
-    body {
-        margin: 0;
-        height: 100%;
-        background: var(--bg);
-        color: #fff;
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        display: flex;
-        align-items: start;
-        justify-content: center;
-        padding: 36px;
-        box-sizing: border-box;
-    }
-    .app {
-        width: 420px;
-    }
-    h1 {
-        margin: 0 0 8px 0;
-        color: var(--accent);
-        font-size: 28px;
-        letter-spacing: -0.5px;
-    }
-    p.lead { margin: 6px 0 18px 0; color: #ccc; }
-    .controls {
-        display:flex;
-        gap:8px;
-        align-items:center;
-        margin-bottom:14px;
-    }
-    input[type="text"]{
-        flex:1;
-        padding:10px 12px;
-        border-radius:8px;
-        border:1px solid #333;
-        background:#0b0b0b;
-        color:#fff;
-        outline: none;
-        font-size:15px;
-    }
-    button {
-        padding:10px 14px;
-        background:var(--accent);
-        color:#000;
-        border: none;
-        border-radius:8px;
-        cursor:pointer;
-        font-weight:600;
-    }
-    #resultMsg { margin-top: 12px; font-weight:600; min-height:26px; color:#fff; }
+:root{
+  --bg:#0f0f0f; --card:#161616; --accent:#ffa500; --muted:#bdbdbd;
+}
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+body{
+  background:var(--bg); color:#fff; display:flex; align-items:flex-start; justify-content:center;
+  padding:28px;
+}
+.app{width:680px; max-width:calc(100% - 40px)}
+h1{margin:0 0 6px;color:var(--accent); font-size:24px}
+.lead{color:#ccc;margin:6px 0 16px}
+.controls{display:flex;gap:8px;align-items:center}
+.inputWrap{position:relative; flex:1}
+input[type="text"]{
+  width:100%; padding:10px 12px; border-radius:10px; border:1px solid #222; background:#0b0b0b; color:#fff;
+  font-size:15px;
+}
+button{padding:10px 14px; border-radius:10px; background:var(--accent); color:#000; border:none; cursor:pointer; font-weight:700}
+.extraBtns{display:flex;gap:8px;margin-left:8px}
+.infoRow{display:flex;gap:12px;align-items:center;margin-top:10px}
+.hintBox{color:#ffcc66;font-style:italic}
+.resultMsg{min-height:26px;font-weight:600;margin-top:10px;color:#fff}
+#guessList{margin-top:16px; display:flex; flex-direction:column; gap:8px; max-height:44vh; overflow:auto; padding-right:6px}
+.guessItem{display:flex; align-items:center; justify-content:space-between; background:var(--card); padding:10px; border-radius:10px; border:1px solid #222}
+.left{display:flex; align-items:center; gap:12px}
+.swatch{width:52px;height:52px;border-radius:8px;border:2px solid rgba(255,255,255,0.06); cursor:pointer; flex-shrink:0}
+.meta{font-size:14px;color:#eaeaea}
+.norm{font-size:12px;color:var(--muted); margin-top:6px}
+.similarity{font-weight:800; min-width:70px; text-align:right}
+.correct{box-shadow:0 0 16px 3px rgba(0,255,128,0.12); border-color:#19d119}
+.footer{margin-top:12px;font-size:12px;color:#888}
 
-    #guessList {
-        margin-top: 18px;
-        display:flex;
-        flex-direction:column;
-        gap:8px;
-    }
+/* Autosuggest dropdown */
+.suggestions{
+  position:absolute; left:0; right:0; top:calc(100% + 8px); background:#0c0c0c; border:1px solid #222; border-radius:10px;
+  max-height:240px; overflow:auto; z-index:60; padding:6px; box-shadow:0 6px 28px rgba(0,0,0,0.6)
+}
+.suggItem{padding:8px 10px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer}
+.suggItem:hover{background:#151515}
+.suggSw{width:36px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.06); flex-shrink:0}
+.suggText{flex:1;font-size:14px;color:#eaeaea}
+.suggMeta{font-size:12px;color:var(--muted)}
 
-    .guessItem{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        background:var(--card);
-        padding:10px;
-        border-radius:8px;
-        border:1px solid #2a2a2a;
-    }
-    .left {
-        display:flex;
-        align-items:center;
-        gap:12px;
-    }
-    .swatch {
-        width:44px;
-        height:44px;
-        border-radius:6px;
-        border:2px solid rgba(255,255,255,0.06);
-        flex-shrink:0;
-    }
-    .meta { font-size:14px; color:#ddd; }
-    .similarity { font-weight:700; min-width:72px; text-align:right; color:#fff; }
+/* small helper row for hex→name result */
+.hexResult{margin-left:12px;font-size:13px;color:#ddd}
+.hexName{font-weight:700;color:#fff}
+.hexPercent{color:#a9ffa3;margin-left:6px;font-weight:800}
 
-    .correct {
-        box-shadow: 0 0 14px 3px rgba(0,255,80,0.12);
-        border-color: #19d119;
-    }
-
-    .hint { color:#bbb; font-size:13px; margin-top:8px; }
-    footer { margin-top:18px; font-size:12px; color:#888; }
+/* responsive */
+@media (max-width:720px){
+  .app{width:100%}
+  .extraBtns{margin-top:8px}
+  .controls{flex-direction:column; align-items:stretch}
+}
 </style>
 </head>
 <body>
 <div class="app">
-    <h1>Color Wordle</h1>
-    <p class="lead">Type any color name or hex (e.g. <code>red</code>, <code>light pink</code>, <code>#3498db</code>). Guess until you match the secret color.</p>
+  <h1>Color Wordle — Autosuggest</h1>
+  <div class="lead">Type a color name or hex. Suggestions show names from the dictionary + your previous guesses. Type hex to see the nearest name and match %.</div>
 
-    <div class="controls">
-        <input id="colorInput" placeholder="Try: red, light pink, skyblue, #ff22aa" autofocus>
-        <button id="guessBtn">Guess</button>
+  <div class="controls">
+    <div class="inputWrap">
+      <input id="colorInput" placeholder="Try: sapphire, strawberry, baby pink, #fa8072" autocomplete="off" />
+      <div id="suggestions" class="suggestions" style="display:none"></div>
     </div>
 
-    <div id="resultMsg"></div>
-    <div class="hint" id="hintLine">Tip: press Enter to submit. Invalid names will show a message.</div>
+    <button id="guessBtn">Guess</button>
 
-    <div id="guessList"></div>
+    <div class="extraBtns">
+      <button id="hintBtn">Reveal Hint</button>
+      <button id="giveUpBtn">Give Up</button>
+    </div>
+  </div>
 
-    <footer>Secret color is randomly chosen each reload. (Secret logged to console for debugging.)</footer>
+  <div class="infoRow">
+    <div id="hexInfo" class="hexResult" aria-live="polite"></div>
+    <div id="resultMsg" class="resultMsg"></div>
+  </div>
+
+  <div id="guessList"></div>
+
+  <div class="footer">Secret is logged to console for debugging.</div>
 </div>
 
 <script>
-/* ---------- Utilities ---------- */
+/* ========= DATA: extended color dictionary (natural names) =========
+   Each entry is hex string. You can expand this list further.
+*/
+const colorDictionary = {
+  // Reds
+  strawberry:"#fc4c4e", cherry:"#de3163", rose:"#ff6674", scarlet:"#ff2400", crimson:"#dc143c",
+  ruby:"#e0115f", garnet:"#8b0000", maroon:"#800000", burgundy:"#800020", wine:"#722f37",
+  // Blues
+  sapphire:"#0f52ba", sky:"#87ceeb", navy:"#000080", cobalt:"#0047ab", indigo:"#4b0082", azure:"#007fff",
+  ocean:"#1c6ba0", royal:"#4169e1", "baby blue":"#89cff0", cerulean:"#007ba7", teal:"#008080",
+  // Greens
+  emerald:"#50c878", mint:"#98ff98", forest:"#228b22", olive:"#808000", jade:"#00a86b", lime:"#bfff00",
+  moss:"#8a9a5b", seafoam:"#78e7af", sage:"#bcb88a",
+  // Purples
+  lavender:"#b57edc", lilac:"#c8a2c8", violet:"#8a2be2", plum:"#8e4585", grape:"#6f2da8", magenta:"#ff00ff",
+  orchid:"#da70d6", amethyst:"#9966cc",
+  // Yellows/Oranges
+  gold:"#ffd700", amber:"#ffbf00", apricot:"#fbcebf", peach:"#ffcc99", tangerine:"#ff8c00", mustard:"#ffdb58",
+  honey:"#ffad00",
+  // Browns/Neutrals
+  tan:"#d2b48c", beige:"#f5f5dc", cream:"#fdf1c9", sand:"#c2b280", chocolate:"#7b3f00", coffee:"#6f4e37",
+  caramel:"#ffb547", chestnut:"#954535", mahogany:"#c04000",
+  // Greys/Black/White
+  charcoal:"#36454f", silver:"#c0c0c0", ivory:"#fffff0", pearl:"#eae0c8", smoke:"#73826a", snow:"#fffafa",
+  onyx:"#0f0f0f", coal:"#141414",
+  // Pinks
+  bubblegum:"#ffc1cc", fuchsia:"#ff00ff", blush:"#ff9aa2", "hot pink":"#ff69b4", coral:"#ff7f50", "rose gold":"#b76e79",
+  // Thematic / misc
+  sunset:"#fa8072", oceanic:"#2c75ff", ice:"#b4dcfa", fire:"#ff5000", leaf:"#2e8b57", "midnight blue":"#191970",
+  "royal blue":"#4169e1", "sky blue":"#87ceeb", "sea green":"#2e8b57", "lime green":"#32cd32",
+  "mint green":"#98ff98", "forest green":"#228b22", turquoise:"#40e0d0"
+};
 
-// pick a random hex color for secret
-function randomHex() {
-    return "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, "0");
-}
+/* ======= GAME STATE ======= */
 let secret = randomHex();
-console.log("DEBUG: secret color ->", secret);
+console.log("DEBUG secret:", secret);
 
-// Is the given string a parseable CSS color?
-function isValidCssColor(input) {
-    // Use a temporary option element's style (fast and reliable)
-    const s = new Option().style;
-    s.color = input;
-    // If the browser couldn't parse it, s.color will be an empty string
-    if (!s.color) return false;
-    return true;
-}
+const guessesTypedSet = new Set();      // store typed guesses (lowercase)
+const guessesNormSet = new Set();      // store normalized color strings to prevent same color twice
+const previousGuesses = [];            // keep order for suggestion source
 
-// Normalize a color string into a value the browser will render (usually rgb(...) or #hex)
-function normalizedColor(colorStr) {
-    const ctx = document.createElement("canvas").getContext("2d");
-    ctx.fillStyle = colorStr;
-    return ctx.fillStyle; // browser-normalized color
-}
-
-// Convert normalized color (like "rgb(255,0,0)" or "#ff0000") to {r,g,b}
-function rgbObj(normalized) {
-    // normalized is often "rgb(r,g,b)" or "#rrggbb"
-    // create a tiny element and ask computed style for rgb value to be consistent
-    const el = document.createElement("div");
-    el.style.color = normalized;
-    document.body.appendChild(el);
-    const cs = getComputedStyle(el).color;
-    document.body.removeChild(el);
-    const m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-    if (!m) return {r:0,g:0,b:0};
-    return { r: +m[1], g: +m[2], b: +m[3] };
-}
-
-// distance -> similarity %
-function colorSimilarity(a, b) {
-    const dr = a.r - b.r;
-    const dg = a.g - b.g;
-    const db = a.b - b.b;
-    const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-    const max = Math.sqrt(3 * 255 * 255);
-    const pct = Math.round((1 - (dist / max)) * 100);
-    return Math.max(0, Math.min(100, pct));
-}
-
-/* ---------- UI ---------- */
-
+/* ======= DOM ======= */
 const input = document.getElementById("colorInput");
-const btn = document.getElementById("guessBtn");
-const list = document.getElementById("guessList");
+const suggestionsEl = document.getElementById("suggestions");
+const guessBtn = document.getElementById("guessBtn");
+const hintBtn = document.getElementById("hintBtn");
+const giveUpBtn = document.getElementById("giveUpBtn");
+const hexInfo = document.getElementById("hexInfo");
 const resultMsg = document.getElementById("resultMsg");
-const hintLine = document.getElementById("hintLine");
+const guessList = document.getElementById("guessList");
 
-// Ensure secret is valid color (it is) and get rgb for comparisons
-const secretNorm = normalizedColor(secret);
-const secretRGB = rgbObj(secretNorm);
+/* ======= UTIL: color parsing & conversion ======= */
 
-// handle a guess string (raw user input)
-function handleGuessRaw(raw) {
-    const typed = raw.trim();
-    if (typed === "") return;
-    // Try to accept names with a space (e.g., "light pink") by trying as-is first,
-    // then also trying to remove spaces (some browsers accept "lightpink").
-    let candidate = typed;
-    if (!isValidCssColor(candidate)) {
-        // Try collapsed (remove extra spaces)
-        const collapsed = candidate.replace(/\s+/g, "");
-        if (isValidCssColor(collapsed)) candidate = collapsed;
-        else {
-            // Try a few fallbacks: common synonyms (optional)
-            // For now: tell the user it's invalid
-            resultMsg.textContent = `Invalid color: "${typed}". Try a CSS color name or hex like #RRGGBB.`;
-            return;
-        }
-    }
-
-    // Normalize for swatch + reliable parsing
-    const norm = normalizedColor(candidate);
-    const guessRGB = rgbObj(norm);
-    const similarity = colorSimilarity(guessRGB, secretRGB);
-
-    addGuessToList(typed, norm, similarity);
-
-    // update result message
-    if (similarity === 100) {
-        resultMsg.innerHTML = `🎉 <strong>Correct!</strong> The secret color was <code>${secret}</code>. Refresh to play again.`;
-    } else {
-        resultMsg.textContent = `You're ${similarity}% close to the secret color. Keep trying!`;
-    }
+function randomHex() {
+  return "#" + Math.floor(Math.random()*0xffffff).toString(16).padStart(6,"0");
 }
 
-// add a visual guess entry
-function addGuessToList(typedText, normalizedColorStr, similarity) {
-    const item = document.createElement("div");
-    item.className = "guessItem";
+function isValidCssColor(str){
+  if (!str || typeof str !== "string") return false;
+  const s = new Option().style; s.color = str;
+  return !!s.color;
+}
 
-    const left = document.createElement("div");
-    left.className = "left";
+function normalizedColor(str){
+  // canvas normalized color (returns #rrggbb or rgb(...) depending on browser; we use computedStyle to get rgb)
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.fillStyle = str;
+  return ctx.fillStyle;
+}
 
+function rgbFromNormalized(norm){
+  // create element to get computed rgb(...) string
+  const el = document.createElement("div");
+  el.style.color = norm;
+  document.body.appendChild(el);
+  const cs = getComputedStyle(el).color;
+  document.body.removeChild(el);
+  const m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+  if (!m) return {r:0,g:0,b:0};
+  return { r:+m[1], g:+m[2], b:+m[3] };
+}
+
+function hexToRgb(hex){
+  hex = hex.replace("#","").trim();
+  if (hex.length===3) hex = hex.split("").map(c=>c+c).join("");
+  const n = parseInt(hex,16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+
+function rgbToHex({r,g,b}){
+  return "#" + [r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+
+function colorDistance(a,b){
+  const dr=a.r-b.r, dg=a.g-b.g, db=a.b-b.b;
+  return Math.sqrt(dr*dr + dg*dg + db*db);
+}
+
+function similarityPercent(a,b){
+  const dist = colorDistance(a,b);
+  const max = Math.sqrt(3*255*255);
+  return Math.max(0, Math.min(100, Math.round((1 - dist/max) * 100)));
+}
+
+/* ======= DICTIONARY HELPERS ======= */
+
+// Precompute rgb for dictionary entries for fast nearest lookups
+const dictEntries = Object.keys(colorDictionary).map(name=>{
+  const hex = colorDictionary[name];
+  return { name, hex, rgb: hexToRgb(hex) };
+});
+
+// Find nearest named color + similarity to a given rgb
+function nearestNamedColorForRgb(rgb){
+  let best = null; let bestDist = Infinity;
+  for (const e of dictEntries){
+    const d = colorDistance(rgb, e.rgb);
+    if (d < bestDist){
+      bestDist = d;
+      best = e;
+    }
+  }
+  const pct = Math.round((1 - bestDist / Math.sqrt(3*255*255)) * 100);
+  return { name: best.name, hex: best.hex, pct };
+}
+
+/* ======= AUTOSUGGEST LOGIC ======= */
+
+function buildSuggestions(query){
+  query = (query||"").trim().toLowerCase();
+  const out = [];
+
+  // If query looks like a hex (# + 3/6 hex chars), compute nearest named color and still show dictionary matches
+  const hexMatch = query.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch){
+    const normalizedHex = "#" + hexMatch[1].length===3 ? hexMatch[1] : hexMatch[1];
+    // robust way: attempt to parse as '#' + raw
+    let hexInput = query.startsWith("#") ? query : "#" + query;
+    try {
+      const rgb = hexToRgb(hexInput);
+      const nearest = nearestNamedColorForRgb(rgb);
+      // show the nearest color first as a suggestion
+      out.push({source:"dict", key:nearest.name, hex:nearest.hex, meta: `${nearest.pct}% match`});
+    } catch(e){}
+  }
+
+  // suggestions from dictionary: prefix match and substring match
+  if (query.length >= 1){
+    const lowerQuery = query;
+    // produce two tiers: startsWith then includes
+    const starts = [];
+    const includes = [];
+    for (const e of dictEntries){
+      const n = e.name;
+      if (n.startsWith(lowerQuery)) starts.push(e);
+      else if (n.includes(lowerQuery)) includes.push(e);
+    }
+    // add starts first
+    for (const e of starts.slice(0,12)) out.push({source:"dict", key:e.name, hex:e.hex, meta:"dict"});
+    for (const e of includes.slice(0,12)) out.push({source:"dict", key:e.name, hex:e.hex, meta:"dict"});
+  } else {
+    // if no query, show some popular ones
+    const popular = ["sapphire","sky","navy","sapphire","emerald","lavender","peach","coral","mint","midnight blue"];
+    for (const p of popular){
+      if (colorDictionary[p]) out.push({source:"dict", key:p, hex:colorDictionary[p], meta:"popular"});
+    }
+  }
+
+  // suggestions from previousGuesses (most recent first), only include ones matching query
+  for (let i = previousGuesses.length - 1; i >= 0; i--){
+    const typed = previousGuesses[i];
+    if (!typed) continue;
+    const lower = typed.toLowerCase();
+    if (!query || lower.includes(query)) {
+      // ensure not duplicating dictionary items already present
+      if (!out.find(it => it.key === typed)) out.push({source:"prev", key:typed, hex:null, meta:"previous"});
+    }
+  }
+
+  // limit total suggestions
+  return out.slice(0,20);
+}
+
+function renderSuggestions(items){
+  suggestionsEl.innerHTML = "";
+  if (!items.length){ suggestionsEl.style.display = "none"; return; }
+  for (const item of items){
+    const row = document.createElement("div");
+    row.className = "suggItem";
+    row.dataset.key = item.key;
     const sw = document.createElement("div");
-    sw.className = "swatch";
-    sw.style.background = normalizedColorStr;
-
+    sw.className = "suggSw";
+    sw.style.background = item.hex || "#222";
+    const t = document.createElement("div");
+    t.className = "suggText";
+    t.textContent = item.key;
     const meta = document.createElement("div");
-    meta.className = "meta";
-    // show the typed text first and the normalized color (hex/rgb) underneath lightly
-    const typedEl = document.createElement("div");
-    typedEl.textContent = typedText;
-    const normEl = document.createElement("div");
-    normEl.textContent = normalizedColorStr;
-    normEl.style.fontSize = "12px";
-    normEl.style.opacity = "0.8";
-    normEl.style.marginTop = "4px";
-    meta.appendChild(typedEl);
-    meta.appendChild(normEl);
-
-    left.appendChild(sw);
-    left.appendChild(meta);
-
-    const sim = document.createElement("div");
-    sim.className = "similarity";
-    sim.textContent = similarity + "%";
-
-    item.appendChild(left);
-    item.appendChild(sim);
-
-    if (similarity === 100) {
-        item.classList.add("correct");
-    }
-
-    // newest at top
-    list.prepend(item);
+    meta.className = "suggMeta";
+    meta.textContent = item.meta || "";
+    row.appendChild(sw); row.appendChild(t); row.appendChild(meta);
+    // click fills input and focuses
+    row.addEventListener("click", ()=> {
+      input.value = item.key;
+      input.focus();
+      // hide suggestions after click
+      suggestionsEl.style.display = "none";
+    });
+    suggestionsEl.appendChild(row);
+  }
+  suggestionsEl.style.display = "block";
 }
 
-/* ---------- Events ---------- */
+/* ======= HEX -> nearest named display (live) ======= */
 
-btn.addEventListener("click", () => {
+function updateHexInfoForInput(value){
+  const v = value.trim();
+  hexInfo.textContent = "";
+  if (!v) return;
+  // match hex: either #abc or #aabbcc or without '#'
+  let m = v.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!m) return;
+  let raw = m[1];
+  if (raw.length === 3){
+    // expand
+    raw = raw.split("").map(ch=>ch+ch).join("");
+  }
+  const hex = "#" + raw.toLowerCase();
+  const rgb = hexToRgb(hex);
+  const nearest = nearestNamedColorForRgb(rgb);
+  hexInfo.innerHTML = `Hex: <span class="hexName">${hex}</span> — Nearest: <span class="hexName">${nearest.name}</span> <span class="hexPercent">(${nearest.pct}%)</span>`;
+}
+
+/* ======= GUESS SUBMISSION & DUPLICATE CHECKS ======= */
+
+function handleGuessRaw(raw){
+  const typed = (raw||"").trim();
+  if (!typed) return;
+  const typedKey = typed.toLowerCase();
+
+  // duplicate typed check
+  if (guessesTypedSet.has(typedKey)){
+    resultMsg.textContent = `You've already guessed "${typed}".`;
+    return;
+  }
+
+  // Try to interpret input:
+  // 1) browser parse
+  // 2) dictionary lookup (including substring)
+  let normalized = null;
+  if (isValidCssColor(typed)){
+    normalized = normalizedColor(typed);
+  } else {
+    // try direct dictionary exact or substring matches
+    // exact
+    if (colorDictionary[typedKey]) normalized = normalizedColor(colorDictionary[typedKey]);
+    else {
+      // substring or words matching (e.g., "midnight blue" -> "midnight blue", or "dark sapphire" -> "sapphire")
+      // attempt to find dict entry containing all non-modifier words
+      const cleaned = typedKey.replace(/\b(the|a|an|very|most|super|really|extremely|darkest|lightest)\b/g,"").trim();
+      const tokens = cleaned.split(/\s+/).filter(Boolean);
+      // try best containing entry
+      let bestName = null; let bestScore = 0;
+      for (const name of Object.keys(colorDictionary)){
+        let score = 0;
+        for (const t of tokens) if (name.includes(t)) score++;
+        if (score > bestScore){ bestScore = score; bestName = name; }
+      }
+      if (bestName && bestScore > 0) normalized = normalizedColor(colorDictionary[bestName]);
+    }
+  }
+
+  if (!normalized){
+    resultMsg.textContent = `Couldn't interpret "${typed}". Try a CSS name, hex, or another natural color name.`;
+    return;
+  }
+
+  // normalizedKey for duplicate-by-color check (lowercase)
+  const normalizedKey = normalized.toLowerCase();
+  if (guessesNormSet.has(normalizedKey)){
+    resultMsg.textContent = `That color (normalized ${normalizedKey}) was already guessed. Try a different color.`;
+    // still record typed form? we choose not to record typed duplicate to allow other phrases later
+    return;
+  }
+
+  // record sets
+  guessesTypedSet.add(typedKey);
+  guessesNormSet.add(normalizedKey);
+  previousGuesses.push(typed); // add for autosuggest
+
+  // compute similarity and add to history
+  const guessRgb = rgbFromNormalized(normalized);
+  const secretRgb = rgbFromNormalized(normalizedColor(secret));
+  const sim = similarityPercent(guessRgb, secretRgb);
+
+  addGuessToList(typed, normalized, sim);
+
+  if (sim === 100){
+    resultMsg.innerHTML = `🎉 Correct! Secret color was <code>${secret}</code>.`;
+  } else {
+    resultMsg.textContent = `You're ${sim}% close. Keep guessing!`;
+  }
+}
+
+/* ======= UI: add guess to list ======= */
+
+function addGuessToList(typedText, normalizedColorStr, similarity){
+  const item = document.createElement("div");
+  item.className = "guessItem";
+  if (similarity === 100) item.classList.add("correct");
+
+  const left = document.createElement("div"); left.className="left";
+  const sw = document.createElement("div"); sw.className="swatch"; sw.style.background = normalizedColorStr;
+  sw.title = `Click to copy ${normalizedColorStr}`;
+  sw.addEventListener("click", ()=> {
+    navigator.clipboard?.writeText(normalizedColorStr).then(()=>{
+      hexInfo.textContent = `Copied ${normalizedColorStr} to clipboard`;
+      setTimeout(()=> hexInfo.textContent = "", 1600);
+    }).catch(()=>{});
+  });
+
+  const meta = document.createElement("div"); meta.className="meta";
+  const typedEl = document.createElement("div"); typedEl.textContent = typedText;
+  const normEl = document.createElement("div"); normEl.className="norm"; normEl.textContent = normalizedColorStr;
+  meta.appendChild(typedEl); meta.appendChild(normEl);
+  left.appendChild(sw); left.appendChild(meta);
+
+  const simEl = document.createElement("div"); simEl.className="similarity"; simEl.textContent = similarity + "%";
+
+  item.appendChild(left); item.appendChild(simEl);
+  guessList.prepend(item);
+}
+
+/* ======= HINT & GIVE UP ======= */
+
+hintBtn.addEventListener("click", ()=>{
+  // find best dictionary color close to secret
+  const secretRgb = rgbFromNormalized(normalizedColor(secret));
+  const nearest = nearestNamedColorForRgb(secretRgb);
+  // produce hint text (hue & brightness)
+  const avg = (secretRgb.r + secretRgb.g + secretRgb.b)/3;
+  const brightnessText = avg > 180 ? "a light color" : avg < 80 ? "a dark color" : "a medium brightness color";
+  hexInfo.textContent = `Hint: It's somewhat close to "${nearest.name}" (${nearest.pct}% match) — ${brightnessText}.`;
+});
+
+giveUpBtn.addEventListener("click", ()=>{
+  resultMsg.innerHTML = `Give up — the secret color is <code>${secret}</code>. Refresh to try again.`;
+});
+
+/* ======= INPUT EVENTS: autosuggest + hex→name live ======= */
+
+let suggestionsVisible = false;
+
+input.addEventListener("input", (e)=>{
+  const v = input.value;
+  // update hex info live
+  updateHexInfoForInput(v);
+  // build suggestions
+  const items = buildSuggestions(v);
+  renderSuggestions(items);
+});
+
+input.addEventListener("keydown", (e)=>{
+  if (e.key === "Enter"){
+    e.preventDefault();
+    suggestionsEl.style.display = "none";
     handleGuessRaw(input.value);
     input.value = "";
-    input.focus();
+    hexInfo.textContent = "";
+  } else if (e.key === "ArrowDown" || e.key === "ArrowUp"){
+    // ignore for now (no keyboard nav)
+  }
 });
 
-input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        handleGuessRaw(input.value);
-        input.value = "";
-    }
+// clicking outside hides suggestions
+document.addEventListener("click", (ev)=>{
+  if (!ev.target.closest(".inputWrap")) suggestionsEl.style.display = "none";
 });
 
-// for convenience: allow clicking a swatch to copy its normalized color (bonus)
-list.addEventListener("click", (ev) => {
-    const sw = ev.target.closest(".swatch");
-    if (!sw) return;
-    const color = sw.style.background;
-    navigator.clipboard?.writeText(color).then(() => {
-        hintLine.textContent = `Copied ${color} to clipboard`;
-        setTimeout(()=> hintLine.textContent = "Tip: press Enter to submit. Invalid names will show a message.", 1400);
-    }).catch(()=>{});
+// show suggestions when focused with some initial items
+input.addEventListener("focus", ()=>{
+  const items = buildSuggestions(input.value);
+  renderSuggestions(items);
 });
+
+/* ======= BUTTONS ======= */
+
+guessBtn.addEventListener("click", ()=>{
+  suggestionsEl.style.display = "none";
+  handleGuessRaw(input.value);
+  input.value = "";
+  hexInfo.textContent = "";
+  input.focus();
+});
+
+/* ======= helper: parse hex input displayed nearest named color ======= */
+
+function updateHexInfoForInput(value){
+  const v = (value||"").trim();
+  hexInfo.textContent = "";
+  if (!v) return;
+  const m = v.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!m) return;
+  let raw = m[1];
+  if (raw.length === 3) raw = raw.split("").map(ch=>ch+ch).join("");
+  const hex = "#" + raw.toLowerCase();
+  const rgb = hexToRgb(hex);
+  const nearest = nearestNamedColorForRgb(rgb);
+  hexInfo.innerHTML = `Hex: <span class="hexName">${hex}</span> — Nearest: <span class="hexName">${nearest.name}</span> <span class="hexPercent">(${nearest.pct}%)</span>`;
+}
+
+/* ======= initialize some suggestions ======= */
+renderSuggestions(buildSuggestions(""));
+
+/* ======= end script ======= */
 </script>
 </body>
 </html>
