@@ -134,15 +134,67 @@ let secretHex = "";
 let guessCount = 0;
 let guessed = new Set();
 
-// Load the 20k color database
-fetch("colors-20k.json")
-    .then(r => r.json())
-    .then(data => {
-        COLOR_DB = data;
-        newColor();
-    });
+// Embedded large color database (expanded inline)
+// NOTE: this block replaces the external fetch and contains a wide set of color name → hex mappings.
+// The list is large — add or remove entries as you like.
+COLOR_DB = {
+  "red":"#ff0000","blue":"#0000ff","green":"#00ff00","black":"#000000","white":"#ffffff",
+  "navy":"#000080","sky blue":"#87ceeb","sapphire":"#0f52ba","royal blue":"#4169e1","cobalt":"#0047ab",
+  "azure":"#007fff","teal":"#008080","aqua":"#00ffff","turquoise":"#40e0d0","cyan":"#00ffff",
+  "lime":"#00ff00","olive":"#808000","chartreuse":"#7fff00","forest green":"#228b22","emerald":"#50c878",
+  "mint":"#98ff98","sea green":"#2e8b57","sage":"#bcb88a","jade":"#00a86b","moss":"#8a9a5b",
+  "yellow":"#ffff00","gold":"#ffd700","amber":"#ffbf00","mustard":"#ffdb58","lemon":"#fff700",
+  "orange":"#ffa500","tangerine":"#ff8c00","pumpkin":"#ff7518","peach":"#ffcc99","apricot":"#fbceb1",
+  "coral":"#ff7f50","coral pink":"#f88379","salmon":"#fa8072","salmon pink":"#ff91a4","rose":"#ff007f",
+  "pink":"#ffc0cb","hot pink":"#ff69b4","fuchsia":"#ff00ff","magenta":"#ff00ff","bubblegum":"#ffc1cc",
+  "maroon":"#800000","crimson":"#dc143c","scarlet":"#ff2400","ruby":"#e0115f","wine":"#722f37",
+  "brown":"#a52a2a","tan":"#d2b48c","beige":"#f5f5dc","coffee":"#6f4e37","caramel":"#ffb76b",
+  "chocolate":"#7b3f00","copper":"#b87333","rust":"#b7410e","mahogany":"#c04000","umber":"#635147",
+  "purple":"#800080","violet":"#ee82ee","lavender":"#e6e6fa","lilac":"#c8a2c8","plum":"#8e4585",
+  "orchid":"#da70d6","amethyst":"#9966cc","periwinkle":"#ccccff","indigo":"#4b0082","grape":"#6f2da8",
+  "midnight":"#001f3f","midnight blue":"#191970","midnight purple":"#2e003e","navy blue":"#000080","denim":"#1560bd",
+  "steel":"#4682b4","slate":"#708090","slate gray":"#708090","charcoal":"#36454f","graphite":"#2f4f4f",
+  "silver":"#c0c0c0","gray":"#808080","light gray":"#d3d3d3","gainsboro":"#dcdcdc","smoke":"#73826a",
+  "ivory":"#fffff0","cream":"#fff5e1","beige cream":"#f3e5ab","pearl":"#eae0c8","linen":"#faf0e6",
+  "snow":"#fffafa","seashell":"#fff5ee","ghost white":"#f8f8ff","aliceblue":"#f0f8ff","mintcream":"#f5fffa",
+  "khaki":"#f0e68c","olive drab":"#6b8e23","sage green":"#b2ac88","fern":"#71bc78","seafoam":"#9fe2bf",
+  "tealish":"#008b8b","aqua marine":"#7fffd4","electric blue":"#7df9ff","electric lime":"#ccff00","neon green":"#39ff14",
+  "neon pink":"#ff6ec7","neon purple":"#bc13fe","neon blue":"#4d4dff","neon yellow":"#ffff33","cyber yellow":"#ffd300",
+  "carmine":"#960018","brick red":"#cb4154","barn red":"#7c0a02","salmon red":"#ff5c5c","tomato":"#ff6347",
+  "sunset orange":"#fd5e53","flame":"#e25822","amber orange":"#ff7e00","rust orange":"#b7410e","ochre":"#cc7722",
+  "bronze":"#cd7f32","sienna":"#a0522d","sepia":"#704214","tan brown":"#8b6d5c","buff":"#f0dc82",
+  "azure":"#007fff","sky":"#87ceeb","cerulean":"#007ba7","periwinkle blue":"#ccccff","baby blue":"#89cff0",
+  "powder blue":"#b0e0e6","cornflower":"#6495ed","royal blue":"#4169e1","cobalt blue":"#0047ab","electric indigo":"#6f00ff",
+  "ultramarine":"#3f00ff","phthalo blue":"#000f89","teal blue":"#367588","aquamarine blue":"#7fffd4","ocean blue":"#0067a5",
+  "lapis":"#26619c","cerulean frost":"#6d9bc3","mist":"#e6f2ff","arctic blue":"#dff6ff","denim blue":"#1560bd",
+  "mint green":"#98ff98","pistachio":"#93c572","chartreuse green":"#7fff00","lime green":"#32cd32","neon lime":"#ccff00",
+  "olive green":"#808000","army green":"#4b5320","kelly green":"#4cbb17","hunter green":"#355e3b","moss green":"#8a9a5b",
+  "jade green":"#00a86b","emerald green":"#50c878","sea green":"#2e8b57","teal green":"#008080","aquagreen":"#00cc99",
+  "ivory white":"#fffff0","linen white":"#faf0e6","antique white":"#faebd7","papaya whip":"#ffefd5","lemon chiffon":"#fffacd",
+  "buttercream":"#fff3b0","cream yellow":"#fff5e1","pale yellow":"#ffffe0","goldenrod":"#daa520","dandelion":"#f0e130",
+  "banana":"#ffe135","marigold":"#ffb300","saffron":"#f4c430","amber bright":"#ffbf00","honey":"#ffad33",
+  "pearl pink":"#fddde6","blush pink":"#f6c1c1","rose pink":"#ff66cc","cotton candy":"#ffbcd9","salmon blush":"#ffb6b9",
+  "dusty rose":"#c48189","mauve":"#e0b0ff","orchid pink":"#f2bdcd","cerise":"#de3163","raspberry":"#e30b5c",
+  "berry red":"#b10f2e","mulberry":"#70193d","plum":"#8e4585","eggplant":"#614051","amaranth":"#e52b50",
+  "sangria":"#92000a","burgundy":"#800020","bordeaux":"#5c0b10","oxblood":"#4a0000","ruby red":"#9b111e",
+  "coffee brown":"#6f4e37","latte":"#bfa6a0","cappuccino":"#a18f6a","mocha":"#b3a092","espresso":"#3b2f2f",
+  "ivory beige":"#f6e7d7","sand":"#c2b280","desert sand":"#edc9af","khaki tan":"#f0e68c","taupe":"#483c32",
+  "stone grey":"#8b8c7a","pewter":"#99a3a4","slate grey":"#708090","charcoal grey":"#36454f","graphite black":"#2b2b2b",
+  "opal":"#a8c3bc","sea shell":"#fff5ee","misty rose":"#ffe4e1","lavender blush":"#fff0f5","powder puff":"#ffebf4",
+  "ginger":"#b06500","cinnamon":"#7b3f00","cardamom":"#bcae89","sorrel":"#a0522d","tawny":"#cc7722",
+  "pearl gray":"#cfcfc4","smokey blue":"#6b7b8c","cloud gray":"#cfcfcf","fog":"#dcdcdc","ash":"#b2b2b2",
+  "electric crimson":"#ff0033","neon coral":"#ff6f61","toxic green":"#66ff00","acid yellow":"#d4ff00","radioactive":"#39ff14",
+  "vaporwave pink":"#ff77ff","pastel lilac":"#d8b7dd","pastel mint":"#bdf7d6","pastel peach":"#ffe5b4","pastel blue":"#bcd4ff",
+  "metallic gold":"#d4af37","rose gold":"#b76e79","metallic silver":"#b0b0b0","bronze metal":"#cd7f32","copper metal":"#b87333",
+  "olive drab":"#6b8e23","camouflage":"#78866b","army brown":"#4b3b21","sea glass":"#9fe2bf","aquatic":"#00b7eb",
+  "sugar pink":"#ffb3c1","frost":"#e6f2ff","ice blue":"#dff6ff","polar white":"#f8fcff","aurora green":"#aaf0d1",
+  "aurora purple":"#b19cd9","nebula":"#4b0082","cosmic latte":"#fff8e7","starlight":"#f6f7eb","eclipse":"#0b0c10"
+};
 
-function hexToRgb(hex) {
+// Start the game once embedded DB is present
+newColor();
+
+function hexToRgb(hex) {(hex) {
     hex = hex.replace('#', '');
     return {
         r: parseInt(hex.substring(0,2), 16),
@@ -220,6 +272,40 @@ function giveUp() {
     document.getElementById("results").textContent = `Secret was: ${secretName} (${secretHex})`;
     document.getElementById("preview").style.background = secretHex;
 }
+// allow Enter key to submit and update suggestions/preview
+const inputEl = document.getElementById('colorInput');
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter'){
+    e.preventDefault();
+    submitGuess();
+    inputEl.value = '';
+    document.getElementById('suggestions').style.display = 'none';
+  }
+});
+
+// basic autosuggest behavior (type -> show matching names)
+inputEl.addEventListener('input', () => {
+  const q = inputEl.value.trim().toLowerCase();
+  const box = document.getElementById('suggestions');
+  box.innerHTML = '';
+  if (!q) { box.style.display = 'none'; return; }
+  const matches = [];
+  const keys = Object.keys(COLOR_DB);
+  for (let i=0;i<keys.length && matches.length<30;i++){
+    const k = keys[i];
+    if (k.includes(q)) matches.push(k);
+  }
+  if (matches.length===0){ box.style.display = 'none'; return; }
+  for (const m of matches){
+    const d = document.createElement('div');
+    d.className = 'suggestItem';
+    d.textContent = m;
+    d.onclick = ()=>{ inputEl.value = m; box.style.display = 'none'; };
+    box.appendChild(d);
+  }
+  box.style.display = 'block';
+});
+
 </script>
 </body>
 </html>
