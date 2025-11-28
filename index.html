@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Color Wordle</title>
+<title>Color Wordle+</title>
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -13,112 +14,163 @@
         align-items: center;
         margin-top: 40px;
     }
+
+    h1 {
+        font-size: 40px;
+        margin-bottom: 10px;
+        color: #ffa500;
+    }
+
     input {
         padding: 10px;
         font-size: 18px;
-        width: 200px;
+        width: 240px;
         border-radius: 6px;
         border: none;
         margin-bottom: 10px;
+        outline: none;
     }
+
     button {
         padding: 10px 20px;
         font-size: 18px;
         border: none;
         border-radius: 6px;
-        background: #ff8800;
+        background: #ffa500;
         color: black;
         cursor: pointer;
         font-weight: bold;
     }
-    .guess-box {
-        margin-top: 20px;
-        width: 300px;
-        height: 80px;
-        border-radius: 10px;
-        border: 2px solid #444;
+
+    #guessList {
+        margin-top: 25px;
+        width: 350px;
+    }
+
+    .guessItem {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        margin-bottom: 15px;
+        background: #1c1c1c;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        border: 1px solid #333;
+    }
+
+    .swatch {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        border: 2px solid #555;
+    }
+
+    .correct {
+        border-color: #0f0;
+        box-shadow: 0 0 10px #0f0;
     }
 </style>
 </head>
 <body>
 
 <h1>Color Wordle</h1>
-<p>Enter a color (hex or name). Try to match the secret color!</p>
+<p>Type any color (hex or name). Try to match the secret color!</p>
 
-<div id="guessBox" class="guess-box">Your guess will show here</div>
-
-<input id="colorInput" placeholder="#3498db or red">
+<input id="colorInput" placeholder="Example: light pink, #3498db">
 <button onclick="makeGuess()">Guess</button>
 
-<p id="resultMsg"></p>
+<div id="guessList"></div>
+
+<p id="resultMsg" style="font-size: 22px; margin-top: 20px;"></p>
 
 <script>
-    // Generate random color
-    function randomColor() {
-        return "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+
+// 🎨 Pick random secret color
+function randomColor() {
+    return "#" + Math.floor(Math.random() * 16777215)
+        .toString(16).padStart(6, '0');
+}
+
+let secret = randomColor();
+console.log("Secret color:", secret); // debug
+
+// 🎨 Convert any color string → full rgb() format
+function normalizedColor(color) {
+    let ctx = document.createElement("canvas").getContext("2d");
+    ctx.fillStyle = color;
+    return ctx.fillStyle; // browser auto-converts
+}
+
+// 🎨 Convert rgb(...) → {r,g,b}
+function rgbObj(color) {
+    color = normalizedColor(color);
+    let m = color.match(/rgba?\((\d+), (\d+), (\d+)/);
+    return {r:+m[1], g:+m[2], b:+m[3]};
+}
+
+// 🎯 Return % similarity
+function colorSimilarity(a, b) {
+    let r = a.r - b.r;
+    let g = a.g - b.g;
+    let bDiff = a.b - b.b;
+    let dist = Math.sqrt(r*r + g*g + bDiff*bDiff);
+    let max = Math.sqrt(255*255*3);
+    return Math.round((1 - dist/max) * 100);
+}
+
+// 🧠 When the user guesses a color
+function makeGuess() {
+    let input = document.getElementById("colorInput");
+    let guess = input.value.trim().toLowerCase();
+    if (!guess) return;
+
+    // Try normalizing — if browser can parse it, it's valid
+    let normalized;
+    try {
+        normalized = normalizedColor(guess);
+    } catch {
+        alert("Invalid color name or format!");
+        return;
     }
 
-    let secret = randomColor();
-    console.log("Secret color:", secret); // for debugging
+    let guessRGB = rgbObj(normalized);
+    let secretRGB = rgbObj(secret);
+    let similarity = colorSimilarity(guessRGB, secretRGB);
 
-    // Convert any CSS color to RGB object
-    function toRGB(color) {
-        let ctx = document.createElement("canvas").getContext("2d");
-        ctx.fillStyle = color;
-        return ctx.fillStyle; // browser converts it to a full color string
+    // Add the guess to the list visually
+    addGuessToList(normalized, similarity);
+
+    // Check correct
+    if (similarity === 100) {
+        document.getElementById("resultMsg").innerHTML =
+            `🎉 Correct! The secret color was <b>${secret}</b>. Refresh to play again!`;
     }
 
-    function rgbObj(color) {
-        color = toRGB(color);
-        let m = color.match(/rgba?\((\d+), (\d+), (\d+)/);
-        return { r: +m[1], g: +m[2], b: +m[3] };
-    }
+    input.value = "";
+}
 
-    // Calculate similarity (0–100%) using RGB distance
-    function colorSimilarity(c1, c2) {
-        let rDiff = c1.r - c2.r;
-        let gDiff = c1.g - c2.g;
-        let bDiff = c1.b - c2.b;
+// 📌 Add guess to the guess history list
+function addGuessToList(color, similarity) {
+    let list = document.getElementById("guessList");
 
-        let distance = Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
-        let maxDistance = Math.sqrt(255*255*3); // max RGB distance
+    let item = document.createElement("div");
+    item.className = "guessItem";
 
-        return Math.round((1 - (distance / maxDistance)) * 100);
-    }
+    let swatch = document.createElement("div");
+    swatch.className = "swatch";
+    swatch.style.background = color;
 
-    function makeGuess() {
-        let guess = document.getElementById("colorInput").value.trim();
-        if (!guess) return;
+    if (similarity === 100) swatch.classList.add("correct");
 
-        let guessBox = document.getElementById("guessBox");
+    let text = document.createElement("div");
+    text.textContent = `${color} — ${similarity}%`;
 
-        // Try applying the color to check if valid
-        try {
-            guessBox.style.background = guess;
-        } catch {
-            alert("Invalid color!");
-            return;
-        }
+    item.appendChild(text);
+    item.appendChild(swatch);
 
-        let guessRGB = rgbObj(guess);
-        let secretRGB = rgbObj(secret);
+    list.prepend(item); // newest guess on top
+}
 
-        let similarity = colorSimilarity(guessRGB, secretRGB);
-
-        if (similarity === 100) {
-            guessBox.style.background = secret;
-            document.getElementById("resultMsg").innerHTML =
-                `🎉 Correct! The secret color was <b>${secret}</b>. Reload to play again.`;
-        } else {
-            document.getElementById("resultMsg").innerHTML =
-                `You're ${similarity}% close!`;
-        }
-    }
 </script>
 
 </body>
