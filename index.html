@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Color Wordle — 1,000 Colors (Mixed Realistic)</title>
+<title>Color Wordle — 1,000 Colors (Fixed lookups)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
@@ -188,7 +188,6 @@
 
   .footer{ margin-top:12px; color:var(--muted); font-size:13px; text-align:center; }
 
-  /* small responsive */
   @media (max-width:800px){
     .app{ width:100%; padding:16px }
     .main{ flex-direction:column; }
@@ -201,7 +200,7 @@
 <body>
   <div class="app" role="application" aria-label="Color Wordle">
     <div class="header">
-      <h1>Color Wordle — 1,000 Colors</h1>
+      <h1>Color Wordle — 1,000 Colors (Fixed)</h1>
     </div>
     <div class="lead">Type any color phrase. Press <kbd style="background:#111;padding:4px 6px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);">Enter</kbd> to submit. Duplicates blocked. Click swatches to copy hex.</div>
 
@@ -266,36 +265,13 @@ function mulberry32(seed) {
   }
 }
 
-// Name components: adjectives, modifiers, nouns
-const ADJ = [
-  "soft","muted","pale","light","deep","rich","vivid","bright","neon","dusty",
-  "warm","cool","icy","smoky","frost","velvet","silken","dusky","dawn","dusk",
-  "ember","solar","lunar","midnight","ocean","sea","storm","sage","mint","sagebrush",
-  "crimson","ruby","coral","peach","amber","golden","sunset","rose","blush","cotton",
-  "ivory","ash","charcoal","onyx","cerulean","azure","sapphire","cerise","orchid","lavender",
-  "berry","plum","teal","aqua","jade","forest","pine","olive","moss","fern",
-  "copper","bronze","stone","sand","beach","oyster","latte","mocha","cherry","maroon",
-  "electric","pastel","ghost","opal","pearl","crystal","citrine","topaz","obsidian","galaxy"
-];
+const ADJ = [ "soft","muted","pale","light","deep","rich","vivid","bright","neon","dusty","warm","cool","icy","smoky","frost","velvet","silken","dusky","dawn","dusk","ember","solar","lunar","midnight","ocean","sea","storm","sage","mint","sagebrush","crimson","ruby","coral","peach","amber","sunset","rose","blush","cotton","ivory","ash","charcoal","onyx","cerulean","azure","sapphire","cerise","orchid","lavender","berry","plum","teal","aqua","jade","forest","pine","olive","moss","fern","copper","bronze","stone","sand","beach","oyster","latte","mocha","cherry","maroon","electric","pastel","ghost","opal","pearl","crystal","citrine","topaz","obsidian","galaxy" ];
+const MOD = [ "light","dark","very","extra","soft","deep","pale","bright","muted","warm","cool","dusty","vivid","faded","neon" ];
+const NOUN = [ "sky","sapphire","lilac","lavender","rose","pearl","dawn","dusk","ember","sun","sand","sea","ocean","wave","mint","forest","leaf","moss","jade","sage","pine","berry","plum","violet","orchid","candy","blossom","coral","flame","brick","stone","ash","smoke","shadow","cloud","storm","crown","silk","velvet","cream","latte","copper","amber","haze","mist","glass","glisten","frost","ice","glow","sunset","marigold","chartreuse","cerulean","indigo"];
 
-const MOD = [
-  "light","dark","very","extra","soft","deep","pale","bright","muted","warm","cool","dusty","vivid","faded","neon"
-];
-
-const NOUN = [
-  "sky","sapphire","lilac","lavender","rose","pearl","dawn","dusk","ember","sun","sand","sea","ocean","wave","mint",
-  "forest","leaf","moss","jade","sage","pine","berry","plum","violet","orchid","candy","blossom","coral","flame",
-  "ember","brick","stone","ash","smoke","shadow","cloud","storm","crown","silk","velvet","cream","latte","copper",
-  "amber","haze","mist","glass","glisten","frost","ice","glow","sunset","marigold","chartreuse","cerulean","indigo"
-];
-
-// seed for PRNG (deterministic but varied)
 const rng = mulberry32(0xC0FFEE);
-
-// helper: random pick
 function pick(arr){ return arr[Math.floor(rng() * arr.length)]; }
 
-// generate unique, human-style names
 function generateNames(count){
   const set = new Set();
   const names = [];
@@ -305,20 +281,15 @@ function generateNames(count){
     const style = Math.floor(rng()*4);
     let name;
     if (style === 0){
-      // adjective + noun
       name = `${pick(ADJ)} ${pick(NOUN)}`;
     } else if (style === 1){
-      // modifier + adjective + noun
       name = `${pick(MOD)} ${pick(ADJ)} ${pick(NOUN)}`;
     } else if (style === 2){
-      // noun + noun (like "ocean sapphire")
       name = `${pick(NOUN)} ${pick(NOUN)}`;
     } else {
-      // single-phrase like "deep indigo"
       name = `${pick(ADJ)} ${pick(NOUN)}`;
     }
     name = name.replace(/\s+/g,' ').trim();
-    // normalize repeated duplicates like "ember ember"
     if (/\b(\w+)\s+\1\b/.test(name)){
       name = name.replace(/\b(\w+)\s+\1\b/, "$1");
     }
@@ -330,32 +301,35 @@ function generateNames(count){
   return names;
 }
 
-// deterministic color generation from name (hash -> hex)
 function hexFromName(name){
-  // FNV-1a style simple hash to 24-bit color
   let h = 2166136261 >>> 0;
   for (let i=0;i<name.length;i++){
     h ^= name.charCodeAt(i);
     h = Math.imul(h, 16777619) >>> 0;
   }
-  // mix a little with golden ratio to improve distribution
   const r = (h >>> 16) & 0xFF;
   const g = (h >>> 8) & 0xFF;
   const b = h & 0xFF;
   return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
 }
 
-/* Build COLOR_DB (object name -> hex) */
+/* Build maps:
+   NAME_TO_HEX: lowercase name -> hex
+   HEX_TO_NAME: hex (lower) -> canonical display name
+*/
 const COLOR_DB = (function(){
   const N = 1000;
   const names = generateNames(N);
-  const obj = {};
+  const nameToHex = {};
+  const hexToName = {};
   for (let i=0;i<names.length;i++){
-    const nm = names[i];
-    const hex = hexFromName(nm);
-    obj[nm] = hex;
+    const display = names[i];
+    const hex = hexFromName(display);
+    const key = display.toLowerCase();
+    nameToHex[key] = hex;
+    hexToName[hex.toLowerCase()] = display; // first writer wins (deterministic)
   }
-  return obj;
+  return { nameToHex, hexToName };
 })();
 
 /* ------------------------------
@@ -390,10 +364,8 @@ function rgbToHsl({r,g,b}){
   }
   return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
 }
-
-// HSL distance % (0..100)
 function hslDistancePercent(a,b){
-  const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180; // 0..1
+  const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180;
   const ds = Math.abs(a.s - b.s) / 100;
   const dl = Math.abs(a.l - b.l) / 100;
   const dist = Math.sqrt((dh*dh)*0.62 + (ds*ds)*0.26 + (dl*dl)*0.12);
@@ -422,11 +394,15 @@ let typedSet = new Set();
 let normSet = new Set();
 
 function pickSecret(){
-  const keys = Object.keys(COLOR_DB);
-  const idx = Math.floor(Math.random() * keys.length);
-  secretName = keys[idx];
-  secretHex = COLOR_DB[secretName];
+  const names = Object.keys(COLOR_DB.nameToHex);
+  const idx = Math.floor(Math.random() * names.length);
+  secretName = COLOR_DB.hexToName ? COLOR_DB.hexToName[names[idx]] : null; // fallback
+  // better: get name by hexToName after choosing
+  const chosenNameLower = names[idx];
+  secretHex = COLOR_DB.nameToHex[chosenNameLower];
   secretHsl = rgbToHsl(hexToRgb(secretHex));
+  const displayName = COLOR_DB.hexToName[secretHex.toLowerCase()] || (chosenNameLower);
+  secretName = displayName;
   // hide secret until give up
   secretNameEl.textContent = "Secret";
   secretHexEl.textContent = "••••••";
@@ -437,37 +413,55 @@ function pickSecret(){
   normSet.clear();
 }
 
+/* Normalize typed input to hex:
+   1) if it's a valid hex -> hex
+   2) if it's a CSS color -> use canvas normalized color
+   3) if it's in our DB by case-insensitive name -> use that hex
+   4) if tokens/collapse match -> use best
+   5) fallback -> null
+*/
 function normalizeInputToHex(raw){
   if (!raw) return null;
   const t = raw.trim();
   // hex direct
   const hx = hexNormalize(t);
   if (hx) return hx;
-  // exact name in DB
+  // CSS named color?
+  if (isCssColor(t)) {
+    const norm = normalizedCssToHex(t);
+    const maybeHex = hexNormalize(norm);
+    if (maybeHex) return maybeHex;
+  }
+  // db exact case-insensitive
   const low = t.toLowerCase();
-  if (COLOR_DB.hasOwnProperty(low)) return COLOR_DB[low]; // not likely because keys keep original casing, so try case-insensitive
-  // try case-insensitive lookup
-  for (const k of Object.keys(COLOR_DB)){
-    if (k.toLowerCase() === low) return COLOR_DB[k];
-  }
-  // try normalized name by removing extra spaces/hyphens
+  if (COLOR_DB.nameToHex[low]) return COLOR_DB.nameToHex[low];
+
+  // collapse hyphens/underscores/spaces and try
   const collapse = low.replace(/[\s\-_]+/g,' ');
-  for (const k of Object.keys(COLOR_DB)){
-    if (k.toLowerCase() === collapse) return COLOR_DB[k];
-  }
-  // try fuzzy: exact word match for any token
-  const tokens = collapse.split(/\s+/);
-  for (const k of Object.keys(COLOR_DB)){
-    const lk = k.toLowerCase();
-    for (const tok of tokens){
-      if (lk.includes(tok) && tok.length > 2) return COLOR_DB[k];
+  if (COLOR_DB.nameToHex[collapse]) return COLOR_DB.nameToHex[collapse];
+
+  // try fuzzy token match: any DB name that contains all tokens
+  const tokens = collapse.split(/\s+/).filter(Boolean);
+  if (tokens.length){
+    const keys = Object.keys(COLOR_DB.nameToHex);
+    // prefer startsWith and then includes
+    for (const k of keys){
+      let lk = k;
+      let matched = tokens.every(tok => lk.includes(tok));
+      if (matched) return COLOR_DB.nameToHex[k];
     }
   }
-  // fallback: null (we could hash phrase into hex deterministically; but we'll let it be invalid)
+
   return null;
 }
 
-function addGuessRow(typed, hex, userHsl, pct){
+function lookupNameForHex(hex){
+  const h = hexNormalize(hex);
+  if (!h) return null;
+  return COLOR_DB.hexToName[h.toLowerCase()] || null;
+}
+
+function addGuessRow(typed, hex, pct){
   const row = document.createElement('div');
   row.className = 'guessRow';
 
@@ -487,7 +481,8 @@ function addGuessRow(typed, hex, userHsl, pct){
   nm.textContent = typed;
   const hx = document.createElement('div');
   hx.className = 'hex';
-  hx.textContent = `${hex} ${lookupNameForHex(hex) ? ' — ' + lookupNameForHex(hex) : ''}`;
+  const canonical = lookupNameForHex(hex);
+  hx.textContent = `${hex}${canonical ? ' — ' + canonical : ''}`;
 
   meta.appendChild(nm);
   meta.appendChild(hx);
@@ -502,7 +497,6 @@ function addGuessRow(typed, hex, userHsl, pct){
 
   if (pct === 100){ row.classList.add('correct'); }
 
-  // newest on top
   guessList.prepend(row);
 }
 
@@ -513,16 +507,6 @@ function showHint(msg){
   h.textContent = msg;
   clearTimeout(hintTimeout);
   hintTimeout = setTimeout(()=>{ h.textContent = "Autosuggest supports the 1,000-color DB. If the typed phrase is a hex or CSS name it will be parsed correctly."; }, 2400);
-}
-
-// return name for exact hex if present
-function lookupNameForHex(hex){
-  const h = hexNormalize(hex);
-  if (!h) return null;
-  for (const k of Object.keys(COLOR_DB)){
-    if (COLOR_DB[k].toLowerCase() === h.toLowerCase()) return k;
-  }
-  return null;
 }
 
 /* ---------- event handling ---------- */
@@ -536,12 +520,11 @@ input.addEventListener('input', () => {
   // autosuggest: find up to 8 matches by startsWith or includes
   suggBox.innerHTML = '';
   if (!q){ suggBox.style.display='none'; return; }
-  const keys = Object.keys(COLOR_DB);
+  const keys = Object.keys(COLOR_DB.nameToHex);
   const starts = [], includes = [];
   for (let k of keys){
-    const lk = k.toLowerCase();
-    if (lk.startsWith(q)) starts.push(k);
-    else if (lk.includes(q)) includes.push(k);
+    if (k.startsWith(q)) starts.push(k);
+    else if (k.includes(q)) includes.push(k);
     if (starts.length >= 8) break;
   }
   const results = starts.concat(includes).slice(0,8);
@@ -565,49 +548,6 @@ input.addEventListener('keydown', (e) => {
   }
 });
 
-async function submitGuess(raw){
-  if (!raw || !raw.trim()) { showHint("Type something to guess."); return; }
-  const typedKey = raw.trim().toLowerCase();
-  if (typedSet.has(typedKey)){ showHint(`You already guessed "${raw}".`); return; }
-
-  // try to convert typed -> hex
-  let hex = normalizeInputToHex(raw);
-  if (!hex){
-    // as a forgiving fallback, create deterministic hex from phrase
-    hex = hexFromName(raw.toLowerCase());
-  }
-  if (!hex){ showHint(`Couldn't parse "${raw}". Try a hex like #RRGGBB or a known name.`); return; }
-
-  if (normSet.has(hex.toLowerCase())) { showHint(`That color (${hex}) was already guessed.`); return; }
-
-  // record
-  typedSet.add(typedKey);
-  normSet.add(hex.toLowerCase());
-
-  // ask for hex -> HSL locally
-  const userHsl = rgbToHsl(hexToRgb(hex));
-  const pct = hslDistancePercent(userHsl, secretHsl || rgbToHsl(hexToRgb(secretHex)));
-
-  addGuessRow(raw, hex, userHsl, pct);
-
-  // update preview
-  preview.style.background = hex;
-
-  // message
-  if (pct === 100){
-    showHint(`🎉 Correct! ${lookupNameForHex(hex) || raw} (${hex}).`);
-    revealSecret(hex);
-  } else {
-    showHint(`You're ${pct}% close.`);
-  }
-
-  input.value = '';
-  suggBox.style.display = 'none';
-}
-
-/* ---------- utilities ---------- */
-
-// quick CSS color check (lets browser parse)
 function isCssColor(s){
   if(!s || typeof s !== 'string') return false;
   const o = new Option();
@@ -617,25 +557,59 @@ function isCssColor(s){
 function normalizedCssToHex(s){
   const ctx = document.createElement('canvas').getContext('2d');
   ctx.fillStyle = s;
-  return ctx.fillStyle; // returns like "#rrggbb" or "rgb(...)"
+  return ctx.fillStyle; // usually "#rrggbb"
+}
+
+function submitGuess(raw){
+  if (!raw || !raw.trim()) { showHint("Type something to guess."); return; }
+  const typedKey = raw.trim().toLowerCase();
+  if (typedSet.has(typedKey)){ showHint(`You already guessed "${raw}".`); return; }
+
+  let hex = normalizeInputToHex(raw);
+  if (!hex){
+    // fallback: deterministic hex from phrase (keeps synonyms allowed, but canonical names are DB-based)
+    hex = hexFromName(raw.toLowerCase());
+  }
+  if (!hex){ showHint(`Couldn't parse "${raw}". Try a hex like #RRGGBB or a known name.`); return; }
+
+  const normalizedHex = hexNormalize(hex);
+  if (normSet.has(normalizedHex)){ showHint(`That color (${normalizedHex}) was already guessed.`); return; }
+
+  typedSet.add(typedKey);
+  normSet.add(normalizedHex);
+
+  const userHsl = rgbToHsl(hexToRgb(normalizedHex));
+  const pct = hslDistancePercent(userHsl, secretHsl);
+
+  addGuessRow(raw, normalizedHex, pct);
+  preview.style.background = normalizedHex;
+
+  if (pct === 100){
+    showHint(`🎉 Correct! ${lookupNameForHex(normalizedHex) || raw} (${normalizedHex}).`);
+    revealSecret(normalizedHex);
+  } else {
+    showHint(`You're ${pct}% close.`);
+  }
+
+  input.value = '';
+  suggBox.style.display = 'none';
 }
 
 /* ---------- give up / reveal ---------- */
 function revealSecret(hex){
-  // reveal with name if available
-  const nm = lookupNameForHex(hex || secretHex) || secretName;
-  secretSwatch.style.background = hex || secretHex;
-  secretNameEl.textContent = nm || 'Unnamed';
-  secretHexEl.textContent = hex || secretHex;
+  const chosenHex = hex || secretHex;
+  const name = lookupNameForHex(chosenHex) || secretName;
+  secretSwatch.style.background = chosenHex;
+  secretNameEl.textContent = name || 'Unnamed';
+  secretHexEl.textContent = chosenHex;
 }
 
-document.getElementById('giveBtn').addEventListener('click', async () => {
-  // reveal secret's name and hex
+giveBtn.addEventListener('click', ()=> {
   revealSecret();
   showHint('Secret revealed.');
 });
 
-document.getElementById('refreshBtn').addEventListener('click', () => {
+refreshBtn.addEventListener('click', ()=> {
   pickSecret();
   showHint('New secret chosen — start guessing!');
 });
@@ -646,8 +620,9 @@ document.getElementById('refreshBtn').addEventListener('click', () => {
 
 pickSecret();
 
-// expose COLOR_DB for debugging only if developer console open (no logging)
-window.__COLOR_DB_SIZE = Object.keys(COLOR_DB).length;
+// expose small debug info
+window.__COLOR_DB = { size: Object.keys(COLOR_DB.nameToHex).length };
+
 </script>
 </body>
 </html>
