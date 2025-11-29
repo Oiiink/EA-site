@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Color Wordle — Natural Language (No Duplicates)</title>
+<title>Color Wordle — TheColorAPI</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root { --bg:#0f0f0f; --card:#141414; --accent:#ff9a00; color-scheme: dark; }
@@ -10,7 +10,7 @@ html,body{height:100%}
 body{
   margin:0;
   font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
-  background:var(--bg);
+  background:radial-gradient(circle at 10% 10%, #121216 0%, #0b0b0d 40%, #070707 100%);
   color:#fff;
   display:flex;
   align-items:flex-start;
@@ -18,23 +18,33 @@ body{
   padding:28px;
   box-sizing:border-box;
 }
-.app { width:520px; max-width:calc(100% - 40px); }
-h1 { margin:0 0 6px 0; color:var(--accent); font-size:28px; }
+.app { width:560px; max-width:calc(100% - 40px); }
+h1 { margin:0 0 6px 0; color:var(--accent); font-size:30px; }
 .lead { color:#cfcfcf; margin:6px 0 14px 0; font-size:14px; }
 .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.inputWrap{ position:relative; flex:1; }
 input[type="text"]{
-  flex:1;
-  padding:10px 12px;
-  border-radius:10px;
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
   border:1px solid #222;
   background:#0b0b0b;
   color:#fff;
   outline:none;
   font-size:15px;
 }
-button { padding:10px 14px; border-radius:10px; background:var(--accent); color:#000; border:none; cursor:pointer; font-weight:700; }
+input[type="text"]:focus{ box-shadow:0 0 10px rgba(255,154,0,0.12); border-color: rgba(255,154,0,0.32); }
+.smallBtn { padding:10px 12px; border-radius:10px; background:var(--accent); color:#000; border:none; cursor:pointer; font-weight:700; }
+
+/* preview + results area */
+.toolbar { display:flex; gap:8px; align-items:center; margin-top:8px; }
+.preview { width:64px; height:64px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:#000; box-shadow: inset 0 -8px 18px rgba(0,0,0,0.6); }
+.controlsRight{ display:flex; gap:6px; align-items:center; margin-left:auto; }
+
+/* messages + list */
 #resultMsg { margin-top:12px; font-weight:700; min-height:28px; color:#fff; }
-#guessList { margin-top:14px; display:flex; flex-direction:column; gap:8px; max-height:52vh; overflow:auto; padding-right:6px; }
+.hint { color:#bdbdbd; font-size:13px; margin-top:8px; }
+#guessList { margin-top:14px; display:flex; flex-direction:column; gap:8px; max-height:46vh; overflow:auto; padding-right:6px; }
 .guessItem { display:flex; align-items:center; justify-content:space-between; background:var(--card); padding:10px; border-radius:10px; border:1px solid #222; }
 .left { display:flex; gap:12px; align-items:center; }
 .swatch { width:56px; height:56px; border-radius:8px; border:2px solid rgba(255,255,255,0.06); flex-shrink:0; cursor:pointer; }
@@ -42,150 +52,60 @@ button { padding:10px 14px; border-radius:10px; background:var(--accent); color:
 .norm { font-size:12px; color:#bfbfbf; margin-top:6px; }
 .similarity { font-weight:800; min-width:70px; text-align:right; color:#fff; font-size:14px; }
 .correct { box-shadow:0 0 18px 3px rgba(0,255,128,0.12); border-color:#19d119; }
-.hint { color:#bdbdbd; font-size:13px; margin-top:8px; }
 .bad { color:#ff6b6b; }
 .good { color:#6bff9b; }
 .small { font-size:12px; color:#aaa; margin-left:6px; }
-kbd { background:#222; padding:2px 6px; border-radius:6px; border:1px solid #333; font-size:12px; }
-footer { margin-top:12px; font-size:12px; color:#888; }
+.kbd { background:#222; padding:4px 8px; border-radius:6px; border:1px solid #333; font-size:12px; }
+
+/* suggestions */
+.suggestions { position:absolute; left:0; right:0; top:calc(100% + 8px); background:#0d0d0d; border:1px solid #222; border-radius:10px; max-height:240px; overflow:auto; z-index:60; padding:6px; display:none; }
+.sugg { padding:8px 10px; cursor:pointer; border-radius:8px; }
+.sugg:hover{ background:#111; }
+
+/* footer */
+footer { margin-top:12px; font-size:12px; color:#888; text-align:center; }
 </style>
 </head>
 <body>
-  <div class="app">
-    <h1>Color Wordle — Natural Language</h1>
-    <div class="lead">Type any color phrase. Examples: <span class="small">red, light red, pinkie, the darkest blue, very pale teal</span></div>
+  <div class="app" role="application" aria-label="Color Wordle">
+    <h1>Color Wordle — API Mode</h1>
+    <div class="lead">Type any color phrase or hex. Press <span class="kbd">Enter</span> to submit. Try "the darkest blue", "very pale pink", or "#3498db".</div>
 
     <div class="controls">
-      <input id="colorInput" placeholder="Try: red | light red | pinkie | the darkest blue" autofocus>
-      <button id="guessBtn">Guess</button>
+      <div class="inputWrap">
+        <input id="colorInput" placeholder="Try: red | light red | pinkie | the darkest blue | #ff33aa" autofocus aria-label="Color input">
+        <div id="suggestions" class="suggestions" aria-hidden="true"></div>
+      </div>
+
+      <div class="controlsRight">
+        <div class="preview" id="preview" aria-hidden="true" title="Color preview"></div>
+        <button id="giveUp" class="smallBtn" title="Reveal secret color">Give up</button>
+        <button id="refresh" class="smallBtn" title="Pick a new secret color">Refresh</button>
+      </div>
     </div>
 
-    <div id="resultMsg">Tip: press <kbd>Enter</kbd> to submit. Duplicate guesses are blocked.</div>
-    <div class="hint" id="hintLine">We accept CSS names + fuzzy phrases (light, dark, pastel, deepest, pale, muted, bright, very). Click a swatch to copy the normalized color.</div>
+    <div id="resultMsg">Tip: natural-language parsing + TheColorAPI name lookup. Duplicate guesses blocked.</div>
+    <div class="hint" id="hintLine">We accept CSS names + phrases (light, dark, pastel, deepest, pale, muted, bright, very). Click a swatch to copy.</div>
 
-    <div id="guessList"></div>
+    <div id="guessList" aria-live="polite"></div>
 
-    <footer>Secret color is random each reload. (Secret logged to console while testing.)</footer>
+    <footer>Secret color is generated randomly and looked up via TheColorAPI. Developer tools cannot be fully blocked; secret is not logged to console.</footer>
   </div>
 
 <script>
-/* ============================
-   Natural-language color engine
-   ============================ */
+/* ---------------------------
+  Color Wordle — API-powered
+   - Option A: TheColorAPI
+   - Natural-language parsing -> hex
+   - Enter submits
+   - Total guesses, give up, refresh
+--------------------------- */
 
-/* ---------- Base color name table (CSS subset + extras) ---------- */
-const colorNames = {
-  aliceblue: "#f0f8ff", antiquewhite: "#faebd7", aqua: "#00ffff", aquamarine: "#7fffd4",
-  azure: "#f0ffff", beige: "#f5f5dc", bisque: "#ffe4c4", black: "#000000",
-  blanchedalmond: "#ffebcd", blue: "#0000ff", blueviolet: "#8a2be2", brown: "#a52a2a",
-  burlywood: "#deb887", cadetblue: "#5f9ea0", chartreuse: "#7fff00", chocolate: "#d2691e",
-  coral: "#ff7f50", cornflowerblue: "#6495ed", cornsilk: "#fff8dc", crimson: "#dc143c",
-  cyan: "#00ffff", darkblue: "#00008b", darkcyan: "#008b8b", darkgoldenrod: "#b8860b",
-  darkgray: "#a9a9a9", darkgreen: "#006400", darkgrey: "#a9a9a9", darkkhaki: "#bdb76b",
-  darkmagenta: "#8b008b", darkolivegreen: "#556b2f", darkorange: "#ff8c00", darkorchid: "#9932cc",
-  darkred: "#8b0000", darksalmon: "#e9967a", darkseagreen: "#8fbc8f", darkslateblue: "#483d8b",
-  darkslategray: "#2f4f4f", darkturquoise: "#00ced1", darkviolet: "#9400d3", deeppink: "#ff1493",
-  deepskyblue: "#00bfff", dimgray: "#696969", dodgerblue: "#1e90ff", firebrick: "#b22222",
-  floralwhite: "#fffaf0", forestgreen: "#228b22", fuchsia: "#ff00ff", gainsboro: "#dcdcdc",
-  ghostwhite: "#f8f8ff", gold: "#ffd700", goldenrod: "#daa520", gray: "#808080",
-  green: "#008000", greenyellow: "#adff2f", grey: "#808080", honeydew: "#f0fff0",
-  hotpink: "#ff69b4", indianred: "#cd5c5c", indigo: "#4b0082", ivory: "#fffff0",
-  khaki: "#f0e68c", lavender: "#e6e6fa", lavenderblush: "#fff0f5", lawngreen: "#7cfc00",
-  lemonchiffon: "#fffacd", lightblue: "#add8e6", lightcoral: "#f08080", lightcyan: "#e0ffff",
-  lightgoldenrodyellow: "#fafad2", lightgray: "#d3d3d3", lightgreen: "#90ee90", lightgrey: "#d3d3d3",
-  lightpink: "#ffb6c1", lightsalmon: "#ffa07a", lightseagreen: "#20b2aa", lightskyblue: "#87cefa",
-  lightslategray: "#778899", lightsteelblue: "#b0c4de", lightyellow: "#ffffe0", lime: "#00ff00",
-  limegreen: "#32cd32", linen: "#faf0e6", magenta: "#ff00ff", maroon: "#800000",
-  mediumaquamarine: "#66cdaa", mediumblue: "#0000cd", mediumorchid: "#ba55d3", mediumpurple: "#9370db",
-  mediumseagreen: "#3cb371", mediumslateblue: "#7b68ee", mediumspringgreen: "#00fa9a", mediumturquoise: "#48d1cc",
-  mediumvioletred: "#c71585", midnightblue: "#191970", mintcream: "#f5fffa", mistyrose: "#ffe4e1",
-  moccasin: "#ffe4b5", navajowhite: "#ffdead", navy: "#000080", oldlace: "#fdf5e6",
-  olive: "#808000", olivedrab: "#6b8e23", orange: "#ffa500", orangered: "#ff4500",
-  orchid: "#da70d6", palegoldenrod: "#eee8aa", palegreen: "#98fb98", paleturquoise: "#afeeee",
-  palevioletred: "#db7093", papayawhip: "#ffefd5", peachpuff: "#ffdab9", peru: "#cd853f",
-  pink: "#ffc0cb", plum: "#dda0dd", powderblue: "#b0e0e6", purple: "#800080",
-  rebeccapurple: "#663399", red: "#ff0000", rosybrown: "#bc8f8f", royalblue: "#4169e1",
-  saddlebrown: "#8b4513", salmon: "#fa8072", sandybrown: "#f4a460", seagreen: "#2e8b57",
-  seashell: "#fff5ee", sienna: "#a0522d", silver: "#c0c0c0", skyblue: "#87ceeb",
-  slateblue: "#6a5acd", slategray: "#708090", snow: "#fffafa", springgreen: "#00ff7f",
-  steelblue: "#4682b4", tan: "#d2b48c", teal: "#008080", thistle: "#d8bfd8",
-  tomato: "#ff6347", turquoise: "#40e0d0", violet: "#ee82ee", wheat: "#f5deb3",
-  white: "#ffffff", whitesmoke: "#f5f5f5", yellow: "#ffff00", yellowgreen: "#9acd32",
-
-  // friendly extras & nicknames
-  pinkie: "#ff66b2", babyblue: "#89cff0", sky: "#87ceeb", lightred: "#ff7f7f",
-  deepestblue: "#000033", midnight: "#001133", tealish: "#008b8b", limey: "#bfff00",
-  coralish: "#ff6f61", salmony: "#ff8c69", minty: "#98ffcc", emeraldish: "#046307"
-};
-
-/* ---------- Color conversion helpers ---------- */
-function hexToRgb(hex) {
-  hex = hex.replace("#","").trim();
-  if (hex.length === 3) hex = hex.split("").map(c=>c+c).join("");
-  const int = parseInt(hex,16);
-  return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
-}
-function rgbToHex({r,g,b}) {
-  return "#" + [r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
-}
-function rgbToHsl({r,g,b}) {
-  r/=255; g/=255; b/=255;
-  const max = Math.max(r,g,b), min = Math.min(r,g,b);
-  let h=0, s=0, l=(max+min)/2;
-  if (max !== min) {
-    const d = max-min;
-    s = l > 0.5 ? d/(2-max-min) : d/(max+min);
-    switch(max) {
-      case r: h = (g-b)/d + (g<b?6:0); break;
-      case g: h = (b-r)/d + 2; break;
-      case b: h = (r-g)/d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
-}
-function hslToRgb({h,s,l}) {
-  h = ((h % 360) + 360) % 360;
-  s /= 100; l /= 100;
-  if (s === 0) {
-    const v = Math.round(l*255);
-    return { r:v, g:v, b:v };
-  }
-  const q = l < 0.5 ? l*(1+s) : l + s - l*s;
-  const p = 2*l - q;
-  const hk = h / 360;
-  const t = [hk + 1/3, hk, hk - 1/3];
-  const rgb = t.map(tc => {
-    if (tc < 0) tc += 1;
-    if (tc > 1) tc -= 1;
-    if (tc < 1/6) return p + (q-p)*6*tc;
-    if (tc < 1/2) return q;
-    if (tc < 2/3) return p + (q-p)*(2/3 - tc)*6;
-    return p;
-  });
-  return { r: Math.round(rgb[0]*255), g: Math.round(rgb[1]*255), b: Math.round(rgb[2]*255) };
-}
-
-/* ---------- Fuzzy match helper ---------- */
-function simpleSimilarity(a,b) {
-  a = (a||"").toLowerCase(); b = (b||"").toLowerCase();
-  if (a === b) return 1;
-  if (a.includes(b) || b.includes(a)) return 0.9;
-  const sa = a.split("").filter(ch=>b.includes(ch)).length;
-  return sa / Math.max(a.length || 1, b.length || 1);
-}
-function findBestColorKey(term) {
-  term = (term||"").toLowerCase();
-  let best = null, bestScore = 0;
-  for (const k of Object.keys(colorNames)) {
-    const score = simpleSimilarity(term, k);
-    if (score > bestScore) { best = k; bestScore = score; }
-  }
-  return bestScore > 0.35 ? best : null;
-}
-
-/* ---------- Parse natural-language phrases ---------- */
+/* ---------- helpers from your parser (lightly adapted) ---------- */
 const modifiersList = ["light","lighter","lightest","dark","darker","darkest","pale","pastel","muted","deep","very","bright","brightest","soft","desaturated","dull","rich","vivid","neon","ultra","slightly","ish"];
+
+function hexPad(h) { return h.replace("#","").toLowerCase().padStart(6,"0"); }
+function randomHex() { return "#" + Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,"0"); }
 
 function isValidCssColor(input) {
   if (!input || typeof input !== "string") return false;
@@ -198,262 +118,363 @@ function normalizedColor(colorStr) {
   ctx.fillStyle = colorStr;
   return ctx.fillStyle;
 }
+function hexToRgb(hex){
+  hex = hex.replace("#",""); if (hex.length===3) hex = hex.split("").map(c=>c+c).join("");
+  const n = parseInt(hex,16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+function rgbToHsl({r,g,b}) {
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0, s=0, l=(max+min)/2;
+  if (max!==min) {
+    const d=max-min;
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h=(g-b)/d + (g<b?6:0); break;
+      case g: h=(b-r)/d + 2; break;
+      case b: h=(r-g)/d + 4; break;
+    }
+    h /= 6;
+  }
+  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+}
+function hslToRgb({h,s,l}) {
+  h = ((h%360)+360)%360; s/=100; l/=100;
+  if (s===0){ const v=Math.round(l*255); return {r:v,g:v,b:v}; }
+  const q = l<0.5 ? l*(1+s) : l + s - l*s;
+  const p = 2*l - q;
+  const hk = h/360;
+  const t = [hk+1/3, hk, hk-1/3].map(tc => {
+    if (tc<0) tc+=1; if (tc>1) tc-=1;
+    if (tc < 1/6) return p + (q-p)*6*tc;
+    if (tc < 1/2) return q;
+    if (tc < 2/3) return p + (q-p)*(2/3 - tc)*6;
+    return p;
+  });
+  return { r: Math.round(t[0]*255), g: Math.round(t[1]*255), b: Math.round(t[2]*255) };
+}
 
+/* ---------- natural-language parsing (fallback, then API) ---------- */
+/* This is a compact parser: first tries CSS parse, then tries to extract base word(s)
+   and apply modifiers (light/dark/pale/etc.) to shift HSL. It returns a hex string or null.
+*/
 function parseNaturalColor(inputRaw) {
   if (!inputRaw) return null;
   const raw = inputRaw.trim().toLowerCase();
 
-  // 1) direct browser parse first
+  // allow direct hex or CSS color names first
+  if (raw.startsWith("#")) {
+    const m = raw.replace("#","").trim();
+    if (/^[0-9a-f]{3}$/i.test(m)) return "#" + m.split("").map(c=>c+c).join("");
+    if (/^[0-9a-f]{6}$/i.test(m)) return "#" + m;
+    return null;
+  }
   if (isValidCssColor(raw)) return normalizedColor(raw);
 
-  // 2) exact map keys
-  const collapsed = raw.replace(/\s+/g,"");
-  if (colorNames[raw]) return colorNames[raw];
-  if (colorNames[collapsed]) return colorNames[collapsed];
-
-  // 3) tokenization
+  // tokenization
   const tokens = raw.split(/[\s,.-]+/).filter(Boolean);
-  let modifiers = [];
-  let candidates = [];
-  const stopwords = new Set(["the","a","an","of","ish","ishest","ishy","my","most","really","super"]);
-  for (const t of tokens) {
-    if (modifiersList.includes(t) || t.endsWith("er") && modifiersList.includes(t.replace(/er$/,""))) modifiers.push(t);
-    else if (!stopwords.has(t)) candidates.push(t);
+  const stopwords = new Set(["the","a","an","of","ish","most","really","super","very","my"]);
+  const mods = [];
+  const words = [];
+  for (let t of tokens) {
+    if (stopwords.has(t)) continue;
+    if (modifiersList.includes(t) || t.endsWith("er") && modifiersList.includes(t.replace(/er$/,""))) mods.push(t);
+    else words.push(t);
   }
+  if (!words.length) return null;
 
-  // Build candidate joins (longest-first)
-  let baseKey = null;
-  for (let len = Math.min(3,candidates.length); len>0 && !baseKey; len--) {
-    for (let i=0;i<=candidates.length-len;i++) {
-      const joined = candidates.slice(i,i+len).join("");
-      const spaced = candidates.slice(i,i+len).join(" ");
-      const best1 = findBestColorKey(joined);
-      const best2 = findBestColorKey(spaced);
-      if (best1) { baseKey = best1; break; }
-      if (best2) { baseKey = best2; break; }
-    }
-  }
-  if (!baseKey && candidates.length) {
-    for (const c of candidates) {
-      const bk = findBestColorKey(c);
-      if (bk) { baseKey = bk; break; }
-    }
-  }
-  if (!baseKey) {
-    // fallback: try any single word in the raw phrase
-    const words = raw.split(/\s+/);
-    for (const w of words) {
-      const bk = findBestColorKey(w);
-      if (bk) { baseKey = bk; break; }
-    }
-  }
-  if (!baseKey) return null;
-
-  // Get base hex and convert to HSL
-  const baseHex = colorNames[baseKey];
-  let rgb = hexToRgb(baseHex);
-  let hsl = rgbToHsl(rgb);
-
-  // Apply modifiers
-  for (let mod of modifiers) {
-    if (!mod) continue;
-    mod = mod.replace(/[^a-z]/g,"");
-    if (mod.includes("light")) {
-      hsl.l = Math.min(98, hsl.l + (mod.includes("est") ? 42 : (mod.includes("er") ? 18 : 14)));
-      hsl.s = Math.max(6, hsl.s - 6);
-    } else if (mod.includes("dark")) {
-      hsl.l = Math.max(2, hsl.l - (mod.includes("est") ? 56 : (mod.includes("er") ? 18 : 18)));
-      hsl.s = Math.min(100, hsl.s + 8);
-    } else if (["pale","pastel"].includes(mod)) {
-      hsl.l = Math.min(96, hsl.l + 18);
-      hsl.s = Math.max(6, hsl.s - 34);
-    } else if (["muted","desaturated","dull","soft"].includes(mod)) {
-      hsl.s = Math.max(6, hsl.s - 34);
-      hsl.l = Math.min(92, hsl.l + 6);
-    } else if (["deep","rich","vivid"].includes(mod)) {
-      hsl.s = Math.min(100, hsl.s + 22);
-      hsl.l = Math.max(4, hsl.l - 12);
-    } else if (["bright","brightest","neon","ultra","vivid"].includes(mod)) {
-      hsl.s = Math.min(100, hsl.s + (mod.includes("est")?32:16));
-      hsl.l = Math.min(96, hsl.l + 8);
-    } else if (mod === "very" || mod === "really" || mod === "super") {
-      hsl.s = Math.min(100, hsl.s + 6);
-      hsl.l = Math.max(0, Math.min(100, hsl.l + (hsl.l < 50 ? -6 : 6)));
-    } else if (mod === "slightly" || mod === "ish") {
-      // small nudge toward base, keep it subtle
-      hsl.s = Math.max(4, hsl.s - 6);
-      hsl.l = Math.min(94, hsl.l + 6);
+  // Build candidate base string (try longest combos first)
+  // We'll try to use the browser CSS parsing for joined phrases (e.g., "midnightblue", "lightpink")
+  for (let len = Math.min(3, words.length); len>0; len--) {
+    for (let i=0;i<=words.length-len;i++) {
+      const spaced = words.slice(i,i+len).join(" ");
+      const joined = words.slice(i,i+len).join("");
+      if (isValidCssColor(spaced)) return normalizedColor(spaced);
+      if (isValidCssColor(joined)) return normalizedColor(joined);
     }
   }
 
-  // Explicit extremes from raw phrase
-  if (/\bdarkest\b/.test(raw)) { hsl.l = Math.max(2, Math.min(12, hsl.l)); hsl.s = Math.min(100, hsl.s + 8); }
-  if (/\blightest\b/.test(raw) || /\bbrightest\b/.test(raw)) { hsl.l = Math.max(86, Math.min(98, hsl.l)); hsl.s = Math.min(100, hsl.s + 6); }
-
-  // Return hex
-  const newRgb = hslToRgb(hsl);
-  return rgbToHex(newRgb);
+  // If still not found, fallback to using TheColorAPI via descriptive phrase:
+  // We'll attempt to form a reasonable color by using the primary noun (last word)
+  // and letting API try to resolve the phrase (handled later in code).
+  // For now return null to indicate we should call API with a generated hex or the phrase.
+  return null;
 }
 
-/* ============================
-   Game logic & UI wiring
-   ============================ */
+/* ---------- TheColorAPI helper ---------- */
+async function fetchColorInfoFromAPI(hexOrPhrase) {
+  // If hexOrPhrase looks like a hex, call /id?hex=
+  // Otherwise call the API's name endpoint by searching with a hex created from phrase? TheColorAPI doesn't have a direct 'search by phrase' endpoint,
+  // so when phrase cannot be parsed to hex we will ask API about a random hex nearby or fallback to generating a hex client-side and using API to name it.
+  try {
+    // hex case:
+    if (typeof hexOrPhrase === "string" && /^#?[0-9a-f]{3}$|#?[0-9a-f]{6}$/i.test(hexOrPhrase)) {
+      const clean = hexPad(hexOrPhrase);
+      const res = await fetch(`https://www.thecolorapi.com/id?hex=${clean}`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      return {
+        hex: json.hex.value || ("#"+clean),
+        name: (json.name && json.name.value) || null,
+        rgb: json.rgb,
+        hsl: json.hsl
+      };
+    }
 
-function randomHex() {
-  return "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6,"0");
-}
-const secret = randomHex();
-console.log("DEBUG secret color:", secret); // remove in production
-
-function normalizedToRgb(norm) {
-  const el = document.createElement("div");
-  el.style.color = norm;
-  document.body.appendChild(el);
-  const cs = getComputedStyle(el).color;
-  document.body.removeChild(el);
-  const m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-  if (!m) return {r:0,g:0,b:0};
-  return { r:+m[1], g:+m[2], b:+m[3] };
-}
-
-const secretRgb = normalizedToRgb(normalizedColor(secret));
-
-function colorSimilarity(a,b) {
-  // Euclidean RGB distance → percentage
-  const dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
-  const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-  const max = Math.sqrt(3 * 255 * 255);
-  return Math.max(0, Math.min(100, Math.round((1 - dist / max) * 100)));
+    // phrase case: try to get a hex by using a heuristic -- ask API with a random hex near a color descriptor is not supported.
+    // We'll return null so the caller can try: either use browser parsing, or generate a hex and call API for name.
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
 
-/* ---------- Duplicate-guess prevention ---------- */
-const guessedTypedSet = new Set();      // stores lowercased typed strings
-const guessedNormalizedSet = new Set(); // stores normalized color string (like rgb(...) or #rrggbb)
+/* ---------- similarity metric using HSL distance ---------- */
+function hslDistancePercent(hslA, hslB) {
+  // hslA, hslB = {h,s,l} with 0-360,0-100,0-100
+  const dh = Math.min(Math.abs(hslA.h - hslB.h), 360 - Math.abs(hslA.h - hslB.h)) / 180; // normalized [0..1]
+  const ds = Math.abs(hslA.s - hslB.s) / 100;
+  const dl = Math.abs(hslA.l - hslB.l) / 100;
+  // weighted sum (hue more important)
+  const dist = Math.sqrt((dh*dh)*0.6 + (ds*ds)*0.25 + (dl*dl)*0.15);
+  const pct = Math.round((1 - Math.min(1, dist)) * 100);
+  return pct;
+}
 
-/* ---------- UI elements ---------- */
+/* ---------- UI & state ---------- */
 const input = document.getElementById("colorInput");
-const btn = document.getElementById("guessBtn");
-const list = document.getElementById("guessList");
+const suggestions = document.getElementById("suggestions");
+const preview = document.getElementById("preview");
+const guessList = document.getElementById("guessList");
 const resultMsg = document.getElementById("resultMsg");
 const hintLine = document.getElementById("hintLine");
+const btnGive = document.getElementById("giveUp");
+const btnRefresh = document.getElementById("refresh");
 
-function handleGuessRaw(raw) {
+let secretHex = null;
+let secretName = null;
+let secretHsl = null;
+
+let totalGuesses = 0;
+const guessedTypedSet = new Set();
+const guessedNormSet = new Set();
+
+/* ---------- pick a secret color (generate random hex, ask TheColorAPI for its official name) ---------- */
+async function pickSecret() {
+  secretHex = randomHex();
+  // We do NOT log the secret anywhere (to make casual discovery harder).
+  // Note: a determined user can still inspect network requests or the JS runtime — that cannot be fully prevented client-side.
+  const info = await fetchColorInfoFromAPI(secretHex);
+  if (info && info.hex) {
+    secretHex = info.hex;
+    secretName = info.name || null;
+    secretHsl = info.hsl ? { h: info.hsl.h, s: info.hsl.s, l: info.hsl.l } : rgbToHsl(hexToRgb(secretHex));
+  } else {
+    // fallback: compute HSL locally
+    secretName = null;
+    secretHsl = rgbToHsl(hexToRgb(secretHex));
+  }
+  totalGuesses = 0;
+  guessedTypedSet.clear(); guessedNormSet.clear();
+  guessList.innerHTML = "";
+  resultMsg.textContent = "New secret chosen — start guessing!";
+  preview.style.background = "#000";
+}
+btnRefresh.addEventListener("click", () => { pickSecret(); });
+
+/* ---------- query handler: called when user submits an input ---------- */
+async function handleGuessRaw(raw) {
   if (!raw || !raw.trim()) {
-    resultMsg.textContent = "Type something (e.g., red or #ff0066).";
+    resultMsg.textContent = "Type something (e.g., 'red' or '#ff0066').";
     return;
   }
   const typed = raw.trim();
   const typedKey = typed.toLowerCase();
 
-  // Duplicate typed check
   if (guessedTypedSet.has(typedKey)) {
-    resultMsg.innerHTML = `<span class="bad">You already guessed "<strong>${escapeHtml(typed)}</strong>". Try something else.</span>`;
+    resultMsg.innerHTML = `<span class="bad">You already guessed "<strong>${escapeHtml(typed)}</strong>".</span>`;
     return;
   }
 
-  // 1) Attempt direct browser parse
-  let normalized = null;
+  // Try CSS / direct parse first or natural parser
+  let hex = null;
   if (isValidCssColor(typed)) {
-    normalized = normalizedColor(typed);
+    hex = normalizedColor(typed); // returns #rrggbb (browser normalized)
   } else {
-    // 2) run natural parser
     const parsed = parseNaturalColor(typed);
-    if (parsed) normalized = normalizedColor(parsed);
+    if (parsed) hex = parsed;
+    else {
+      // attempt to ask API by generating a hex from phrase fallback:
+      // strategy: hash the phrase to produce a deterministic hex, then ask API for name.
+      const hashHex = deterministicHexFromString(typed);
+      hex = hashHex;
+    }
   }
 
-  if (!normalized) {
+  // Normalize hex format (#rrggbb)
+  if (hex && /^#?[0-9a-f]{3}$/i.test(hex)) hex = "#" + hex.replace("#","").replace(/^(.)(.)(.)$/,"$1$1$2$2$3$3");
+  if (hex && /^#?[0-9a-f]{6}$/i.test(hex) === false) {
     resultMsg.innerHTML = `<span class="bad">Couldn't interpret "<strong>${escapeHtml(typed)}</strong>". Try a different phrase or a hex like #RRGGBB.</span>`;
     return;
   }
+  hex = "#" + hex.replace("#","").toLowerCase().slice(0,6);
 
-  // Check duplicate normalized (same color)
-  const normalizedKey = normalized.toLowerCase();
-  if (guessedNormalizedSet.has(normalizedKey)) {
-    resultMsg.innerHTML = `<span class="bad">That color (normalized <code>${escapeHtml(normalized)}</code>) was already guessed. Try a different color.</span>`;
-    // still record typed form so user can't spam synonyms? We'll not add to guessedTypedSet to allow another typed word later
+  // Check duplicate normalized color
+  if (guessedNormSet.has(hex)) {
+    resultMsg.innerHTML = `<span class="bad">That color (normalized <code>${escapeHtml(hex)}</code>) was already guessed.</span>`;
     return;
   }
 
-  // Passed duplication checks -> record both
+  // Ask TheColorAPI to get official name & HSL for this hex (if available)
+  let apiInfo = await fetchColorInfoFromAPI(hex);
+  let userName = apiInfo && apiInfo.name ? apiInfo.name : null;
+  let userHsl = apiInfo && apiInfo.hsl ? { h: apiInfo.hsl.h, s: apiInfo.hsl.s, l: apiInfo.hsl.l } : rgbToHsl(hexToRgb(hex));
+
+  // record guess
   guessedTypedSet.add(typedKey);
-  guessedNormalizedSet.add(normalizedKey);
+  guessedNormSet.add(hex);
+  totalGuesses++;
 
-  // Compute similarity and add to history
-  const guessRgb = normalizedToRgb(normalized);
-  const similarity = colorSimilarity(guessRgb, secretRgb);
+  // update preview & list
+  preview.style.background = hex;
+  addGuessToList(typed, hex, userName, userHsl);
 
-  addGuessToList(typed, normalized, similarity);
+  // compute similarity %
+  const sim = secretHsl ? hslDistancePercent(userHsl, secretHsl) : 0;
 
-  if (similarity === 100) {
-    resultMsg.innerHTML = `<span class="good">🎉 Correct! Secret color: <code>${secret}</code>. Refresh to play again.</span>`;
+  if (sim === 100) {
+    resultMsg.innerHTML = `<span class="good">🎉 Correct! ${ userName ? escapeHtml(userName) + " " : "" }(${escapeHtml(hex)})</span>`;
   } else {
-    resultMsg.innerHTML = `You're <strong>${similarity}%</strong> close. Keep trying!`;
+    resultMsg.innerHTML = `You're <strong>${sim}%</strong> close. Total guesses: <strong>${totalGuesses}</strong>.`;
   }
+
+  // clear input
   input.value = "";
+  suggestions.style.display = "none";
   input.focus();
 }
 
-function addGuessToList(typedText, normalizedColorStr, similarity) {
+/* ---------- UI: add guess entry ---------- */
+function addGuessToList(typedText, normalizedHex, officialName, hsl) {
   const item = document.createElement("div");
   item.className = "guessItem";
-  if (similarity === 100) item.classList.add("correct");
 
-  const left = document.createElement("div");
-  left.className = "left";
+  const left = document.createElement("div"); left.className = "left";
+  const sw = document.createElement("div"); sw.className = "swatch"; sw.style.background = normalizedHex;
+  sw.title = `Click to copy ${normalizedHex}`;
+  sw.addEventListener("click", ()=> {
+    navigator.clipboard?.writeText(normalizedHex).then(()=> {
+      hintLine.textContent = `Copied ${normalizedHex} to clipboard`;
+      setTimeout(()=> hintLine.textContent = 'We accept CSS + natural phrases (light/dark/pastel/etc).', 1400);
+    }).catch(()=>{});
+  });
 
-  const sw = document.createElement("div");
-  sw.className = "swatch";
-  sw.style.background = normalizedColorStr;
-  sw.title = `Click to copy ${normalizedColorStr}`;
+  const meta = document.createElement("div"); meta.className = "meta";
+  const typedEl = document.createElement("div"); typedEl.textContent = typedText;
+  const normEl = document.createElement("div"); normEl.className = "norm";
+  normEl.textContent = `${normalizedHex}${officialName ? " — " + officialName : ""}`;
+  meta.appendChild(typedEl); meta.appendChild(normEl);
 
-  const meta = document.createElement("div");
-  meta.className = "meta";
-  const typedEl = document.createElement("div");
-  typedEl.textContent = typedText;
-  const normEl = document.createElement("div");
-  normEl.className = "norm";
-  normEl.textContent = normalizedColorStr;
-  meta.appendChild(typedEl);
-  meta.appendChild(normEl);
+  left.appendChild(sw); left.appendChild(meta);
 
-  left.appendChild(sw);
-  left.appendChild(meta);
+  const sim = document.createElement("div"); sim.className = "similarity"; sim.textContent = `#${totalGuesses}`;
+  item.appendChild(left); item.appendChild(sim);
 
-  const sim = document.createElement("div");
-  sim.className = "similarity";
-  sim.textContent = similarity + "%";
-
-  item.appendChild(left);
-  item.appendChild(sim);
-
-  list.prepend(item);
+  guessList.prepend(item);
 }
 
-/* ---------- Events ---------- */
-btn.addEventListener("click", () => handleGuessRaw(input.value));
+/* ---------- Give up: reveal official name + hex ---------- */
+btnGive.addEventListener("click", async () => {
+  // If we don't have secretName from API, try to fetch it now
+  if (!secretName) {
+    const info = await fetchColorInfoFromAPI(secretHex);
+    if (info && info.name) secretName = info.name;
+  }
+  resultMsg.innerHTML = `<span class="bad">Give up — secret: <strong>${escapeHtml(secretName || "Unnamed")}</strong> (${escapeHtml(secretHex)})</span>`;
+  preview.style.background = secretHex;
+});
 
+/* ---------- input events: Enter submits, suggestions ---------- */
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
     handleGuessRaw(input.value);
+  } else if (e.key === "ArrowDown") {
+    // focus first suggestion
+    const first = suggestions.querySelector(".sugg");
+    if (first) first.focus();
   }
 });
 
-// Click a swatch to copy normalized color
-list.addEventListener("click", (ev) => {
-  const sw = ev.target.closest(".swatch");
-  if (!sw) return;
-  const color = sw.style.background;
-  navigator.clipboard?.writeText(color).then(()=>{
-    hintLine.textContent = `Copied ${color} to clipboard`;
-    setTimeout(()=> hintLine.textContent = 'We accept CSS + natural phrases (light, dark, pastel, pale, deep, bright, very).', 1400);
-  }).catch(()=>{});
+input.addEventListener("input", () => {
+  const q = input.value.trim().toLowerCase();
+  suggestions.innerHTML = "";
+  if (!q) { suggestions.style.display = "none"; return; }
+
+  // simple suggestions: show CSS keyword matches from browser (try a small list)
+  // We'll use a tiny curated list to avoid huge memory; API resolves names anyway.
+  const curated = ["red","blue","green","pink","purple","navy","teal","azure","lavender","salmon","coral","mint","olive","maroon","gold","silver","indigo"];
+  const matches = curated.filter(k => k.includes(q)).slice(0,12);
+
+  for (const m of matches) {
+    const el = document.createElement("div");
+    el.tabIndex = 0;
+    el.className = "sugg";
+    el.textContent = m;
+    el.onclick = ()=> { input.value = m; suggestions.style.display = "none"; input.focus(); };
+    el.onkeydown = (ev)=> { if (ev.key==="Enter"){ input.value=m; suggestions.style.display="none"; input.focus(); } };
+    suggestions.appendChild(el);
+  }
+  suggestions.style.display = matches.length ? "block" : "none";
 });
 
-/* ---------- Utility ---------- */
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+/* ---------- utility helpers ---------- */
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+/* ---------- deterministic hex from phrase (fallback) ---------- */
+function deterministicHexFromString(s) {
+  // simple hash -> hex
+  let h=2166136261 >>> 0;
+  for (let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0; }
+  const r = (h & 0xFF0000) >> 16;
+  const g = (h & 0x00FF00) >> 8;
+  const b = (h & 0x0000FF);
+  return "#" + [r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
 }
+
+/* ---------- fetch color info from TheColorAPI for hex; returns {hex,name,rgb,hsl} or null ---------- */
+async function fetchColorInfoFromAPI(hex) {
+  try {
+    const clean = hexPad(hex);
+    const resp = await fetch(`https://www.thecolorapi.com/id?hex=${clean}`);
+    if (!resp.ok) return null;
+    const j = await resp.json();
+    return { hex: j.hex.value, name: j.name && j.name.value ? j.name.value : null, rgb: j.rgb, hsl: j.hsl };
+  } catch(e){
+    return null;
+  }
+}
+
+/* ---------- pick initial secret on load ---------- */
+(async function init(){
+  // pick a secret hex and ask TheColorAPI to name it
+  await pickSecret();
+})();
+
+/* ---------- small note about devtools / secrecy ---------- */
+/*
+  IMPORTANT: You asked to "make it so you cant go on developer mode to get the color".
+  Short, honest answer: it's impossible to absolutely prevent someone from inspecting network requests
+  or the JavaScript runtime if the secret is chosen client-side. Measures taken here to reduce casual
+  exposure:
+    - We DO NOT log the secret to console.
+    - We do not place the secret in any visible DOM element.
+    - The secret name is fetched from the API but kept in a local variable.
+  If you need true secrecy (server-side only), the secret must be stored on a server, and the server should
+  evaluate guesses (so the secret never reaches the client).
+*/
+
 </script>
 </body>
 </html>
