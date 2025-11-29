@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Color Wordle — 1,000 Colors (Fixed lookups)</title>
+<title>Color Wordle — 1,000 Colors (Fixed & Hardened)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
@@ -10,7 +10,7 @@
 
   :root{
     --bg:#0b0b0b;
-    --card:#121213;
+    --card:#111214;
     --accent:#ff9a00;
     --muted:#9aa0a6;
     color-scheme: dark;
@@ -20,188 +20,102 @@
     margin:0;
     font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
     background:
-      radial-gradient(1000px 600px at 10% 10%, rgba(255,154,0,0.03), transparent 8%),
-      linear-gradient(180deg,#0b0b0b 0%, #080808 100%);
+      radial-gradient(900px 500px at 8% 10%, rgba(255,154,0,0.03), transparent 8%),
+      linear-gradient(180deg,#0b0b0b 0%, #070707 100%);
     color:#EAF0F6;
     display:flex;
     align-items:flex-start;
     justify-content:center;
-    padding:36px;
+    padding:28px;
     box-sizing:border-box;
   }
 
   .app{
-    width:720px;
+    width:820px;
     max-width:calc(100% - 48px);
     background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.002));
     border-radius:14px;
     padding:20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 16px 60px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.02);
   }
 
-  .header{
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
-  h1{
-    margin:0;
-    color:var(--accent);
-    font-size:22px;
-    letter-spacing:-0.2px;
-  }
-  .lead{
-    margin:8px 0 14px 0;
-    color:var(--muted);
-    font-size:14px;
-  }
+  .header{display:flex;align-items:center;gap:12px}
+  h1{ margin:0; color:var(--accent); font-size:22px; letter-spacing:-0.2px; }
+  .lead{ margin:8px 0 14px 0; color:var(--muted); font-size:14px; }
 
-  .controls{
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
-
+  .controls{ display:flex; gap:12px; align-items:center; }
   .inputWrap{ position:relative; flex:1; }
   #colorInput{
-    width:100%;
-    padding:14px 16px;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,0.04);
-    background:linear-gradient(180deg,#0f1112,#0b0b0b);
-    color:#fff;
-    font-size:16px;
-    outline:none;
-    box-shadow: none;
-  }
-  #colorInput:focus { box-shadow: 0 6px 18px rgba(255,154,0,0.06); border-color: rgba(255,154,0,0.18); }
-
-  .actions { display:flex; gap:8px; align-items:center; }
-  .btn {
-    padding:10px 14px;
-    border-radius:10px;
-    border:none;
-    cursor:pointer;
-    background:linear-gradient(180deg,var(--accent), #ff7f00);
-    color:#07120a;
-    font-weight:700;
-    letter-spacing:0.2px;
-  }
-  .mutebtn {
-    padding:10px 12px;
-    border-radius:10px;
-    background:transparent;
-    color:var(--muted);
+    width:100%; padding:14px 16px; border-radius:12px;
     border:1px solid rgba(255,255,255,0.03);
-    cursor:pointer;
-    font-weight:600;
+    background:linear-gradient(180deg,#0f1112,#0b0b0b);
+    color:#fff; font-size:16px; outline:none;
   }
+  #colorInput:focus{ box-shadow: 0 8px 24px rgba(255,154,0,0.06); border-color: rgba(255,154,0,0.18); }
 
-  .preview{
-    width:72px;
-    height:72px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.04);
-    background:#000;
+  .actions{ display:flex; gap:8px; align-items:center; }
+  .btn {
+    padding:10px 14px; border-radius:10px; border:none; cursor:pointer;
+    background:linear-gradient(180deg,var(--accent), #ff7f00); color:#07120a; font-weight:700;
   }
+  .mutebtn{ padding:10px 12px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); cursor:pointer; font-weight:600; }
 
-  .hint{
-    color:var(--muted);
-    font-size:13px;
-    margin-top:10px;
-  }
+  .preview{ width:76px; height:76px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:#000; }
 
-  .main{
-    display:flex;
-    gap:18px;
-    margin-top:16px;
-  }
+  .hint{ color:var(--muted); font-size:13px; margin-top:10px; }
 
-  .leftCol{
-    width:calc(45%);
-    min-width:260px;
-  }
+  .main{ display:flex; gap:18px; margin-top:16px; }
+  .leftCol{ width:340px; min-width:260px; }
+  .rightCol{ flex:1; min-width:360px; max-height:62vh; overflow:auto; padding-right:6px; }
 
-  .rightCol{
-    flex:1;
-    min-width:320px;
-    max-height:58vh;
-    overflow:auto;
-    padding-right:6px;
-  }
+  .card{ background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.003)); border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.02); }
 
-  .card{
-    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.003));
-    border-radius:12px;
-    padding:12px;
-    border:1px solid rgba(255,255,255,0.02);
-  }
-
-  .secretPreview{
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
-  .bigSwatch{
-    width:88px; height:88px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:#000;
-  }
+  .secretPreview{ display:flex; gap:12px; align-items:center; }
+  .bigSwatch{ width:120px; height:120px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:#000; }
   .secretMeta{ color:var(--muted); font-size:14px; }
 
-  #guessList { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
-
+  #guessList{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
   .guessRow{
-    display:flex;
-    align-items:center;
-    gap:12px;
+    display:flex; align-items:center; gap:12px;
     background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.002));
-    border-radius:10px;
-    padding:10px;
-    border:1px solid rgba(255,255,255,0.02);
+    border-radius:10px; padding:10px; border:1px solid rgba(255,255,255,0.02);
     transition: transform .12s ease, box-shadow .12s ease;
   }
-  .guessRow:hover{ transform: translateY(-3px); box-shadow: 0 8px 26px rgba(0,0,0,0.5); }
+  .guessRow:hover{ transform: translateY(-3px); box-shadow: 0 8px 34px rgba(0,0,0,0.5); }
 
   .swatch{ width:56px; height:56px; border-radius:8px; border:2px solid rgba(255,255,255,0.04); flex-shrink:0; cursor:pointer; }
-  .meta { flex:1; }
-  .meta .name{ font-weight:700; color:#fff; }
-  .meta .hex { font-size:12px; color:var(--muted); margin-top:4px; }
-  .pct { font-weight:800; min-width:60px; text-align:right; color:#fff; font-size:15px; }
+  .meta{ flex:1; }
+  .meta .name{ font-weight:700; color:#fff; font-size:15px; }
+  .meta .hex{ font-size:12px; color:var(--muted); margin-top:6px; }
+  .pct{ font-weight:800; min-width:70px; text-align:right; color:#fff; font-size:15px; }
 
-  .correct { box-shadow: 0 0 20px rgba(0,255,128,0.08); border-color:#19d119; }
+  .correct{ box-shadow: 0 0 22px rgba(0,255,128,0.08); border-color:#19d119; }
 
   .suggestions{
-    position:absolute;
-    left:0;
-    right:0;
-    top:calc(100% + 8px);
-    background:#0e0f10;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.03);
-    z-index:60;
-    max-height:220px;
-    overflow:auto;
-    display:none;
+    position:absolute; left:0; right:0; top:calc(100% + 8px); background:#0e0f10;
+    border-radius:10px; border:1px solid rgba(255,255,255,0.03); z-index:60; max-height:220px; overflow:auto; display:none;
   }
   .sugg{ padding:10px 12px; cursor:pointer; color:#eaeff3; }
   .sugg:hover{ background:#121314; }
 
+  .statsRow{ display:flex; gap:12px; align-items:center; margin-top:12px; color:var(--muted); font-size:13px; }
   .footer{ margin-top:12px; color:var(--muted); font-size:13px; text-align:center; }
 
-  @media (max-width:800px){
-    .app{ width:100%; padding:16px }
+  @media (max-width:920px){
+    .app{ width:calc(100% - 28px); padding:16px; }
     .main{ flex-direction:column; }
-    .leftCol{ width:100% }
-    .rightCol{ width:100%; max-height:40vh }
-    .preview{ width:56px; height:56px }
+    .leftCol, .rightCol{ width:100% }
+    .bigSwatch{ width:100px; height:100px }
   }
 </style>
 </head>
 <body>
   <div class="app" role="application" aria-label="Color Wordle">
     <div class="header">
-      <h1>Color Wordle — 1,000 Colors (Fixed)</h1>
+      <h1>Color Wordle — 1,000 Colors</h1>
     </div>
+
     <div class="lead">Type any color phrase. Press <kbd style="background:#111;padding:4px 6px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);">Enter</kbd> to submit. Duplicates blocked. Click swatches to copy hex.</div>
 
     <div class="controls">
@@ -227,7 +141,11 @@
             <div>
               <div style="font-weight:800;color:var(--accent);font-size:18px" id="secretName">Secret</div>
               <div class="secretMeta" id="secretHex">••••••</div>
-              <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: the secret is chosen randomly from the 1,000-color DB.</div>
+              <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: secret picked securely (crypto) from the DB. Hidden until you give up.</div>
+              <div class="statsRow">
+                <div id="totalGuesses">Total guesses: 0</div>
+                <div id="uniqueColors" style="opacity:0.85">Unique colors guessed: 0</div>
+              </div>
             </div>
           </div>
         </div>
@@ -249,380 +167,407 @@
   </div>
 
 <script>
-/* ------------------------------
-   Color DB generator (1,000 names)
-   Mixed realistic style (Option 3)
-   ------------------------------ */
-
-// Deterministic PRNG so same DB every load
-function mulberry32(seed) {
-  return function() {
-    seed |= 0;
-    seed = seed + 0x6D2B79F5 | 0;
-    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  }
-}
-
-const ADJ = [ "soft","muted","pale","light","deep","rich","vivid","bright","neon","dusty","warm","cool","icy","smoky","frost","velvet","silken","dusky","dawn","dusk","ember","solar","lunar","midnight","ocean","sea","storm","sage","mint","sagebrush","crimson","ruby","coral","peach","amber","sunset","rose","blush","cotton","ivory","ash","charcoal","onyx","cerulean","azure","sapphire","cerise","orchid","lavender","berry","plum","teal","aqua","jade","forest","pine","olive","moss","fern","copper","bronze","stone","sand","beach","oyster","latte","mocha","cherry","maroon","electric","pastel","ghost","opal","pearl","crystal","citrine","topaz","obsidian","galaxy" ];
-const MOD = [ "light","dark","very","extra","soft","deep","pale","bright","muted","warm","cool","dusty","vivid","faded","neon" ];
-const NOUN = [ "sky","sapphire","lilac","lavender","rose","pearl","dawn","dusk","ember","sun","sand","sea","ocean","wave","mint","forest","leaf","moss","jade","sage","pine","berry","plum","violet","orchid","candy","blossom","coral","flame","brick","stone","ash","smoke","shadow","cloud","storm","crown","silk","velvet","cream","latte","copper","amber","haze","mist","glass","glisten","frost","ice","glow","sunset","marigold","chartreuse","cerulean","indigo"];
-
-const rng = mulberry32(0xC0FFEE);
-function pick(arr){ return arr[Math.floor(rng() * arr.length)]; }
-
-function generateNames(count){
-  const set = new Set();
-  const names = [];
-  let attempts = 0;
-  while (names.length < count && attempts < count * 10){
-    attempts++;
-    const style = Math.floor(rng()*4);
-    let name;
-    if (style === 0){
-      name = `${pick(ADJ)} ${pick(NOUN)}`;
-    } else if (style === 1){
-      name = `${pick(MOD)} ${pick(ADJ)} ${pick(NOUN)}`;
-    } else if (style === 2){
-      name = `${pick(NOUN)} ${pick(NOUN)}`;
-    } else {
-      name = `${pick(ADJ)} ${pick(NOUN)}`;
-    }
-    name = name.replace(/\s+/g,' ').trim();
-    if (/\b(\w+)\s+\1\b/.test(name)){
-      name = name.replace(/\b(\w+)\s+\1\b/, "$1");
-    }
-    if (!set.has(name)){
-      set.add(name);
-      names.push(name);
-    }
-  }
-  return names;
-}
-
-function hexFromName(name){
-  let h = 2166136261 >>> 0;
-  for (let i=0;i<name.length;i++){
-    h ^= name.charCodeAt(i);
-    h = Math.imul(h, 16777619) >>> 0;
-  }
-  const r = (h >>> 16) & 0xFF;
-  const g = (h >>> 8) & 0xFF;
-  const b = h & 0xFF;
-  return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
-}
-
-/* Build maps:
-   NAME_TO_HEX: lowercase name -> hex
-   HEX_TO_NAME: hex (lower) -> canonical display name
+/*
+  Full client-side game.
+  - COLOR_DB generated deterministically from PRNG seed for names,
+    but secret is chosen via crypto RNG so it is not trivially predictable.
+  - All maps and runtime state live inside this IIFE closure (not on window).
+  - No console logs of the secret.
+  - Duplicate detection by normalized hex and typed string.
 */
-const COLOR_DB = (function(){
-  const N = 1000;
-  const names = generateNames(N);
-  const nameToHex = {};
-  const hexToName = {};
-  for (let i=0;i<names.length;i++){
-    const display = names[i];
-    const hex = hexFromName(display);
-    const key = display.toLowerCase();
-    nameToHex[key] = hex;
-    hexToName[hex.toLowerCase()] = display; // first writer wins (deterministic)
+
+(() => {
+  'use strict';
+
+  /* -------------------------
+     Deterministic name generator
+     (generates the 1,000 human-style names)
+     ------------------------- */
+
+  function mulberry32(seed) {
+    return function() {
+      seed |= 0;
+      seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
   }
-  return { nameToHex, hexToName };
-})();
 
-/* ------------------------------
-   Color helpers & similarity
-   ------------------------------ */
+  const ADJ = [ "soft","muted","pale","light","deep","rich","vivid","bright","neon","dusty","warm","cool","icy","smoky","frost","velvet","silken","dusky","dawn","dusk","ember","solar","lunar","midnight","ocean","sea","storm","sage","mint","sagebrush","crimson","ruby","coral","peach","amber","sunset","rose","blush","cotton","ivory","ash","charcoal","onyx","cerulean","azure","sapphire","cerise","orchid","lavender","berry","plum","teal","aqua","jade","forest","pine","olive","moss","fern","copper","bronze","stone","sand","beach","oyster","latte","mocha","cherry","maroon","electric","pastel","ghost","opal","pearl","crystal","citrine","topaz","obsidian","galaxy" ];
+  const MOD = [ "light","dark","very","extra","soft","deep","pale","bright","muted","warm","cool","dusty","vivid","faded","neon" ];
+  const NOUN = [ "sky","sapphire","lilac","lavender","rose","pearl","dawn","dusk","ember","sun","sand","sea","ocean","wave","mint","forest","leaf","moss","jade","sage","pine","berry","plum","violet","orchid","candy","blossom","coral","flame","brick","stone","ash","smoke","shadow","cloud","storm","crown","silk","velvet","cream","latte","copper","amber","haze","mist","glass","glisten","frost","ice","glow","sunset","marigold","chartreuse","cerulean","indigo" ];
 
-function hexNormalize(h){
-  if (!h) return null;
-  let s = String(h).replace('#','').trim();
-  if (s.length===3) s = s.split('').map(c=>c+c).join('');
-  if (!/^[0-9a-f]{6}$/i.test(s)) return null;
-  return "#"+s.toLowerCase();
-}
-function hexToRgb(hex){
-  hex = hexNormalize(hex).replace('#','');
-  const n = parseInt(hex,16);
-  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
-}
-function rgbToHsl({r,g,b}){
-  r/=255; g/=255; b/=255;
-  const max=Math.max(r,g,b), min=Math.min(r,g,b);
-  let h=0, s=0, l=(max+min)/2;
-  if (max!==min){
-    const d = max-min;
-    s = l>0.5 ? d/(2-max-min) : d/(max+min);
-    switch(max){
-      case r: h = (g-b)/d + (g<b?6:0); break;
-      case g: h = (b-r)/d + 2; break;
-      case b: h = (r-g)/d + 4; break;
+  // deterministic PRNG seed (for name generation only)
+  const seedRng = mulberry32(0xC0FFEE);
+  function pick(arr) { return arr[Math.floor(seedRng() * arr.length)]; }
+
+  function generateNames(count) {
+    const set = new Set();
+    const names = [];
+    let attempts = 0;
+    while (names.length < count && attempts < count * 10) {
+      attempts++;
+      const style = Math.floor(seedRng() * 4);
+      let name;
+      if (style === 0) {
+        name = `${pick(ADJ)} ${pick(NOUN)}`;
+      } else if (style === 1) {
+        name = `${pick(MOD)} ${pick(ADJ)} ${pick(NOUN)}`;
+      } else if (style === 2) {
+        name = `${pick(NOUN)} ${pick(NOUN)}`;
+      } else {
+        name = `${pick(ADJ)} ${pick(NOUN)}`;
+      }
+      name = name.replace(/\s+/g,' ').trim();
+      if (/\b(\w+)\s+\1\b/.test(name)) name = name.replace(/\b(\w+)\s+\1\b/, "$1");
+      if (!set.has(name)) { set.add(name); names.push(name); }
     }
-    h /= 6;
+    return names;
   }
-  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
-}
-function hslDistancePercent(a,b){
-  const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180;
-  const ds = Math.abs(a.s - b.s) / 100;
-  const dl = Math.abs(a.l - b.l) / 100;
-  const dist = Math.sqrt((dh*dh)*0.62 + (ds*ds)*0.26 + (dl*dl)*0.12);
-  return Math.round((1 - Math.min(1, dist)) * 100);
-}
 
-/* ------------------------------
-   UI & game state
-   ------------------------------ */
-
-const input = document.getElementById('colorInput');
-const suggBox = document.getElementById('suggestions');
-const preview = document.getElementById('preview');
-const guessList = document.getElementById('guessList');
-const secretNameEl = document.getElementById('secretName');
-const secretHexEl = document.getElementById('secretHex');
-const secretSwatch = document.getElementById('secretSwatch');
-const giveBtn = document.getElementById('giveBtn');
-const refreshBtn = document.getElementById('refreshBtn');
-
-let secretName = null;
-let secretHex = null;
-let secretHsl = null;
-
-let typedSet = new Set();
-let normSet = new Set();
-
-function pickSecret(){
-  const names = Object.keys(COLOR_DB.nameToHex);
-  const idx = Math.floor(Math.random() * names.length);
-  secretName = COLOR_DB.hexToName ? COLOR_DB.hexToName[names[idx]] : null; // fallback
-  // better: get name by hexToName after choosing
-  const chosenNameLower = names[idx];
-  secretHex = COLOR_DB.nameToHex[chosenNameLower];
-  secretHsl = rgbToHsl(hexToRgb(secretHex));
-  const displayName = COLOR_DB.hexToName[secretHex.toLowerCase()] || (chosenNameLower);
-  secretName = displayName;
-  // hide secret until give up
-  secretNameEl.textContent = "Secret";
-  secretHexEl.textContent = "••••••";
-  secretSwatch.style.background = "#000";
-  // reset history
-  guessList.innerHTML = "";
-  typedSet.clear();
-  normSet.clear();
-}
-
-/* Normalize typed input to hex:
-   1) if it's a valid hex -> hex
-   2) if it's a CSS color -> use canvas normalized color
-   3) if it's in our DB by case-insensitive name -> use that hex
-   4) if tokens/collapse match -> use best
-   5) fallback -> null
-*/
-function normalizeInputToHex(raw){
-  if (!raw) return null;
-  const t = raw.trim();
-  // hex direct
-  const hx = hexNormalize(t);
-  if (hx) return hx;
-  // CSS named color?
-  if (isCssColor(t)) {
-    const norm = normalizedCssToHex(t);
-    const maybeHex = hexNormalize(norm);
-    if (maybeHex) return maybeHex;
+  // simple deterministic hash => 24-bit color
+  function hexFromName(name) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < name.length; i++) {
+      h ^= name.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    const r = (h >>> 16) & 0xFF;
+    const g = (h >>> 8) & 0xFF;
+    const b = h & 0xFF;
+    return "#" + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
   }
-  // db exact case-insensitive
-  const low = t.toLowerCase();
-  if (COLOR_DB.nameToHex[low]) return COLOR_DB.nameToHex[low];
 
-  // collapse hyphens/underscores/spaces and try
-  const collapse = low.replace(/[\s\-_]+/g,' ');
-  if (COLOR_DB.nameToHex[collapse]) return COLOR_DB.nameToHex[collapse];
+  // Build name->hex and hex->displayName maps
+  const COLOR_DB = (function(){
+    const COUNT = 1000;
+    const names = generateNames(COUNT);
+    const nameToHex = Object.create(null);
+    const hexToName = Object.create(null);
+    for (let i=0;i<names.length;i++){
+      const display = names[i];
+      const hex = hexFromName(display);
+      const key = display.toLowerCase();
+      // do not overwrite existing hex->name mapping (first wins)
+      if (!hexToName[hex.toLowerCase()]) hexToName[hex.toLowerCase()] = display;
+      nameToHex[key] = hex;
+    }
+    // freeze maps to make casual tampering harder
+    Object.freeze(nameToHex);
+    Object.freeze(hexToName);
+    return { nameToHex, hexToName };
+  })();
 
-  // try fuzzy token match: any DB name that contains all tokens
-  const tokens = collapse.split(/\s+/).filter(Boolean);
-  if (tokens.length){
+  /* -------------------------
+     Color conversion helpers
+     ------------------------- */
+  function hexNormalize(h){
+    if(!h) return null;
+    let s = String(h).replace('#','').trim();
+    if(s.length === 3) s = s.split('').map(c=>c+c).join('');
+    if(!/^[0-9a-f]{6}$/i.test(s)) return null;
+    return "#" + s.toLowerCase();
+  }
+  function hexToRgb(hex){
+    hex = hexNormalize(hex).replace('#','');
+    const n = parseInt(hex,16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+  function rgbToHsl({r,g,b}){
+    r/=255; g/=255; b/=255;
+    const max=Math.max(r,g,b), min=Math.min(r,g,b);
+    let h=0,s=0,l=(max+min)/2;
+    if(max!==min){
+      const d = max-min;
+      s = l>0.5 ? d/(2-max-min) : d/(max+min);
+      switch(max){
+        case r: h = (g-b)/d + (g<b?6:0); break;
+        case g: h = (b-r)/d + 2; break;
+        case b: h = (r-g)/d + 4; break;
+      }
+      h /= 6;
+    }
+    return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+  }
+  function hslDistancePercent(a,b){
+    const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180;
+    const ds = Math.abs(a.s - b.s) / 100;
+    const dl = Math.abs(a.l - b.l) / 100;
+    const dist = Math.sqrt((dh*dh)*0.62 + (ds*ds)*0.26 + (dl*dl)*0.12);
+    return Math.round((1 - Math.min(1, dist)) * 100);
+  }
+
+  /* -------------------------
+     UI elements (cached)
+     ------------------------- */
+  const input = document.getElementById('colorInput');
+  const suggBox = document.getElementById('suggestions');
+  const preview = document.getElementById('preview');
+  const guessList = document.getElementById('guessList');
+  const secretNameEl = document.getElementById('secretName');
+  const secretHexEl = document.getElementById('secretHex');
+  const secretSwatch = document.getElementById('secretSwatch');
+  const giveBtn = document.getElementById('giveBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const totalGuessesEl = document.getElementById('totalGuesses');
+  const uniqueColorsEl = document.getElementById('uniqueColors');
+
+  /* -------------------------
+     Secure secret selection
+     - We use crypto.getRandomValues to pick an index (unpredictable)
+     - Secret lives only in closure: secretName/secretHex not on window
+     ------------------------- */
+  let secretName = null;
+  let secretHex = null;
+  let secretHsl = null;
+
+  function securePickSecret(){
+    // pick an index using crypto RNG
     const keys = Object.keys(COLOR_DB.nameToHex);
-    // prefer startsWith and then includes
-    for (const k of keys){
-      let lk = k;
-      let matched = tokens.every(tok => lk.includes(tok));
-      if (matched) return COLOR_DB.nameToHex[k];
-    }
+    const arrLen = keys.length;
+    // use crypto to get an unbiased integer
+    const u32 = new Uint32Array(1);
+    window.crypto.getRandomValues(u32);
+    const idx = u32[0] % arrLen;
+    const nameLower = keys[idx];
+    const hex = COLOR_DB.nameToHex[nameLower];
+    secretName = COLOR_DB.hexToName[hex.toLowerCase()] || nameLower;
+    secretHex = hex;
+    secretHsl = rgbToHsl(hexToRgb(secretHex));
+    // hide secret in UI until give-up
+    secretNameEl.textContent = "Secret";
+    secretHexEl.textContent = "••••••";
+    secretSwatch.style.background = "#000";
   }
 
-  return null;
-}
+  /* -------------------------
+     Lookup helpers (consistent mapping)
+     ------------------------- */
+  function lookupHexForInput(raw){
+    if(!raw) return null;
+    const t = raw.trim();
+    // direct hex
+    const hx = hexNormalize(t);
+    if (hx) return hx;
+    // css color name parse
+    if (isCssColor(t)){
+      const norm = normalizedCssToHex(t);
+      const maybeHex = hexNormalize(norm);
+      if (maybeHex) return maybeHex;
+    }
+    // DB exact case-insensitive
+    const low = t.toLowerCase();
+    if (COLOR_DB.nameToHex[low]) return COLOR_DB.nameToHex[low];
+    // collapse spaces/hyphens
+    const collapse = low.replace(/[\s\-_]+/g,' ');
+    if (COLOR_DB.nameToHex[collapse]) return COLOR_DB.nameToHex[collapse];
+    // token fuzzy: require all tokens appear in DB name
+    const tokens = collapse.split(/\s+/).filter(Boolean);
+    if (tokens.length){
+      const keys = Object.keys(COLOR_DB.nameToHex);
+      // prefer startsWith then includes
+      for (const k of keys){
+        let lk = k;
+        let matched = tokens.every(tok => lk.includes(tok));
+        if (matched) return COLOR_DB.nameToHex[k];
+      }
+    }
+    return null;
+  }
 
-function lookupNameForHex(hex){
-  const h = hexNormalize(hex);
-  if (!h) return null;
-  return COLOR_DB.hexToName[h.toLowerCase()] || null;
-}
+  function lookupNameForHex(hex){
+    const h = hexNormalize(hex);
+    if (!h) return null;
+    return COLOR_DB.hexToName[h.toLowerCase()] || null;
+  }
 
-function addGuessRow(typed, hex, pct){
-  const row = document.createElement('div');
-  row.className = 'guessRow';
+  /* -------------------------
+     Guess bookkeeping
+     ------------------------- */
+  let typedSet = new Set(); // typed strings lowercased
+  let normSet = new Set();  // normalized hex strings
+  let totalGuesses = 0;
 
-  const sw = document.createElement('div');
-  sw.className = 'swatch';
-  sw.style.background = hex;
-  sw.title = `Click to copy ${hex}`;
-  sw.addEventListener('click', ()=> {
-    navigator.clipboard?.writeText(hex);
-    showHint(`Copied ${hex} to clipboard`);
+  function updateStats(){
+    totalGuessesEl.textContent = `Total guesses: ${totalGuesses}`;
+    uniqueColorsEl.textContent = `Unique colors guessed: ${normSet.size}`;
+  }
+
+  function addGuessRow(typed, hex, pct){
+    const row = document.createElement('div');
+    row.className = 'guessRow';
+    const sw = document.createElement('div');
+    sw.className = 'swatch';
+    sw.style.background = hex;
+    sw.title = `Click to copy ${hex}`;
+    sw.addEventListener('click', ()=> {
+      navigator.clipboard?.writeText(hex);
+      showHint(`Copied ${hex} to clipboard`);
+    });
+
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const nm = document.createElement('div'); nm.className = 'name';
+    nm.textContent = typed;
+    const hx = document.createElement('div'); hx.className = 'hex';
+    const canonical = lookupNameForHex(hex);
+    hx.textContent = `${hex}${canonical ? ' — ' + canonical : ''}`;
+
+    meta.appendChild(nm); meta.appendChild(hx);
+
+    const pctEl = document.createElement('div'); pctEl.className = 'pct';
+    pctEl.textContent = pct + '%';
+
+    row.appendChild(sw); row.appendChild(meta); row.appendChild(pctEl);
+
+    if (pct === 100) row.classList.add('correct');
+
+    // newest on top
+    guessList.prepend(row);
+  }
+
+  let hintTimer = 0;
+  function showHint(msg){
+    const h = document.querySelector('.hint');
+    if (!h) return;
+    h.textContent = msg;
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(()=>{ h.textContent = "Autosuggest supports the 1,000-color DB. If typed phrase is a hex or CSS name it will be parsed correctly."; }, 3000);
+  }
+
+  /* -------------------------
+     Input & autosuggest
+     ------------------------- */
+  function isCssColor(s){
+    if(!s || typeof s !== 'string') return false;
+    const o = new Option();
+    o.style.color = s;
+    return !!o.style.color;
+  }
+  function normalizedCssToHex(s){
+    const ctx = document.createElement('canvas').getContext('2d');
+    ctx.fillStyle = s;
+    return ctx.fillStyle; // returns "#rrggbb" in most browsers
+  }
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    // live preview: if hex or CSS color
+    const direct = hexNormalize(q) || (isCssColor(q) ? normalizedCssToHex(q) : null);
+    preview.style.background = direct || '#000';
+
+    // suggestions from DB
+    suggBox.innerHTML = '';
+    if(!q){ suggBox.style.display = 'none'; return; }
+    const keys = Object.keys(COLOR_DB.nameToHex);
+    const starts = [], includes = [];
+    for (let i=0;i<keys.length;i++){
+      const k = keys[i];
+      if (k.startsWith(q)) starts.push(k);
+      else if (k.includes(q)) includes.push(k);
+      if (starts.length >= 8) break;
+    }
+    const results = starts.concat(includes).slice(0,8);
+    if (results.length === 0){ suggBox.style.display = 'none'; return; }
+    for (const r of results){
+      const el = document.createElement('div');
+      el.className = 'sugg';
+      el.textContent = r;
+      el.addEventListener('click', ()=> { input.value = r; suggBox.style.display = 'none'; input.focus(); });
+      suggBox.appendChild(el);
+    }
+    suggBox.style.display = 'block';
   });
 
-  const meta = document.createElement('div');
-  meta.className = 'meta';
-  const nm = document.createElement('div');
-  nm.className = 'name';
-  nm.textContent = typed;
-  const hx = document.createElement('div');
-  hx.className = 'hex';
-  const canonical = lookupNameForHex(hex);
-  hx.textContent = `${hex}${canonical ? ' — ' + canonical : ''}`;
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      submitGuess(input.value.trim());
+    } else if (e.key === 'Escape'){
+      suggBox.style.display = 'none';
+    }
+  });
 
-  meta.appendChild(nm);
-  meta.appendChild(hx);
+  /* -------------------------
+     Submit guess
+     ------------------------- */
+  function submitGuess(raw){
+    if (!raw || !raw.trim()) { showHint("Type something to guess."); return; }
+    const typedKey = raw.trim().toLowerCase();
+    if (typedSet.has(typedKey)){ showHint(`You already guessed "${raw}".`); return; }
 
-  const pctEl = document.createElement('div');
-  pctEl.className = 'pct';
-  pctEl.textContent = pct + '%';
+    let hex = lookupHexForInput(raw);
+    if (!hex){
+      // deterministic fallback (keeps guessable but not DB canonical)
+      hex = hexFromName(raw.toLowerCase());
+    }
+    const normalizedHex = hexNormalize(hex);
+    if (!normalizedHex){ showHint(`Couldn't parse "${raw}". Try #RRGGBB or a name.`); return; }
+    if (normSet.has(normalizedHex)){ showHint(`That color (${normalizedHex}) was already guessed.`); return; }
 
-  row.appendChild(sw);
-  row.appendChild(meta);
-  row.appendChild(pctEl);
+    // record
+    typedSet.add(typedKey);
+    normSet.add(normalizedHex);
+    totalGuesses++;
+    updateStats();
 
-  if (pct === 100){ row.classList.add('correct'); }
+    const userHsl = rgbToHsl(hexToRgb(normalizedHex));
+    const pct = hslDistancePercent(userHsl, secretHsl);
 
-  guessList.prepend(row);
-}
+    addGuessRow(raw, normalizedHex, pct);
+    preview.style.background = normalizedHex;
 
-let hintTimeout = null;
-function showHint(msg){
-  const h = document.querySelector('.hint');
-  if (!h) return;
-  h.textContent = msg;
-  clearTimeout(hintTimeout);
-  hintTimeout = setTimeout(()=>{ h.textContent = "Autosuggest supports the 1,000-color DB. If the typed phrase is a hex or CSS name it will be parsed correctly."; }, 2400);
-}
+    if (pct === 100){
+      showHint(`🎉 Correct! ${lookupNameForHex(normalizedHex) || raw} (${normalizedHex}).`);
+      revealSecret(normalizedHex);
+    } else {
+      showHint(`You're ${pct}% close.`);
+    }
 
-/* ---------- event handling ---------- */
-
-input.addEventListener('input', () => {
-  const q = input.value.trim().toLowerCase();
-  // live preview: if user types a hex or CSS color, show it
-  const direct = hexNormalize(q) || (isCssColor(q) ? normalizedCssToHex(q) : null);
-  preview.style.background = direct || '#000';
-
-  // autosuggest: find up to 8 matches by startsWith or includes
-  suggBox.innerHTML = '';
-  if (!q){ suggBox.style.display='none'; return; }
-  const keys = Object.keys(COLOR_DB.nameToHex);
-  const starts = [], includes = [];
-  for (let k of keys){
-    if (k.startsWith(q)) starts.push(k);
-    else if (k.includes(q)) includes.push(k);
-    if (starts.length >= 8) break;
-  }
-  const results = starts.concat(includes).slice(0,8);
-  if (results.length === 0){ suggBox.style.display='none'; return; }
-  for (const r of results){
-    const d = document.createElement('div');
-    d.className = 'sugg';
-    d.textContent = r;
-    d.addEventListener('click', ()=>{ input.value = r; suggBox.style.display='none'; input.focus(); });
-    suggBox.appendChild(d);
-  }
-  suggBox.style.display = 'block';
-});
-
-input.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter'){
-    e.preventDefault();
-    submitGuess(input.value.trim());
-  } else if (e.key === 'Escape'){
-    suggBox.style.display='none';
-  }
-});
-
-function isCssColor(s){
-  if(!s || typeof s !== 'string') return false;
-  const o = new Option();
-  o.style.color = s;
-  return !!o.style.color;
-}
-function normalizedCssToHex(s){
-  const ctx = document.createElement('canvas').getContext('2d');
-  ctx.fillStyle = s;
-  return ctx.fillStyle; // usually "#rrggbb"
-}
-
-function submitGuess(raw){
-  if (!raw || !raw.trim()) { showHint("Type something to guess."); return; }
-  const typedKey = raw.trim().toLowerCase();
-  if (typedSet.has(typedKey)){ showHint(`You already guessed "${raw}".`); return; }
-
-  let hex = normalizeInputToHex(raw);
-  if (!hex){
-    // fallback: deterministic hex from phrase (keeps synonyms allowed, but canonical names are DB-based)
-    hex = hexFromName(raw.toLowerCase());
-  }
-  if (!hex){ showHint(`Couldn't parse "${raw}". Try a hex like #RRGGBB or a known name.`); return; }
-
-  const normalizedHex = hexNormalize(hex);
-  if (normSet.has(normalizedHex)){ showHint(`That color (${normalizedHex}) was already guessed.`); return; }
-
-  typedSet.add(typedKey);
-  normSet.add(normalizedHex);
-
-  const userHsl = rgbToHsl(hexToRgb(normalizedHex));
-  const pct = hslDistancePercent(userHsl, secretHsl);
-
-  addGuessRow(raw, normalizedHex, pct);
-  preview.style.background = normalizedHex;
-
-  if (pct === 100){
-    showHint(`🎉 Correct! ${lookupNameForHex(normalizedHex) || raw} (${normalizedHex}).`);
-    revealSecret(normalizedHex);
-  } else {
-    showHint(`You're ${pct}% close.`);
+    input.value = '';
+    suggBox.style.display = 'none';
   }
 
-  input.value = '';
-  suggBox.style.display = 'none';
-}
+  /* -------------------------
+     Reveal & refresh
+     ------------------------- */
+  function revealSecret(hex){
+    const finalHex = hex || secretHex;
+    const name = lookupNameForHex(finalHex) || secretName;
+    secretSwatch.style.background = finalHex;
+    secretNameEl.textContent = name || 'Unnamed';
+    secretHexEl.textContent = finalHex;
+  }
 
-/* ---------- give up / reveal ---------- */
-function revealSecret(hex){
-  const chosenHex = hex || secretHex;
-  const name = lookupNameForHex(chosenHex) || secretName;
-  secretSwatch.style.background = chosenHex;
-  secretNameEl.textContent = name || 'Unnamed';
-  secretHexEl.textContent = chosenHex;
-}
+  giveBtn.addEventListener('click', () => {
+    revealSecret();
+    showHint('Secret revealed.');
+  });
 
-giveBtn.addEventListener('click', ()=> {
-  revealSecret();
-  showHint('Secret revealed.');
-});
+  refreshBtn.addEventListener('click', () => {
+    securePickSecret();
+    // reset history
+    typedSet = new Set(); normSet = new Set(); totalGuesses = 0;
+    guessList.innerHTML = '';
+    updateStats();
+    preview.style.background = '#000';
+    showHint('New secret chosen — start guessing!');
+  });
 
-refreshBtn.addEventListener('click', ()=> {
-  pickSecret();
-  showHint('New secret chosen — start guessing!');
-});
+  /* -------------------------
+     Initialize game
+     ------------------------- */
+  securePickSecret();
+  updateStats();
 
-/* ------------------------------
-   initialize
-   ------------------------------ */
+  // Freeze internal helpers to make casual tampering harder
+  Object.freeze(COLOR_DB);
+  Object.freeze(lookupHexForInput);
+  Object.freeze(lookupNameForHex);
 
-pickSecret();
+  // intentionally do NOT attach secret or maps to window
 
-// expose small debug info
-window.__COLOR_DB = { size: Object.keys(COLOR_DB.nameToHex).length };
-
+})(); // end closure
 </script>
 </body>
 </html>
