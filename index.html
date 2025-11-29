@@ -1,148 +1,653 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Color Guess</title>
+<meta charset="utf-8" />
+<title>Color Wordle — 1,000 Colors (Mixed Realistic)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0e0e0e;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px;
-    }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
-    h1 {
-        margin-bottom: 20px;
-        font-size: 40px;
-        font-weight: 800;
-        letter-spacing: 2px;
-        background: linear-gradient(45deg, #ff9500, #ffaa33);
-        -webkit-background-clip: text;
-        color: transparent;
-    }
+  :root{
+    --bg:#0b0b0b;
+    --card:#121213;
+    --accent:#ff9a00;
+    --muted:#9aa0a6;
+    color-scheme: dark;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:
+      radial-gradient(1000px 600px at 10% 10%, rgba(255,154,0,0.03), transparent 8%),
+      linear-gradient(180deg,#0b0b0b 0%, #080808 100%);
+    color:#EAF0F6;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:36px;
+    box-sizing:border-box;
+  }
 
-    #colorBox {
-        width: 300px;
-        height: 300px;
-        border-radius: 20px;
-        margin: 20px;
-        box-shadow: 0 0 25px rgba(255, 140, 0, 0.8);
-    }
+  .app{
+    width:720px;
+    max-width:calc(100% - 48px);
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.002));
+    border-radius:14px;
+    padding:20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+  }
 
-    input {
-        width: 300px;
-        padding: 12px;
-        border: none;
-        outline: none;
-        border-radius: 10px;
-        margin-top: 20px;
-        font-size: 16px;
-        text-align: center;
-    }
+  .header{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  h1{
+    margin:0;
+    color:var(--accent);
+    font-size:22px;
+    letter-spacing:-0.2px;
+  }
+  .lead{
+    margin:8px 0 14px 0;
+    color:var(--muted);
+    font-size:14px;
+  }
 
-    #status {
-        margin-top: 20px;
-        font-size: 20px;
-        font-weight: 700;
-    }
+  .controls{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  .inputWrap{ position:relative; flex:1; }
+  #colorInput{
+    width:100%;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:linear-gradient(180deg,#0f1112,#0b0b0b);
+    color:#fff;
+    font-size:16px;
+    outline:none;
+    box-shadow: none;
+  }
+  #colorInput:focus { box-shadow: 0 6px 18px rgba(255,154,0,0.06); border-color: rgba(255,154,0,0.18); }
+
+  .actions { display:flex; gap:8px; align-items:center; }
+  .btn {
+    padding:10px 14px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(180deg,var(--accent), #ff7f00);
+    color:#07120a;
+    font-weight:700;
+    letter-spacing:0.2px;
+  }
+  .mutebtn {
+    padding:10px 12px;
+    border-radius:10px;
+    background:transparent;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.03);
+    cursor:pointer;
+    font-weight:600;
+  }
+
+  .preview{
+    width:72px;
+    height:72px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:#000;
+  }
+
+  .hint{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:10px;
+  }
+
+  .main{
+    display:flex;
+    gap:18px;
+    margin-top:16px;
+  }
+
+  .leftCol{
+    width:calc(45%);
+    min-width:260px;
+  }
+
+  .rightCol{
+    flex:1;
+    min-width:320px;
+    max-height:58vh;
+    overflow:auto;
+    padding-right:6px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.003));
+    border-radius:12px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+
+  .secretPreview{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .bigSwatch{
+    width:88px; height:88px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:#000;
+  }
+  .secretMeta{ color:var(--muted); font-size:14px; }
+
+  #guessList { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+
+  .guessRow{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.002));
+    border-radius:10px;
+    padding:10px;
+    border:1px solid rgba(255,255,255,0.02);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .guessRow:hover{ transform: translateY(-3px); box-shadow: 0 8px 26px rgba(0,0,0,0.5); }
+
+  .swatch{ width:56px; height:56px; border-radius:8px; border:2px solid rgba(255,255,255,0.04); flex-shrink:0; cursor:pointer; }
+  .meta { flex:1; }
+  .meta .name{ font-weight:700; color:#fff; }
+  .meta .hex { font-size:12px; color:var(--muted); margin-top:4px; }
+  .pct { font-weight:800; min-width:60px; text-align:right; color:#fff; font-size:15px; }
+
+  .correct { box-shadow: 0 0 20px rgba(0,255,128,0.08); border-color:#19d119; }
+
+  .suggestions{
+    position:absolute;
+    left:0;
+    right:0;
+    top:calc(100% + 8px);
+    background:#0e0f10;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.03);
+    z-index:60;
+    max-height:220px;
+    overflow:auto;
+    display:none;
+  }
+  .sugg{ padding:10px 12px; cursor:pointer; color:#eaeff3; }
+  .sugg:hover{ background:#121314; }
+
+  .footer{ margin-top:12px; color:var(--muted); font-size:13px; text-align:center; }
+
+  /* small responsive */
+  @media (max-width:800px){
+    .app{ width:100%; padding:16px }
+    .main{ flex-direction:column; }
+    .leftCol{ width:100% }
+    .rightCol{ width:100%; max-height:40vh }
+    .preview{ width:56px; height:56px }
+  }
 </style>
 </head>
 <body>
+  <div class="app" role="application" aria-label="Color Wordle">
+    <div class="header">
+      <h1>Color Wordle — 1,000 Colors</h1>
+    </div>
+    <div class="lead">Type any color phrase. Press <kbd style="background:#111;padding:4px 6px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);">Enter</kbd> to submit. Duplicates blocked. Click swatches to copy hex.</div>
 
-<h1>Color Guess</h1>
+    <div class="controls">
+      <div class="inputWrap">
+        <input id="colorInput" placeholder="Try: 'icy lavender', 'deep sapphire', 'hot pink', '#ff33aa'">
+        <div id="suggestions" class="suggestions" aria-hidden="true"></div>
+      </div>
 
-<div id="colorBox"></div>
+      <div class="actions">
+        <div id="preview" class="preview" title="Preview"></div>
+        <button id="giveBtn" class="btn" title="Reveal secret color">Give up</button>
+        <button id="refreshBtn" class="mutebtn" title="Pick new secret">Refresh</button>
+      </div>
+    </div>
 
-<input id="guessInput" placeholder="Type a color name…">
+    <div class="hint">Autosuggest supports the 1,000-color DB. If the typed phrase is a hex or CSS name it will be parsed correctly.</div>
 
-<div id="status"></div>
+    <div class="main">
+      <div class="leftCol">
+        <div class="card secretCard">
+          <div class="secretPreview">
+            <div class="bigSwatch" id="secretSwatch" title="Secret preview (hidden until give up)"></div>
+            <div>
+              <div style="font-weight:800;color:var(--accent);font-size:18px" id="secretName">Secret</div>
+              <div class="secretMeta" id="secretHex">••••••</div>
+              <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: the secret is chosen randomly from the 1,000-color DB.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rightCol">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700">Your Guesses</div>
+            <div style="font-size:13px;color:var(--muted)">Matches shown as % (HSL)</div>
+          </div>
+
+          <div id="guessList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">1,000 realistic color names generated locally — works offline and on GitHub Pages.</div>
+  </div>
 
 <script>
-// -----------------------------------------------------------
-// HUGE COLOR DATABASE (400+ color names)
-// -----------------------------------------------------------
-const COLORS = [
-    // CSS standard colors
-    "red","blue","green","yellow","purple","orange","pink","brown","black","white",
-    "gray","grey","cyan","magenta","lime","maroon","navy","olive","teal","silver",
-    "gold","beige","coral","crimson","indigo","ivory","khaki","lavender","orchid",
-    "plum","salmon","tan","tomato","violet",
+/* ------------------------------
+   Color DB generator (1,000 names)
+   Mixed realistic style (Option 3)
+   ------------------------------ */
 
-    // Extended descriptive colors
-    "light red","dark red","soft red","bright red","deep red",
-    "light blue","sky blue","steel blue","baby blue","royal blue","navy blue",
-    "light green","dark green","forest green","neon green","mint green",
-    "light yellow","pale yellow","soft yellow","warm yellow",
-    "light pink","hot pink","deep pink","pastel pink","neon pink",
-    "light purple","deep purple","pastel purple","neon purple","royal purple",
-    "light orange","dark orange","burnt orange","soft orange",
-    "light brown","dark brown","chocolate brown","sandy brown",
-    "charcoal grey","light grey","dark grey","storm grey","space grey",
-    "aqua","aquamarine","azure","blue violet","cornflower blue",
-    "emerald","jade","sea green","spring green",
-    "sunset orange","sunset pink","rose","ruby","blood red",
-    "peach","apricot","amber","mustard","lemon","honey",
-    "fog grey","titanium","shadow black","ink black",
-    "snow white","ghost white","pearl white","cream",
-    "lavender blush","misty rose","powder blue","light cyan","pale turquoise",
-    "turquoise","medium turquoise","dark turquoise",
-    "firebrick","sienna","burlywood",
-    "chartreuse","dark olive green","yellow green",
-    "medium purple","medium orchid","slate blue","slate gray","light slate gray",
-    "midnight blue","dodger blue","cadet blue","cornsilk","papaya whip",
-
-    // 300+ autogenerated named colors
-    ...(() => {
-        const base = [
-            "red","blue","green","yellow","pink","purple","orange","brown","grey",
-            "cyan","teal","lime","magenta","gold","silver"
-        ];
-        const modifiers = [
-            "light","dark","soft","deep","bright","pale","neon","warm","cool","muted"
-        ];
-        const list = [];
-        for (let b of base) {
-            for (let m of modifiers) {
-                list.push(`${m} ${b}`);
-            }
-        }
-        return list;
-    })()
-];
-
-// -----------------------------------------------------------
-
-const colorBox = document.getElementById("colorBox");
-const guessInput = document.getElementById("guessInput");
-const status = document.getElementById("status");
-
-let currentColor = "";
-
-function pickColor() {
-    currentColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-    colorBox.style.background = currentColor;
-    status.innerText = "Guess the color!";
+// Deterministic PRNG so same DB every load
+function mulberry32(seed) {
+  return function() {
+    seed |= 0;
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
 }
 
-guessInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        const guess = guessInput.value.trim().toLowerCase();
-        if (guess === currentColor.toLowerCase()) {
-            status.innerText = "Correct!";
-        } else {
-            status.innerText = `Wrong! It was "${currentColor}"`;
-        }
-        pickColor();
-        guessInput.value = "";
+// Name components: adjectives, modifiers, nouns
+const ADJ = [
+  "soft","muted","pale","light","deep","rich","vivid","bright","neon","dusty",
+  "warm","cool","icy","smoky","frost","velvet","silken","dusky","dawn","dusk",
+  "ember","solar","lunar","midnight","ocean","sea","storm","sage","mint","sagebrush",
+  "crimson","ruby","coral","peach","amber","golden","sunset","rose","blush","cotton",
+  "ivory","ash","charcoal","onyx","cerulean","azure","sapphire","cerise","orchid","lavender",
+  "berry","plum","teal","aqua","jade","forest","pine","olive","moss","fern",
+  "copper","bronze","stone","sand","beach","oyster","latte","mocha","cherry","maroon",
+  "electric","pastel","ghost","opal","pearl","crystal","citrine","topaz","obsidian","galaxy"
+];
+
+const MOD = [
+  "light","dark","very","extra","soft","deep","pale","bright","muted","warm","cool","dusty","vivid","faded","neon"
+];
+
+const NOUN = [
+  "sky","sapphire","lilac","lavender","rose","pearl","dawn","dusk","ember","sun","sand","sea","ocean","wave","mint",
+  "forest","leaf","moss","jade","sage","pine","berry","plum","violet","orchid","candy","blossom","coral","flame",
+  "ember","brick","stone","ash","smoke","shadow","cloud","storm","crown","silk","velvet","cream","latte","copper",
+  "amber","haze","mist","glass","glisten","frost","ice","glow","sunset","marigold","chartreuse","cerulean","indigo"
+];
+
+// seed for PRNG (deterministic but varied)
+const rng = mulberry32(0xC0FFEE);
+
+// helper: random pick
+function pick(arr){ return arr[Math.floor(rng() * arr.length)]; }
+
+// generate unique, human-style names
+function generateNames(count){
+  const set = new Set();
+  const names = [];
+  let attempts = 0;
+  while (names.length < count && attempts < count * 10){
+    attempts++;
+    const style = Math.floor(rng()*4);
+    let name;
+    if (style === 0){
+      // adjective + noun
+      name = `${pick(ADJ)} ${pick(NOUN)}`;
+    } else if (style === 1){
+      // modifier + adjective + noun
+      name = `${pick(MOD)} ${pick(ADJ)} ${pick(NOUN)}`;
+    } else if (style === 2){
+      // noun + noun (like "ocean sapphire")
+      name = `${pick(NOUN)} ${pick(NOUN)}`;
+    } else {
+      // single-phrase like "deep indigo"
+      name = `${pick(ADJ)} ${pick(NOUN)}`;
     }
+    name = name.replace(/\s+/g,' ').trim();
+    // normalize repeated duplicates like "ember ember"
+    if (/\b(\w+)\s+\1\b/.test(name)){
+      name = name.replace(/\b(\w+)\s+\1\b/, "$1");
+    }
+    if (!set.has(name)){
+      set.add(name);
+      names.push(name);
+    }
+  }
+  return names;
+}
+
+// deterministic color generation from name (hash -> hex)
+function hexFromName(name){
+  // FNV-1a style simple hash to 24-bit color
+  let h = 2166136261 >>> 0;
+  for (let i=0;i<name.length;i++){
+    h ^= name.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  // mix a little with golden ratio to improve distribution
+  const r = (h >>> 16) & 0xFF;
+  const g = (h >>> 8) & 0xFF;
+  const b = h & 0xFF;
+  return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+/* Build COLOR_DB (object name -> hex) */
+const COLOR_DB = (function(){
+  const N = 1000;
+  const names = generateNames(N);
+  const obj = {};
+  for (let i=0;i<names.length;i++){
+    const nm = names[i];
+    const hex = hexFromName(nm);
+    obj[nm] = hex;
+  }
+  return obj;
+})();
+
+/* ------------------------------
+   Color helpers & similarity
+   ------------------------------ */
+
+function hexNormalize(h){
+  if (!h) return null;
+  let s = String(h).replace('#','').trim();
+  if (s.length===3) s = s.split('').map(c=>c+c).join('');
+  if (!/^[0-9a-f]{6}$/i.test(s)) return null;
+  return "#"+s.toLowerCase();
+}
+function hexToRgb(hex){
+  hex = hexNormalize(hex).replace('#','');
+  const n = parseInt(hex,16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+function rgbToHsl({r,g,b}){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0, s=0, l=(max+min)/2;
+  if (max!==min){
+    const d = max-min;
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h = (g-b)/d + (g<b?6:0); break;
+      case g: h = (b-r)/d + 2; break;
+      case b: h = (r-g)/d + 4; break;
+    }
+    h /= 6;
+  }
+  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+}
+
+// HSL distance % (0..100)
+function hslDistancePercent(a,b){
+  const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180; // 0..1
+  const ds = Math.abs(a.s - b.s) / 100;
+  const dl = Math.abs(a.l - b.l) / 100;
+  const dist = Math.sqrt((dh*dh)*0.62 + (ds*ds)*0.26 + (dl*dl)*0.12);
+  return Math.round((1 - Math.min(1, dist)) * 100);
+}
+
+/* ------------------------------
+   UI & game state
+   ------------------------------ */
+
+const input = document.getElementById('colorInput');
+const suggBox = document.getElementById('suggestions');
+const preview = document.getElementById('preview');
+const guessList = document.getElementById('guessList');
+const secretNameEl = document.getElementById('secretName');
+const secretHexEl = document.getElementById('secretHex');
+const secretSwatch = document.getElementById('secretSwatch');
+const giveBtn = document.getElementById('giveBtn');
+const refreshBtn = document.getElementById('refreshBtn');
+
+let secretName = null;
+let secretHex = null;
+let secretHsl = null;
+
+let typedSet = new Set();
+let normSet = new Set();
+
+function pickSecret(){
+  const keys = Object.keys(COLOR_DB);
+  const idx = Math.floor(Math.random() * keys.length);
+  secretName = keys[idx];
+  secretHex = COLOR_DB[secretName];
+  secretHsl = rgbToHsl(hexToRgb(secretHex));
+  // hide secret until give up
+  secretNameEl.textContent = "Secret";
+  secretHexEl.textContent = "••••••";
+  secretSwatch.style.background = "#000";
+  // reset history
+  guessList.innerHTML = "";
+  typedSet.clear();
+  normSet.clear();
+}
+
+function normalizeInputToHex(raw){
+  if (!raw) return null;
+  const t = raw.trim();
+  // hex direct
+  const hx = hexNormalize(t);
+  if (hx) return hx;
+  // exact name in DB
+  const low = t.toLowerCase();
+  if (COLOR_DB.hasOwnProperty(low)) return COLOR_DB[low]; // not likely because keys keep original casing, so try case-insensitive
+  // try case-insensitive lookup
+  for (const k of Object.keys(COLOR_DB)){
+    if (k.toLowerCase() === low) return COLOR_DB[k];
+  }
+  // try normalized name by removing extra spaces/hyphens
+  const collapse = low.replace(/[\s\-_]+/g,' ');
+  for (const k of Object.keys(COLOR_DB)){
+    if (k.toLowerCase() === collapse) return COLOR_DB[k];
+  }
+  // try fuzzy: exact word match for any token
+  const tokens = collapse.split(/\s+/);
+  for (const k of Object.keys(COLOR_DB)){
+    const lk = k.toLowerCase();
+    for (const tok of tokens){
+      if (lk.includes(tok) && tok.length > 2) return COLOR_DB[k];
+    }
+  }
+  // fallback: null (we could hash phrase into hex deterministically; but we'll let it be invalid)
+  return null;
+}
+
+function addGuessRow(typed, hex, userHsl, pct){
+  const row = document.createElement('div');
+  row.className = 'guessRow';
+
+  const sw = document.createElement('div');
+  sw.className = 'swatch';
+  sw.style.background = hex;
+  sw.title = `Click to copy ${hex}`;
+  sw.addEventListener('click', ()=> {
+    navigator.clipboard?.writeText(hex);
+    showHint(`Copied ${hex} to clipboard`);
+  });
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  const nm = document.createElement('div');
+  nm.className = 'name';
+  nm.textContent = typed;
+  const hx = document.createElement('div');
+  hx.className = 'hex';
+  hx.textContent = `${hex} ${lookupNameForHex(hex) ? ' — ' + lookupNameForHex(hex) : ''}`;
+
+  meta.appendChild(nm);
+  meta.appendChild(hx);
+
+  const pctEl = document.createElement('div');
+  pctEl.className = 'pct';
+  pctEl.textContent = pct + '%';
+
+  row.appendChild(sw);
+  row.appendChild(meta);
+  row.appendChild(pctEl);
+
+  if (pct === 100){ row.classList.add('correct'); }
+
+  // newest on top
+  guessList.prepend(row);
+}
+
+let hintTimeout = null;
+function showHint(msg){
+  const h = document.querySelector('.hint');
+  if (!h) return;
+  h.textContent = msg;
+  clearTimeout(hintTimeout);
+  hintTimeout = setTimeout(()=>{ h.textContent = "Autosuggest supports the 1,000-color DB. If the typed phrase is a hex or CSS name it will be parsed correctly."; }, 2400);
+}
+
+// return name for exact hex if present
+function lookupNameForHex(hex){
+  const h = hexNormalize(hex);
+  if (!h) return null;
+  for (const k of Object.keys(COLOR_DB)){
+    if (COLOR_DB[k].toLowerCase() === h.toLowerCase()) return k;
+  }
+  return null;
+}
+
+/* ---------- event handling ---------- */
+
+input.addEventListener('input', () => {
+  const q = input.value.trim().toLowerCase();
+  // live preview: if user types a hex or CSS color, show it
+  const direct = hexNormalize(q) || (isCssColor(q) ? normalizedCssToHex(q) : null);
+  preview.style.background = direct || '#000';
+
+  // autosuggest: find up to 8 matches by startsWith or includes
+  suggBox.innerHTML = '';
+  if (!q){ suggBox.style.display='none'; return; }
+  const keys = Object.keys(COLOR_DB);
+  const starts = [], includes = [];
+  for (let k of keys){
+    const lk = k.toLowerCase();
+    if (lk.startsWith(q)) starts.push(k);
+    else if (lk.includes(q)) includes.push(k);
+    if (starts.length >= 8) break;
+  }
+  const results = starts.concat(includes).slice(0,8);
+  if (results.length === 0){ suggBox.style.display='none'; return; }
+  for (const r of results){
+    const d = document.createElement('div');
+    d.className = 'sugg';
+    d.textContent = r;
+    d.addEventListener('click', ()=>{ input.value = r; suggBox.style.display='none'; input.focus(); });
+    suggBox.appendChild(d);
+  }
+  suggBox.style.display = 'block';
 });
 
-pickColor();
-</script>
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter'){
+    e.preventDefault();
+    submitGuess(input.value.trim());
+  } else if (e.key === 'Escape'){
+    suggBox.style.display='none';
+  }
+});
 
+async function submitGuess(raw){
+  if (!raw || !raw.trim()) { showHint("Type something to guess."); return; }
+  const typedKey = raw.trim().toLowerCase();
+  if (typedSet.has(typedKey)){ showHint(`You already guessed "${raw}".`); return; }
+
+  // try to convert typed -> hex
+  let hex = normalizeInputToHex(raw);
+  if (!hex){
+    // as a forgiving fallback, create deterministic hex from phrase
+    hex = hexFromName(raw.toLowerCase());
+  }
+  if (!hex){ showHint(`Couldn't parse "${raw}". Try a hex like #RRGGBB or a known name.`); return; }
+
+  if (normSet.has(hex.toLowerCase())) { showHint(`That color (${hex}) was already guessed.`); return; }
+
+  // record
+  typedSet.add(typedKey);
+  normSet.add(hex.toLowerCase());
+
+  // ask for hex -> HSL locally
+  const userHsl = rgbToHsl(hexToRgb(hex));
+  const pct = hslDistancePercent(userHsl, secretHsl || rgbToHsl(hexToRgb(secretHex)));
+
+  addGuessRow(raw, hex, userHsl, pct);
+
+  // update preview
+  preview.style.background = hex;
+
+  // message
+  if (pct === 100){
+    showHint(`🎉 Correct! ${lookupNameForHex(hex) || raw} (${hex}).`);
+    revealSecret(hex);
+  } else {
+    showHint(`You're ${pct}% close.`);
+  }
+
+  input.value = '';
+  suggBox.style.display = 'none';
+}
+
+/* ---------- utilities ---------- */
+
+// quick CSS color check (lets browser parse)
+function isCssColor(s){
+  if(!s || typeof s !== 'string') return false;
+  const o = new Option();
+  o.style.color = s;
+  return !!o.style.color;
+}
+function normalizedCssToHex(s){
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.fillStyle = s;
+  return ctx.fillStyle; // returns like "#rrggbb" or "rgb(...)"
+}
+
+/* ---------- give up / reveal ---------- */
+function revealSecret(hex){
+  // reveal with name if available
+  const nm = lookupNameForHex(hex || secretHex) || secretName;
+  secretSwatch.style.background = hex || secretHex;
+  secretNameEl.textContent = nm || 'Unnamed';
+  secretHexEl.textContent = hex || secretHex;
+}
+
+document.getElementById('giveBtn').addEventListener('click', async () => {
+  // reveal secret's name and hex
+  revealSecret();
+  showHint('Secret revealed.');
+});
+
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  pickSecret();
+  showHint('New secret chosen — start guessing!');
+});
+
+/* ------------------------------
+   initialize
+   ------------------------------ */
+
+pickSecret();
+
+// expose COLOR_DB for debugging only if developer console open (no logging)
+window.__COLOR_DB_SIZE = Object.keys(COLOR_DB).length;
+</script>
 </body>
 </html>
