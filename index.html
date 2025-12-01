@@ -155,7 +155,7 @@
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <div style="font-weight:700">Your Guesses</div>
-            <div style="font-size:13px;color:var(--muted)">Matches shown as % (HSL)</div>
+            <div style="font-size:13px;color:var(--muted)">Matches shown as % (perceptual)</div>
           </div>
 
           <div id="guessList"></div>
@@ -174,6 +174,7 @@
   - All maps and runtime state live inside this IIFE closure (not on window).
   - No console logs of the secret.
   - Duplicate detection by normalized hex and typed string.
+  - Similarity computed with CIE ΔE (Lab) for perceptual accuracy.
 */
 
 (() => {
@@ -260,8 +261,9 @@
   })();
 
   /* -------------------------
-     Color conversion helpers
+     Color conversion helpers (RGB -> XYZ -> Lab) and ΔE
      ------------------------- */
+
   function hexNormalize(h){
     if(!h) return null;
     let s = String(h).replace('#','').trim();
@@ -269,33 +271,61 @@
     if(!/^[0-9a-f]{6}$/i.test(s)) return null;
     return "#" + s.toLowerCase();
   }
+
   function hexToRgb(hex){
-    hex = hexNormalize(hex).replace('#','');
-    const n = parseInt(hex,16);
+    const h = hexNormalize(hex);
+    if (!h) return null;
+    const s = h.replace('#','');
+    const n = parseInt(s,16);
     return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
   }
-  function rgbToHsl({r,g,b}){
-    r/=255; g/=255; b/=255;
-    const max=Math.max(r,g,b), min=Math.min(r,g,b);
-    let h=0,s=0,l=(max+min)/2;
-    if(max!==min){
-      const d = max-min;
-      s = l>0.5 ? d/(2-max-min) : d/(max+min);
-      switch(max){
-        case r: h = (g-b)/d + (g<b?6:0); break;
-        case g: h = (b-r)/d + 2; break;
-        case b: h = (r-g)/d + 4; break;
-      }
-      h /= 6;
-    }
-    return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+
+  function srgbToLinear(v){ // 0..1 -> linear
+    if (v <= 0.04045) return v / 12.92;
+    return Math.pow((v + 0.055) / 1.055, 2.4);
   }
-  function hslDistancePercent(a,b){
-    const dh = Math.min(Math.abs(a.h-b.h), 360 - Math.abs(a.h-b.h)) / 180;
-    const ds = Math.abs(a.s - b.s) / 100;
-    const dl = Math.abs(a.l - b.l) / 100;
-    const dist = Math.sqrt((dh*dh)*0.62 + (ds*ds)*0.26 + (dl*dl)*0.12);
-    return Math.round((1 - Math.min(1, dist)) * 100);
+
+  function rgbToXyz({r,g,b}){
+    // convert 0..255 to 0..1
+    const R = srgbToLinear(r/255);
+    const G = srgbToLinear(g/255);
+    const B = srgbToLinear(b/255);
+    // sRGB D65
+    const X = R * 0.4124564 + G * 0.3575761 + B * 0.1804375;
+    const Y = R * 0.2126729 + G * 0.7151522 + B * 0.0721750;
+    const Z = R * 0.0193339 + G * 0.1191920 + B * 0.9503041;
+    return { X: X * 100, Y: Y * 100, Z: Z * 100 };
+  }
+
+  function xyzToLab({X,Y,Z}) {
+    // D65 white point
+    const Xn = 95.047, Yn = 100.000, Zn = 108.883;
+    let x = X / Xn, y = Y / Yn, z = Z / Zn;
+    function f(t){ return t > 0.008856 ? Math.cbrt(t) : (7.787 * t + 16/116); }
+    const fx = f(x), fy = f(y), fz = f(z);
+    const L = (116 * fy) - 16;
+    const a = 500 * (fx - fy);
+    const b = 200 * (fy - fz);
+    return { L: L, a: a, b: b };
+  }
+
+  function rgbToLab(rgb){
+    const xyz = rgbToXyz(rgb);
+    return xyzToLab(xyz);
+  }
+
+  function deltaE76(labA, labB){
+    const dL = labA.L - labB.L;
+    const da = labA.a - labB.a;
+    const db = labA.b - labB.b;
+    return Math.sqrt(dL*dL + da*da + db*db);
+  }
+
+  // Map ΔE to percent similarity: ΔE 0 => 100%; ΔE >= 100 => 0%
+  function deltaEPercent(labA, labB){
+    const d = deltaE76(labA, labB);
+    const pct = Math.round((1 - Math.min(1, d / 100)) * 100);
+    return Math.max(0, Math.min(100, pct));
   }
 
   /* -------------------------
@@ -315,34 +345,60 @@
 
   /* -------------------------
      Secure secret selection
-     - We use crypto.getRandomValues to pick an index (unpredictable)
-     - Secret lives only in closure: secretName/secretHex not on window
      ------------------------- */
   let secretName = null;
   let secretHex = null;
-  let secretHsl = null;
+  let secretLab = null;
 
   function securePickSecret(){
-    // pick an index using crypto RNG
     const keys = Object.keys(COLOR_DB.nameToHex);
     const arrLen = keys.length;
-    // use crypto to get an unbiased integer
     const u32 = new Uint32Array(1);
     window.crypto.getRandomValues(u32);
     const idx = u32[0] % arrLen;
     const nameLower = keys[idx];
     const hex = COLOR_DB.nameToHex[nameLower];
     secretName = COLOR_DB.hexToName[hex.toLowerCase()] || nameLower;
-    secretHex = hex;
-    secretHsl = rgbToHsl(hexToRgb(secretHex));
-    // hide secret in UI until give-up
+    secretHex = hexNormalize(hex);
+    const rgb = hexToRgb(secretHex);
+    secretLab = rgbToLab(rgb);
     secretNameEl.textContent = "Secret";
     secretHexEl.textContent = "••••••";
     secretSwatch.style.background = "#000";
   }
 
   /* -------------------------
-     Lookup helpers (consistent mapping)
+     CSS color -> hex helper (robust)
+     returns "#rrggbb" or null
+     ------------------------- */
+  function cssColorToHex(s){
+    if (!s || typeof s !== 'string') return null;
+    // quick try: use canvas fillStyle (returns normalized value in most browsers)
+    try {
+      const ctx = document.createElement('canvas').getContext('2d');
+      ctx.fillStyle = s;
+      const val = ctx.fillStyle; // may be "#rrggbb" or "rgb(...)"
+      if (typeof val === 'string' && val[0] === '#') {
+        return hexNormalize(val);
+      }
+      // fallback to computed rgb parsing (handles "rgb(..)" or color keywords)
+      const el = document.createElement('div');
+      el.style.color = s;
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      const cs = getComputedStyle(el).color; // "rgb(r,g,b)" or "rgba(...)"
+      document.body.removeChild(el);
+      const m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (!m) return null;
+      const r = parseInt(m[1]), g = parseInt(m[2]), b = parseInt(m[3]);
+      return "#" + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+    } catch(e){
+      return null;
+    }
+  }
+
+  /* -------------------------
+     Lookup helpers
      ------------------------- */
   function lookupHexForInput(raw){
     if(!raw) return null;
@@ -351,11 +407,8 @@
     const hx = hexNormalize(t);
     if (hx) return hx;
     // css color name parse
-    if (isCssColor(t)){
-      const norm = normalizedCssToHex(t);
-      const maybeHex = hexNormalize(norm);
-      if (maybeHex) return maybeHex;
-    }
+    const cssHex = cssColorToHex(t);
+    if (cssHex) return cssHex;
     // DB exact case-insensitive
     const low = t.toLowerCase();
     if (COLOR_DB.nameToHex[low]) return COLOR_DB.nameToHex[low];
@@ -366,7 +419,6 @@
     const tokens = collapse.split(/\s+/).filter(Boolean);
     if (tokens.length){
       const keys = Object.keys(COLOR_DB.nameToHex);
-      // prefer startsWith then includes
       for (const k of keys){
         let lk = k;
         let matched = tokens.every(tok => lk.includes(tok));
@@ -438,22 +490,10 @@
   /* -------------------------
      Input & autosuggest
      ------------------------- */
-  function isCssColor(s){
-    if(!s || typeof s !== 'string') return false;
-    const o = new Option();
-    o.style.color = s;
-    return !!o.style.color;
-  }
-  function normalizedCssToHex(s){
-    const ctx = document.createElement('canvas').getContext('2d');
-    ctx.fillStyle = s;
-    return ctx.fillStyle; // returns "#rrggbb" in most browsers
-  }
-
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     // live preview: if hex or CSS color
-    const direct = hexNormalize(q) || (isCssColor(q) ? normalizedCssToHex(q) : null);
+    const direct = hexNormalize(q) || cssColorToHex(q);
     preview.style.background = direct || '#000';
 
     // suggestions from DB
@@ -511,8 +551,10 @@
     totalGuesses++;
     updateStats();
 
-    const userHsl = rgbToHsl(hexToRgb(normalizedHex));
-    const pct = hslDistancePercent(userHsl, secretHsl);
+    // compute perceptual similarity using Lab ΔE
+    const userRgb = hexToRgb(normalizedHex);
+    const userLab = rgbToLab(userRgb);
+    const pct = deltaEPercent(userLab, secretLab);
 
     addGuessRow(raw, normalizedHex, pct);
     preview.style.background = normalizedHex;
