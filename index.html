@@ -18,36 +18,27 @@ body {
     background:#141414;
     padding:20px;
     border-radius:14px;
-    width:420px;
-}
-h3 {
-    margin:0 0 10px;
+    width:440px;
 }
 #row {
     display:flex;
     gap:20px;
+    align-items:center;
 }
 canvas {
     background:#000;
     border-radius:10px;
 }
-#info {
-    margin-top:10px;
-    font-size:13px;
-    opacity:.8;
-}
-#fail {
-    margin-top:6px;
-    font-size:14px;
-    color:#ff5555;
-}
+#info { font-size:13px; opacity:.8; }
+#fail { margin-top:6px; color:#ff5555; }
+#timer { font-size:12px; opacity:.6; }
 </style>
 </head>
 <body>
 
 <div id="box">
     <h3>Verify You Are Human</h3>
-    <p id="info">Click the matching icon</p>
+    <p id="info">Drag the circle onto the matching icon</p>
 
     <div id="row">
         <canvas id="target" width="90" height="90"></canvas>
@@ -55,6 +46,7 @@ canvas {
     </div>
 
     <div id="fail">Fails: 0</div>
+    <div id="timer"></div>
 </div>
 
 <script>
@@ -65,9 +57,25 @@ const gctx = gridCanvas.getContext("2d");
 
 let failCount = 0;
 let correctIndex = 0;
-let icons = [];
+let currentType = null;
+let timeLeft = 2;
 
-/* --- ICON DRAWING --- */
+let drag = {
+    active: false,
+    x: 135,
+    y: 135,
+    lastX: 135,
+    lastY: 135,
+    startTime: 0,
+    distance: 0,
+    version: 0
+};
+
+const MAX_STEP = 25;        // pixels per frame (anti-teleport)
+const MIN_DRAG_TIME = 350; // ms
+const MIN_DISTANCE = 120;  // pixels
+
+/* ICON DRAWING */
 function drawIcon(ctx, type, x, y, size, rot) {
     ctx.save();
     ctx.translate(x + size/2, y + size/2);
@@ -76,91 +84,139 @@ function drawIcon(ctx, type, x, y, size, rot) {
     ctx.strokeStyle = "#f2f2f2";
     ctx.lineWidth = 4;
 
-    switch(type) {
-        case "square":
-            ctx.fillRect(-size/2, -size/2, size, size);
-            break;
-        case "circle":
-            ctx.beginPath();
-            ctx.arc(0,0,size/2,0,Math.PI*2);
-            ctx.fill();
-            break;
-        case "triangle":
-            ctx.beginPath();
-            ctx.moveTo(0,-size/2);
-            ctx.lineTo(size/2,size/2);
-            ctx.lineTo(-size/2,size/2);
-            ctx.closePath();
-            ctx.fill();
-            break;
-        case "cross":
-            ctx.beginPath();
-            ctx.moveTo(-size/2,0);
-            ctx.lineTo(size/2,0);
-            ctx.moveTo(0,-size/2);
-            ctx.lineTo(0,size/2);
-            ctx.stroke();
-            break;
-        case "diamond":
-            ctx.beginPath();
-            ctx.moveTo(0,-size/2);
-            ctx.lineTo(size/2,0);
-            ctx.lineTo(0,size/2);
-            ctx.lineTo(-size/2,0);
-            ctx.closePath();
-            ctx.fill();
-            break;
+    if(type === "square") ctx.fillRect(-size/2,-size/2,size,size);
+    if(type === "circle") { ctx.beginPath(); ctx.arc(0,0,size/2,0,Math.PI*2); ctx.fill(); }
+    if(type === "triangle") {
+        ctx.beginPath();
+        ctx.moveTo(0,-size/2);
+        ctx.lineTo(size/2,size/2);
+        ctx.lineTo(-size/2,size/2);
+        ctx.closePath();
+        ctx.fill();
+    }
+    if(type === "cross") {
+        ctx.beginPath();
+        ctx.moveTo(-size/2,0); ctx.lineTo(size/2,0);
+        ctx.moveTo(0,-size/2); ctx.lineTo(0,size/2);
+        ctx.stroke();
+    }
+    if(type === "diamond") {
+        ctx.beginPath();
+        ctx.moveTo(0,-size/2);
+        ctx.lineTo(size/2,0);
+        ctx.lineTo(0,size/2);
+        ctx.lineTo(-size/2,0);
+        ctx.closePath();
+        ctx.fill();
     }
     ctx.restore();
 }
 
-/* --- GENERATE CAPTCHA --- */
-function generateCaptcha() {
-    tctx.clearRect(0,0,90,90);
+/* DRAW GRID */
+function redraw() {
     gctx.clearRect(0,0,270,270);
-
     const types = ["square","circle","triangle","cross","diamond"];
-    const targetType = types[Math.floor(Math.random()*types.length)];
-    correctIndex = Math.floor(Math.random()*9);
-
-    icons = [];
-
-    drawIcon(tctx, targetType, 15, 15, 60, Math.random());
 
     for(let i=0;i<9;i++){
-        let type = i === correctIndex
-            ? targetType
-            : types[Math.floor(Math.random()*types.length)];
-
-        let x = (i % 3) * 90;
-        let y = Math.floor(i / 3) * 90;
-
-        let rot = (Math.random() - 0.5);
-        icons.push({x,y,type});
-
-        drawIcon(gctx, type, x+15, y+15, 60, rot);
+        let type = i === correctIndex ? currentType : types[Math.floor(Math.random()*types.length)];
+        drawIcon(gctx, type, (i%3)*90+15, Math.floor(i/3)*90+15, 60, Math.random()-0.5);
     }
+
+    // Drag circle
+    gctx.beginPath();
+    gctx.arc(drag.x, drag.y, 16, 0, Math.PI*2);
+    gctx.strokeStyle = "#ff8c00";
+    gctx.lineWidth = 3;
+    gctx.stroke();
 }
 
-/* --- CLICK HANDLING --- */
-gridCanvas.addEventListener("click", e => {
-    const rect = gridCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+/* GENERATE CAPTCHA */
+let version = 0;
+function generateCaptcha() {
+    version++;
+    drag = { active:false, x:135, y:135, lastX:135, lastY:135, startTime:0, distance:0, version };
+    timeLeft = 2;
 
-    const col = Math.floor(x / 90);
-    const row = Math.floor(y / 90);
+    tctx.clearRect(0,0,90,90);
+    const types = ["square","circle","triangle","cross","diamond"];
+    currentType = types[Math.floor(Math.random()*types.length)];
+    correctIndex = Math.floor(Math.random()*9);
+    drawIcon(tctx, currentType, 15, 15, 60, Math.random());
+
+    redraw();
+}
+
+/* DRAG LOGIC */
+gridCanvas.addEventListener("mousedown", e => {
+    const r = gridCanvas.getBoundingClientRect();
+    const mx = e.clientX - r.left;
+    const my = e.clientY - r.top;
+    if(Math.hypot(mx-drag.x, my-drag.y) < 18){
+        drag.active = true;
+        drag.startTime = performance.now();
+        drag.lastX = drag.x;
+        drag.lastY = drag.y;
+        drag.version = version;
+    }
+});
+
+gridCanvas.addEventListener("mousemove", e => {
+    if(!drag.active || drag.version !== version) return;
+
+    const r = gridCanvas.getBoundingClientRect();
+    const nx = e.clientX - r.left;
+    const ny = e.clientY - r.top;
+
+    const step = Math.hypot(nx-drag.lastX, ny-drag.lastY);
+    if(step > MAX_STEP){
+        fail("Invalid movement");
+        return;
+    }
+
+    drag.distance += step;
+    drag.x = nx;
+    drag.y = ny;
+    drag.lastX = nx;
+    drag.lastY = ny;
+    redraw();
+});
+
+document.addEventListener("mouseup", () => {
+    if(!drag.active) return;
+    drag.active = false;
+
+    const duration = performance.now() - drag.startTime;
+    if(duration < MIN_DRAG_TIME || drag.distance < MIN_DISTANCE){
+        fail("Movement too fast");
+        return;
+    }
+
+    const col = Math.floor(drag.x / 90);
+    const row = Math.floor(drag.y / 90);
     const index = row * 3 + col;
 
     if(index === correctIndex){
         document.getElementById("info").textContent = "✅ Verified";
         document.getElementById("info").style.color = "lime";
     } else {
-        failCount++;
-        document.getElementById("fail").textContent = "Fails: " + failCount;
-        generateCaptcha();
+        fail("Wrong icon");
     }
 });
+
+/* FAIL HANDLER */
+function fail(reason){
+    failCount++;
+    document.getElementById("fail").textContent = "Fails: " + failCount;
+    generateCaptcha();
+}
+
+/* TIMERS */
+setInterval(generateCaptcha, 2000);
+setInterval(() => {
+    timeLeft -= 0.1;
+    document.getElementById("timer").textContent =
+        "Refreshing in " + Math.max(0,timeLeft).toFixed(1) + "s";
+}, 100);
 
 generateCaptcha();
 </script>
