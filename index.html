@@ -17,7 +17,7 @@ body {
     background:#141414;
     padding:20px;
     border-radius:14px;
-    width:440px;
+    width:460px;
 }
 #row {
     display:flex;
@@ -29,14 +29,15 @@ canvas {
     border-radius:10px;
 }
 #fail { color:#ff5555; margin-top:6px; }
-#timer { font-size:12px; opacity:.6; }
+#round { font-size:13px; opacity:.8; }
+#status { margin-top:10px; font-weight:600; }
 </style>
 </head>
 <body>
 
 <div id="box">
     <h3>Verify You Are Human</h3>
-    <p>Drag the circle onto the matching icon</p>
+    <div id="round">Round 1 of 3</div>
 
     <div id="row">
         <canvas id="target" width="90" height="90"></canvas>
@@ -44,7 +45,7 @@ canvas {
     </div>
 
     <div id="fail">Fails: 0</div>
-    <div id="timer"></div>
+    <div id="status"></div>
 </div>
 
 <script>
@@ -57,18 +58,23 @@ const TYPES = ["square","circle","triangle","cross","diamond"];
 const MAX_STEP = 25;
 const MIN_TIME = 350;
 const MIN_DIST = 120;
+const TOTAL_ROUNDS = 3;
 
+let round = 1;
 let failCount = 0;
 let correctIndex = 0;
 let currentType = null;
 let gridData = [];
 let version = 0;
-let timeLeft = 2;
+
+/* speed samples across all rounds */
+let speedSamples = [];
 
 let drag = {
     active:false,
     x:135, y:135,
     lastX:135, lastY:135,
+    lastT:0,
     start:0,
     dist:0,
     version:0
@@ -111,7 +117,7 @@ function drawIcon(ctx,type,x,y,s,r){
     ctx.restore();
 }
 
-/* REDRAW GRID (LOCKED DATA) */
+/* REDRAW */
 function redraw(){
     gctx.clearRect(0,0,270,270);
     gridData.forEach((o,i)=>{
@@ -125,11 +131,10 @@ function redraw(){
     gctx.stroke();
 }
 
-/* GENERATE CAPTCHA */
+/* GENERATE ROUND */
 function generate(){
     version++;
-    drag={active:false,x:135,y:135,lastX:135,lastY:135,start:0,dist:0,version};
-    timeLeft=2;
+    drag={active:false,x:135,y:135,lastX:135,lastY:135,lastT:0,start:0,dist:0,version};
 
     tctx.clearRect(0,0,90,90);
     currentType=TYPES[Math.floor(Math.random()*TYPES.length)];
@@ -153,31 +158,74 @@ gCanvas.addEventListener("mousedown",e=>{
     if(Math.hypot(mx-drag.x,my-drag.y)<18){
         drag.active=true;
         drag.start=performance.now();
+        drag.lastT=drag.start;
         drag.version=version;
     }
 });
 
 gCanvas.addEventListener("mousemove",e=>{
     if(!drag.active||drag.version!==version) return;
+
     const r=gCanvas.getBoundingClientRect();
     const nx=e.clientX-r.left,ny=e.clientY-r.top;
-    const step=Math.hypot(nx-drag.lastX,ny-drag.lastY);
-    if(step>MAX_STEP) return fail();
-    drag.dist+=step;
-    drag.x=nx;drag.y=ny;
-    drag.lastX=nx;drag.lastY=ny;
+    const now=performance.now();
+
+    const dx=nx-drag.lastX, dy=ny-drag.lastY;
+    const dist=Math.hypot(dx,dy);
+    const dt=now-drag.lastT;
+
+    if(dist>MAX_STEP) return fail();
+
+    if(dt>0){
+        speedSamples.push(dist/dt);
+    }
+
+    drag.dist+=dist;
+    drag.x=nx; drag.y=ny;
+    drag.lastX=nx; drag.lastY=ny;
+    drag.lastT=now;
     redraw();
 });
 
 document.addEventListener("mouseup",()=>{
     if(!drag.active) return;
     drag.active=false;
-    if(performance.now()-drag.start<MIN_TIME||drag.dist<MIN_DIST) return fail();
+
+    if(performance.now()-drag.start<MIN_TIME||drag.dist<MIN_DIST){
+        return fail();
+    }
+
     const idx=Math.floor(drag.y/90)*3+Math.floor(drag.x/90);
     if(idx===correctIndex){
-        document.querySelector("p").textContent="✅ Verified";
+        nextRound();
     } else fail();
 });
+
+/* ROUND CONTROL */
+function nextRound(){
+    if(round<TOTAL_ROUNDS){
+        round++;
+        document.getElementById("round").textContent=`Round ${round} of ${TOTAL_ROUNDS}`;
+        generate();
+    } else {
+        analyzeBehavior();
+    }
+}
+
+/* ANALYSIS */
+function analyzeBehavior(){
+    const avg=speedSamples.reduce((a,b)=>a+b,0)/speedSamples.length;
+    const variance=speedSamples.reduce((a,b)=>a+(b-avg)**2,0)/speedSamples.length;
+
+    const status=document.getElementById("status");
+    if(variance<0.0005){
+        status.textContent="❌ Behavior too consistent — likely automated";
+        status.style.color="#ff5555";
+    } else {
+        status.textContent="✅ Human-like interaction detected";
+        status.style.color="lime";
+    }
+}
 
 /* FAIL */
 function fail(){
@@ -186,14 +234,7 @@ function fail(){
     generate();
 }
 
-/* TIMERS */
-setInterval(generate,2000);
-setInterval(()=>{
-    timeLeft-=0.1;
-    document.getElementById("timer").textContent=
-        "Refreshing in "+Math.max(0,timeLeft).toFixed(1)+"s";
-},100);
-
+/* INIT */
 generate();
 </script>
 
