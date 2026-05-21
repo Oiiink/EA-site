@@ -1,358 +1,253 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Flappy Bee</title>
+<!-- SERVER HOSTING SECTION -->
+<section class="hosting-section">
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
+  <div class="hosting-header">
+    <h2>Server Hosting Plans</h2>
+    <p>
+      High performance hosting for communities, events, gaming servers,
+      and Discord integrations.
+    </p>
+  </div>
 
-    body{
-      overflow:hidden;
-      background:#87ceeb;
-      font-family:Arial, sans-serif;
-    }
+  <div class="plans-grid">
 
-    canvas{
-      display:block;
-      margin:auto;
-      background:
-        linear-gradient(to bottom,#87ceeb 0%,#b8ecff 65%,#7ad66f 65%,#69c55f 100%);
-    }
+    <!-- STARTER -->
+    <div class="plan-card">
 
-    .ui{
-      position:fixed;
-      top:20px;
-      width:100%;
-      text-align:center;
-      color:white;
-      text-shadow:2px 2px 6px rgba(0,0,0,0.4);
-      pointer-events:none;
-    }
+      <div class="plan-top">
+        <span class="badge">Starter</span>
+        <h3>Basic Host</h3>
+        <div class="price">
+          $4<span>/mo</span>
+        </div>
+      </div>
 
-    .title{
-      font-size:42px;
-      font-weight:bold;
-    }
+      <ul class="features">
+        <li>✔ 2GB RAM</li>
+        <li>✔ 1 vCPU Core</li>
+        <li>✔ DDOS Protection</li>
+        <li>✔ Instant Setup</li>
+        <li>✔ Discord Support</li>
+      </ul>
 
-    .subtitle{
-      margin-top:8px;
-      font-size:18px;
-    }
+      <button>Select Plan</button>
 
-    .score{
-      margin-top:16px;
-      font-size:28px;
-      font-weight:bold;
-    }
-  </style>
-</head>
-<body>
+    </div>
 
-<div class="ui">
-  <div class="title">🐝 Flappy Bee</div>
-  <div class="subtitle">Press SPACE or CLICK to fly</div>
-  <div class="score">Score: <span id="score">0</span></div>
-</div>
+    <!-- PRO -->
+    <div class="plan-card featured">
 
-<canvas id="game"></canvas>
+      <div class="popular">
+        MOST POPULAR
+      </div>
 
-<script>
+      <div class="plan-top">
+        <span class="badge purple">Pro</span>
+        <h3>Performance Host</h3>
+        <div class="price">
+          $12<span>/mo</span>
+        </div>
+      </div>
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+      <ul class="features">
+        <li>✔ 8GB RAM</li>
+        <li>✔ 4 vCPU Cores</li>
+        <li>✔ NVMe SSD Storage</li>
+        <li>✔ Priority Support</li>
+        <li>✔ Unlimited Backups</li>
+      </ul>
 
-canvas.width = 480;
-canvas.height = 720;
+      <button>Get Started</button>
 
-const scoreText = document.getElementById("score");
+    </div>
 
-let gameStarted = false;
-let gameOver = false;
-let score = 0;
+    <!-- ENTERPRISE -->
+    <div class="plan-card">
 
-const gravity = 0.45;
-const flap = -8;
+      <div class="plan-top">
+        <span class="badge gold">Enterprise</span>
+        <h3>Dedicated Cluster</h3>
+        <div class="price">
+          $29<span>/mo</span>
+        </div>
+      </div>
 
-const bee = {
-  x: 120,
-  y: 300,
-  radius: 22,
-  velocity: 0,
-  rotation: 0
-};
+      <ul class="features">
+        <li>✔ 32GB RAM</li>
+        <li>✔ Dedicated Resources</li>
+        <li>✔ Premium Networking</li>
+        <li>✔ 24/7 Support</li>
+        <li>✔ Custom Domains</li>
+      </ul>
 
-const pipes = [];
-const pipeWidth = 90;
-const pipeGap = 180;
-const pipeSpeed = 3;
+      <button>Deploy Now</button>
 
-function createPipe(){
-  const topHeight =
-    Math.floor(Math.random() * 260) + 80;
+    </div>
 
-  pipes.push({
-    x: canvas.width,
-    top: topHeight,
-    bottom: canvas.height - topHeight - pipeGap,
-    passed: false
-  });
+  </div>
+
+</section>
+
+<style>
+
+.hosting-section{
+  padding:80px 40px;
+  background:
+    radial-gradient(circle at top left,
+      rgba(124,92,255,0.12),
+      transparent 30%),
+    #0b0d14;
 }
 
-function drawBee(){
-
-  ctx.save();
-
-  ctx.translate(bee.x, bee.y);
-
-  bee.rotation = bee.velocity * 0.05;
-  ctx.rotate(bee.rotation);
-
-  // wings
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
-
-  ctx.beginPath();
-  ctx.ellipse(-8,-18,12,18,-0.4,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.ellipse(10,-18,12,18,0.4,0,Math.PI*2);
-  ctx.fill();
-
-  // body
-  ctx.fillStyle = "#ffd93b";
-
-  ctx.beginPath();
-  ctx.arc(0,0,22,0,Math.PI*2);
-  ctx.fill();
-
-  // stripes
-  ctx.fillStyle = "#222";
-
-  ctx.fillRect(-18,-10,36,6);
-  ctx.fillRect(-18,5,36,6);
-
-  // eyes
-  ctx.fillStyle = "#fff";
-
-  ctx.beginPath();
-  ctx.arc(8,-5,5,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle = "#000";
-
-  ctx.beginPath();
-  ctx.arc(10,-5,2,0,Math.PI*2);
-  ctx.fill();
-
-  // smile
-  ctx.strokeStyle = "#000";
-  ctx.lineWidth = 2;
-
-  ctx.beginPath();
-  ctx.arc(0,4,8,0,Math.PI);
-  ctx.stroke();
-
-  // stinger
-  ctx.fillStyle = "#222";
-
-  ctx.beginPath();
-  ctx.moveTo(-22,0);
-  ctx.lineTo(-34,-5);
-  ctx.lineTo(-34,5);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.restore();
+.hosting-header{
+  text-align:center;
+  margin-bottom:50px;
 }
 
-function drawPipes(){
-
-  pipes.forEach(pipe => {
-
-    // top pipe
-    ctx.fillStyle = "#46b04a";
-
-    ctx.fillRect(pipe.x,0,pipeWidth,pipe.top);
-
-    // bottom pipe
-    ctx.fillRect(
-      pipe.x,
-      canvas.height - pipe.bottom,
-      pipeWidth,
-      pipe.bottom
-    );
-
-    // highlights
-    ctx.fillStyle = "#6fe874";
-
-    ctx.fillRect(pipe.x + 8,0,10,pipe.top);
-
-    ctx.fillRect(
-      pipe.x + 8,
-      canvas.height - pipe.bottom,
-      10,
-      pipe.bottom
-    );
-  });
+.hosting-header h2{
+  color:white;
+  font-size:42px;
+  font-weight:800;
+  margin-bottom:12px;
 }
 
-function drawCloud(x,y,size){
-
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-
-  ctx.beginPath();
-  ctx.arc(x,y,size,0,Math.PI*2);
-  ctx.arc(x+size,y+5,size*0.8,0,Math.PI*2);
-  ctx.arc(x-size,y+5,size*0.7,0,Math.PI*2);
-  ctx.fill();
+.hosting-header p{
+  color:#9ca3af;
+  font-size:17px;
 }
 
-function update(){
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:28px;
+  max-width:1300px;
+  margin:auto;
+}
 
-  if(gameOver) return;
+.plan-card{
+  position:relative;
+  background:
+    linear-gradient(180deg,#171923 0%,#11131a 100%);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:28px;
+  padding:36px;
+  transition:0.25s ease;
+  overflow:hidden;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.45);
+}
 
-  requestAnimationFrame(update);
+.plan-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(124,92,255,0.35);
+}
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+.plan-card.featured{
+  border:1px solid rgba(124,92,255,0.45);
+  transform:scale(1.03);
+  box-shadow:
+    0 0 40px rgba(124,92,255,0.18),
+    0 25px 60px rgba(0,0,0,0.5);
+}
 
-  // clouds
-  drawCloud(90,120,28);
-  drawCloud(350,180,24);
-  drawCloud(250,80,18);
+.popular{
+  position:absolute;
+  top:18px;
+  right:-36px;
+  background:#7c5cff;
+  color:white;
+  font-size:12px;
+  font-weight:700;
+  padding:8px 40px;
+  transform:rotate(35deg);
+}
 
-  if(gameStarted){
+.plan-top{
+  margin-bottom:30px;
+}
 
-    bee.velocity += gravity;
-    bee.y += bee.velocity;
+.badge{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(74,222,128,0.15);
+  color:#4ade80;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:18px;
+}
 
-    // spawn pipes
-    if(frames % 100 === 0){
-      createPipe();
-    }
+.badge.purple{
+  background:rgba(124,92,255,0.18);
+  color:#a78bfa;
+}
 
-    pipes.forEach(pipe => {
+.badge.gold{
+  background:rgba(255,200,87,0.18);
+  color:#ffd166;
+}
 
-      pipe.x -= pipeSpeed;
+.plan-top h3{
+  color:white;
+  font-size:30px;
+  margin-bottom:16px;
+}
 
-      // score
-      if(!pipe.passed && pipe.x + pipeWidth < bee.x){
-        pipe.passed = true;
-        score++;
-        scoreText.textContent = score;
-      }
+.price{
+  color:white;
+  font-size:52px;
+  font-weight:800;
+}
 
-      // collision
-      if(
-        bee.x + bee.radius > pipe.x &&
-        bee.x - bee.radius < pipe.x + pipeWidth &&
-        (
-          bee.y - bee.radius < pipe.top ||
-          bee.y + bee.radius >
-          canvas.height - pipe.bottom
-        )
-      ){
-        endGame();
-      }
+.price span{
+  font-size:18px;
+  color:#9ca3af;
+}
 
-    });
+.features{
+  list-style:none;
+  margin-bottom:32px;
+}
 
-    // remove old pipes
-    while(pipes.length && pipes[0].x < -pipeWidth){
-      pipes.shift();
-    }
+.features li{
+  color:#d1d5db;
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  font-size:15px;
+}
 
-    // ground collision
-    if(
-      bee.y + bee.radius > canvas.height ||
-      bee.y - bee.radius < 0
-    ){
-      endGame();
-    }
+button{
+  width:100%;
+  border:none;
+  padding:16px;
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,#7c5cff 0%,#9f67ff 100%);
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+button:hover{
+  opacity:0.92;
+  transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+
+  .hosting-section{
+    padding:60px 20px;
   }
 
-  drawPipes();
-  drawBee();
-
-  if(!gameStarted){
-
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
-    ctx.font = "bold 40px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(
-      "CLICK TO START",
-      canvas.width / 2,
-      canvas.height / 2
-    );
+  .hosting-header h2{
+    font-size:34px;
   }
 
-  frames++;
-}
-
-function flapBee(){
-
-  if(gameOver){
-    location.reload();
-    return;
+  .plan-card.featured{
+    transform:none;
   }
-
-  gameStarted = true;
-  bee.velocity = flap;
 }
 
-function endGame(){
-
-  gameOver = true;
-
-  ctx.fillStyle = "rgba(0,0,0,0.65)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle = "#fff";
-  ctx.font = "bold 56px Arial";
-  ctx.textAlign = "center";
-
-  ctx.fillText(
-    "GAME OVER",
-    canvas.width/2,
-    canvas.height/2 - 20
-  );
-
-  ctx.font = "32px Arial";
-
-  ctx.fillText(
-    "Final Score: " + score,
-    canvas.width/2,
-    canvas.height/2 + 40
-  );
-
-  ctx.font = "22px Arial";
-
-  ctx.fillText(
-    "Click to Restart",
-    canvas.width/2,
-    canvas.height/2 + 90
-  );
-}
-
-let frames = 0;
-
-document.addEventListener("keydown", e => {
-  if(e.code === "Space"){
-    flapBee();
-  }
-});
-
-document.addEventListener("mousedown", flapBee);
-document.addEventListener("touchstart", flapBee);
-
-update();
-
-</script>
-
-</body>
-</html>
+</style>
