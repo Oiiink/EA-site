@@ -3,446 +3,438 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EventAlerts Dashboard</title>
+  <title>Heartline — Dating Simulator</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
 
-    body {
-      background: #0b0d14;
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      padding: 48px;
-      overflow-x: hidden;
+    body{
+      font-family:'Inter',sans-serif;
+      background:
+        radial-gradient(circle at top left,#ff4d8d33,transparent 30%),
+        radial-gradient(circle at top right,#8b5cf633,transparent 30%),
+        #0b0b12;
+      color:white;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:32px;
     }
 
-    .container {
-      max-width: 1400px;
-      margin: auto;
-    }
-
-    .subtitle {
-      color: #8b8fa3;
-      margin-top: 8px;
-      font-size: 15px;
-    }
-
-    h1 {
-      font-size: 42px;
-      font-weight: 800;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      margin-top: 36px;
-    }
-
-    .card {
-      background: linear-gradient(180deg, #151822 0%, #11131b 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 28px;
-      padding: 28px;
-      min-height: 220px;
+    .game{
+      width:100%;
+      max-width:1100px;
+      background:rgba(17,17,27,0.95);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:28px;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:420px 1fr;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.02),
-        0 20px 50px rgba(0,0,0,0.45);
-      transition: 0.2s ease;
+        0 30px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(124, 92, 255, 0.3);
+    .left{
+      background:
+        linear-gradient(180deg,#1a1b28 0%,#11121a 100%);
+      padding:40px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      border-right:1px solid rgba(255,255,255,0.05);
     }
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #a8afc2;
-      margin-bottom: 18px;
-      font-size: 15px;
+    .avatar{
+      width:260px;
+      height:360px;
+      border-radius:24px;
+      overflow:hidden;
+      background:#222;
+      margin-bottom:24px;
+      position:relative;
+      border:2px solid rgba(255,255,255,0.08);
     }
 
-    .metric {
-      font-size: 52px;
-      font-weight: 800;
-      margin-bottom: 18px;
-      letter-spacing: -2px;
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(123, 92, 255, 0.15);
-      border: 1px solid rgba(123, 92, 255, 0.3);
-      color: #9d7dff;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      margin-bottom: 24px;
-      font-weight: 600;
+    .status{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #8b5cf6;
-      box-shadow: 0 0 12px #8b5cf6;
+    .pill{
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.08);
+      padding:10px 16px;
+      border-radius:999px;
+      font-size:14px;
+      color:#d6d6e3;
     }
 
-    .card h3 {
-      margin-bottom: 10px;
-      font-size: 22px;
+    .love{
+      color:#ff70a6;
+      font-weight:700;
     }
 
-    .muted {
-      color: #8b8fa3;
-      line-height: 1.6;
-      font-size: 15px;
+    .right{
+      padding:48px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
     }
 
-    .section-title {
-      margin-top: 56px;
-      font-size: 34px;
-      font-weight: 800;
+    .top h1{
+      font-size:48px;
+      font-weight:800;
+      margin-bottom:10px;
     }
 
-    .section-sub {
-      margin-top: 8px;
-      color: #8b8fa3;
+    .subtitle{
+      color:#9ea3b5;
+      line-height:1.7;
+      max-width:700px;
+      font-size:16px;
     }
 
-    .charts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 24px;
-      margin-top: 28px;
+    .dialogue-box{
+      margin-top:40px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:24px;
+      padding:28px;
+      min-height:160px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
     }
 
-    .chart-card {
-      background: linear-gradient(180deg, #151822 0%, #11131b 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 28px;
-      padding: 26px;
-      min-height: 420px;
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.02),
-        0 20px 50px rgba(0,0,0,0.45);
+    .character-name{
+      color:#ff79af;
+      font-weight:700;
+      margin-bottom:16px;
+      font-size:18px;
     }
 
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      gap: 18px;
+    .dialogue{
+      font-size:24px;
+      line-height:1.6;
+      color:#f4f4fa;
     }
 
-    .chart-title {
-      font-size: 24px;
-      font-weight: 700;
+    .choices{
+      margin-top:36px;
+      display:grid;
+      gap:16px;
     }
 
-    .chart-subtitle {
-      color: #8b8fa3;
-      margin-top: 6px;
-      font-size: 14px;
+    button{
+      background:linear-gradient(135deg,#7c3aed 0%,#ff4d8d 100%);
+      border:none;
+      color:white;
+      padding:18px 22px;
+      border-radius:18px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.2s ease;
+      text-align:left;
     }
 
-    .filters {
-      display: flex;
-      gap: 12px;
+    button:hover{
+      transform:translateY(-2px) scale(1.01);
+      opacity:0.95;
     }
 
-    .filter {
-      background: #11141d;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #bfc5d8;
-      padding: 10px 16px;
-      border-radius: 14px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.2s ease;
+    .footer{
+      margin-top:28px;
+      color:#777b92;
+      font-size:14px;
     }
 
-    .filter.active {
-      background: rgba(123, 92, 255, 0.18);
-      border-color: rgba(123, 92, 255, 0.4);
-      color: #a78bfa;
-    }
+    @media(max-width:900px){
 
-    canvas {
-      width: 100% !important;
-      height: 260px !important;
-    }
-
-    .footer {
-      margin-top: 60px;
-      text-align: center;
-      color: #71768a;
-      font-size: 14px;
-    }
-
-    @media(max-width: 768px) {
-      body {
-        padding: 24px;
+      .game{
+        grid-template-columns:1fr;
       }
 
-      .charts {
-        grid-template-columns: 1fr;
+      .left{
+        border-right:none;
+        border-bottom:1px solid rgba(255,255,255,0.05);
       }
 
-      .chart-card {
-        min-height: auto;
+      .avatar{
+        width:100%;
+        max-width:320px;
       }
 
-      h1 {
-        font-size: 34px;
+      .right{
+        padding:32px;
       }
 
-      .metric {
-        font-size: 42px;
+      .top h1{
+        font-size:38px;
+      }
+
+      .dialogue{
+        font-size:20px;
       }
     }
   </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="game">
 
-  <h1>Dashboard</h1>
-  <div class="subtitle">
-    Event analytics and performance metrics
-  </div>
+  <div class="left">
 
-  <div class="cards">
+    <div class="avatar">
+      <img id="characterImage"
+        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop"
+        alt="Character">
+    </div>
 
-    <div class="card">
-      <div class="card-top">
-        <span>Upcoming Events</span>
-        <span>🎟️</span>
-      </div>
+    <h2 id="characterTitle">Luna</h2>
 
-      <div class="metric">12</div>
-
+    <div class="status">
       <div class="pill">
-        <div class="dot"></div>
-        Live
+        Mood: <span id="mood">Curious</span>
       </div>
 
-      <h3>Realtime status</h3>
-
-      <div class="muted">
-        Currently tracking active events and registrations.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-top">
-        <span>Total Registrations</span>
-        <span>📈</span>
-      </div>
-
-      <div class="metric">8,421</div>
-
-      <div class="pill" style="color:#ff7b7b;border-color:rgba(255,0,0,0.2);background:rgba(255,0,0,0.08);">
-        ↓ 12.4%
-      </div>
-
-      <h3>Lower than last month</h3>
-
-      <div class="muted">
-        Registration activity compared to previous month.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-top">
-        <span>Total Alerts Sent</span>
-        <span>🔔</span>
-      </div>
-
-      <div class="metric">98,054</div>
-
-      <div class="pill" style="color:#ff7b7b;border-color:rgba(255,0,0,0.2);background:rgba(255,0,0,0.08);">
-        ↓ 63.9%
-      </div>
-
-      <h3>Decrease in activity</h3>
-
-      <div class="muted">
-        Notifications and reminder messages this month.
+      <div class="pill love">
+        ❤ <span id="love">0</span>
       </div>
     </div>
 
   </div>
 
-  <div class="section-title">
-    Analytics & Insights
-  </div>
+  <div class="right">
 
-  <div class="section-sub">
-    Detailed breakdown of event performance and engagement.
-  </div>
+    <div>
 
-  <div class="charts">
+      <div class="top">
+        <h1>Heartline</h1>
 
-    <div class="chart-card">
+        <div class="subtitle">
+          A simple browser dating simulator. Make choices, build affection,
+          and unlock different reactions.
+        </div>
+      </div>
 
-      <div class="chart-header">
+      <div class="dialogue-box">
 
-        <div>
-          <div class="chart-title">Events Hosted</div>
-          <div class="chart-subtitle">
-            50 events in the selected period
-          </div>
+        <div class="character-name" id="speaker">
+          Luna
         </div>
 
-        <div class="filters">
-          <div class="filter">Week</div>
-          <div class="filter active">Month</div>
-          <div class="filter">Custom</div>
+        <div class="dialogue" id="dialogue">
+          “Hey... you're new here, right? I was wondering if you'd sit with me.”
         </div>
 
       </div>
 
-      <canvas id="eventsChart"></canvas>
+      <div class="choices" id="choices">
 
-    </div>
+        <button onclick="choose(1)">
+          “Of course. I'd love to.”
+        </button>
 
-    <div class="chart-card">
+        <button onclick="choose(2)">
+          “Depends. Are you always this mysterious?”
+        </button>
 
-      <div class="chart-header">
-
-        <div>
-          <div class="chart-title">Response Time</div>
-          <div class="chart-subtitle">
-            Average support response time: 35m
-          </div>
-        </div>
-
-        <div class="filters">
-          <div class="filter">Week</div>
-          <div class="filter active">Month</div>
-          <div class="filter">Custom</div>
-        </div>
+        <button onclick="choose(3)">
+          “Sorry, I’m kinda busy.”
+        </button>
 
       </div>
 
-      <canvas id="responseChart"></canvas>
-
     </div>
 
-  </div>
+    <div class="footer">
+      Placeholder visual novel / dating simulator for GitHub Pages
+    </div>
 
-  <div class="footer">
-    Placeholder dashboard for EventAlerts.gg • Hosted on GitHub Pages
   </div>
 
 </div>
 
 <script>
-  const labels = [
-    'Apr 22','Apr 24','Apr 26','Apr 28',
-    'May 1','May 3','May 5','May 7',
-    'May 9','May 11','May 13','May 15',
-    'May 17','May 19'
-  ];
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#d1d5db',
-          usePointStyle: true
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#8b8fa3'
-        },
-        grid: {
-          color: 'rgba(255,255,255,0.04)'
-        }
-      },
-      y: {
-        ticks: {
-          color: '#8b8fa3'
-        },
-        grid: {
-          color: 'rgba(255,255,255,0.04)'
-        }
-      }
+  let love = 0;
+
+  const dialogue = document.getElementById("dialogue");
+  const mood = document.getElementById("mood");
+  const loveText = document.getElementById("love");
+  const choices = document.getElementById("choices");
+
+  function updateLove(points){
+    love += points;
+    loveText.textContent = love;
+  }
+
+  function choose(option){
+
+    if(option === 1){
+
+      updateLove(10);
+
+      mood.textContent = "Happy";
+
+      dialogue.innerHTML =
+        "“Really? That makes me happy... Most people ignore me here.”";
+
+      choices.innerHTML = `
+        <button onclick="scene2(1)">
+          “I'd never ignore someone like you.”
+        </button>
+
+        <button onclick="scene2(2)">
+          “You should be more confident.”
+        </button>
+      `;
     }
-  };
 
-  new Chart(document.getElementById('eventsChart'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Previous Period',
-          data: [4,2,5,3,6,1,7,2,3,5,2,10,1,4],
-          borderColor: '#8b5cf6',
-          backgroundColor: '#8b5cf6',
-          tension: 0.4
-        },
-        {
-          label: 'This Period',
-          data: [1,3,0,24,2,1,0,3,2,1,0,0,3,1],
-          borderColor: '#4ade80',
-          backgroundColor: '#4ade80',
-          tension: 0.4
-        }
-      ]
-    },
-    options: chartOptions
-  });
+    if(option === 2){
 
-  new Chart(document.getElementById('responseChart'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Previous Period',
-          data: [700,200,300,100,0,50,20,40,200,0,300,3800,600,50],
-          borderColor: '#8b5cf6',
-          backgroundColor: '#8b5cf6',
-          tension: 0.4
-        },
-        {
-          label: 'This Period',
-          data: [0,0,0,0,600,0,100,0,0,0,0,0,0,0],
-          borderColor: '#4ade80',
-          backgroundColor: '#4ade80',
-          tension: 0.4
-        }
-      ]
-    },
-    options: chartOptions
-  });
+      updateLove(5);
+
+      mood.textContent = "Interested";
+
+      dialogue.innerHTML =
+        "“Maybe. Or maybe I just wanted your attention.”";
+
+      choices.innerHTML = `
+        <button onclick="scene2(3)">
+          “Looks like it worked.”
+        </button>
+
+        <button onclick="scene2(4)">
+          “That’s dangerous.”
+        </button>
+      `;
+    }
+
+    if(option === 3){
+
+      updateLove(-5);
+
+      mood.textContent = "Disappointed";
+
+      dialogue.innerHTML =
+        "“Oh... I see. Maybe another time then.”";
+
+      choices.innerHTML = `
+        <button onclick="restart()">
+          Restart
+        </button>
+      `;
+    }
+  }
+
+  function scene2(choice){
+
+    if(choice === 1){
+
+      updateLove(15);
+
+      mood.textContent = "Flustered";
+
+      dialogue.innerHTML =
+        "“You really know how to make someone blush...”";
+
+      ending();
+    }
+
+    if(choice === 2){
+
+      updateLove(3);
+
+      mood.textContent = "Shy";
+
+      dialogue.innerHTML =
+        "“I'm trying... maybe you could help me with that?”";
+
+      ending();
+    }
+
+    if(choice === 3){
+
+      updateLove(10);
+
+      mood.textContent = "Playful";
+
+      dialogue.innerHTML =
+        "“Good. I was hoping you'd notice me.”";
+
+      ending();
+    }
+
+    if(choice === 4){
+
+      updateLove(-2);
+
+      mood.textContent = "Smug";
+
+      dialogue.innerHTML =
+        "“Dangerous things are usually the most exciting.”";
+
+      ending();
+    }
+  }
+
+  function ending(){
+
+    let endText = "";
+
+    if(love >= 20){
+      endText =
+        "✨ Ending: Romantic Connection";
+    }
+    else if(love >= 10){
+      endText =
+        "💫 Ending: New Friendship";
+    }
+    else{
+      endText =
+        "🖤 Ending: Missed Opportunity";
+    }
+
+    choices.innerHTML = `
+      <button onclick="restart()">
+        Play Again
+      </button>
+
+      <button disabled style="
+        opacity:0.8;
+        cursor:default;
+        background:#1c1c28;
+      ">
+        ${endText}
+      </button>
+    `;
+  }
+
+  function restart(){
+    location.reload();
+  }
+
 </script>
 
 </body>
