@@ -3,12 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Heartline — Dating Simulator</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Flappy Bee</title>
 
   <style>
     *{
@@ -18,422 +13,344 @@
     }
 
     body{
-      font-family:'Inter',sans-serif;
+      overflow:hidden;
+      background:#87ceeb;
+      font-family:Arial, sans-serif;
+    }
+
+    canvas{
+      display:block;
+      margin:auto;
       background:
-        radial-gradient(circle at top left,#ff4d8d33,transparent 30%),
-        radial-gradient(circle at top right,#8b5cf633,transparent 30%),
-        #0b0b12;
+        linear-gradient(to bottom,#87ceeb 0%,#b8ecff 65%,#7ad66f 65%,#69c55f 100%);
+    }
+
+    .ui{
+      position:fixed;
+      top:20px;
+      width:100%;
+      text-align:center;
       color:white;
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:32px;
+      text-shadow:2px 2px 6px rgba(0,0,0,0.4);
+      pointer-events:none;
     }
 
-    .game{
-      width:100%;
-      max-width:1100px;
-      background:rgba(17,17,27,0.95);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:28px;
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:420px 1fr;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-
-    .left{
-      background:
-        linear-gradient(180deg,#1a1b28 0%,#11121a 100%);
-      padding:40px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      border-right:1px solid rgba(255,255,255,0.05);
-    }
-
-    .avatar{
-      width:260px;
-      height:360px;
-      border-radius:24px;
-      overflow:hidden;
-      background:#222;
-      margin-bottom:24px;
-      position:relative;
-      border:2px solid rgba(255,255,255,0.08);
-    }
-
-    .avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-
-    .status{
-      display:flex;
-      gap:12px;
-      margin-top:18px;
-    }
-
-    .pill{
-      background:rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.08);
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:14px;
-      color:#d6d6e3;
-    }
-
-    .love{
-      color:#ff70a6;
-      font-weight:700;
-    }
-
-    .right{
-      padding:48px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-
-    .top h1{
-      font-size:48px;
-      font-weight:800;
-      margin-bottom:10px;
+    .title{
+      font-size:42px;
+      font-weight:bold;
     }
 
     .subtitle{
-      color:#9ea3b5;
-      line-height:1.7;
-      max-width:700px;
-      font-size:16px;
-    }
-
-    .dialogue-box{
-      margin-top:40px;
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.06);
-      border-radius:24px;
-      padding:28px;
-      min-height:160px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-    }
-
-    .character-name{
-      color:#ff79af;
-      font-weight:700;
-      margin-bottom:16px;
+      margin-top:8px;
       font-size:18px;
     }
 
-    .dialogue{
-      font-size:24px;
-      line-height:1.6;
-      color:#f4f4fa;
-    }
-
-    .choices{
-      margin-top:36px;
-      display:grid;
-      gap:16px;
-    }
-
-    button{
-      background:linear-gradient(135deg,#7c3aed 0%,#ff4d8d 100%);
-      border:none;
-      color:white;
-      padding:18px 22px;
-      border-radius:18px;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.2s ease;
-      text-align:left;
-    }
-
-    button:hover{
-      transform:translateY(-2px) scale(1.01);
-      opacity:0.95;
-    }
-
-    .footer{
-      margin-top:28px;
-      color:#777b92;
-      font-size:14px;
-    }
-
-    @media(max-width:900px){
-
-      .game{
-        grid-template-columns:1fr;
-      }
-
-      .left{
-        border-right:none;
-        border-bottom:1px solid rgba(255,255,255,0.05);
-      }
-
-      .avatar{
-        width:100%;
-        max-width:320px;
-      }
-
-      .right{
-        padding:32px;
-      }
-
-      .top h1{
-        font-size:38px;
-      }
-
-      .dialogue{
-        font-size:20px;
-      }
+    .score{
+      margin-top:16px;
+      font-size:28px;
+      font-weight:bold;
     }
   </style>
 </head>
 <body>
 
-<div class="game">
-
-  <div class="left">
-
-    <div class="avatar">
-      <img id="characterImage"
-        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop"
-        alt="Character">
-    </div>
-
-    <h2 id="characterTitle">Luna</h2>
-
-    <div class="status">
-      <div class="pill">
-        Mood: <span id="mood">Curious</span>
-      </div>
-
-      <div class="pill love">
-        ❤ <span id="love">0</span>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="right">
-
-    <div>
-
-      <div class="top">
-        <h1>Heartline</h1>
-
-        <div class="subtitle">
-          A simple browser dating simulator. Make choices, build affection,
-          and unlock different reactions.
-        </div>
-      </div>
-
-      <div class="dialogue-box">
-
-        <div class="character-name" id="speaker">
-          Luna
-        </div>
-
-        <div class="dialogue" id="dialogue">
-          “Hey... you're new here, right? I was wondering if you'd sit with me.”
-        </div>
-
-      </div>
-
-      <div class="choices" id="choices">
-
-        <button onclick="choose(1)">
-          “Of course. I'd love to.”
-        </button>
-
-        <button onclick="choose(2)">
-          “Depends. Are you always this mysterious?”
-        </button>
-
-        <button onclick="choose(3)">
-          “Sorry, I’m kinda busy.”
-        </button>
-
-      </div>
-
-    </div>
-
-    <div class="footer">
-      Placeholder visual novel / dating simulator for GitHub Pages
-    </div>
-
-  </div>
-
+<div class="ui">
+  <div class="title">🐝 Flappy Bee</div>
+  <div class="subtitle">Press SPACE or CLICK to fly</div>
+  <div class="score">Score: <span id="score">0</span></div>
 </div>
+
+<canvas id="game"></canvas>
 
 <script>
 
-  let love = 0;
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-  const dialogue = document.getElementById("dialogue");
-  const mood = document.getElementById("mood");
-  const loveText = document.getElementById("love");
-  const choices = document.getElementById("choices");
+canvas.width = 480;
+canvas.height = 720;
 
-  function updateLove(points){
-    love += points;
-    loveText.textContent = love;
+const scoreText = document.getElementById("score");
+
+let gameStarted = false;
+let gameOver = false;
+let score = 0;
+
+const gravity = 0.45;
+const flap = -8;
+
+const bee = {
+  x: 120,
+  y: 300,
+  radius: 22,
+  velocity: 0,
+  rotation: 0
+};
+
+const pipes = [];
+const pipeWidth = 90;
+const pipeGap = 180;
+const pipeSpeed = 3;
+
+function createPipe(){
+  const topHeight =
+    Math.floor(Math.random() * 260) + 80;
+
+  pipes.push({
+    x: canvas.width,
+    top: topHeight,
+    bottom: canvas.height - topHeight - pipeGap,
+    passed: false
+  });
+}
+
+function drawBee(){
+
+  ctx.save();
+
+  ctx.translate(bee.x, bee.y);
+
+  bee.rotation = bee.velocity * 0.05;
+  ctx.rotate(bee.rotation);
+
+  // wings
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+
+  ctx.beginPath();
+  ctx.ellipse(-8,-18,12,18,-0.4,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.ellipse(10,-18,12,18,0.4,0,Math.PI*2);
+  ctx.fill();
+
+  // body
+  ctx.fillStyle = "#ffd93b";
+
+  ctx.beginPath();
+  ctx.arc(0,0,22,0,Math.PI*2);
+  ctx.fill();
+
+  // stripes
+  ctx.fillStyle = "#222";
+
+  ctx.fillRect(-18,-10,36,6);
+  ctx.fillRect(-18,5,36,6);
+
+  // eyes
+  ctx.fillStyle = "#fff";
+
+  ctx.beginPath();
+  ctx.arc(8,-5,5,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = "#000";
+
+  ctx.beginPath();
+  ctx.arc(10,-5,2,0,Math.PI*2);
+  ctx.fill();
+
+  // smile
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.arc(0,4,8,0,Math.PI);
+  ctx.stroke();
+
+  // stinger
+  ctx.fillStyle = "#222";
+
+  ctx.beginPath();
+  ctx.moveTo(-22,0);
+  ctx.lineTo(-34,-5);
+  ctx.lineTo(-34,5);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPipes(){
+
+  pipes.forEach(pipe => {
+
+    // top pipe
+    ctx.fillStyle = "#46b04a";
+
+    ctx.fillRect(pipe.x,0,pipeWidth,pipe.top);
+
+    // bottom pipe
+    ctx.fillRect(
+      pipe.x,
+      canvas.height - pipe.bottom,
+      pipeWidth,
+      pipe.bottom
+    );
+
+    // highlights
+    ctx.fillStyle = "#6fe874";
+
+    ctx.fillRect(pipe.x + 8,0,10,pipe.top);
+
+    ctx.fillRect(
+      pipe.x + 8,
+      canvas.height - pipe.bottom,
+      10,
+      pipe.bottom
+    );
+  });
+}
+
+function drawCloud(x,y,size){
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.arc(x+size,y+5,size*0.8,0,Math.PI*2);
+  ctx.arc(x-size,y+5,size*0.7,0,Math.PI*2);
+  ctx.fill();
+}
+
+function update(){
+
+  if(gameOver) return;
+
+  requestAnimationFrame(update);
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // clouds
+  drawCloud(90,120,28);
+  drawCloud(350,180,24);
+  drawCloud(250,80,18);
+
+  if(gameStarted){
+
+    bee.velocity += gravity;
+    bee.y += bee.velocity;
+
+    // spawn pipes
+    if(frames % 100 === 0){
+      createPipe();
+    }
+
+    pipes.forEach(pipe => {
+
+      pipe.x -= pipeSpeed;
+
+      // score
+      if(!pipe.passed && pipe.x + pipeWidth < bee.x){
+        pipe.passed = true;
+        score++;
+        scoreText.textContent = score;
+      }
+
+      // collision
+      if(
+        bee.x + bee.radius > pipe.x &&
+        bee.x - bee.radius < pipe.x + pipeWidth &&
+        (
+          bee.y - bee.radius < pipe.top ||
+          bee.y + bee.radius >
+          canvas.height - pipe.bottom
+        )
+      ){
+        endGame();
+      }
+
+    });
+
+    // remove old pipes
+    while(pipes.length && pipes[0].x < -pipeWidth){
+      pipes.shift();
+    }
+
+    // ground collision
+    if(
+      bee.y + bee.radius > canvas.height ||
+      bee.y - bee.radius < 0
+    ){
+      endGame();
+    }
   }
 
-  function choose(option){
+  drawPipes();
+  drawBee();
 
-    if(option === 1){
+  if(!gameStarted){
 
-      updateLove(10);
-
-      mood.textContent = "Happy";
-
-      dialogue.innerHTML =
-        "“Really? That makes me happy... Most people ignore me here.”";
-
-      choices.innerHTML = `
-        <button onclick="scene2(1)">
-          “I'd never ignore someone like you.”
-        </button>
-
-        <button onclick="scene2(2)">
-          “You should be more confident.”
-        </button>
-      `;
-    }
-
-    if(option === 2){
-
-      updateLove(5);
-
-      mood.textContent = "Interested";
-
-      dialogue.innerHTML =
-        "“Maybe. Or maybe I just wanted your attention.”";
-
-      choices.innerHTML = `
-        <button onclick="scene2(3)">
-          “Looks like it worked.”
-        </button>
-
-        <button onclick="scene2(4)">
-          “That’s dangerous.”
-        </button>
-      `;
-    }
-
-    if(option === 3){
-
-      updateLove(-5);
-
-      mood.textContent = "Disappointed";
-
-      dialogue.innerHTML =
-        "“Oh... I see. Maybe another time then.”";
-
-      choices.innerHTML = `
-        <button onclick="restart()">
-          Restart
-        </button>
-      `;
-    }
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.font = "bold 40px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "CLICK TO START",
+      canvas.width / 2,
+      canvas.height / 2
+    );
   }
 
-  function scene2(choice){
+  frames++;
+}
 
-    if(choice === 1){
+function flapBee(){
 
-      updateLove(15);
-
-      mood.textContent = "Flustered";
-
-      dialogue.innerHTML =
-        "“You really know how to make someone blush...”";
-
-      ending();
-    }
-
-    if(choice === 2){
-
-      updateLove(3);
-
-      mood.textContent = "Shy";
-
-      dialogue.innerHTML =
-        "“I'm trying... maybe you could help me with that?”";
-
-      ending();
-    }
-
-    if(choice === 3){
-
-      updateLove(10);
-
-      mood.textContent = "Playful";
-
-      dialogue.innerHTML =
-        "“Good. I was hoping you'd notice me.”";
-
-      ending();
-    }
-
-    if(choice === 4){
-
-      updateLove(-2);
-
-      mood.textContent = "Smug";
-
-      dialogue.innerHTML =
-        "“Dangerous things are usually the most exciting.”";
-
-      ending();
-    }
-  }
-
-  function ending(){
-
-    let endText = "";
-
-    if(love >= 20){
-      endText =
-        "✨ Ending: Romantic Connection";
-    }
-    else if(love >= 10){
-      endText =
-        "💫 Ending: New Friendship";
-    }
-    else{
-      endText =
-        "🖤 Ending: Missed Opportunity";
-    }
-
-    choices.innerHTML = `
-      <button onclick="restart()">
-        Play Again
-      </button>
-
-      <button disabled style="
-        opacity:0.8;
-        cursor:default;
-        background:#1c1c28;
-      ">
-        ${endText}
-      </button>
-    `;
-  }
-
-  function restart(){
+  if(gameOver){
     location.reload();
+    return;
   }
+
+  gameStarted = true;
+  bee.velocity = flap;
+}
+
+function endGame(){
+
+  gameOver = true;
+
+  ctx.fillStyle = "rgba(0,0,0,0.65)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 56px Arial";
+  ctx.textAlign = "center";
+
+  ctx.fillText(
+    "GAME OVER",
+    canvas.width/2,
+    canvas.height/2 - 20
+  );
+
+  ctx.font = "32px Arial";
+
+  ctx.fillText(
+    "Final Score: " + score,
+    canvas.width/2,
+    canvas.height/2 + 40
+  );
+
+  ctx.font = "22px Arial";
+
+  ctx.fillText(
+    "Click to Restart",
+    canvas.width/2,
+    canvas.height/2 + 90
+  );
+}
+
+let frames = 0;
+
+document.addEventListener("keydown", e => {
+  if(e.code === "Space"){
+    flapBee();
+  }
+});
+
+document.addEventListener("mousedown", flapBee);
+document.addEventListener("touchstart", flapBee);
+
+update();
 
 </script>
 
