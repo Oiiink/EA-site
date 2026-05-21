@@ -1,253 +1,771 @@
-<!-- SERVER HOSTING SECTION -->
-<section class="hosting-section">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <div class="hosting-header">
-    <h2>Server Hosting Plans</h2>
-    <p>
-      High performance hosting for communities, events, gaming servers,
-      and Discord integrations.
-    </p>
-  </div>
+<title>🐝 Bee Clicker Heroes</title>
 
-  <div class="plans-grid">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- STARTER -->
-    <div class="plan-card">
-
-      <div class="plan-top">
-        <span class="badge">Starter</span>
-        <h3>Basic Host</h3>
-        <div class="price">
-          $4<span>/mo</span>
-        </div>
-      </div>
-
-      <ul class="features">
-        <li>✔ 2GB RAM</li>
-        <li>✔ 1 vCPU Core</li>
-        <li>✔ DDOS Protection</li>
-        <li>✔ Instant Setup</li>
-        <li>✔ Discord Support</li>
-      </ul>
-
-      <button>Select Plan</button>
-
-    </div>
-
-    <!-- PRO -->
-    <div class="plan-card featured">
-
-      <div class="popular">
-        MOST POPULAR
-      </div>
-
-      <div class="plan-top">
-        <span class="badge purple">Pro</span>
-        <h3>Performance Host</h3>
-        <div class="price">
-          $12<span>/mo</span>
-        </div>
-      </div>
-
-      <ul class="features">
-        <li>✔ 8GB RAM</li>
-        <li>✔ 4 vCPU Cores</li>
-        <li>✔ NVMe SSD Storage</li>
-        <li>✔ Priority Support</li>
-        <li>✔ Unlimited Backups</li>
-      </ul>
-
-      <button>Get Started</button>
-
-    </div>
-
-    <!-- ENTERPRISE -->
-    <div class="plan-card">
-
-      <div class="plan-top">
-        <span class="badge gold">Enterprise</span>
-        <h3>Dedicated Cluster</h3>
-        <div class="price">
-          $29<span>/mo</span>
-        </div>
-      </div>
-
-      <ul class="features">
-        <li>✔ 32GB RAM</li>
-        <li>✔ Dedicated Resources</li>
-        <li>✔ Premium Networking</li>
-        <li>✔ 24/7 Support</li>
-        <li>✔ Custom Domains</li>
-      </ul>
-
-      <button>Deploy Now</button>
-
-    </div>
-
-  </div>
-
-</section>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
-.hosting-section{
-  padding:80px 40px;
+:root{
+  --bg:#0a0b10;
+  --panel:#12141d;
+  --panel2:#171923;
+  --border:rgba(255,255,255,0.07);
+
+  --yellow:#ffd54a;
+  --gold:#ffb703;
+
+  --text:#ffffff;
+  --muted:#9ca3af;
+
+  --purple:#8b5cf6;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
+  color:var(--text);
+
   background:
     radial-gradient(circle at top left,
-      rgba(124,92,255,0.12),
+      rgba(255,213,74,0.12),
       transparent 30%),
-    #0b0d14;
+
+    radial-gradient(circle at top right,
+      rgba(139,92,246,0.12),
+      transparent 30%),
+
+    linear-gradient(180deg,#0d0f16 0%,#090a0f 100%);
 }
 
-.hosting-header{
-  text-align:center;
-  margin-bottom:50px;
-}
-
-.hosting-header h2{
-  color:white;
-  font-size:42px;
-  font-weight:800;
-  margin-bottom:12px;
-}
-
-.hosting-header p{
-  color:#9ca3af;
-  font-size:17px;
-}
-
-.plans-grid{
+.game{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:28px;
-  max-width:1300px;
-  margin:auto;
+  grid-template-columns:1fr 420px;
+  height:100vh;
 }
 
-.plan-card{
+/* LEFT */
+
+.left{
   position:relative;
-  background:
-    linear-gradient(180deg,#171923 0%,#11131a 100%);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:28px;
-  padding:36px;
-  transition:0.25s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   overflow:hidden;
-  box-shadow:
-    0 20px 50px rgba(0,0,0,0.45);
 }
 
-.plan-card:hover{
-  transform:translateY(-6px);
-  border-color:rgba(124,92,255,0.35);
-}
-
-.plan-card.featured{
-  border:1px solid rgba(124,92,255,0.45);
-  transform:scale(1.03);
-  box-shadow:
-    0 0 40px rgba(124,92,255,0.18),
-    0 25px 60px rgba(0,0,0,0.5);
-}
-
-.popular{
+.left::before{
+  content:"";
   position:absolute;
-  top:18px;
-  right:-36px;
-  background:#7c5cff;
-  color:white;
-  font-size:12px;
-  font-weight:700;
-  padding:8px 40px;
-  transform:rotate(35deg);
+  width:700px;
+  height:700px;
+  background:
+    radial-gradient(circle,
+      rgba(255,213,74,0.12),
+      transparent 70%);
+  z-index:0;
 }
 
-.plan-top{
-  margin-bottom:30px;
+.logo{
+  position:absolute;
+  top:28px;
+  left:34px;
+  z-index:5;
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:-1px;
 }
 
-.badge{
-  display:inline-block;
-  padding:8px 14px;
-  border-radius:999px;
-  background:rgba(74,222,128,0.15);
-  color:#4ade80;
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:18px;
+.logo span{
+  color:var(--yellow);
 }
 
-.badge.purple{
-  background:rgba(124,92,255,0.18);
-  color:#a78bfa;
+.hero{
+  position:relative;
+  z-index:2;
+  text-align:center;
 }
 
-.badge.gold{
-  background:rgba(255,200,87,0.18);
-  color:#ffd166;
-}
-
-.plan-top h3{
-  color:white;
-  font-size:30px;
+h1{
+  font-size:72px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-3px;
   margin-bottom:16px;
 }
 
-.price{
-  color:white;
+.subtitle{
+  color:var(--muted);
+  font-size:18px;
+  margin-bottom:34px;
+}
+
+.honey-card{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.03));
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  padding:24px 38px;
+  border-radius:28px;
+
+  backdrop-filter:blur(12px);
+
+  margin-bottom:40px;
+
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.35);
+}
+
+.honey-title{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+.honey-display{
   font-size:52px;
   font-weight:800;
+  color:var(--yellow);
+  text-shadow:0 0 25px rgba(255,213,74,0.25);
 }
 
-.price span{
-  font-size:18px;
-  color:#9ca3af;
-}
-
-.features{
-  list-style:none;
-  margin-bottom:32px;
-}
-
-.features li{
-  color:#d1d5db;
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+.per-second{
+  margin-top:10px;
+  color:#d4d4d8;
   font-size:15px;
 }
 
-button{
+/* BEE */
+
+.bee-wrap{
+  position:relative;
+}
+
+.bee-glow{
+  position:absolute;
+  inset:0;
+  border-radius:999px;
+  background:
+    radial-gradient(circle,
+      rgba(255,213,74,0.4),
+      transparent 70%);
+  filter:blur(40px);
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%{
+    transform:scale(0.9);
+    opacity:0.7;
+  }
+  50%{
+    transform:scale(1.05);
+    opacity:1;
+  }
+  100%{
+    transform:scale(0.9);
+    opacity:0.7;
+  }
+}
+
+.bee{
+  position:relative;
+  width:280px;
+  cursor:pointer;
+  transition:0.08s ease;
+  z-index:2;
+  user-select:none;
+  filter:
+    drop-shadow(0 25px 50px rgba(0,0,0,0.45));
+}
+
+.bee:hover{
+  transform:translateY(-4px);
+}
+
+.bee:active{
+  transform:scale(0.93);
+}
+
+.float-text{
+  position:absolute;
+  color:var(--yellow);
+  font-weight:800;
+  font-size:24px;
+  pointer-events:none;
+  animation:floatUp 1s forwards;
+  text-shadow:0 0 15px rgba(255,213,74,0.45);
+}
+
+@keyframes floatUp{
+  0%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+
+  100%{
+    opacity:0;
+    transform:translateY(-120px) scale(1.2);
+  }
+}
+
+/* RIGHT PANEL */
+
+.right{
+  background:
+    linear-gradient(180deg,
+      rgba(20,22,30,0.98),
+      rgba(13,14,19,0.98));
+
+  border-left:1px solid var(--border);
+
+  backdrop-filter:blur(12px);
+
+  padding:30px;
+
+  overflow-y:auto;
+}
+
+.panel-title{
+  font-size:42px;
+  font-weight:800;
+  margin-bottom:10px;
+  letter-spacing:-2px;
+}
+
+.panel-sub{
+  color:var(--muted);
+  margin-bottom:34px;
+  line-height:1.7;
+}
+
+/* UPGRADES */
+
+.shop{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.upgrade{
+  position:relative;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.05),
+      rgba(255,255,255,0.03));
+
+  border:1px solid rgba(255,255,255,0.07);
+
+  border-radius:24px;
+
+  padding:22px;
+
+  overflow:hidden;
+
+  transition:0.25s ease;
+}
+
+.upgrade::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:4px;
+  height:100%;
+  background:
+    linear-gradient(180deg,
+      var(--yellow),
+      var(--gold));
+}
+
+.upgrade:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,213,74,0.2);
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.35);
+}
+
+.upgrade-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.upgrade-name{
+  font-size:22px;
+  font-weight:700;
+}
+
+.level{
+  background:rgba(255,255,255,0.08);
+  padding:8px 14px;
+  border-radius:999px;
+  color:#e5e7eb;
+  font-size:13px;
+  font-weight:600;
+}
+
+.upgrade-desc{
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:20px;
+  font-size:14px;
+}
+
+.buy{
   width:100%;
   border:none;
   padding:16px;
-  border-radius:18px;
+  border-radius:16px;
+
   background:
-    linear-gradient(135deg,#7c5cff 0%,#9f67ff 100%);
-  color:white;
+    linear-gradient(135deg,
+      var(--yellow),
+      var(--gold));
+
+  color:black;
+
   font-size:16px;
-  font-weight:700;
+  font-weight:800;
+
   cursor:pointer;
+
   transition:0.2s ease;
 }
 
-button:hover{
-  opacity:0.92;
-  transform:translateY(-2px);
+.buy:hover{
+  transform:translateY(-2px) scale(1.01);
 }
 
-@media(max-width:768px){
+.buy:disabled{
+  opacity:0.35;
+  cursor:not-allowed;
+  transform:none;
+}
 
-  .hosting-section{
-    padding:60px 20px;
+/* STATS */
+
+.stats{
+  margin-top:34px;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.04),
+      rgba(255,255,255,0.03));
+
+  border:1px solid rgba(255,255,255,0.07);
+
+  border-radius:24px;
+
+  padding:26px;
+}
+
+.stats h3{
+  margin-bottom:20px;
+  font-size:22px;
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 0;
+  color:#e5e7eb;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.stat:last-child{
+  border-bottom:none;
+}
+
+/* MOBILE */
+
+@media(max-width:950px){
+
+  body{
+    overflow:auto;
   }
 
-  .hosting-header h2{
+  .game{
+    grid-template-columns:1fr;
+    height:auto;
+  }
+
+  .right{
+    border-left:none;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+
+  h1{
+    font-size:52px;
+  }
+
+  .left{
+    padding:120px 20px 60px;
+  }
+
+  .bee{
+    width:230px;
+  }
+
+  .panel-title{
     font-size:34px;
-  }
-
-  .plan-card.featured{
-    transform:none;
   }
 }
 
 </style>
+</head>
+<body>
+
+<div class="game">
+
+  <!-- LEFT -->
+
+  <div class="left">
+
+    <div class="logo">
+      Bee<span>Clicker</span>
+    </div>
+
+    <div class="hero">
+
+      <h1>🐝 Bee Heroes</h1>
+
+      <div class="subtitle">
+        Grow your hive and become the ultimate honey tycoon
+      </div>
+
+      <div class="honey-card">
+
+        <div class="honey-title">
+          TOTAL HONEY
+        </div>
+
+        <div class="honey-display">
+          🍯 <span id="honey">0</span>
+        </div>
+
+        <div class="per-second">
+          +<span id="hps">0</span> per second
+        </div>
+
+      </div>
+
+      <div class="bee-wrap">
+
+        <div class="bee-glow"></div>
+
+        <svg class="bee" id="beeBtn" viewBox="0 0 300 300">
+
+          <!-- wings -->
+          <ellipse cx="105" cy="90" rx="42" ry="60"
+            fill="rgba(255,255,255,0.85)"
+            transform="rotate(-18 105 90)"/>
+
+          <ellipse cx="195" cy="90" rx="42" ry="60"
+            fill="rgba(255,255,255,0.85)"
+            transform="rotate(18 195 90)"/>
+
+          <!-- body -->
+          <ellipse cx="150" cy="160" rx="72" ry="88"
+            fill="#ffd54a"/>
+
+          <!-- stripes -->
+          <rect x="85" y="118" width="130" height="18"
+            rx="9" fill="#222"/>
+
+          <rect x="85" y="158" width="130" height="18"
+            rx="9" fill="#222"/>
+
+          <rect x="85" y="198" width="130" height="18"
+            rx="9" fill="#222"/>
+
+          <!-- eyes -->
+          <circle cx="130" cy="140" r="10" fill="#fff"/>
+          <circle cx="170" cy="140" r="10" fill="#fff"/>
+
+          <circle cx="132" cy="140" r="4" fill="#000"/>
+          <circle cx="172" cy="140" r="4" fill="#000"/>
+
+          <!-- smile -->
+          <path d="M125 175 Q150 195 175 175"
+            stroke="#000"
+            stroke-width="6"
+            fill="none"
+            stroke-linecap="round"/>
+
+        </svg>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+
+  <div class="right">
+
+    <div class="panel-title">
+      Hive Upgrades
+    </div>
+
+    <div class="panel-sub">
+      Buy upgrades to automate honey production and expand your bee empire.
+    </div>
+
+    <div class="shop" id="shop"></div>
+
+    <div class="stats">
+
+      <h3>📊 Statistics</h3>
+
+      <div class="stat">
+        <span>Total Honey</span>
+        <span id="totalHoney">0</span>
+      </div>
+
+      <div class="stat">
+        <span>Total Clicks</span>
+        <span id="clicks">0</span>
+      </div>
+
+      <div class="stat">
+        <span>Hive Level</span>
+        <span id="hiveLevel">1</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let honey = 0;
+let totalHoney = 0;
+let clicks = 0;
+let hiveLevel = 1;
+
+const honeyText = document.getElementById("honey");
+const hpsText = document.getElementById("hps");
+
+const totalHoneyText = document.getElementById("totalHoney");
+const clicksText = document.getElementById("clicks");
+const hiveLevelText = document.getElementById("hiveLevel");
+
+const upgrades = [
+  {
+    name:"Worker Bee",
+    desc:"Tiny bees that gather honey automatically.",
+    baseCost:25,
+    hps:1,
+    owned:0
+  },
+  {
+    name:"Honeycomb Farm",
+    desc:"Large scale honey production.",
+    baseCost:120,
+    hps:5,
+    owned:0
+  },
+  {
+    name:"Queen Bee",
+    desc:"Boosts the hive output massively.",
+    baseCost:500,
+    hps:20,
+    owned:0
+  },
+  {
+    name:"Royal Nectar Lab",
+    desc:"Refine premium golden nectar.",
+    baseCost:2500,
+    hps:75,
+    owned:0
+  },
+  {
+    name:"Bee Kingdom",
+    desc:"Rule over millions of bees.",
+    baseCost:12000,
+    hps:250,
+    owned:0
+  }
+];
+
+function renderShop(){
+
+  const shop = document.getElementById("shop");
+
+  shop.innerHTML = "";
+
+  upgrades.forEach((upgrade,index)=>{
+
+    const cost =
+      Math.floor(upgrade.baseCost *
+      Math.pow(1.15,upgrade.owned));
+
+    const div = document.createElement("div");
+
+    div.className = "upgrade";
+
+    div.innerHTML = `
+      <div class="upgrade-top">
+
+        <div class="upgrade-name">
+          ${upgrade.name}
+        </div>
+
+        <div class="level">
+          Lv ${upgrade.owned}
+        </div>
+
+      </div>
+
+      <div class="upgrade-desc">
+        ${upgrade.desc}<br><br>
+        +${upgrade.hps} honey/sec
+      </div>
+
+      <button class="buy"
+        onclick="buyUpgrade(${index})"
+        ${honey < cost ? "disabled" : ""}>
+
+        Buy — 🍯 ${cost}
+
+      </button>
+    `;
+
+    shop.appendChild(div);
+  });
+}
+
+function getHPS(){
+
+  let total = 0;
+
+  upgrades.forEach(u=>{
+    total += u.hps * u.owned;
+  });
+
+  return total;
+}
+
+function updateUI(){
+
+  honeyText.textContent =
+    Math.floor(honey);
+
+  hpsText.textContent =
+    getHPS();
+
+  totalHoneyText.textContent =
+    Math.floor(totalHoney);
+
+  clicksText.textContent =
+    clicks;
+
+  hiveLevelText.textContent =
+    hiveLevel;
+
+  renderShop();
+}
+
+function clickBee(e){
+
+  const gain = 1 + Math.floor(hiveLevel * 0.5);
+
+  honey += gain;
+  totalHoney += gain;
+  clicks++;
+
+  spawnFloatText(e.clientX,e.clientY,
+    `+${gain} 🍯`);
+
+  updateUI();
+}
+
+function spawnFloatText(x,y,text){
+
+  const div = document.createElement("div");
+
+  div.className = "float-text";
+
+  div.style.left = x + "px";
+  div.style.top = y + "px";
+
+  div.innerText = text;
+
+  document.body.appendChild(div);
+
+  setTimeout(()=>{
+    div.remove();
+  },1000);
+}
+
+function buyUpgrade(index){
+
+  const upgrade = upgrades[index];
+
+  const cost =
+    Math.floor(upgrade.baseCost *
+    Math.pow(1.15,upgrade.owned));
+
+  if(honey >= cost){
+
+    honey -= cost;
+
+    upgrade.owned++;
+
+    if(upgrade.owned % 10 === 0){
+      hiveLevel++;
+    }
+
+    updateUI();
+  }
+}
+
+setInterval(()=>{
+
+  const generated = getHPS() / 10;
+
+  honey += generated;
+  totalHoney += generated;
+
+  updateUI();
+
+},100);
+
+document
+  .getElementById("beeBtn")
+  .addEventListener("click",clickBee);
+
+updateUI();
+
+</script>
+
+</body>
+</html>
