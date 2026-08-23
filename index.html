@@ -1,769 +1,966 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>🐝 Bee Clicker Heroes</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-
-:root{
-  --bg:#0a0b10;
-  --panel:#12141d;
-  --panel2:#171923;
-  --border:rgba(255,255,255,0.07);
-
-  --yellow:#ffd54a;
-  --gold:#ffb703;
-
-  --text:#ffffff;
-  --muted:#9ca3af;
-
-  --purple:#8b5cf6;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
-  font-family:'Inter',sans-serif;
-  overflow:hidden;
-  color:var(--text);
-
-  background:
-    radial-gradient(circle at top left,
-      rgba(255,213,74,0.12),
-      transparent 30%),
-
-    radial-gradient(circle at top right,
-      rgba(139,92,246,0.12),
-      transparent 30%),
-
-    linear-gradient(180deg,#0d0f16 0%,#090a0f 100%);
-}
-
-.game{
-  display:grid;
-  grid-template-columns:1fr 420px;
-  height:100vh;
-}
-
-/* LEFT */
-
-.left{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-}
-
-.left::before{
-  content:"";
-  position:absolute;
-  width:700px;
-  height:700px;
-  background:
-    radial-gradient(circle,
-      rgba(255,213,74,0.12),
-      transparent 70%);
-  z-index:0;
-}
-
-.logo{
-  position:absolute;
-  top:28px;
-  left:34px;
-  z-index:5;
-  font-size:24px;
-  font-weight:800;
-  letter-spacing:-1px;
-}
-
-.logo span{
-  color:var(--yellow);
-}
-
-.hero{
-  position:relative;
-  z-index:2;
-  text-align:center;
-}
-
-h1{
-  font-size:72px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:-3px;
-  margin-bottom:16px;
-}
-
-.subtitle{
-  color:var(--muted);
-  font-size:18px;
-  margin-bottom:34px;
-}
-
-.honey-card{
-  display:inline-flex;
-  flex-direction:column;
-  align-items:center;
-
-  background:
-    linear-gradient(180deg,
-      rgba(255,255,255,0.06),
-      rgba(255,255,255,0.03));
-
-  border:1px solid rgba(255,255,255,0.08);
-
-  padding:24px 38px;
-  border-radius:28px;
-
-  backdrop-filter:blur(12px);
-
-  margin-bottom:40px;
-
-  box-shadow:
-    0 10px 40px rgba(0,0,0,0.35);
-}
-
-.honey-title{
-  color:var(--muted);
-  font-size:14px;
-  margin-bottom:8px;
-}
-
-.honey-display{
-  font-size:52px;
-  font-weight:800;
-  color:var(--yellow);
-  text-shadow:0 0 25px rgba(255,213,74,0.25);
-}
-
-.per-second{
-  margin-top:10px;
-  color:#d4d4d8;
-  font-size:15px;
-}
-
-/* BEE */
-
-.bee-wrap{
-  position:relative;
-}
-
-.bee-glow{
-  position:absolute;
-  inset:0;
-  border-radius:999px;
-  background:
-    radial-gradient(circle,
-      rgba(255,213,74,0.4),
-      transparent 70%);
-  filter:blur(40px);
-  animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-  0%{
-    transform:scale(0.9);
-    opacity:0.7;
-  }
-  50%{
-    transform:scale(1.05);
-    opacity:1;
-  }
-  100%{
-    transform:scale(0.9);
-    opacity:0.7;
-  }
-}
-
-.bee{
-  position:relative;
-  width:280px;
-  cursor:pointer;
-  transition:0.08s ease;
-  z-index:2;
-  user-select:none;
-  filter:
-    drop-shadow(0 25px 50px rgba(0,0,0,0.45));
-}
-
-.bee:hover{
-  transform:translateY(-4px);
-}
-
-.bee:active{
-  transform:scale(0.93);
-}
-
-.float-text{
-  position:absolute;
-  color:var(--yellow);
-  font-weight:800;
-  font-size:24px;
-  pointer-events:none;
-  animation:floatUp 1s forwards;
-  text-shadow:0 0 15px rgba(255,213,74,0.45);
-}
-
-@keyframes floatUp{
-  0%{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
-
-  100%{
-    opacity:0;
-    transform:translateY(-120px) scale(1.2);
-  }
-}
-
-/* RIGHT PANEL */
-
-.right{
-  background:
-    linear-gradient(180deg,
-      rgba(20,22,30,0.98),
-      rgba(13,14,19,0.98));
-
-  border-left:1px solid var(--border);
-
-  backdrop-filter:blur(12px);
-
-  padding:30px;
-
-  overflow-y:auto;
-}
-
-.panel-title{
-  font-size:42px;
-  font-weight:800;
-  margin-bottom:10px;
-  letter-spacing:-2px;
-}
-
-.panel-sub{
-  color:var(--muted);
-  margin-bottom:34px;
-  line-height:1.7;
-}
-
-/* UPGRADES */
-
-.shop{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.upgrade{
-  position:relative;
-
-  background:
-    linear-gradient(180deg,
-      rgba(255,255,255,0.05),
-      rgba(255,255,255,0.03));
-
-  border:1px solid rgba(255,255,255,0.07);
-
-  border-radius:24px;
-
-  padding:22px;
-
-  overflow:hidden;
-
-  transition:0.25s ease;
-}
-
-.upgrade::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  width:4px;
-  height:100%;
-  background:
-    linear-gradient(180deg,
-      var(--yellow),
-      var(--gold));
-}
-
-.upgrade:hover{
-  transform:translateY(-4px);
-  border-color:rgba(255,213,74,0.2);
-
-  box-shadow:
-    0 10px 35px rgba(0,0,0,0.35);
-}
-
-.upgrade-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
-
-.upgrade-name{
-  font-size:22px;
-  font-weight:700;
-}
-
-.level{
-  background:rgba(255,255,255,0.08);
-  padding:8px 14px;
-  border-radius:999px;
-  color:#e5e7eb;
-  font-size:13px;
-  font-weight:600;
-}
-
-.upgrade-desc{
-  color:var(--muted);
-  line-height:1.7;
-  margin-bottom:20px;
-  font-size:14px;
-}
-
-.buy{
-  width:100%;
-  border:none;
-  padding:16px;
-  border-radius:16px;
-
-  background:
-    linear-gradient(135deg,
-      var(--yellow),
-      var(--gold));
-
-  color:black;
-
-  font-size:16px;
-  font-weight:800;
-
-  cursor:pointer;
-
-  transition:0.2s ease;
-}
-
-.buy:hover{
-  transform:translateY(-2px) scale(1.01);
-}
-
-.buy:disabled{
-  opacity:0.35;
-  cursor:not-allowed;
-  transform:none;
-}
-
-/* STATS */
-
-.stats{
-  margin-top:34px;
-
-  background:
-    linear-gradient(180deg,
-      rgba(255,255,255,0.04),
-      rgba(255,255,255,0.03));
-
-  border:1px solid rgba(255,255,255,0.07);
-
-  border-radius:24px;
-
-  padding:26px;
-}
-
-.stats h3{
-  margin-bottom:20px;
-  font-size:22px;
-}
-
-.stat{
-  display:flex;
-  justify-content:space-between;
-  padding:14px 0;
-  color:#e5e7eb;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
-
-.stat:last-child{
-  border-bottom:none;
-}
-
-/* MOBILE */
-
-@media(max-width:950px){
-
-  body{
-    overflow:auto;
-  }
-
-  .game{
-    grid-template-columns:1fr;
-    height:auto;
-  }
-
-  .right{
-    border-left:none;
-    border-top:1px solid rgba(255,255,255,0.08);
-  }
-
-  h1{
-    font-size:52px;
-  }
-
-  .left{
-    padding:120px 20px 60px;
-  }
-
-  .bee{
-    width:230px;
-  }
-
-  .panel-title{
-    font-size:34px;
-  }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oiiink Subathon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --red: #ff1e2d;
+            --red-dark: #b5000c;
+            --red-light: #ff4b55;
+            --black: #050505;
+            --black-2: #0b0b0b;
+            --black-3: #111111;
+            --gray: #171717;
+            --gray-light: #242424;
+            --text: #ffffff;
+            --muted: #929292;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(255, 30, 45, 0.18), transparent 35%),
+                var(--black);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background: rgba(5, 5, 5, 0.82);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-dot {
+            width: 11px;
+            height: 11px;
+            background: var(--red);
+            border-radius: 50%;
+            box-shadow: 0 0 18px rgba(255, 30, 45, 0.8);
+        }
+
+        nav {
+            display: flex;
+            gap: 28px;
+        }
+
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            max-width: 1150px;
+            margin: auto;
+            padding: 100px 25px 70px;
+            text-align: center;
+        }
+
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 30, 45, 0.09);
+            border: 1px solid rgba(255, 30, 45, 0.3);
+            color: #ff6670;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 10px var(--red);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.45;
+                transform: scale(0.7);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(46px, 8vw, 88px);
+            line-height: 0.95;
+            font-weight: 900;
+            letter-spacing: -5px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            color: var(--red);
+            text-shadow: 0 0 35px rgba(255, 30, 45, 0.25);
+        }
+
+        .hero p {
+            max-width: 620px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           TIMER
+        ========================= */
+
+        .timer {
+            margin: 50px auto 0;
+            max-width: 650px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .time-box {
+            background: linear-gradient(145deg, #151515, #0b0b0b);
+            border: 1px solid #242424;
+            border-radius: 14px;
+            padding: 20px 10px;
+        }
+
+        .time-number {
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .time-label {
+            margin-top: 5px;
+            color: #666;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 0 25px 100px;
+        }
+
+        .section {
+            margin-top: 70px;
+        }
+
+        .section-heading {
+            margin-bottom: 25px;
+        }
+
+        .section-heading .eyebrow {
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 7px;
+        }
+
+        .section-heading h2 {
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .section-heading p {
+            color: #777;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        /* =========================
+           PERKS
+        ========================= */
+
+        .perks {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .perk {
+            position: relative;
+            overflow: hidden;
+            padding: 28px;
+            min-height: 240px;
+            border-radius: 18px;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(255, 30, 45, 0.12), transparent 40%),
+                linear-gradient(145deg, #151515, #0a0a0a);
+            border: 1px solid #242424;
+            transition: 0.3s ease;
+        }
+
+        .perk:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 30, 45, 0.55);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        .perk::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -70px;
+            bottom: -80px;
+            background: var(--red);
+            opacity: 0.06;
+            filter: blur(40px);
+            border-radius: 50%;
+        }
+
+        .perk-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 62px;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 8px;
+            background: rgba(255, 30, 45, 0.1);
+            border: 1px solid rgba(255, 30, 45, 0.25);
+            color: var(--red-light);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .perk-icon {
+            font-size: 38px;
+            margin: 25px 0 16px;
+        }
+
+        .perk h3 {
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .perk p {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           LEADERBOARD
+        ========================= */
+
+        .leaderboard-wrapper {
+            background: #0c0c0c;
+            border: 1px solid #222;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 7px;
+            gap: 5px;
+            background: #090909;
+            border-bottom: 1px solid #1d1d1d;
+        }
+
+        .tab {
+            flex: 1;
+            border: 0;
+            background: transparent;
+            color: #666;
+            padding: 13px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab:hover {
+            color: white;
+        }
+
+        .tab.active {
+            background: var(--red);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 30, 45, 0.2);
+        }
+
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 70px 1fr 150px;
+            padding: 17px 25px;
+            color: #555;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #191919;
+        }
+
+        .leaderboard-header div:last-child {
+            text-align: right;
+        }
+
+        .leaderboard {
+            display: none;
+        }
+
+        .leaderboard.active {
+            display: block;
+        }
+
+        .leader {
+            display: grid;
+            grid-template-columns: 70px 1fr 150px;
+            align-items: center;
+            padding: 18px 25px;
+            border-bottom: 1px solid #161616;
+            transition: 0.2s;
+        }
+
+        .leader:last-child {
+            border-bottom: 0;
+        }
+
+        .leader:hover {
+            background: #111;
+        }
+
+        .rank {
+            font-size: 18px;
+            font-weight: 900;
+            color: #555;
+        }
+
+        .leader:nth-child(1) .rank {
+            color: #ffd84d;
+        }
+
+        .leader:nth-child(2) .rank {
+            color: #bdbdbd;
+        }
+
+        .leader:nth-child(3) .rank {
+            color: #c77c4b;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background:
+                linear-gradient(135deg, var(--red), #450006);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .username {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .sub-count {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .sub-count span {
+            color: var(--red);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            text-align: center;
+            padding: 35px 20px;
+            border-top: 1px solid #161616;
+            color: #444;
+            font-size: 12px;
+        }
+
+        footer strong {
+            color: #777;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 750px) {
+            header {
+                padding: 0 20px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 70px;
+            }
+
+            .hero h1 {
+                letter-spacing: -3px;
+            }
+
+            .timer {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .perks {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard-header,
+            .leader {
+                grid-template-columns: 45px 1fr 90px;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .leaderboard-header {
+                font-size: 8px;
+            }
+
+            .username {
+                font-size: 13px;
+            }
+
+            .sub-count {
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="game">
-
-  <!-- LEFT -->
-
-  <div class="left">
-
+<header>
     <div class="logo">
-      Bee<span>Clicker</span>
+        <div class="logo-dot"></div>
+        OIIINK SUBATHON
     </div>
 
-    <div class="hero">
+    <nav>
+        <a href="#perks">Perks</a>
+        <a href="#leaderboard">Leaderboard</a>
+    </nav>
+</header>
 
-      <h1>🐝 Bee Heroes</h1>
 
-      <div class="subtitle">
-        Grow your hive and become the ultimate honey tycoon
-      </div>
+<!-- HERO -->
 
-      <div class="honey-card">
+<section class="hero">
 
-        <div class="honey-title">
-          TOTAL HONEY
+    <div class="live-pill">
+        <div class="live-dot"></div>
+        Subathon Live
+    </div>
+
+    <h1>
+        LET'S GO<br>
+        <span>CRAZY.</span>
+    </h1>
+
+    <p>
+        Every gifted sub helps extend the subathon.
+        Hit the milestones below to unlock exclusive perks
+        and events.
+    </p>
+
+    <div class="timer">
+
+        <div class="time-box">
+            <div class="time-number" id="days">00</div>
+            <div class="time-label">Days</div>
         </div>
 
-        <div class="honey-display">
-          🍯 <span id="honey">0</span>
+        <div class="time-box">
+            <div class="time-number" id="hours">00</div>
+            <div class="time-label">Hours</div>
         </div>
 
-        <div class="per-second">
-          +<span id="hps">0</span> per second
+        <div class="time-box">
+            <div class="time-number" id="minutes">00</div>
+            <div class="time-label">Minutes</div>
         </div>
 
-      </div>
-
-      <div class="bee-wrap">
-
-        <div class="bee-glow"></div>
-
-        <svg class="bee" id="beeBtn" viewBox="0 0 300 300">
-
-          <!-- wings -->
-          <ellipse cx="105" cy="90" rx="42" ry="60"
-            fill="rgba(255,255,255,0.85)"
-            transform="rotate(-18 105 90)"/>
-
-          <ellipse cx="195" cy="90" rx="42" ry="60"
-            fill="rgba(255,255,255,0.85)"
-            transform="rotate(18 195 90)"/>
-
-          <!-- body -->
-          <ellipse cx="150" cy="160" rx="72" ry="88"
-            fill="#ffd54a"/>
-
-          <!-- stripes -->
-          <rect x="85" y="118" width="130" height="18"
-            rx="9" fill="#222"/>
-
-          <rect x="85" y="158" width="130" height="18"
-            rx="9" fill="#222"/>
-
-          <rect x="85" y="198" width="130" height="18"
-            rx="9" fill="#222"/>
-
-          <!-- eyes -->
-          <circle cx="130" cy="140" r="10" fill="#fff"/>
-          <circle cx="170" cy="140" r="10" fill="#fff"/>
-
-          <circle cx="132" cy="140" r="4" fill="#000"/>
-          <circle cx="172" cy="140" r="4" fill="#000"/>
-
-          <!-- smile -->
-          <path d="M125 175 Q150 195 175 175"
-            stroke="#000"
-            stroke-width="6"
-            fill="none"
-            stroke-linecap="round"/>
-
-        </svg>
-
-      </div>
+        <div class="time-box">
+            <div class="time-number" id="seconds">00</div>
+            <div class="time-label">Seconds</div>
+        </div>
 
     </div>
 
-  </div>
+</section>
 
-  <!-- RIGHT -->
 
-  <div class="right">
+<main class="container">
 
-    <div class="panel-title">
-      Hive Upgrades
-    </div>
+    <!-- PERKS -->
 
-    <div class="panel-sub">
-      Buy upgrades to automate honey production and expand your bee empire.
-    </div>
+    <section class="section" id="perks">
 
-    <div class="shop" id="shop"></div>
+        <div class="section-heading">
+            <div class="eyebrow">Milestones</div>
+            <h2>Subathon Perks</h2>
+            <p>Gift subs to unlock these rewards.</p>
+        </div>
 
-    <div class="stats">
+        <div class="perks">
 
-      <h3>📊 Statistics</h3>
+            <div class="perk">
 
-      <div class="stat">
-        <span>Total Honey</span>
-        <span id="totalHoney">0</span>
-      </div>
+                <div class="perk-number">
+                    10 GIFTED
+                </div>
 
-      <div class="stat">
-        <span>Total Clicks</span>
-        <span id="clicks">0</span>
-      </div>
+                <div class="perk-icon">
+                    📸
+                </div>
 
-      <div class="stat">
-        <span>Hive Level</span>
-        <span id="hiveLevel">1</span>
-      </div>
+                <h3>Face Cam</h3>
 
-    </div>
+                <p>
+                    Face cam gets turned on during the subathon.
+                    Only available during the day.
+                </p>
 
-  </div>
+            </div>
 
-</div>
+
+            <div class="perk">
+
+                <div class="perk-number">
+                    25 GIFTED
+                </div>
+
+                <div class="perk-icon">
+                    🎮
+                </div>
+
+                <h3>Host an Event</h3>
+
+                <p>
+                    Host your own event on LeoneMC.
+                    You get to decide what happens.
+                </p>
+
+            </div>
+
+
+            <div class="perk">
+
+                <div class="perk-number">
+                    35 GIFTED
+                </div>
+
+                <div class="perk-icon">
+                    🧠
+                </div>
+
+                <h3>IQ Test</h3>
+
+                <p>
+                    At 35 gifted subs, the IQ test begins.
+                    Let's see how smart I actually am.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LEADERBOARD -->
+
+    <section class="section" id="leaderboard">
+
+        <div class="section-heading">
+            <div class="eyebrow">Supporters</div>
+            <h2>Top Gifters</h2>
+            <p>See who's gifted the most subs.</p>
+        </div>
+
+
+        <div class="leaderboard-wrapper">
+
+            <div class="tabs">
+
+                <button
+                    class="tab active"
+                    onclick="showYear('2026', this)">
+                    2026
+                </button>
+
+                <button
+                    class="tab"
+                    onclick="showYear('2025', this)">
+                    2025
+                </button>
+
+            </div>
+
+
+            <div class="leaderboard-header">
+                <div>#</div>
+                <div>Gifter</div>
+                <div>Gifted</div>
+            </div>
+
+
+            <!-- 2026 -->
+
+            <div class="leaderboard active" id="leaderboard-2026">
+
+                <div class="leader">
+
+                    <div class="rank">01</div>
+
+                    <div class="user">
+                        <div class="avatar">O</div>
+                        <div class="username">TopGifter</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>150</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">02</div>
+
+                    <div class="user">
+                        <div class="avatar">S</div>
+                        <div class="username">Someone</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>100</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">03</div>
+
+                    <div class="user">
+                        <div class="avatar">M</div>
+                        <div class="username">MinecraftFan</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>75</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">04</div>
+
+                    <div class="user">
+                        <div class="avatar">J</div>
+                        <div class="username">Jester</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>50</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">05</div>
+
+                    <div class="user">
+                        <div class="avatar">A</div>
+                        <div class="username">Alex</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>35</span> subs
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- 2025 -->
+
+            <div class="leaderboard" id="leaderboard-2025">
+
+                <div class="leader">
+
+                    <div class="rank">01</div>
+
+                    <div class="user">
+                        <div class="avatar">N</div>
+                        <div class="username">Netherite</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>200</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">02</div>
+
+                    <div class="user">
+                        <div class="avatar">D</div>
+                        <div class="username">Dragon</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>125</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">03</div>
+
+                    <div class="user">
+                        <div class="avatar">C</div>
+                        <div class="username">Creeper</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>80</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">04</div>
+
+                    <div class="user">
+                        <div class="avatar">P</div>
+                        <div class="username">Piglin</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>55</span> subs
+                    </div>
+
+                </div>
+
+
+                <div class="leader">
+
+                    <div class="rank">05</div>
+
+                    <div class="user">
+                        <div class="avatar">B</div>
+                        <div class="username">Bedrock</div>
+                    </div>
+
+                    <div class="sub-count">
+                        <span>40</span> subs
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <strong>Oiiink</strong> Subathon • Thanks for the support ❤️
+</footer>
+
 
 <script>
 
-let honey = 0;
-let totalHoney = 0;
-let clicks = 0;
-let hiveLevel = 1;
+    /* =========================
+       LEADERBOARD TABS
+    ========================= */
 
-const honeyText = document.getElementById("honey");
-const hpsText = document.getElementById("hps");
+    function showYear(year, button) {
 
-const totalHoneyText = document.getElementById("totalHoney");
-const clicksText = document.getElementById("clicks");
-const hiveLevelText = document.getElementById("hiveLevel");
+        document.querySelectorAll(".tab").forEach(tab => {
+            tab.classList.remove("active");
+        });
 
-const upgrades = [
-  {
-    name:"Worker Bee",
-    desc:"Tiny bees that gather honey automatically.",
-    baseCost:25,
-    hps:1,
-    owned:0
-  },
-  {
-    name:"Honeycomb Farm",
-    desc:"Large scale honey production.",
-    baseCost:120,
-    hps:5,
-    owned:0
-  },
-  {
-    name:"Queen Bee",
-    desc:"Boosts the hive output massively.",
-    baseCost:500,
-    hps:20,
-    owned:0
-  },
-  {
-    name:"Royal Nectar Lab",
-    desc:"Refine premium golden nectar.",
-    baseCost:2500,
-    hps:75,
-    owned:0
-  },
-  {
-    name:"Bee Kingdom",
-    desc:"Rule over millions of bees.",
-    baseCost:12000,
-    hps:250,
-    owned:0
-  }
-];
+        button.classList.add("active");
 
-function renderShop(){
+        document.querySelectorAll(".leaderboard").forEach(board => {
+            board.classList.remove("active");
+        });
 
-  const shop = document.getElementById("shop");
-
-  shop.innerHTML = "";
-
-  upgrades.forEach((upgrade,index)=>{
-
-    const cost =
-      Math.floor(upgrade.baseCost *
-      Math.pow(1.15,upgrade.owned));
-
-    const div = document.createElement("div");
-
-    div.className = "upgrade";
-
-    div.innerHTML = `
-      <div class="upgrade-top">
-
-        <div class="upgrade-name">
-          ${upgrade.name}
-        </div>
-
-        <div class="level">
-          Lv ${upgrade.owned}
-        </div>
-
-      </div>
-
-      <div class="upgrade-desc">
-        ${upgrade.desc}<br><br>
-        +${upgrade.hps} honey/sec
-      </div>
-
-      <button class="buy"
-        onclick="buyUpgrade(${index})"
-        ${honey < cost ? "disabled" : ""}>
-
-        Buy — 🍯 ${cost}
-
-      </button>
-    `;
-
-    shop.appendChild(div);
-  });
-}
-
-function getHPS(){
-
-  let total = 0;
-
-  upgrades.forEach(u=>{
-    total += u.hps * u.owned;
-  });
-
-  return total;
-}
-
-function updateUI(){
-
-  honeyText.textContent =
-    Math.floor(honey);
-
-  hpsText.textContent =
-    getHPS();
-
-  totalHoneyText.textContent =
-    Math.floor(totalHoney);
-
-  clicksText.textContent =
-    clicks;
-
-  hiveLevelText.textContent =
-    hiveLevel;
-
-  renderShop();
-}
-
-function clickBee(e){
-
-  const gain = 1 + Math.floor(hiveLevel * 0.5);
-
-  honey += gain;
-  totalHoney += gain;
-  clicks++;
-
-  spawnFloatText(e.clientX,e.clientY,
-    `+${gain} 🍯`);
-
-  updateUI();
-}
-
-function spawnFloatText(x,y,text){
-
-  const div = document.createElement("div");
-
-  div.className = "float-text";
-
-  div.style.left = x + "px";
-  div.style.top = y + "px";
-
-  div.innerText = text;
-
-  document.body.appendChild(div);
-
-  setTimeout(()=>{
-    div.remove();
-  },1000);
-}
-
-function buyUpgrade(index){
-
-  const upgrade = upgrades[index];
-
-  const cost =
-    Math.floor(upgrade.baseCost *
-    Math.pow(1.15,upgrade.owned));
-
-  if(honey >= cost){
-
-    honey -= cost;
-
-    upgrade.owned++;
-
-    if(upgrade.owned % 10 === 0){
-      hiveLevel++;
+        document
+            .getElementById("leaderboard-" + year)
+            .classList.add("active");
     }
 
-    updateUI();
-  }
-}
 
-setInterval(()=>{
+    /* =========================
+       COUNTDOWN
+       
+       Change this date to the
+       time your subathon ends.
+    ========================= */
 
-  const generated = getHPS() / 10;
+    const endDate = new Date("2026-08-30T23:59:59").getTime();
 
-  honey += generated;
-  totalHoney += generated;
 
-  updateUI();
+    function updateTimer() {
 
-},100);
+        const now = new Date().getTime();
 
-document
-  .getElementById("beeBtn")
-  .addEventListener("click",clickBee);
+        const distance = endDate - now;
 
-updateUI();
+
+        if (distance <= 0) {
+
+            document.getElementById("days").innerText = "00";
+            document.getElementById("hours").innerText = "00";
+            document.getElementById("minutes").innerText = "00";
+            document.getElementById("seconds").innerText = "00";
+
+            return;
+        }
+
+
+        const days = Math.floor(
+            distance / (1000 * 60 * 60 * 24)
+        );
+
+        const hours = Math.floor(
+            (distance % (1000 * 60 * 60 * 24))
+            / (1000 * 60 * 60)
+        );
+
+        const minutes = Math.floor(
+            (distance % (1000 * 60 * 60))
+            / (1000 * 60)
+        );
+
+        const seconds = Math.floor(
+            (distance % (1000 * 60))
+            / 1000
+        );
+
+
+        document.getElementById("days").innerText =
+            String(days).padStart(2, "0");
+
+        document.getElementById("hours").innerText =
+            String(hours).padStart(2, "0");
+
+        document.getElementById("minutes").innerText =
+            String(minutes).padStart(2, "0");
+
+        document.getElementById("seconds").innerText =
+            String(seconds).padStart(2, "0");
+    }
+
+
+    updateTimer();
+
+    setInterval(updateTimer, 1000);
 
 </script>
 
