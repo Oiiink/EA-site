@@ -18,6 +18,8 @@ let state = {
   activity: [],
   chat: [],
   timeHistory: [],
+  hourlyEvents: [],
+  eventLog: [],
 
   customLeaderboard: {
     2026: { subs: [], bits: [] },
@@ -27,6 +29,7 @@ let state = {
 
 let selectedYear = 2026;
 let selectedType = "subs";
+let lastGoalAmount = 0;
 
 function loadState() {
   try {
@@ -57,6 +60,19 @@ function loadState() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
+
+function normalizeState() {
+  state.activity ||= [];
+  state.chat ||= [];
+  state.timeHistory ||= [];
+  state.hourlyEvents ||= [];
+  state.eventLog ||= [];
+  state.totalSubTimeAdded ||= 0;
+  state.totalBitTimeAdded ||= 0;
+}
+
+
+normalizeState();
 
 function pad(n) {
   return String(Math.max(0, Math.floor(n))).padStart(2, "0");
@@ -238,6 +254,7 @@ function addToLeaderboard(type, user, amount) {
 }
 
 function simulate(type, amount, user) {
+  const oldSubs = state.totalSubs;
   const seconds = type === "sub"
     ? CONFIG.secondsPerSub * amount
     : CONFIG.secondsPerBit * amount;
@@ -260,10 +277,31 @@ function simulate(type, amount, user) {
     seconds,
     timestamp: Date.now()
   });
-  state.timeHistory = state.timeHistory.slice(0, 20);
+  state.timeHistory = state.timeHistory.slice(0, 30);
+  state.hourlyEvents.unshift({ type, user, amount, seconds, timestamp: Date.now() });
+  state.hourlyEvents = state.hourlyEvents.filter(x => Date.now() - x.timestamp < 60 * 60 * 1000).slice(0, 50);
+  state.eventLog.unshift({ type, user, amount, seconds, timestamp: Date.now() });
+  state.eventLog = state.eventLog.slice(0, 100);
 
   addActivity(type, user, amount, seconds);
   addToLeaderboard(type, user, amount);
+
+  if (type === "sub") {
+    CONFIG.goals.forEach(goal => {
+      if (oldSubs < goal.amount && state.totalSubs >= goal.amount) {
+        state.eventLog.unshift({
+          type: "goal",
+          user: "SUBATHON",
+          amount: goal.amount,
+          goal: goal.name,
+          seconds: 0,
+          timestamp: Date.now()
+        });
+        state.eventLog = state.eventLog.slice(0, 100);
+        showGoalCelebration(goal);
+      }
+    });
+  }
 
   saveState();
   render();
@@ -525,6 +563,9 @@ function render() {
   renderTimeAdded();
   renderRoadmap();
   renderPodium();
+  renderExtraStats();
+  renderEventLog();
+  updateUrgency();
 }
 
 function relativeTime(timestamp) {
@@ -600,7 +641,114 @@ function addFakeChatMessage() {
 }
 
 
+
+
+function showGoalCelebration(goal) {
+  const card = $("#subathonCard");
+  card.classList.remove("goal-hit");
+  void card.offsetWidth;
+  card.classList.add("goal-hit");
+
+  const effects = $("#effects");
+  const node = document.createElement("div");
+  node.className = "goal-celebration";
+  node.innerHTML = `<span>🎉</span><strong>GOAL UNLOCKED</strong><b>${escapeHtml(goal.name)}</b>`;
+  effects.appendChild(node);
+  setTimeout(() => node.remove(), 3500);
+}
+
+function renderEventLog() {
+  const log = $("#eventLog");
+  const items = (state.eventLog || []).slice(0, 12);
+  if (!items.length) {
+    log.innerHTML = '<div class="event-empty">No events yet.</div>';
+    return;
+  }
+  log.innerHTML = items.map(item => {
+    if (item.type === "goal") {
+      return `<div class="event-row goal-event"><span>🎯</span><div><strong>${escapeHtml(item.goal)}</strong><small>Goal unlocked at ${item.amount} gifted subs</small></div><time>${relativeTime(item.timestamp)}</time></div>`;
+    }
+    const icon = item.type === "bits" ? "💜" : "🎁";
+    const detail = item.type === "bits" ? `${formatNumber(item.amount)} Bits` : `${item.amount} gifted sub${item.amount === 1 ? "" : "s"}`;
+    return `<div class="event-row"><span>${icon}</span><div><strong>${escapeHtml(item.user)}</strong><small>${detail} • +${formatAddedTime(item.seconds)}</small></div><time>${relativeTime(item.timestamp)}</time></div>`;
+  }).join("");
+}
+
+function setFeedMode(mode) {
+  $$(".activity-tab").forEach(btn => btn.classList.toggle("active", btn.dataset.feed === mode));
+  $("#activityFeed").classList.toggle("active", mode === "activity");
+  $("#twitchChatPanel").classList.toggle("active", mode === "chat");
+  $("#activityTitle").textContent = mode === "chat" ? "Twitch Chat" : "Live Activity";
+}
+
+function renderExtraStats() {
+  normalizeState();
+  const now = Date.now();
+  state.hourlyEvents = state.hourlyEvents.filter(x => now - x.timestamp < 3600000);
+  const hour = [...state.hourlyEvents].sort((a,b) => b.seconds - a.seconds);
+  const top = hour[0];
+
+  $("#hourSupporter").textContent = top ? top.user : "Nobody yet";
+  $("#hourSupporterValue").textContent = top
+    ? `+${formatAddedTime(top.seconds)} from ${top.type === "bits" ? formatNumber(top.amount) + " Bits" : top.amount + " gifted sub" + (top.amount === 1 ? "" : "s")}`
+    : "Be the first to add time this hour.";
+
+  const recentSeconds = state.hourlyEvents.reduce((n,x)=>n+x.seconds,0);
+  const recentMinutes = Math.floor(recentSeconds/60);
+  $("#cookingValue").textContent = `${recentMinutes}m added`;
+  $("#cookingText").textContent = recentSeconds >= 1800 ? "CHAT IS COOKING — huge support in the last hour." : "No recent donation spike.";
+  $("#cookingValue").classList.toggle("hot", recentSeconds >= 1800);
+
+  $("#communitySubs").textContent = `${formatNumber(state.totalSubs)} Subs`;
+  $("#communityBits").textContent = `${formatNumber(state.totalBits)} Bits`;
+
+  const events = state.timeHistory.slice(0, 14).reverse();
+  const chart = $("#donationChart");
+  if (!events.length) {
+    chart.innerHTML = '<div class="chart-empty">Support events will build this graph.</div>';
+  } else {
+    const max = Math.max(...events.map(x=>x.seconds), 1);
+    chart.innerHTML = events.map(x => `
+      <div class="chart-bar-wrap" title="${escapeHtml(x.user)} +${formatAddedTime(x.seconds)}">
+        <div class="chart-bar ${x.type === "bits" ? "bits" : "subs"}" style="height:${Math.max(8, Math.round(x.seconds/max*100))}%"></div>
+        <span>${x.type === "bits" ? "💜" : "🎁"}</span>
+      </div>`).join("");
+  }
+
+  const mystery = $("#mysteryCard");
+  const unlocked = state.totalSubs >= 50;
+  mystery.classList.toggle("unlocked", unlocked);
+  $("#mysteryStatus").textContent = unlocked ? "UNLOCKED" : `${Math.max(0,50-state.totalSubs)} TO GO`;
+  $("#mysteryText").textContent = unlocked ? "🎉 Mystery milestone unlocked!" : "Something happens at 50 gifted subs...";
+}
+
+function updateUrgency() {
+  const alert = $("#subathonAlert");
+  if (!alert) return;
+  const t = Math.max(0, state.timeRemaining);
+  const title = $("#alertTitle");
+  const text = $("#alertText");
+  alert.classList.toggle("urgent", t <= 600 && t > 60);
+  alert.classList.toggle("critical", t <= 60 && t > 0);
+
+  if (t <= 60 && t > 0) {
+    title.textContent = "⚠️ SAVE THE SUBATHON";
+    text.textContent = `${formatClock(t)} remaining — every support event matters.`;
+  } else if (t <= 600 && t > 0) {
+    title.textContent = "⚠️ SUBATHON ENDING SOON";
+    text.textContent = `${formatClock(t)} remaining — keep it alive!`;
+  } else {
+    const info = goalInfo();
+    title.textContent = info.goal ? `🔥 ${info.needed} MORE TO ${info.goal.name.toUpperCase()}` : "🎉 ALL GOALS COMPLETE";
+    text.textContent = info.goal ? "The community controls how long we go." : "You unlocked every listed perk.";
+  }
+}
+
 function setupEvents() {
+  $$(".activity-tab").forEach(btn => {
+    btn.addEventListener("click", () => setFeedMode(btn.dataset.feed));
+  });
+
   $$(".podium-type").forEach(btn => {
     btn.addEventListener("click", () => {
       podiumType = btn.dataset.podium;
@@ -637,6 +785,13 @@ function setupEvents() {
       if (kind === "gift10") simulate("sub", 10, user);
       if (kind === "bits100") simulate("bits", 100, user);
       if (kind === "bits1000") simulate("bits", 1000, user);
+      if (kind === "bits5000") simulate("bits", 5000, user);
+      if (kind === "bits10000") simulate("bits", 10000, user);
+      if (kind === "chat") addFakeChatMessage();
+      if (kind === "goal") {
+        const info = goalInfo();
+        if (info.goal) simulate("sub", info.needed, user);
+      }
     });
   });
 
@@ -652,6 +807,8 @@ function setupEvents() {
       activity: [],
       chat: [],
       timeHistory: [],
+      hourlyEvents: [],
+      eventLog: [],
 
       customLeaderboard: {
         2026: { subs: [], bits: [] },
@@ -673,6 +830,11 @@ function setupEvents() {
 }
 
 loadState();
+if (!state.chat.length) {
+  addFakeChatMessage();
+  addFakeChatMessage();
+  addFakeChatMessage();
+}
 setupEvents();
 render();
 updateStreamStatus();
@@ -681,21 +843,25 @@ podiumInterval = setInterval(() => {
   podiumType = podiumType === "subs" ? "bits" : "subs";
   $$(".podium-type").forEach(x => x.classList.toggle("active", x.dataset.podium === podiumType));
   renderPodium();
-}, 7000);
+}, 5000);
 
 setInterval(() => {
   if (state.timeRemaining > 0) {
     state.timeRemaining--;
     updateTimer();
     updateGoal();
+    updateUrgency();
   }
 }, 1000);
 
 setInterval(() => {
   renderActivity();
-}, 15000);
+  renderExtraStats();
+  updateUrgency();
+}, 5000);
 
 // Simulated Twitch chat: new fake chat messages appear automatically.
+setTimeout(addFakeChatMessage, 700);
 setInterval(addFakeChatMessage, 4200);
 
 setInterval(saveState, 10000);

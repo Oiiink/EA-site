@@ -42,6 +42,11 @@
       </div>
     </section>
 
+    <div class="subathon-alert" id="subathonAlert">
+      <span class="alert-icon">🔥</span>
+      <div><strong id="alertTitle">SUBATHON IS LIVE</strong><span id="alertText">Every gifted sub pushes the timer forward.</span></div>
+    </div>
+
     <section class="stream-layout">
       <div class="stream-card">
         <div class="section-label">
@@ -171,12 +176,19 @@
             <div class="activity-header">
               <div class="activity-title">
                 <span class="activity-title-dot"></span>
-                Live Activity
+                <span id="activityTitle">Live Activity</span>
                 <span class="feed-live">LIVE</span>
               </div>
-              <button class="dropdown-button" id="activityDropdown">▼</button>
+              <div class="activity-actions">
+                <button class="activity-tab active" data-feed="activity">ACTIVITY</button>
+                <button class="activity-tab" data-feed="chat">CHAT</button>
+                <button class="dropdown-button" id="activityDropdown">▼</button>
+              </div>
             </div>
-            <div class="activity-body" id="activityFeed"></div>
+            <div class="activity-body feed-panel active" id="activityFeed"></div>
+            <div class="activity-body feed-panel twitch-chat-panel" id="twitchChatPanel">
+              <iframe src="https://www.twitch.tv/embed/oiiinkyt/chat?parent=oiiink.github.io&darkpopout" title="Twitch chat" loading="lazy"></iframe>
+            </div>
           </div>
         </div>
       </div>
@@ -251,6 +263,50 @@
       </div>
     </section>
 
+    <section class="section extra-stats-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">COMMUNITY</div><h2>Subathon Stats</h2></div>
+        <p>Live totals, streaks and the people keeping the timer alive.</p>
+      </div>
+      <div class="community-grid">
+        <div class="community-card supporter-hour">
+          <div class="eyebrow">👑 SUPPORTER OF THE HOUR</div>
+          <strong id="hourSupporter">Nobody yet</strong>
+          <span id="hourSupporterValue">Be the first to add time this hour.</span>
+        </div>
+        <div class="community-card cooking-card">
+          <div class="eyebrow">🔥 CHAT IS COOKING</div>
+          <strong id="cookingValue">0m added</strong>
+          <span id="cookingText">No recent donation spike.</span>
+        </div>
+        <div class="community-card">
+          <div class="eyebrow">🎁 COMMUNITY TOTAL</div>
+          <strong id="communitySubs">0 Subs</strong>
+          <span id="communityBits">0 Bits</span>
+        </div>
+      </div>
+      <div class="donation-chart-card">
+        <div class="chart-header"><strong>TIME ADDED — LAST EVENTS</strong><span>Subs + Bits</span></div>
+        <div class="donation-chart" id="donationChart"></div>
+      </div>
+    </section>
+
+    <section class="section mystery-section">
+      <div class="mystery-card" id="mysteryCard">
+        <div class="mystery-icon">🔒</div>
+        <div><div class="eyebrow">MYSTERY MILESTONE</div><h2>50 GIFTED SUBS</h2><p id="mysteryText">Something happens at 50 gifted subs...</p></div>
+        <span class="mystery-status" id="mysteryStatus">LOCKED</span>
+      </div>
+    </section>
+
+    <section class="section event-log-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">HISTORY</div><h2>Event Log</h2></div>
+        <p>Every important Subathon moment, in order.</p>
+      </div>
+      <div class="event-log-card" id="eventLog"></div>
+    </section>
+
     <section id="leaderboard" class="section">
       <div class="section-heading">
         <div><div class="eyebrow">TOP GIFTERS</div><h2>Leaderboard</h2></div>
@@ -290,6 +346,10 @@
           <button data-sim="gift10">+10 Gifted</button>
           <button data-sim="bits100">+100 Bits</button>
           <button data-sim="bits1000">+1,000 Bits</button>
+          <button data-sim="bits5000">+5,000 Bits</button>
+          <button data-sim="bits10000">+10,000 Bits</button>
+          <button data-sim="chat">Random Chat</button>
+          <button data-sim="goal">Complete Goal</button>
         </div>
         <div class="simulation-reset">
           <button class="danger-button" id="resetSimulation">Reset Simulation</button>
