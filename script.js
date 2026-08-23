@@ -33,6 +33,237 @@ let selectedType = "subs";
 let podiumType = "subs";
 let podiumInterval = null;
 
+let roadmapFilter = "all";
+
+/* ---------------- ROADMAP INCENTIVES ---------------- */
+
+const ROADMAP_INCENTIVES = [
+  /* SHORT CHALLENGES */
+
+  {
+    amount: 10,
+    category: "short",
+    icon: "📹",
+    name: "Face Cam",
+    description: "Face Cam during the day only."
+  },
+
+  {
+    amount: 25,
+    category: "short",
+    icon: "🎤",
+    name: "Host an Event on LeoneMC",
+    description: "Oiiink hosts an event on LeoneMC."
+  },
+
+  {
+    amount: 35,
+    category: "short",
+    icon: "🧠",
+    name: "IQ Test",
+    description: "Take an IQ test live on stream."
+  },
+
+  {
+    amount: 50,
+    category: "short",
+    icon: "❓",
+    name: "TBD",
+    description: "This challenge will be announced later."
+  },
+
+  {
+    amount: 75,
+    category: "short",
+    icon: "⛏️",
+    name: "Beat Minecraft Within 25 Minutes",
+    description: "Beat Minecraft with a 25-minute time limit."
+  },
+
+  {
+    amount: 100,
+    category: "short",
+    icon: "😴",
+    name: "Sleeping Face Cam",
+    description: "Sleeping Face Cam. Viewers will be able to play loud sounds."
+  },
+
+  {
+    amount: 125,
+    category: "short",
+    icon: "😂",
+    name: "Try Not to Laugh",
+    description: "$5 for every laugh."
+  },
+
+  {
+    amount: 150,
+    category: "short",
+    icon: "🍕",
+    name: "Order & Eat a Pizza",
+    description: "Stream chooses up to 7 toppings."
+  },
+
+  {
+    amount: 175,
+    category: "short",
+    icon: "🎱",
+    name: "Marbles on Stream",
+    description: "Marbles on Stream with a giveaway for exclusive Oiiink Subathon 2026 merch."
+  },
+
+  {
+    amount: 200,
+    category: "short",
+    icon: "🌶️",
+    name: "One Chip Challenge",
+    description: "Take on the One Chip Challenge."
+  },
+
+  {
+    amount: 250,
+    category: "short",
+    icon: "💬",
+    name: "Change Discord Display Name",
+    description: "Change Oiiink's Discord display name for a day."
+  },
+
+  {
+    amount: 300,
+    category: "short",
+    icon: "📅",
+    name: "Daily Streams for October",
+    description: "Stream every day throughout October."
+  },
+
+
+  /* LONG CHALLENGES */
+
+  {
+    amount: 50,
+    category: "long",
+    icon: "⚔️",
+    name: "Play Hoplite Until I Win",
+    description: "Play Hoplite until Oiiink gets a win — Teams."
+  },
+
+  {
+    amount: 100,
+    category: "long",
+    icon: "🏛️",
+    name: "Mine an Entire Trial Chamber",
+    description: "Mine every block inside an entire Trial Chamber."
+  },
+
+  {
+    amount: 200,
+    category: "long",
+    icon: "🎯",
+    name: "Draft Out Until I Win",
+    description: "Keep playing Draft Out until Oiiink wins."
+  },
+
+  {
+    amount: 300,
+    category: "long",
+    icon: "🔢",
+    name: "Count to 10,000",
+    description: "Count to 10,000. Donations can remove, add, or reset the count."
+  },
+
+  {
+    amount: 500,
+    category: "long",
+    icon: "🏆",
+    name: "All Advancements Multiplayer",
+    description: "Complete every Minecraft advancement with other players."
+  },
+
+  {
+    amount: 750,
+    category: "long",
+    icon: "🏆",
+    name: "All Advancements Solo",
+    description: "Complete every Minecraft advancement completely solo."
+  },
+
+  {
+    amount: 800,
+    category: "long",
+    icon: "🎮",
+    name: "24 Hours of Valorant",
+    description: "Play Valorant for 24 hours — over 100 Swiftplays or 50 Unrated/Ranked games."
+  },
+
+  {
+    amount: 1000,
+    category: "long",
+    icon: "🚗",
+    name: "Reach GC in Rocket League",
+    description: "Reach Grand Champion in Rocket League."
+  },
+
+
+  /* USER INCENTIVES */
+
+  {
+    amount: 25,
+    category: "user",
+    icon: "🎮",
+    name: "Choose a Game",
+    description: "I'll purchase any Steam/Epic Games game you want under $10 USD and play it for 1 hour. No NSFW."
+  },
+
+  {
+    amount: 35,
+    category: "user",
+    icon: "👕",
+    name: "Oiiink 2026 Subathon Merch",
+    description: "Receive exclusive Oiiink 2026 Subathon merch.",
+    link: "https://shop.oiiink.art"
+  },
+
+  {
+    amount: 50,
+    category: "user",
+    icon: "🖼️",
+    name: "Discord PFP",
+    description: "Change Oiiink's Discord profile picture to whatever you want for one week. No NSFW."
+  },
+
+  {
+    amount: 75,
+    category: "user",
+    icon: "❓",
+    name: "TBD",
+    description: "This user incentive will be announced later."
+  },
+
+  {
+    amount: 100,
+    category: "user",
+    icon: "👥",
+    name: "Friend Request",
+    description: "Receive a friend request from Oiiink."
+  }
+];
+
+const ROADMAP_CATEGORY_NAMES = {
+  all: "All Incentives",
+  short: "Short Challenges",
+  long: "Long Challenges",
+  user: "User Incentives"
+};
+
+const ROADMAP_CATEGORY_LABELS = {
+  short: "SHORT CHALLENGE",
+  long: "LONG CHALLENGE",
+  user: "USER INCENTIVE"
+};
+
+
+/* ---------------- STATE ---------------- */
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -79,19 +310,34 @@ function normalizeState() {
     2025: { subs: [], bits: [] }
   };
 
-  state.customLeaderboard[2025] ||= { subs: [], bits: [] };
-  state.customLeaderboard[2026] ||= { subs: [], bits: [] };
+  state.customLeaderboard[2025] ||= {
+    subs: [],
+    bits: []
+  };
+
+  state.customLeaderboard[2026] ||= {
+    subs: [],
+    bits: []
+  };
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(state)
+  );
 }
 
 loadState();
 normalizeState();
 
+
+/* ---------------- FORMATTING ---------------- */
+
 function pad(number) {
-  return String(Math.max(0, Math.floor(number))).padStart(2, "0");
+  return String(
+    Math.max(0, Math.floor(number))
+  ).padStart(2, "0");
 }
 
 function formatNumber(number) {
@@ -99,11 +345,23 @@ function formatNumber(number) {
 }
 
 function formatClock(seconds) {
-  seconds = Math.max(0, Math.floor(seconds));
+  seconds = Math.max(
+    0,
+    Math.floor(seconds)
+  );
 
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
+  const days = Math.floor(
+    seconds / 86400
+  );
+
+  const hours = Math.floor(
+    (seconds % 86400) / 3600
+  );
+
+  const minutes = Math.floor(
+    (seconds % 3600) / 60
+  );
+
   const secs = seconds % 60;
 
   if (days > 0) {
@@ -114,10 +372,19 @@ function formatClock(seconds) {
 }
 
 function formatAddedTime(seconds) {
-  seconds = Math.max(0, Math.floor(seconds));
+  seconds = Math.max(
+    0,
+    Math.floor(seconds)
+  );
 
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
+  const hours = Math.floor(
+    seconds / 3600
+  );
+
+  const minutes = Math.floor(
+    (seconds % 3600) / 60
+  );
+
   const secs = seconds % 60;
 
   if (hours > 0) {
@@ -132,11 +399,15 @@ function formatAddedTime(seconds) {
 }
 
 function relativeTime(timestamp) {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  const seconds =
+    Math.floor(
+      (Date.now() - timestamp) / 1000
+    );
 
   if (seconds < 10) return "now";
   if (seconds < 60) return `${seconds}s`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < 3600)
+    return `${Math.floor(seconds / 60)}m`;
 
   return `${Math.floor(seconds / 3600)}h`;
 }
@@ -150,74 +421,121 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+
 /* ---------------- TIMER ---------------- */
 
 function updateTimer() {
-  const total = Math.max(0, state.timeRemaining);
+  const total =
+    Math.max(
+      0,
+      state.timeRemaining
+    );
 
-  const days = Math.floor(total / 86400);
-  const hours = Math.floor((total % 86400) / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
+  const days =
+    Math.floor(total / 86400);
 
-  if ($("#days")) $("#days").textContent = pad(days);
-  if ($("#hours")) $("#hours").textContent = pad(hours);
-  if ($("#minutes")) $("#minutes").textContent = pad(minutes);
-  if ($("#seconds")) $("#seconds").textContent = pad(seconds);
+  const hours =
+    Math.floor(
+      (total % 86400) / 3600
+    );
+
+  const minutes =
+    Math.floor(
+      (total % 3600) / 60
+    );
+
+  const seconds =
+    total % 60;
+
+  if ($("#days"))
+    $("#days").textContent =
+      pad(days);
+
+  if ($("#hours"))
+    $("#hours").textContent =
+      pad(hours);
+
+  if ($("#minutes"))
+    $("#minutes").textContent =
+      pad(minutes);
+
+  if ($("#seconds"))
+    $("#seconds").textContent =
+      pad(seconds);
 
   if ($("#subathonTimer")) {
-    $("#subathonTimer").textContent = formatClock(total);
+    $("#subathonTimer").textContent =
+      formatClock(total);
   }
 }
+
 
 /* ---------------- GOALS ---------------- */
 
 function goalInfo() {
-  const goal = CONFIG.goals.find(
-    goal => state.totalSubs < goal.amount
-  );
+  const goal =
+    CONFIG.goals.find(
+      goal =>
+        state.totalSubs <
+        goal.amount
+    );
 
   if (!goal) {
     return {
       goal: null,
-      previous: CONFIG.goals.at(-1)?.amount || 0,
+      previous:
+        CONFIG.goals.at(-1)?.amount || 0,
       percentage: 100,
       needed: 0,
       level: CONFIG.goals.length
     };
   }
 
-  const index = CONFIG.goals.indexOf(goal);
+  const index =
+    CONFIG.goals.indexOf(goal);
 
   const previous =
     index === 0
       ? 0
       : CONFIG.goals[index - 1].amount;
 
-  const range = goal.amount - previous;
-  const current = state.totalSubs - previous;
+  const range =
+    goal.amount - previous;
+
+  const current =
+    state.totalSubs - previous;
 
   return {
     goal,
     previous,
+
     percentage: Math.min(
       100,
       Math.max(
         0,
-        Math.round((current / range) * 100)
+        Math.round(
+          (current / range) * 100
+        )
       )
     ),
-    needed: goal.amount - state.totalSubs,
-    level: index + 1
+
+    needed:
+      goal.amount -
+      state.totalSubs,
+
+    level:
+      index + 1
   };
 }
 
 function updateGoal() {
-  const info = goalInfo();
+  const info =
+    goalInfo();
 
   if (!info.goal) {
     if ($("#goalTitle"))
-      $("#goalTitle").textContent = "All Sub Goals Complete";
+      $("#goalTitle").textContent =
+        "All Sub Goals Complete";
 
     if ($("#goalDescription"))
       $("#goalDescription").textContent =
@@ -228,25 +546,32 @@ function updateGoal() {
         `${state.totalSubs} / ${CONFIG.goals.at(-1).amount}`;
 
     if ($("#goalProgress"))
-      $("#goalProgress").style.width = "100%";
+      $("#goalProgress").style.width =
+        "100%";
 
     if ($("#goalNeeded"))
-      $("#goalNeeded").textContent = "0";
+      $("#goalNeeded").textContent =
+        "0";
 
     if ($("#goalName"))
-      $("#goalName").textContent = "All Goals Complete";
+      $("#goalName").textContent =
+        "All Goals Complete";
 
     if ($("#subathonLevel"))
-      $("#subathonLevel").textContent = "MAX LEVEL";
+      $("#subathonLevel").textContent =
+        "MAX LEVEL";
 
     if ($("#subathonPercent"))
-      $("#subathonPercent").textContent = "100%";
+      $("#subathonPercent").textContent =
+        "100%";
 
     if ($("#subathonProgress"))
-      $("#subathonProgress").style.width = "100%";
+      $("#subathonProgress").style.width =
+        "100%";
 
     if ($("#subathonNeeded"))
-      $("#subathonNeeded").textContent = "0";
+      $("#subathonNeeded").textContent =
+        "0";
 
     if ($("#subathonGoalName"))
       $("#subathonGoalName").textContent =
@@ -260,7 +585,8 @@ function updateGoal() {
   }
 
   if ($("#goalTitle"))
-    $("#goalTitle").textContent = "Next Sub Goal";
+    $("#goalTitle").textContent =
+      "Next Sub Goal";
 
   if ($("#goalDescription"))
     $("#goalDescription").textContent =
@@ -311,69 +637,139 @@ function updateGoal() {
       `${state.totalSubs} / ${info.goal.amount} gifted`;
 }
 
+
 /* ---------------- ROADMAP ---------------- */
 
 function renderRoadmap() {
-  const roadmap = $("#roadmap");
+  const roadmap =
+    $("#roadmapList");
 
   if (!roadmap) return;
 
-  roadmap.innerHTML = CONFIG.goals
-    .map((goal, index) => {
-      const reached =
-        state.totalSubs >= goal.amount;
+  const incentives =
+    ROADMAP_INCENTIVES.filter(item => {
+      return (
+        roadmapFilter === "all" ||
+        item.category === roadmapFilter
+      );
+    });
 
-      const previous =
-        index === 0
-          ? 0
-          : CONFIG.goals[index - 1].amount;
+  roadmap.innerHTML =
+    incentives
+      .map(item => {
+        const reached =
+          state.totalSubs >=
+          item.amount;
 
-      const current =
-        state.totalSubs >= previous &&
-        state.totalSubs < goal.amount;
+        const categoryLabel =
+          ROADMAP_CATEGORY_LABELS[
+            item.category
+          ];
 
-      return `
-        <div class="roadmap-step
-          ${reached ? "reached" : ""}
-          ${current ? "current" : ""}
-        ">
-          <div class="roadmap-node">
-            ${reached ? "✓" : goal.icon}
+        return `
+          <div class="
+            roadmap-step
+            roadmap-${item.category}
+            ${reached ? "reached" : ""}
+          ">
+
+            <div class="roadmap-node">
+              ${
+                reached
+                  ? "✓"
+                  : escapeHtml(item.icon)
+              }
+            </div>
+
+            <div class="roadmap-card">
+
+              <div class="roadmap-card-top">
+
+                <div class="roadmap-amount">
+                  ${item.amount} GIFTED
+                </div>
+
+                <div class="roadmap-category">
+                  ${categoryLabel}
+                </div>
+
+              </div>
+
+              <div class="roadmap-name">
+                ${escapeHtml(item.name)}
+              </div>
+
+              <div class="roadmap-description">
+                ${escapeHtml(item.description)}
+              </div>
+
+              ${
+                item.link
+                  ? `
+                    <a
+                      class="roadmap-link"
+                      href="${escapeHtml(item.link)}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Merch
+                    </a>
+                  `
+                  : ""
+              }
+
+              <div class="roadmap-status">
+                ${
+                  reached
+                    ? item.category === "user"
+                      ? "Milestone Reached"
+                      : "Unlocked"
+                    : `Locked • ${formatNumber(
+                        item.amount -
+                        state.totalSubs
+                      )} more gifted`
+                }
+              </div>
+
+            </div>
+
           </div>
+        `;
+      })
+      .join("");
 
-          <div class="roadmap-amount">
-            ${goal.amount} GIFTED
-          </div>
-
-          <div class="roadmap-name">
-            ${escapeHtml(goal.name)}
-          </div>
-
-          <div class="roadmap-status">
-            ${
-              reached
-                ? "Unlocked"
-                : current
-                  ? "Next Goal"
-                  : "Locked"
-            }
-          </div>
-        </div>
-      `;
-    })
-    .join("");
+  updateRoadmapFilterButtons();
 }
+
+function updateRoadmapFilterButtons() {
+  $$(".roadmap-filter").forEach(
+    button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.roadmapFilter ===
+          roadmapFilter
+      );
+    }
+  );
+}
+
 
 /* ---------------- ACTIVITY ---------------- */
 
 function renderActivity() {
-  const feed = $("#activityFeed");
+  const feed =
+    $("#activityFeed");
 
   if (!feed) return;
 
-  const items = [...state.activity]
-    .sort((a, b) => b.timestamp - a.timestamp)
-    .slice(0, 45);
+  const items =
+    [...state.activity]
+      .sort(
+        (a, b) =>
+          b.timestamp -
+          a.timestamp
+      )
+      .slice(0, 45);
 
   if (!items.length) {
     feed.innerHTML = `
@@ -395,72 +791,86 @@ function renderActivity() {
     return;
   }
 
-  feed.innerHTML = items.map(item => {
-    const avatar =
-      item.type === "sub"
-        ? "🎁"
-        : "💜";
+  feed.innerHTML =
+    items.map(item => {
+      const avatar =
+        item.type === "sub"
+          ? "🎁"
+          : "💜";
 
-    const amountText =
-      item.type === "sub"
-        ? item.amount === 1
-          ? "1 Sub"
-          : `${item.amount} Gifted Subs`
-        : `${formatNumber(item.amount)} Bits`;
+      const amountText =
+        item.type === "sub"
+          ? item.amount === 1
+            ? "1 Sub"
+            : `${item.amount} Gifted Subs`
+          : `${formatNumber(item.amount)} Bits`;
 
-    const isBig =
-      (item.type === "bits" && item.amount >= 1000) ||
-      (item.type === "sub" && item.amount >= 5);
+      const isBig =
+        (
+          item.type === "bits" &&
+          item.amount >= 1000
+        ) ||
+        (
+          item.type === "sub" &&
+          item.amount >= 5
+        );
 
-    return `
-      <div class="activity-item
-        ${item.type}
-        ${isBig ? "big-donation" : ""}
-      ">
+      return `
+        <div class="
+          activity-item
+          ${item.type}
+          ${isBig ? "big-donation" : ""}
+        ">
 
-        <div class="activity-avatar">
-          ${avatar}
-        </div>
-
-        <div class="activity-content">
-
-          <div class="activity-user">
-            ${escapeHtml(item.user)}
+          <div class="activity-avatar">
+            ${avatar}
           </div>
 
-          <span class="activity-text">
-            ${escapeHtml(item.text)}
-            •
-            <strong>${amountText}</strong>
-          </span>
+          <div class="activity-content">
 
-          <span class="donation-time">
-            +
-            <strong>
-              ${formatAddedTime(item.seconds)}
-            </strong>
-            added to timer
-          </span>
+            <div class="activity-user">
+              ${escapeHtml(item.user)}
+            </div>
+
+            <span class="activity-text">
+              ${escapeHtml(item.text)}
+              •
+              <strong>${amountText}</strong>
+            </span>
+
+            <span class="donation-time">
+              +
+              <strong>
+                ${formatAddedTime(item.seconds)}
+              </strong>
+              added to timer
+            </span>
+
+          </div>
+
+          <div class="activity-time">
+            ${relativeTime(item.timestamp)}
+          </div>
 
         </div>
-
-        <div class="activity-time">
-          ${relativeTime(item.timestamp)}
-        </div>
-
-      </div>
-    `;
-  }).join("");
+      `;
+    }).join("");
 }
+
 
 /* ---------------- LEADERBOARD ---------------- */
 
-function mergeLeaderboard(year, type) {
+function mergeLeaderboard(
+  year,
+  type
+) {
   const configured =
-    CONFIG.leaderboard?.[year]?.[type] || [];
+    CONFIG.leaderboard?.[year]?.[type] ||
+    [];
 
   const custom =
-    state.customLeaderboard?.[year]?.[type] || [];
+    state.customLeaderboard?.[year]?.[type] ||
+    [];
 
   const merged = [];
 
@@ -468,29 +878,34 @@ function mergeLeaderboard(year, type) {
     ...configured,
     ...custom
   ]) {
-    const existing = merged.find(
-      x =>
-        x.name.toLowerCase() ===
-        item.name.toLowerCase()
-    );
+    const existing =
+      merged.find(
+        x =>
+          x.name.toLowerCase() ===
+          item.name.toLowerCase()
+      );
 
     if (existing) {
-      existing.amount += Number(item.amount);
+      existing.amount +=
+        Number(item.amount);
     } else {
       merged.push({
         name: item.name,
-        amount: Number(item.amount)
+        amount:
+          Number(item.amount)
       });
     }
   }
 
   return merged.sort(
-    (a, b) => b.amount - a.amount
+    (a, b) =>
+      b.amount - a.amount
   );
 }
 
 function renderLeaderboard() {
-  const rows = $("#leaderboardRows");
+  const rows =
+    $("#leaderboardRows");
 
   if (!rows) return;
 
@@ -504,9 +919,11 @@ function renderLeaderboard() {
     rows.innerHTML = `
       <div class="leader-row">
         <div></div>
+
         <div class="leader-name">
           No data yet
         </div>
+
         <div></div>
       </div>
     `;
@@ -516,51 +933,76 @@ function renderLeaderboard() {
 
   rows.innerHTML =
     leaderboard
-      .map((entry, index) => `
-        <div class="leader-row">
+      .map(
+        (entry, index) => `
+          <div class="leader-row">
 
-          <div class="leader-rank">
-            ${index + 1}
-          </div>
+            <div class="leader-rank">
+              ${index + 1}
+            </div>
 
-          <div class="leader-user">
+            <div class="leader-user">
 
-            <div class="leader-avatar">
-              ${escapeHtml(
-                entry.name
-                  .slice(0, 1)
-                  .toUpperCase()
+              <div class="leader-avatar">
+                ${escapeHtml(
+                  entry.name
+                    .slice(0, 1)
+                    .toUpperCase()
+                )}
+              </div>
+
+              <div class="leader-name">
+                ${escapeHtml(
+                  entry.name
+                )}
+              </div>
+
+            </div>
+
+            <div class="
+              leader-amount
+              ${
+                selectedType === "bits"
+                  ? "bits"
+                  : ""
+              }
+            ">
+              ${formatNumber(
+                entry.amount
               )}
-            </div>
-
-            <div class="leader-name">
-              ${escapeHtml(entry.name)}
+              ${
+                selectedType === "bits"
+                  ? "Bits"
+                  : "Subs"
+              }
             </div>
 
           </div>
-
-          <div class="leader-amount
-            ${selectedType === "bits" ? "bits" : ""}
-          ">
-            ${formatNumber(entry.amount)}
-            ${selectedType === "bits"
-              ? "Bits"
-              : "Subs"}
-          </div>
-
-        </div>
-      `)
+        `
+      )
       .join("");
 }
+
 
 /* ---------------- PODIUM ---------------- */
 
 function renderPodium() {
-  const podium = $("#podium");
-  const title = $("#podiumTitle");
-  const dots = $("#podiumDots");
+  const podium =
+    $("#podium");
 
-  if (!podium || !title || !dots) return;
+  const title =
+    $("#podiumTitle");
+
+  const dots =
+    $("#podiumDots");
+
+  if (
+    !podium ||
+    !title ||
+    !dots
+  ) {
+    return;
+  }
 
   const leaderboard =
     mergeLeaderboard(
@@ -573,24 +1015,19 @@ function renderPodium() {
       ? "Bits"
       : "Gifted Subs";
 
-  /*
-    Important:
-    Always render the podium, even if there
-    is no custom leaderboard data yet.
-    This fixes the blank podium on first load.
-  */
-
   const positions = [
     {
       rank: 2,
       item: leaderboard[1],
       className: "second"
     },
+
     {
       rank: 1,
       item: leaderboard[0],
       className: "first"
     },
+
     {
       rank: 3,
       item: leaderboard[2],
@@ -601,11 +1038,15 @@ function renderPodium() {
   podium.innerHTML =
     positions
       .map(position => {
-        const item = position.item;
+        const item =
+          position.item;
 
         if (!item) {
           return `
-            <div class="podium-place ${position.className}">
+            <div class="
+              podium-place
+              ${position.className}
+            ">
 
               ${
                 position.rank === 1
@@ -623,9 +1064,11 @@ function renderPodium() {
 
               <div class="podium-amount">
                 0
-                ${podiumType === "bits"
-                  ? "Bits"
-                  : "Subs"}
+                ${
+                  podiumType === "bits"
+                    ? "Bits"
+                    : "Subs"
+                }
               </div>
 
               <div class="podium-block">
@@ -639,7 +1082,10 @@ function renderPodium() {
         }
 
         return `
-          <div class="podium-place ${position.className}">
+          <div class="
+            podium-place
+            ${position.className}
+          ">
 
             ${
               position.rank === 1
@@ -656,14 +1102,20 @@ function renderPodium() {
             </div>
 
             <div class="podium-name">
-              ${escapeHtml(item.name)}
+              ${escapeHtml(
+                item.name
+              )}
             </div>
 
             <div class="podium-amount">
-              ${formatNumber(item.amount)}
-              ${podiumType === "bits"
-                ? "Bits"
-                : "Subs"}
+              ${formatNumber(
+                item.amount
+              )}
+              ${
+                podiumType === "bits"
+                  ? "Bits"
+                  : "Subs"
+              }
             </div>
 
             <div class="podium-block">
@@ -678,15 +1130,18 @@ function renderPodium() {
       .join("");
 
   dots.innerHTML = `
-    <span class="podium-dot
+    <span class="
+      podium-dot
       ${podiumType === "subs" ? "active" : ""}
     "></span>
 
-    <span class="podium-dot
+    <span class="
+      podium-dot
       ${podiumType === "bits" ? "active" : ""}
     "></span>
   `;
 }
+
 
 /* ---------------- TIME ADDED ---------------- */
 
@@ -707,7 +1162,9 @@ function renderTimeAdded() {
 
   if ($("#totalTimeAdded"))
     $("#totalTimeAdded").textContent =
-      formatAddedTime(sub + bits);
+      formatAddedTime(
+        sub + bits
+      );
 
   if ($("#timeAddedCount"))
     $("#timeAddedCount").textContent =
@@ -731,54 +1188,73 @@ function renderTimeAdded() {
   history.innerHTML =
     state.timeHistory
       .slice(0, 8)
-      .map(item => `
-        <div class="time-history-row">
+      .map(
+        item => `
+          <div class="time-history-row">
 
-          <div class="time-history-icon">
-            ${item.type === "sub"
-              ? "🎁"
-              : "💜"}
-          </div>
+            <div class="time-history-icon">
+              ${
+                item.type === "sub"
+                  ? "🎁"
+                  : "💜"
+              }
+            </div>
 
-          <div>
-            <div class="time-history-user">
-              ${escapeHtml(item.user)}
+            <div>
+
+              <div class="time-history-user">
+                ${escapeHtml(
+                  item.user
+                )}
+              </div>
+
+              <div class="time-history-detail">
+                ${
+                  item.type === "sub"
+                    ? `${item.amount} gifted sub${
+                        item.amount === 1
+                          ? ""
+                          : "s"
+                      }`
+                    : `${formatNumber(
+                        item.amount
+                      )} Bits`
+                }
+              </div>
+
             </div>
 
             <div class="time-history-detail">
-              ${
-                item.type === "sub"
-                  ? `${item.amount} gifted sub${
-                      item.amount === 1
-                        ? ""
-                        : "s"
-                    }`
-                  : `${formatNumber(item.amount)} Bits`
-              }
+              ${relativeTime(
+                item.timestamp
+              )}
             </div>
-          </div>
 
-          <div class="time-history-detail">
-            ${relativeTime(item.timestamp)}
-          </div>
+            <div class="
+              time-history-added
+              ${
+                item.type === "bits"
+                  ? "bits"
+                  : ""
+              }
+            ">
+              +${formatAddedTime(
+                item.seconds
+              )}
+            </div>
 
-          <div class="time-history-added
-            ${item.type === "bits"
-              ? "bits"
-              : ""}
-          ">
-            +${formatAddedTime(item.seconds)}
           </div>
-
-        </div>
-      `)
+        `
+      )
       .join("");
 }
+
 
 /* ---------------- STREAM STATUS ---------------- */
 
 function updateStreamStatus() {
-  if (!$("#streamStatusText")) return;
+  if (!$("#streamStatusText"))
+    return;
 
   $("#streamStatusTitle").textContent =
     "OiiinkYT";
@@ -787,29 +1263,29 @@ function updateStreamStatus() {
     "Twitch player ready";
 }
 
+
 /* ---------------- STATS ---------------- */
 
 function renderExtraStats() {
   const events =
     state.hourlyEvents || [];
 
-  const currentHour =
-    new Date().getHours();
-
   const recent =
     events.filter(event => {
       const age =
-        Date.now() - event.timestamp;
+        Date.now() -
+        event.timestamp;
 
-      return (
-        age <= 3600000
-      );
+      return age <= 3600000;
     });
 
   const totalRecentTime =
     recent.reduce(
       (sum, event) =>
-        sum + Number(event.seconds || 0),
+        sum +
+        Number(
+          event.seconds || 0
+        ),
       0
     );
 
@@ -818,12 +1294,17 @@ function renderExtraStats() {
   for (const event of recent) {
     grouped[event.user] =
       (grouped[event.user] || 0) +
-      Number(event.seconds || 0);
+      Number(
+        event.seconds || 0
+      );
   }
 
   const supporter =
     Object.entries(grouped)
-      .sort((a, b) => b[1] - a[1])[0];
+      .sort(
+        (a, b) =>
+          b[1] - a[1]
+      )[0];
 
   if ($("#hourSupporter")) {
     $("#hourSupporter").textContent =
@@ -835,13 +1316,17 @@ function renderExtraStats() {
   if ($("#hourSupporterValue")) {
     $("#hourSupporterValue").textContent =
       supporter
-        ? `+${formatAddedTime(supporter[1])} added this hour.`
+        ? `+${formatAddedTime(
+            supporter[1]
+          )} added this hour.`
         : "Be the first to add time this hour.";
   }
 
   if ($("#cookingValue")) {
     $("#cookingValue").textContent =
-      `${formatAddedTime(totalRecentTime)} added`;
+      `${formatAddedTime(
+        totalRecentTime
+      )} added`;
   }
 
   if ($("#cookingText")) {
@@ -853,12 +1338,16 @@ function renderExtraStats() {
 
   if ($("#communitySubs")) {
     $("#communitySubs").textContent =
-      `${formatNumber(state.totalSubs)} Subs`;
+      `${formatNumber(
+        state.totalSubs
+      )} Subs`;
   }
 
   if ($("#communityBits")) {
     $("#communityBits").textContent =
-      `${formatNumber(state.totalBits)} Bits`;
+      `${formatNumber(
+        state.totalBits
+      )} Bits`;
   }
 
   renderDonationChart();
@@ -887,32 +1376,43 @@ function renderDonationChart() {
   const max =
     Math.max(
       ...events.map(
-        e => Number(e.seconds || 0)
+        e =>
+          Number(
+            e.seconds || 0
+          )
       ),
       1
     );
 
   chart.innerHTML =
-    events.map(event => {
-      const height =
-        Math.max(
-          8,
-          (event.seconds / max) * 100
-        );
+    events
+      .map(event => {
+        const height =
+          Math.max(
+            8,
+            (event.seconds / max) *
+              100
+          );
 
-      return `
-        <div
-          class="chart-bar ${
-            event.type === "bits"
-              ? "bits"
-              : ""
-          }"
-          style="height:${height}%"
-          title="${escapeHtml(event.user)} +${formatAddedTime(event.seconds)}"
-        ></div>
-      `;
-    }).join("");
+        return `
+          <div
+            class="chart-bar ${
+              event.type === "bits"
+                ? "bits"
+                : ""
+            }"
+            style="height:${height}%"
+            title="${escapeHtml(
+              event.user
+            )} +${formatAddedTime(
+              event.seconds
+            )}"
+          ></div>
+        `;
+      })
+      .join("");
 }
+
 
 /* ---------------- EVENT LOG ---------------- */
 
@@ -935,65 +1435,90 @@ function renderEventLog() {
   }
 
   log.innerHTML =
-    items.map(item => {
-      if (item.type === "goal") {
+    items
+      .map(item => {
+        if (item.type === "goal") {
+          return `
+            <div class="event-row goal-event">
+
+              <span>🎯</span>
+
+              <div>
+
+                <strong>
+                  ${escapeHtml(
+                    item.goal
+                  )}
+                </strong>
+
+                <small>
+                  Goal unlocked at
+                  ${item.amount}
+                  gifted subs
+                </small>
+
+              </div>
+
+              <time>
+                ${relativeTime(
+                  item.timestamp
+                )}
+              </time>
+
+            </div>
+          `;
+        }
+
         return `
-          <div class="event-row goal-event">
-            <span>🎯</span>
+          <div class="event-row">
+
+            <span>
+              ${
+                item.type === "sub"
+                  ? "🎁"
+                  : "💜"
+              }
+            </span>
 
             <div>
+
               <strong>
-                ${escapeHtml(item.goal)}
+                ${escapeHtml(
+                  item.user
+                )}
               </strong>
 
               <small>
-                Goal unlocked at
-                ${item.amount}
-                gifted subs
+                ${
+                  item.type === "sub"
+                    ? `${item.amount} gifted sub${
+                        item.amount === 1
+                          ? ""
+                          : "s"
+                      }`
+                    : `${formatNumber(
+                        item.amount
+                      )} Bits`
+                }
+                • +${formatAddedTime(
+                  item.seconds
+                )}
               </small>
+
             </div>
 
             <time>
-              ${relativeTime(item.timestamp)}
+              ${relativeTime(
+                item.timestamp
+              )}
             </time>
+
           </div>
         `;
-      }
-
-      return `
-        <div class="event-row">
-
-          <span>
-            ${item.type === "sub"
-              ? "🎁"
-              : "💜"}
-          </span>
-
-          <div>
-            <strong>
-              ${escapeHtml(item.user)}
-            </strong>
-
-            <small>
-              ${item.type === "sub"
-                ? `${item.amount} gifted sub${
-                    item.amount === 1
-                      ? ""
-                      : "s"
-                  }`
-                : `${formatNumber(item.amount)} Bits`}
-              • +${formatAddedTime(item.seconds)}
-            </small>
-          </div>
-
-          <time>
-            ${relativeTime(item.timestamp)}
-          </time>
-
-        </div>
-      `;
-    }).join("");
+      })
+      .join("");
 }
+
 
 /* ---------------- URGENCY ---------------- */
 
@@ -1024,27 +1549,38 @@ function updateUrgency() {
     time > 0
   );
 
-  if (time <= 60 && time > 0) {
+  if (
+    time <= 60 &&
+    time > 0
+  ) {
     title.textContent =
       "⚠️ SAVE THE SUBATHON";
 
     text.textContent =
-      `${formatClock(time)} remaining — every support event matters.`;
+      `${formatClock(
+        time
+      )} remaining — every support event matters.`;
 
     return;
   }
 
-  if (time <= 600 && time > 0) {
+  if (
+    time <= 600 &&
+    time > 0
+  ) {
     title.textContent =
       "⚠️ SUBATHON ENDING SOON";
 
     text.textContent =
-      `${formatClock(time)} remaining — keep it alive!`;
+      `${formatClock(
+        time
+      )} remaining — keep it alive!`;
 
     return;
   }
 
-  const info = goalInfo();
+  const info =
+    goalInfo();
 
   title.textContent =
     info.goal
@@ -1056,6 +1592,7 @@ function updateUrgency() {
       ? "The community controls how long we go."
       : "You reached every Subathon milestone.";
 }
+
 
 /* ---------------- TIMER EFFECT ---------------- */
 
@@ -1077,10 +1614,14 @@ function showTimerAdd(seconds) {
 
   if (amount >= 3600) {
     text =
-      `${sign}${Math.floor(amount / 3600)}h`;
+      `${sign}${Math.floor(
+        amount / 3600
+      )}h`;
   } else if (amount >= 60) {
     text =
-      `${sign}${Math.floor(amount / 60)}m`;
+      `${sign}${Math.floor(
+        amount / 60
+      )}m`;
   } else {
     text =
       `${sign}${amount}s`;
@@ -1089,16 +1630,24 @@ function showTimerAdd(seconds) {
   el.textContent = text;
 
   el.classList.remove("show");
+
   void el.offsetWidth;
+
   el.classList.add("show");
 
   const timer =
     $("#timerDisplay");
 
   if (timer) {
-    timer.classList.remove("bump");
+    timer.classList.remove(
+      "bump"
+    );
+
     void timer.offsetWidth;
-    timer.classList.add("bump");
+
+    timer.classList.add(
+      "bump"
+    );
   }
 
   spawnParticles();
@@ -1110,9 +1659,15 @@ function spawnParticles() {
 
   if (!effects) return;
 
-  for (let i = 0; i < 18; i++) {
+  for (
+    let i = 0;
+    i < 18;
+    i++
+  ) {
     const particle =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     particle.className =
       "timer-particle";
@@ -1136,14 +1691,18 @@ function spawnParticles() {
     particle.style.animationDelay =
       `${Math.random() * 120}ms`;
 
-    effects.appendChild(particle);
+    effects.appendChild(
+      particle
+    );
 
     setTimeout(
-      () => particle.remove(),
+      () =>
+        particle.remove(),
       1200
     );
   }
 }
+
 
 /* ---------------- SIMULATION ---------------- */
 
@@ -1159,12 +1718,16 @@ function randomName() {
 
   return names[
     Math.floor(
-      Math.random() * names.length
+      Math.random() *
+        names.length
     )
   ];
 }
 
-function getSecondsForDonation(type, amount) {
+function getSecondsForDonation(
+  type,
+  amount
+) {
   if (type === "sub") {
     return amount * 300;
   }
@@ -1174,30 +1737,45 @@ function getSecondsForDonation(type, amount) {
   );
 }
 
-function simulate(type, amount, user) {
+function simulate(
+  type,
+  amount,
+  user
+) {
   const seconds =
     getSecondsForDonation(
       type,
       amount
     );
 
-  state.timeRemaining += seconds;
+  state.timeRemaining +=
+    seconds;
 
   if (type === "sub") {
-    state.totalSubs += amount;
-    state.totalSubTimeAdded += seconds;
+    state.totalSubs +=
+      amount;
+
+    state.totalSubTimeAdded +=
+      seconds;
   } else {
-    state.totalBits += amount;
-    state.totalBitTimeAdded += seconds;
+    state.totalBits +=
+      amount;
+
+    state.totalBitTimeAdded +=
+      seconds;
   }
 
   const activity = {
-    id: Date.now() + Math.random(),
+    id:
+      Date.now() +
+      Math.random(),
+
     type,
     user,
     amount,
     seconds,
     timestamp: Date.now(),
+
     text:
       type === "sub"
         ? amount === 1
@@ -1206,30 +1784,44 @@ function simulate(type, amount, user) {
         : "cheered"
   };
 
-  state.activity.unshift(activity);
+  state.activity.unshift(
+    activity
+  );
+
   state.activity =
-    state.activity.slice(0, 50);
+    state.activity.slice(
+      0,
+      50
+    );
 
   state.timeHistory.unshift({
     ...activity
   });
 
   state.timeHistory =
-    state.timeHistory.slice(0, 20);
+    state.timeHistory.slice(
+      0,
+      20
+    );
 
   state.hourlyEvents.push({
     user,
     seconds,
-    timestamp: Date.now()
+    timestamp:
+      Date.now()
   });
 
   state.hourlyEvents =
-    state.hourlyEvents.slice(-100);
+    state.hourlyEvents.slice(
+      -100
+    );
 
   const year = 2026;
 
   const leaderboard =
-    state.customLeaderboard[year][type];
+    state.customLeaderboard[
+      year
+    ][type];
 
   const existing =
     leaderboard.find(
@@ -1239,7 +1831,8 @@ function simulate(type, amount, user) {
     );
 
   if (existing) {
-    existing.amount += amount;
+    existing.amount +=
+      amount;
   } else {
     leaderboard.push({
       name: user,
@@ -1253,7 +1846,9 @@ function simulate(type, amount, user) {
   saveState();
   render();
 
-  showTimerAdd(seconds);
+  showTimerAdd(
+    seconds
+  );
 
   const newGoal =
     goalInfo();
@@ -1270,7 +1865,9 @@ function simulate(type, amount, user) {
   }
 }
 
-function showGoalCelebration(goal) {
+function showGoalCelebration(
+  goal
+) {
   const card =
     $("#subathonCard");
 
@@ -1292,7 +1889,9 @@ function showGoalCelebration(goal) {
   if (!effects) return;
 
   const node =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
   node.className =
     "goal-celebration";
@@ -1300,10 +1899,14 @@ function showGoalCelebration(goal) {
   node.innerHTML = `
     <span>🎉</span>
     <strong>GOAL UNLOCKED</strong>
-    <b>${escapeHtml(goal.name)}</b>
+    <b>${escapeHtml(
+      goal.name
+    )}</b>
   `;
 
-  effects.appendChild(node);
+  effects.appendChild(
+    node
+  );
 
   setTimeout(
     () => node.remove(),
@@ -1311,158 +1914,198 @@ function showGoalCelebration(goal) {
   );
 }
 
+
 /* ---------------- EVENTS ---------------- */
 
 function setupEvents() {
 
-  $$(".activity-tab").forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        setFeedMode(
-          button.dataset.feed
-        );
-      }
-    );
-  });
+  $$(".activity-tab").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          setFeedMode(
+            button.dataset.feed
+          );
+        }
+      );
+    }
+  );
 
-  $$(".podium-type").forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        podiumType =
-          button.dataset.podium;
 
-        $$(".podium-type").forEach(
-          other => {
-            other.classList.toggle(
-              "active",
-              other === button
+  $$(".podium-type").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          podiumType =
+            button.dataset.podium;
+
+          $$(".podium-type").forEach(
+            other => {
+              other.classList.toggle(
+                "active",
+                other === button
+              );
+            }
+          );
+
+          renderPodium();
+        }
+      );
+    }
+  );
+
+
+  $$(".year-tab").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          selectedYear =
+            Number(
+              button.dataset.year
             );
-          }
-        );
 
-        renderPodium();
-      }
-    );
-  });
-
-  $$(".year-tab").forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        selectedYear =
-          Number(button.dataset.year);
-
-        $$(".year-tab").forEach(
-          other => {
-            other.classList.toggle(
-              "active",
-              other === button
-            );
-          }
-        );
-
-        renderLeaderboard();
-      }
-    );
-  });
-
-  $$(".type-tab").forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        selectedType =
-          button.dataset.type;
-
-        $$(".type-tab").forEach(
-          other => {
-            other.classList.toggle(
-              "active",
-              other === button
-            );
-          }
-        );
-
-        renderLeaderboard();
-      }
-    );
-  });
-
-  $$("[data-sim]").forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        const kind =
-          button.dataset.sim;
-
-        const user =
-          randomName();
-
-        if (kind === "sub")
-          simulate(
-            "sub",
-            1,
-            user
+          $$(".year-tab").forEach(
+            other => {
+              other.classList.toggle(
+                "active",
+                other === button
+              );
+            }
           );
 
-        if (kind === "gift5")
-          simulate(
-            "sub",
-            5,
-            user
+          renderLeaderboard();
+        }
+      );
+    }
+  );
+
+
+  $$(".type-tab").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          selectedType =
+            button.dataset.type;
+
+          $$(".type-tab").forEach(
+            other => {
+              other.classList.toggle(
+                "active",
+                other === button
+              );
+            }
           );
 
-        if (kind === "gift10")
-          simulate(
-            "sub",
-            10,
-            user
-          );
+          renderLeaderboard();
+        }
+      );
+    }
+  );
 
-        if (kind === "bits100")
-          simulate(
-            "bits",
-            100,
-            user
-          );
 
-        if (kind === "bits1000")
-          simulate(
-            "bits",
-            1000,
-            user
-          );
+  /* ROADMAP FILTERS */
 
-        if (kind === "bits5000")
-          simulate(
-            "bits",
-            5000,
-            user
-          );
+  $$(".roadmap-filter").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          roadmapFilter =
+            button.dataset.roadmapFilter;
 
-        if (kind === "bits10000")
-          simulate(
-            "bits",
-            10000,
-            user
-          );
+          updateRoadmapFilterButtons();
+          renderRoadmap();
+        }
+      );
+    }
+  );
 
-        if (kind === "goal") {
-          const info =
-            goalInfo();
 
-          if (info.goal) {
+  /* SIMULATION */
+
+  $$("[data-sim]").forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          const kind =
+            button.dataset.sim;
+
+          const user =
+            randomName();
+
+          if (kind === "sub")
             simulate(
               "sub",
-              info.needed,
+              1,
               user
             );
+
+          if (kind === "gift5")
+            simulate(
+              "sub",
+              5,
+              user
+            );
+
+          if (kind === "gift10")
+            simulate(
+              "sub",
+              10,
+              user
+            );
+
+          if (kind === "bits100")
+            simulate(
+              "bits",
+              100,
+              user
+            );
+
+          if (kind === "bits1000")
+            simulate(
+              "bits",
+              1000,
+              user
+            );
+
+          if (kind === "bits5000")
+            simulate(
+              "bits",
+              5000,
+              user
+            );
+
+          if (kind === "bits10000")
+            simulate(
+              "bits",
+              10000,
+              user
+            );
+
+          if (kind === "goal") {
+            const info =
+              goalInfo();
+
+            if (info.goal) {
+              simulate(
+                "sub",
+                info.needed,
+                user
+              );
+            }
           }
         }
-      }
-    );
-  });
+      );
+    }
+  );
+
+
+  /* RESET */
 
   const reset =
     $("#resetSimulation");
@@ -1513,6 +2156,9 @@ function setupEvents() {
     );
   }
 
+
+  /* SUBATHON DROPDOWN */
+
   const subathonDropdown =
     $("#subathonDropdown");
 
@@ -1527,6 +2173,9 @@ function setupEvents() {
       }
     );
   }
+
+
+  /* ACTIVITY DROPDOWN */
 
   const activityDropdown =
     $("#activityDropdown");
@@ -1544,6 +2193,7 @@ function setupEvents() {
   }
 }
 
+
 /* ---------------- FEED MODE ---------------- */
 
 function setFeedMode(mode) {
@@ -1551,7 +2201,8 @@ function setFeedMode(mode) {
     button => {
       button.classList.toggle(
         "active",
-        button.dataset.feed === mode
+        button.dataset.feed ===
+          mode
       );
     }
   );
@@ -1576,6 +2227,7 @@ function setFeedMode(mode) {
   }
 }
 
+
 /* ---------------- MAIN RENDER ---------------- */
 
 function render() {
@@ -1592,16 +2244,16 @@ function render() {
   updateUrgency();
 }
 
+
 /* ---------------- INITIALIZE ---------------- */
 
 setupEvents();
 render();
 updateStreamStatus();
 
+
 /*
   Rotate Top Supporters every 5 seconds.
-  This starts AFTER the first render, so the
-  podium is guaranteed to exist on page load.
 */
 
 podiumInterval =
@@ -1624,10 +2276,13 @@ podiumInterval =
     renderPodium();
   }, 5000);
 
+
 /* Timer countdown */
 
 setInterval(() => {
-  if (state.timeRemaining > 0) {
+  if (
+    state.timeRemaining > 0
+  ) {
     state.timeRemaining--;
 
     updateTimer();
@@ -1635,6 +2290,7 @@ setInterval(() => {
     updateUrgency();
   }
 }, 1000);
+
 
 /* Refresh relative timestamps */
 
@@ -1645,6 +2301,7 @@ setInterval(() => {
   renderEventLog();
   updateUrgency();
 }, 5000);
+
 
 /* Save state */
 
