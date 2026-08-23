@@ -14,6 +14,7 @@ let state = {
   totalSubs: 0,
   totalBits: 0,
   activity: [],
+  chat: [],
   customLeaderboard: {
     2026: { subs: [], bits: [] },
     2025: { subs: [], bits: [] }
@@ -252,21 +253,51 @@ function simulate(type, amount, user) {
 
 function renderActivity() {
   const feed = $("#activityFeed");
+  const donationItems = state.activity.map(item => ({
+    ...item,
+    feedType: "donation"
+  }));
 
-  if (!state.activity.length) {
+  const chatItems = (state.chat || []).map(item => ({
+    ...item,
+    feedType: "chat"
+  }));
+
+  const combined = [...donationItems, ...chatItems]
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 45);
+
+  if (!combined.length) {
     feed.innerHTML = `
       <div class="activity-item">
         <div class="activity-avatar">♥</div>
         <div class="activity-content">
-          <div class="activity-user">Waiting for support…</div>
-          <span class="activity-text">New subs and Bits will appear here.</span>
+          <div class="activity-user">Waiting for activity…</div>
+          <span class="activity-text">Subs, Bits and chat messages will appear here.</span>
         </div>
       </div>
     `;
     return;
   }
 
-  feed.innerHTML = state.activity.map(item => {
+  feed.innerHTML = combined.map(item => {
+    if (item.feedType === "chat") {
+      return `
+        <div class="activity-item chat-message">
+          <div class="activity-avatar">💬</div>
+          <div class="activity-content">
+            <div class="activity-user">
+              ${escapeHtml(item.user)}
+              ${item.mod ? '<span class="chat-badge">MOD</span>' : ''}
+              ${item.vip ? '<span class="chat-badge">VIP</span>' : ''}
+            </div>
+            <span class="activity-text">${escapeHtml(item.message)}</span>
+          </div>
+          <div class="activity-time">${relativeTime(item.timestamp)}</div>
+        </div>
+      `;
+    }
+
     const avatar = item.type === "sub" ? "🎁" : "◆";
     const amountText = item.type === "sub"
       ? item.amount === 1 ? "1 Sub" : `${item.amount} Gifted Subs`
@@ -284,6 +315,7 @@ function renderActivity() {
     `;
   }).join("");
 }
+
 
 function renderLeaderboard() {
   const configured = CONFIG.leaderboard[selectedYear]?.[selectedType] || [];
@@ -394,6 +426,48 @@ function randomName() {
   return names[Math.floor(Math.random() * names.length)];
 }
 
+const FAKE_CHAT_MESSAGES = [
+  ["MaceMain", "W stream", false, false],
+  ["OiiinkFan", "BRO THE TIMER 💀", false, false],
+  ["LeonePlayer", "25 gifted incoming", false, true],
+  ["EventKing", "when is the event??", false, false],
+  ["RandomViewer", "WOOOOOO", false, false],
+  ["MinecraftGuy", "that was actually crazy", false, false],
+  ["SubEnjoyer", "KEEP THE TIMER GOING", false, false],
+  ["RedstonePro", "facecam soon 👀", false, false],
+  ["OiiinkFan", "LETS GOOOO", true, false],
+  ["MaceMain", "this subathon is cooked", false, false],
+  ["EventKing", "NO WAYYYYY", false, false],
+  ["LeonePlayer", "W stream W chat", false, false],
+  ["RandomViewer", "bro is never ending the stream", false, false],
+  ["SubEnjoyer", "1 more goal!!!", false, false],
+  ["MinecraftGuy", "LMAO", false, false]
+];
+
+function addFakeChatMessage() {
+  if (!state.chat) state.chat = [];
+
+  const item = FAKE_CHAT_MESSAGES[Math.floor(Math.random() * FAKE_CHAT_MESSAGES.length)];
+
+  state.chat.unshift({
+    id: Date.now() + Math.random(),
+    user: item[0],
+    message: item[1],
+    mod: item[2],
+    vip: item[3],
+    timestamp: Date.now()
+  });
+
+  state.chat = state.chat.slice(0, 35);
+  saveState();
+  renderActivity();
+
+  // Keep the feed feeling like Twitch chat by scrolling to the newest message.
+  const feed = $("#activityFeed");
+  if (feed) feed.scrollTop = 0;
+}
+
+
 function setupEvents() {
   $$(".year-tab").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -433,6 +507,7 @@ function setupEvents() {
       totalSubs: 0,
       totalBits: 0,
       activity: [],
+      chat: [],
       customLeaderboard: {
         2026: { subs: [], bits: [] },
         2025: { subs: [], bits: [] }
@@ -467,5 +542,8 @@ setInterval(() => {
 setInterval(() => {
   renderActivity();
 }, 15000);
+
+// Simulated Twitch chat: new fake chat messages appear automatically.
+setInterval(addFakeChatMessage, 4200);
 
 setInterval(saveState, 10000);

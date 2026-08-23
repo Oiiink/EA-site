@@ -58,42 +58,81 @@
         </div>
       </div>
 
-      <div class="timer-card">
-        <div class="card-heading">
-          <div>
-            <div class="card-kicker">TIME REMAINING</div>
-            <div class="timer-live"><span></span> SUBATHON TIMER</div>
-          </div>
-          <div class="timer-add" id="timerAdd">+0:00</div>
-        </div>
-
-        <div class="timer" id="timerDisplay">
-          <div class="time-box"><div class="time-number" id="days">00</div><div class="time-label">Days</div></div>
-          <div class="time-divider">:</div>
-          <div class="time-box"><div class="time-number" id="hours">00</div><div class="time-label">Hours</div></div>
-          <div class="time-divider">:</div>
-          <div class="time-box"><div class="time-number" id="minutes">00</div><div class="time-label">Minutes</div></div>
-          <div class="time-divider">:</div>
-          <div class="time-box"><div class="time-number" id="seconds">00</div><div class="time-label">Seconds</div></div>
-        </div>
-
-        <div class="goal">
-          <div class="goal-top">
-            <div class="goal-title">
-              <div class="gift-icon">🎁</div>
-              <div>
-                <strong id="goalTitle">Next Sub Goal</strong>
-                <small id="goalDescription">Face Cam</small>
-              </div>
+      <div class="right-column">
+        <div class="timer-card">
+          <div class="card-heading">
+            <div>
+              <div class="card-kicker">TIME REMAINING</div>
+              <div class="timer-live"><span></span> SUBATHON TIMER</div>
             </div>
-            <div class="goal-count" id="goalCount">0 / 10</div>
+            <div class="timer-add" id="timerAdd">+0:00</div>
           </div>
 
-          <div class="goal-bar"><div class="goal-progress" id="goalProgress"></div></div>
+          <div class="timer" id="timerDisplay">
+            <div class="time-box"><div class="time-number" id="days">00</div><div class="time-label">Days</div></div>
+            <div class="time-divider">:</div>
+            <div class="time-box"><div class="time-number" id="hours">00</div><div class="time-label">Hours</div></div>
+            <div class="time-divider">:</div>
+            <div class="time-box"><div class="time-number" id="minutes">00</div><div class="time-label">Minutes</div></div>
+            <div class="time-divider">:</div>
+            <div class="time-box"><div class="time-number" id="seconds">00</div><div class="time-label">Seconds</div></div>
+          </div>
 
-          <div class="goal-bottom">
-            <span><strong id="goalNeeded">10</strong> more gifted subs</span>
-            <span>Next: <strong id="goalName">Face Cam</strong></span>
+          <div class="goal">
+            <div class="goal-top">
+              <div class="goal-title">
+                <div class="gift-icon">🎁</div>
+                <div>
+                  <strong id="goalTitle">Next Sub Goal</strong>
+                  <small id="goalDescription">Face Cam</small>
+                </div>
+              </div>
+              <div class="goal-count" id="goalCount">0 / 10</div>
+            </div>
+
+            <div class="goal-bar"><div class="goal-progress" id="goalProgress"></div></div>
+
+            <div class="goal-bottom">
+              <span><strong id="goalNeeded">10</strong> more gifted subs</span>
+              <span>Next: <strong id="goalName">Face Cam</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-column">
+          <div class="top-supporters">
+            <div class="supporter-track" id="supporterTrack"></div>
+          </div>
+
+          <div class="subathon-card" id="subathonCard">
+            <div class="subathon-main">
+              <div class="subathon-left">
+                <div class="subathon-title">🎁 SUBATHON</div>
+                <div class="subathon-level" id="subathonLevel">LEVEL 1</div>
+              </div>
+              <div class="subathon-right">
+                <div class="subathon-timer" id="subathonTimer">0:00</div>
+                <div class="subathon-percent" id="subathonPercent">0%</div>
+              </div>
+              <button class="subathon-dropdown" id="subathonDropdown" aria-label="Toggle Subathon details">⌄</button>
+            </div>
+            <div class="subathon-progress"><div class="subathon-progress-bar" id="subathonProgress"></div></div>
+            <div class="subathon-details" id="subathonDetails">
+              <span><strong id="subathonNeeded">10</strong> gifted subs until the next goal</span>
+              <span>Next: <strong id="subathonGoalName">Face Cam</strong></span>
+            </div>
+          </div>
+
+          <div class="activity" id="activityPanel">
+            <div class="activity-header">
+              <div class="activity-title">
+                <span class="activity-title-dot"></span>
+                Live Activity
+                <span class="feed-live">LIVE</span>
+              </div>
+              <button class="dropdown-button" id="activityDropdown">▼</button>
+            </div>
+            <div class="activity-body" id="activityFeed"></div>
           </div>
         </div>
       </div>
@@ -126,50 +165,6 @@
           <p>At 35 gifted subs, the IQ test begins.</p>
           <div class="perk-status" id="perkStatus35">Locked</div>
         </article>
-      </div>
-    </section>
-
-    <section id="activity" class="section">
-      <div class="section-heading">
-        <div><div class="eyebrow">LIVE ACTIVITY</div><h2>Recent Support</h2></div>
-        <p>Twitch-style activity feed showing only subs and Bits.</p>
-      </div>
-
-      <div class="activity-column">
-        <div class="top-supporters">
-          <div class="supporter-track" id="supporterTrack"></div>
-        </div>
-
-        <div class="subathon-card" id="subathonCard">
-          <div class="subathon-main">
-            <div class="subathon-left">
-              <div class="subathon-title">🎁 SUBATHON</div>
-              <div class="subathon-level" id="subathonLevel">LEVEL 1</div>
-            </div>
-            <div class="subathon-right">
-              <div class="subathon-timer" id="subathonTimer">0:00</div>
-              <div class="subathon-percent" id="subathonPercent">0%</div>
-            </div>
-            <button class="subathon-dropdown" id="subathonDropdown" aria-label="Toggle Subathon details">⌄</button>
-          </div>
-          <div class="subathon-progress"><div class="subathon-progress-bar" id="subathonProgress"></div></div>
-          <div class="subathon-details" id="subathonDetails">
-            <span><strong id="subathonNeeded">10</strong> gifted subs until the next goal</span>
-            <span>Next: <strong id="subathonGoalName">Face Cam</strong></span>
-          </div>
-        </div>
-
-        <div class="activity" id="activityPanel">
-          <div class="activity-header">
-            <div class="activity-title">
-              <span class="activity-title-dot"></span>
-              Activity Feed
-              <span class="feed-live">LIVE</span>
-            </div>
-            <button class="dropdown-button" id="activityDropdown">▼</button>
-          </div>
-          <div class="activity-body" id="activityFeed"></div>
-        </div>
       </div>
     </section>
 
