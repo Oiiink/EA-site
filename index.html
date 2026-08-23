@@ -8,6 +8,363 @@
   <meta name="description" content="Oiiink's live Minecraft subathon.">
 
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ==========================================
+       SUBATHON ROADMAP
+       ========================================== */
+
+    .roadmap-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .roadmap-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 5px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+    }
+
+    .roadmap-tab {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .roadmap-tab:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .roadmap-tab.active {
+      color: #fff;
+      background: rgba(255,255,255,0.09);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .roadmap-filter {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+
+    .roadmap-filter button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.42);
+      padding: 8px 11px;
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      cursor: pointer;
+    }
+
+    .roadmap-filter button.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .roadmap-category-description {
+      color: rgba(255,255,255,0.48);
+      font-size: 13px;
+      margin: -5px 0 18px;
+    }
+
+    .roadmap-list {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .roadmap-list::before {
+      content: "";
+      position: absolute;
+      left: 25px;
+      top: 18px;
+      bottom: 18px;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.12),
+        rgba(255,255,255,0.025)
+      );
+      pointer-events: none;
+    }
+
+    .roadmap-milestone {
+      position: relative;
+      display: grid;
+      grid-template-columns: 52px 90px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 16px;
+      min-height: 82px;
+      padding: 14px 18px 14px 0;
+      border: 1px solid rgba(255,255,255,0.065);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.025);
+      transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        opacity .2s ease;
+    }
+
+    .roadmap-milestone:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .roadmap-milestone.completed {
+      opacity: .68;
+    }
+
+    .roadmap-milestone.current {
+      border-color: rgba(255,154,55,0.42);
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,140,40,0.10),
+          rgba(255,255,255,0.025)
+        );
+      box-shadow:
+        0 0 35px rgba(255,140,40,0.06),
+        inset 0 0 0 1px rgba(255,140,40,0.035);
+    }
+
+    .roadmap-milestone.future {
+      opacity: .78;
+    }
+
+    .roadmap-milestone.hidden {
+      display: none;
+    }
+
+    .roadmap-node-wrap {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .roadmap-node-new {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #161616;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.42);
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 0 0 5px #0c0c0c;
+    }
+
+    .roadmap-milestone.completed .roadmap-node-new {
+      background: rgba(65,190,120,0.12);
+      border-color: rgba(65,190,120,0.35);
+      color: #63d89a;
+    }
+
+    .roadmap-milestone.current .roadmap-node-new {
+      background: rgba(255,140,40,0.14);
+      border-color: rgba(255,140,40,0.5);
+      color: #ff9b45;
+      box-shadow:
+        0 0 0 5px #0c0c0c,
+        0 0 20px rgba(255,140,40,0.22);
+    }
+
+    .roadmap-amount-new {
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .roadmap-amount-new small {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .roadmap-milestone.current .roadmap-amount-new {
+      color: #ff9b45;
+    }
+
+    .roadmap-content-new {
+      min-width: 0;
+    }
+
+    .roadmap-content-new strong {
+      display: block;
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .roadmap-content-new span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255,255,255,0.42);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .roadmap-status-new {
+      min-width: 82px;
+      text-align: right;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,0.32);
+    }
+
+    .roadmap-milestone.completed .roadmap-status-new {
+      color: #63d89a;
+    }
+
+    .roadmap-milestone.current .roadmap-status-new {
+      color: #ff9b45;
+    }
+
+    .roadmap-empty {
+      display: none;
+      padding: 35px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 14px;
+    }
+
+    .roadmap-progress-summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: center;
+      margin-top: 20px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255,255,255,0.065);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .roadmap-summary-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .roadmap-summary-title {
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .roadmap-summary-progress {
+      text-align: right;
+    }
+
+    .roadmap-summary-progress strong {
+      display: block;
+      font-size: 20px;
+      color: #ff9b45;
+    }
+
+    .roadmap-summary-progress span {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .roadmap-shop-link {
+      display: inline-flex;
+      margin-top: 7px;
+      color: #ff9b45;
+      text-decoration: none;
+      font-size: 10px !important;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .roadmap-shop-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 760px) {
+
+      .roadmap-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .roadmap-tabs {
+        overflow-x: auto;
+      }
+
+      .roadmap-filter {
+        width: fit-content;
+      }
+
+      .roadmap-milestone {
+        grid-template-columns: 42px 65px minmax(0,1fr);
+        gap: 10px;
+        padding-right: 12px;
+      }
+
+      .roadmap-status-new {
+        display: none;
+      }
+
+      .roadmap-amount-new {
+        font-size: 14px;
+      }
+
+      .roadmap-content-new strong {
+        font-size: 13px;
+      }
+
+      .roadmap-content-new span {
+        font-size: 10px;
+      }
+
+      .roadmap-progress-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .roadmap-summary-progress {
+        text-align: left;
+      }
+
+    }
+  </style>
 </head>
 
 <body>
@@ -16,6 +373,7 @@
   <div class="background-glow glow-two"></div>
 
   <div id="effects"></div>
+
 
   <!-- HEADER -->
   <header class="site-header">
@@ -50,7 +408,9 @@
     <!-- HERO -->
     <section class="hero">
 
-      <div class="eyebrow">LIVE SUBATHON</div>
+      <div class="eyebrow">
+        LIVE SUBATHON
+      </div>
 
       <h1>
         HOW LONG<br>
@@ -64,7 +424,9 @@
 
       <div class="stream-status">
         <span class="status-dot"></span>
-        <span id="streamStatusText">CHECKING STREAM STATUS...</span>
+        <span id="streamStatusText">
+          CHECKING STREAM STATUS...
+        </span>
       </div>
 
     </section>
@@ -79,7 +441,10 @@
         <div class="stream-card">
 
           <div class="section-label">
-            <span>LIVE STREAM</span>
+
+            <span>
+              LIVE STREAM
+            </span>
 
             <a
               href="https://twitch.tv/oiiinkyt"
@@ -88,6 +453,7 @@
             >
               OPEN TWITCH ↗
             </a>
+
           </div>
 
           <div class="twitch-frame-wrap">
@@ -157,15 +523,21 @@
 
 
           <!-- SUBATHON -->
-          <div class="subathon-card" id="subathonCard">
+          <div
+            class="subathon-card"
+            id="subathonCard"
+          >
 
             <div class="subathon-topline">
 
               <div class="subathon-brand">
 
-                <div class="subathon-gift">🎁</div>
+                <div class="subathon-gift">
+                  🎁
+                </div>
 
                 <div>
+
                   <div class="subathon-title">
                     SUBATHON
                   </div>
@@ -173,6 +545,7 @@
                   <div class="subathon-level">
                     LIVE TIMER
                   </div>
+
                 </div>
 
               </div>
@@ -191,23 +564,29 @@
             <div class="subathon-goal-row">
 
               <div>
+
                 <span class="subathon-next-label">
                   NEXT MILESTONE
                 </span>
 
                 <strong id="subathonNextGoal">
-                  24 HOURS
+                  10 GIFTED
                 </strong>
+
               </div>
 
               <div class="subathon-goal-number">
+
                 <strong id="subathonProgressCount">
                   0
                 </strong>
+
                 /
+
                 <span id="subathonGoalCount">
-                  100
+                  10
                 </span>
+
               </div>
 
             </div>
@@ -230,12 +609,14 @@
               <div class="subathon-progress-meta">
 
                 <span>
-                  <strong id="subathonPercent">0%</strong>
+                  <strong id="subathonPercent">
+                    0%
+                  </strong>
                   complete
                 </span>
 
                 <span id="subathonRemaining">
-                  100 remaining
+                  10 remaining
                 </span>
 
               </div>
@@ -247,12 +628,16 @@
 
               <span>
                 Total added:
-                <strong id="totalTimeAdded">0:00:00</strong>
+                <strong id="totalTimeAdded">
+                  0:00:00
+                </strong>
               </span>
 
               <span>
                 Events:
-                <strong id="totalEvents">0</strong>
+                <strong id="totalEvents">
+                  0
+                </strong>
               </span>
 
             </div>
@@ -261,7 +646,10 @@
 
 
           <!-- TIMER -->
-          <div class="timer-card" id="timerCard">
+          <div
+            class="timer-card"
+            id="timerCard"
+          >
 
             <div class="card-heading">
 
@@ -291,6 +679,7 @@
             <div class="timer">
 
               <div class="time-box">
+
                 <div
                   class="time-number"
                   id="hours"
@@ -301,11 +690,15 @@
                 <div class="time-label">
                   Hours
                 </div>
+
               </div>
 
-              <div class="time-divider">:</div>
+              <div class="time-divider">
+                :
+              </div>
 
               <div class="time-box">
+
                 <div
                   class="time-number"
                   id="minutes"
@@ -316,11 +709,15 @@
                 <div class="time-label">
                   Minutes
                 </div>
+
               </div>
 
-              <div class="time-divider">:</div>
+              <div class="time-divider">
+                :
+              </div>
 
               <div class="time-box">
+
                 <div
                   class="time-number"
                   id="seconds"
@@ -331,6 +728,7 @@
                 <div class="time-label">
                   Seconds
                 </div>
+
               </div>
 
             </div>
@@ -348,6 +746,7 @@
                   </div>
 
                   <div>
+
                     <strong>
                       Subathon Goal
                     </strong>
@@ -355,6 +754,7 @@
                     <small>
                       Next milestone
                     </small>
+
                   </div>
 
                 </div>
@@ -363,7 +763,7 @@
                   class="goal-count"
                   id="goalCount"
                 >
-                  0 / 100
+                  0 / 10
                 </div>
 
               </div>
@@ -383,13 +783,15 @@
               <div class="goal-bottom">
 
                 <span>
-                  <strong id="goalPercent">0%</strong>
+                  <strong id="goalPercent">
+                    0%
+                  </strong>
                   complete
                 </span>
 
                 <span>
                   <strong id="goalRemaining">
-                    100
+                    10
                   </strong>
                   to go
                 </span>
@@ -408,11 +810,15 @@
 
 
     <!-- TOP SUPPORTERS -->
-    <section class="section" id="supporters">
+    <section
+      class="section"
+      id="supporters"
+    >
 
       <div class="section-heading">
 
         <div>
+
           <div class="eyebrow">
             COMMUNITY
           </div>
@@ -420,6 +826,7 @@
           <h2>
             Top Supporters
           </h2>
+
         </div>
 
         <p>
@@ -428,11 +835,6 @@
 
       </div>
 
-
-      <!-- IMPORTANT:
-           This is intentionally rendered directly in HTML.
-           It does NOT wait for JavaScript/API data to appear.
-      -->
 
       <div class="activity-column">
 
@@ -471,8 +873,6 @@
             </div>
 
             <span class="supporter-separator">•</span>
-
-            <!-- duplicated for seamless marquee -->
 
             <div class="supporter-item">
               <span class="supporter-rank">#1</span>
@@ -638,7 +1038,9 @@
     </section>
 
 
-    <!-- ROADMAP -->
+    <!-- ==========================================
+         SUBATHON ROADMAP
+         ========================================== -->
     <section
       class="section"
       id="roadmap"
@@ -659,72 +1061,1001 @@
         </div>
 
         <p>
-          Every milestone brings us closer to the next one.
+          Every milestone brings a new challenge, reward, or community goal.
         </p>
 
       </div>
 
 
+      <!-- ROADMAP CATEGORY / FILTER -->
+      <div class="roadmap-toolbar">
+
+        <div class="roadmap-tabs">
+
+          <button
+            class="roadmap-tab active"
+            data-roadmap-category="short"
+          >
+            SHORT CHALLENGES
+          </button>
+
+          <button
+            class="roadmap-tab"
+            data-roadmap-category="long"
+          >
+            LONG CHALLENGES
+          </button>
+
+          <button
+            class="roadmap-tab"
+            data-roadmap-category="user"
+          >
+            USER INCENTIVES
+          </button>
+
+        </div>
+
+
+        <div class="roadmap-filter">
+
+          <button
+            class="roadmap-view active"
+            data-roadmap-view="all"
+          >
+            ALL
+          </button>
+
+          <button
+            class="roadmap-view"
+            data-roadmap-view="past"
+          >
+            PAST
+          </button>
+
+          <button
+            class="roadmap-view"
+            data-roadmap-view="future"
+          >
+            UPCOMING
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="roadmap-category-description"
+        id="roadmapCategoryDescription"
+      >
+        Short challenges that can happen during the subathon.
+      </div>
+
+
       <div class="roadmap-card">
 
-        <div class="roadmap-step reached">
+        <div
+          class="roadmap-list"
+          id="roadmapList"
+        >
 
-          <div class="roadmap-node">
-            ✓
-          </div>
+          <!-- ==========================
+               SHORT CHALLENGES
+               ========================== -->
 
-          <div class="roadmap-amount">
-            25
-          </div>
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="10"
+          >
 
-          <div class="roadmap-name">
-            First Milestone
-          </div>
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">10</div>
+            </div>
 
-          <div class="roadmap-status">
-            Reached
-          </div>
+            <div class="roadmap-amount-new">
+              10
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Face Cam
+              </strong>
+
+              <span>
+                Face cam for the stream — only during the day.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="25"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">25</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              25
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Host an Event on LeoneMC
+              </strong>
+
+              <span>
+                Oiiink hosts an event on LeoneMC.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="35"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">35</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              35
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                IQ Test
+              </strong>
+
+              <span>
+                Oiiink takes an IQ test live on stream.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="50"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">50</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              50
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Challenge TBD
+              </strong>
+
+              <span>
+                A challenge will be revealed for this milestone.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="75"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">75</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              75
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Challenge TBD
+              </strong>
+
+              <span>
+                A challenge will be revealed for this milestone.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="100"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">100</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              100
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Sleeping Face Cam
+              </strong>
+
+              <span>
+                Sleeping face cam — viewers will be able to play loud sounds.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="125"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">125</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              125
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Try Not to Laugh
+              </strong>
+
+              <span>
+                Try not to laugh — $5 for every laugh.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="150"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">150</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              150
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Pizza Challenge
+              </strong>
+
+              <span>
+                Order and eat a pizza. Stream chooses up to 7 toppings.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="175"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">175</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              175
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Marbles on Stream
+              </strong>
+
+              <span>
+                Marbles on Stream with an Oiiink Subathon 2026 Exclusive Merch giveaway.
+              </span>
+
+              <a
+                class="roadmap-shop-link"
+                href="https://shop.oiiink.art"
+                target="_blank"
+                rel="noopener"
+              >
+                VIEW EXCLUSIVE MERCH ↗
+              </a>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="200"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">200</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              200
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                One Chip Challenge
+              </strong>
+
+              <span>
+                Take on the One Chip Challenge live.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="250"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">250</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              250
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Change My Discord Display Name
+              </strong>
+
+              <span>
+                The community chooses Oiiink's Discord display name for a day.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="short"
+            data-milestone="300"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">300</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              300
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Daily Streams for October
+              </strong>
+
+              <span>
+                Oiiink streams every day throughout October.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <!-- ==========================
+               LONG CHALLENGES
+               ========================== -->
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="50"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">50</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              50
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Play Hoplite Until I Win
+              </strong>
+
+              <span>
+                Keep playing Hoplite until a win is secured — Teams.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="100"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">100</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              100
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Mine an Entire Trial Chamber
+              </strong>
+
+              <span>
+                Mine every block inside an entire Trial Chamber.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="200"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">200</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              200
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Draft Out Until I Win
+              </strong>
+
+              <span>
+                Keep playing Draft Out until a win is achieved.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="300"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">300</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              300
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Count to 10,000
+              </strong>
+
+              <span>
+                Count all the way to 10,000. Donations can remove, add, or reset the count.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="500"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">500</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              500
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                All Advancements Multiplayer
+              </strong>
+
+              <span>
+                Complete every Minecraft advancement with other players.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="750"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">750</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              750
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                All Advancements Solo
+              </strong>
+
+              <span>
+                Complete every Minecraft advancement completely solo.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="800"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">800</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              800
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                24 Hours of Valorant
+              </strong>
+
+              <span>
+                24 hours of Valorant — over 100 Swiftplays or 50 Unrated/Ranked games.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="long"
+            data-milestone="1000"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">1K</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              1,000
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Reach Grand Champion in Rocket League
+              </strong>
+
+              <span>
+                Reach GC in Rocket League.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <!-- ==========================
+               USER INCENTIVES
+               ========================== -->
+
+          <article
+            class="roadmap-milestone"
+            data-category="user"
+            data-milestone="25"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">25</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              25
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Choose a Game
+              </strong>
+
+              <span>
+                Oiiink purchases a Steam/Epic Games game of your choice under $10 USD and plays it for 1 hour. No NSFW.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="user"
+            data-milestone="35"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">35</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              35
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Oiiink 2026 Subathon Merch
+              </strong>
+
+              <span>
+                Receive the exclusive Oiiink 2026 Subathon merchandise.
+              </span>
+
+              <a
+                class="roadmap-shop-link"
+                href="https://shop.oiiink.art"
+                target="_blank"
+                rel="noopener"
+              >
+                VIEW MERCH SHOP ↗
+              </a>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="user"
+            data-milestone="50"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">50</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              50
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Discord PFP
+              </strong>
+
+              <span>
+                Change Oiiink's Discord profile picture to whatever you want for one week. No NSFW.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="user"
+            data-milestone="75"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">75</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              75
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                User Incentive — TBD
+              </strong>
+
+              <span>
+                A new personalized reward will be announced for this milestone.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
+
+
+          <article
+            class="roadmap-milestone"
+            data-category="user"
+            data-milestone="100"
+          >
+
+            <div class="roadmap-node-wrap">
+              <div class="roadmap-node-new">100</div>
+            </div>
+
+            <div class="roadmap-amount-new">
+              100
+              <small>GIFTED</small>
+            </div>
+
+            <div class="roadmap-content-new">
+
+              <strong>
+                Friend Request
+              </strong>
+
+              <span>
+                Oiiink sends you a Discord friend request.
+              </span>
+
+            </div>
+
+            <div class="roadmap-status-new">
+              UPCOMING
+            </div>
+
+          </article>
 
         </div>
 
 
-        <div class="roadmap-step current">
-
-          <div class="roadmap-node">
-            ★
-          </div>
-
-          <div class="roadmap-amount">
-            50
-          </div>
-
-          <div class="roadmap-name">
-            Next Milestone
-          </div>
-
-          <div class="roadmap-status">
-            In Progress
-          </div>
-
+        <div
+          class="roadmap-empty"
+          id="roadmapEmpty"
+        >
+          No milestones in this view.
         </div>
 
 
-        <div class="roadmap-step">
+        <div class="roadmap-progress-summary">
 
-          <div class="roadmap-node">
-            3
+          <div>
+
+            <div class="roadmap-summary-label">
+              CURRENT SUBATHON PROGRESS
+            </div>
+
+            <div
+              class="roadmap-summary-title"
+              id="roadmapCurrentTitle"
+            >
+              Next milestone: 10 Gifted — Face Cam
+            </div>
+
           </div>
 
-          <div class="roadmap-amount">
-            100
-          </div>
+          <div class="roadmap-summary-progress">
 
-          <div class="roadmap-name">
-            Major Milestone
-          </div>
+            <strong id="roadmapCurrentCount">
+              0 / 10
+            </strong>
 
-          <div class="roadmap-status">
-            Locked
+            <span>
+              gifted subscriptions
+            </span>
+
           </div>
 
         </div>
@@ -828,7 +2159,9 @@
               </span>
 
               <span class="donation-time">
-                <strong>+1:00:00</strong>
+                <strong>
+                  +1:00:00
+                </strong>
               </span>
 
             </div>
@@ -857,7 +2190,9 @@
               </span>
 
               <span class="donation-time">
-                <strong>+10:00</strong>
+                <strong>
+                  +10:00
+                </strong>
               </span>
 
             </div>
@@ -886,7 +2221,9 @@
               </span>
 
               <span class="donation-time">
-                <strong>+5:00</strong>
+                <strong>
+                  +5:00
+                </strong>
               </span>
 
             </div>
@@ -915,7 +2252,9 @@
               </span>
 
               <span class="donation-time">
-                <strong>+50:00</strong>
+                <strong>
+                  +50:00
+                </strong>
               </span>
 
             </div>
@@ -1470,9 +2809,37 @@
 
     let totalEvents = 4;
 
+    /*
+     * This is the current gifted-sub total.
+     * Replace this with your real API value later.
+     */
     let goalCurrent = 0;
 
-    const goalTarget = 100;
+
+    /*
+     * ==========================================
+     * ROADMAP DATA
+     * ==========================================
+     */
+
+    const roadmapData = {
+
+      short: {
+        description:
+          "Short challenges that can happen during the subathon."
+      },
+
+      long: {
+        description:
+          "Long-form challenges that can take hours or even an entire stream to complete."
+      },
+
+      user: {
+        description:
+          "Rewards chosen or triggered by individual supporters."
+      }
+
+    };
 
 
     /*
@@ -1506,11 +2873,26 @@
     }
 
 
+    function formatLongTime(seconds) {
+
+      const h =
+        Math.floor(seconds / 3600);
+
+      const m =
+        Math.floor((seconds % 3600) / 60);
+
+      const s =
+        seconds % 60;
+
+      return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+
+    }
+
+
     function updateTimer() {
 
-      const time = formatTime(
-        remainingSeconds
-      );
+      const time =
+        formatTime(remainingSeconds);
 
       document.getElementById("hours").textContent =
         time.hours;
@@ -1527,75 +2909,522 @@
     }
 
 
-    function updateGoal() {
+    /*
+     * ==========================================
+     * FIND NEXT ROADMAP MILESTONE
+     * ==========================================
+     */
 
-      const percentage =
-        Math.min(
-          100,
-          (goalCurrent / goalTarget) * 100
+    function getNextMilestone() {
+
+      const milestones =
+        Array.from(
+          document.querySelectorAll(".roadmap-milestone")
+        )
+        .map(element => ({
+          element,
+          category: element.dataset.category,
+          amount: Number(element.dataset.milestone)
+        }))
+        .filter(item =>
+          item.amount > goalCurrent
+        )
+        .sort((a, b) =>
+          a.amount - b.amount
         );
 
-      document.getElementById("goalCount").textContent =
-        `${goalCurrent} / ${goalTarget}`;
-
-      document.getElementById("goalPercent").textContent =
-        `${Math.round(percentage)}%`;
-
-      document.getElementById("goalRemaining").textContent =
-        Math.max(0, goalTarget - goalCurrent);
-
-      document.getElementById("goalProgress").style.width =
-        `${percentage}%`;
-
-      document.getElementById("subathonProgressCount").textContent =
-        goalCurrent;
-
-      document.getElementById("subathonGoalCount").textContent =
-        goalTarget;
-
-      document.getElementById("subathonPercent").textContent =
-        `${Math.round(percentage)}%`;
-
-      document.getElementById("subathonRemaining").textContent =
-        `${Math.max(0, goalTarget - goalCurrent)} remaining`;
-
-      document.getElementById("subathonProgressBar").style.width =
-        `${percentage}%`;
+      return milestones[0] || null;
 
     }
 
+
+    function updateGoal() {
+
+      const nextMilestone =
+        getNextMilestone();
+
+      /*
+       * If there is a next milestone,
+       * use it for the main progress bars.
+       */
+
+      if (nextMilestone) {
+
+        const goalTarget =
+          nextMilestone.amount;
+
+        /*
+         * Calculate progress from the previous
+         * milestone rather than always from zero.
+         */
+
+        const sameCategory =
+          Array.from(
+            document.querySelectorAll(
+              `.roadmap-milestone[data-category="${nextMilestone.category}"]`
+            )
+          )
+          .map(element =>
+            Number(element.dataset.milestone)
+          )
+          .filter(amount =>
+            amount < goalTarget
+          )
+          .sort((a, b) => b - a);
+
+        const previousTarget =
+          sameCategory.length
+            ? sameCategory[0]
+            : 0;
+
+        const range =
+          goalTarget - previousTarget;
+
+        const progress =
+          Math.min(
+            100,
+            Math.max(
+              0,
+              ((goalCurrent - previousTarget) / range) * 100
+            )
+          );
+
+
+        document.getElementById(
+          "subathonNextGoal"
+        ).textContent =
+          `${goalTarget.toLocaleString()} GIFTED`;
+
+
+        document.getElementById(
+          "subathonProgressCount"
+        ).textContent =
+          goalCurrent.toLocaleString();
+
+
+        document.getElementById(
+          "subathonGoalCount"
+        ).textContent =
+          goalTarget.toLocaleString();
+
+
+        document.getElementById(
+          "subathonPercent"
+        ).textContent =
+          `${Math.round(progress)}%`;
+
+
+        document.getElementById(
+          "subathonRemaining"
+        ).textContent =
+          `${Math.max(0, goalTarget - goalCurrent).toLocaleString()} remaining`;
+
+
+        document.getElementById(
+          "subathonProgressBar"
+        ).style.width =
+          `${progress}%`;
+
+
+        document.getElementById(
+          "goalCount"
+        ).textContent =
+          `${goalCurrent.toLocaleString()} / ${goalTarget.toLocaleString()}`;
+
+
+        document.getElementById(
+          "goalPercent"
+        ).textContent =
+          `${Math.round(progress)}%`;
+
+
+        document.getElementById(
+          "goalRemaining"
+        ).textContent =
+          Math.max(
+            0,
+            goalTarget - goalCurrent
+          ).toLocaleString();
+
+
+        document.getElementById(
+          "goalProgress"
+        ).style.width =
+          `${progress}%`;
+
+
+        updateRoadmapSummary(
+          nextMilestone
+        );
+
+      }
+
+    }
+
+
+    /*
+     * ==========================================
+     * ROADMAP STATUS
+     * ==========================================
+     */
+
+    function updateRoadmapStatus() {
+
+      const milestones =
+        document.querySelectorAll(
+          ".roadmap-milestone"
+        );
+
+      let closestFuture = null;
+
+      milestones.forEach(milestone => {
+
+        const amount =
+          Number(
+            milestone.dataset.milestone
+          );
+
+        milestone.classList.remove(
+          "completed",
+          "current",
+          "future"
+        );
+
+        const status =
+          milestone.querySelector(
+            ".roadmap-status-new"
+          );
+
+        const node =
+          milestone.querySelector(
+            ".roadmap-node-new"
+          );
+
+
+        if (amount < goalCurrent) {
+
+          milestone.classList.add(
+            "completed"
+          );
+
+          status.textContent =
+            "REACHED";
+
+          node.textContent =
+            "✓";
+
+        }
+        else if (amount === goalCurrent) {
+
+          milestone.classList.add(
+            "completed"
+          );
+
+          status.textContent =
+            "REACHED";
+
+          node.textContent =
+            "✓";
+
+        }
+        else {
+
+          milestone.classList.add(
+            "future"
+          );
+
+          status.textContent =
+            "UPCOMING";
+
+          node.textContent =
+            amount >= 1000
+              ? "1K"
+              : amount;
+
+          if (
+            !closestFuture ||
+            amount < closestFuture.amount
+          ) {
+
+            closestFuture = {
+              milestone,
+              amount
+            };
+
+          }
+
+        }
+
+      });
+
+
+      if (closestFuture) {
+
+        closestFuture.milestone.classList.remove(
+          "future"
+        );
+
+        closestFuture.milestone.classList.add(
+          "current"
+        );
+
+        closestFuture.milestone.querySelector(
+          ".roadmap-status-new"
+        ).textContent =
+          "NEXT UP";
+
+      }
+
+    }
+
+
+    function updateRoadmapSummary(
+      nextMilestone
+    ) {
+
+      if (!nextMilestone) {
+        return;
+      }
+
+      const title =
+        nextMilestone.element.querySelector(
+          ".roadmap-content-new strong"
+        ).textContent.trim();
+
+      const amount =
+        nextMilestone.amount;
+
+
+      document.getElementById(
+        "roadmapCurrentTitle"
+      ).textContent =
+        `Next milestone: ${amount.toLocaleString()} Gifted — ${title}`;
+
+
+      document.getElementById(
+        "roadmapCurrentCount"
+      ).textContent =
+        `${goalCurrent.toLocaleString()} / ${amount.toLocaleString()}`;
+
+    }
+
+
+    /*
+     * ==========================================
+     * ROADMAP FILTERS
+     * ==========================================
+     */
+
+    let currentRoadmapCategory =
+      "short";
+
+    let currentRoadmapView =
+      "all";
+
+
+    function refreshRoadmap() {
+
+      const milestones =
+        document.querySelectorAll(
+          ".roadmap-milestone"
+        );
+
+      let visibleCount = 0;
+
+
+      milestones.forEach(milestone => {
+
+        const category =
+          milestone.dataset.category;
+
+        const amount =
+          Number(
+            milestone.dataset.milestone
+          );
+
+        const categoryMatches =
+          category === currentRoadmapCategory;
+
+
+        let viewMatches = true;
+
+
+        if (
+          currentRoadmapView === "past"
+        ) {
+
+          viewMatches =
+            amount <= goalCurrent;
+
+        }
+
+
+        if (
+          currentRoadmapView === "future"
+        ) {
+
+          viewMatches =
+            amount > goalCurrent;
+
+        }
+
+
+        if (
+          categoryMatches &&
+          viewMatches
+        ) {
+
+          milestone.classList.remove(
+            "hidden"
+          );
+
+          visibleCount++;
+
+        }
+        else {
+
+          milestone.classList.add(
+            "hidden"
+          );
+
+        }
+
+      });
+
+
+      document.getElementById(
+        "roadmapEmpty"
+      ).style.display =
+        visibleCount === 0
+          ? "block"
+          : "none";
+
+
+      document.getElementById(
+        "roadmapCategoryDescription"
+      ).textContent =
+        roadmapData[
+          currentRoadmapCategory
+        ].description;
+
+    }
+
+
+    document
+      .querySelectorAll(".roadmap-tab")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(
+                ".roadmap-tab"
+              )
+              .forEach(item => {
+                item.classList.remove(
+                  "active"
+                );
+              });
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            currentRoadmapCategory =
+              button.dataset.roadmapCategory;
+
+
+            refreshRoadmap();
+
+          }
+        );
+
+      });
+
+
+    document
+      .querySelectorAll(".roadmap-view")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(
+                ".roadmap-view"
+              )
+              .forEach(item => {
+                item.classList.remove(
+                  "active"
+                );
+              });
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            currentRoadmapView =
+              button.dataset.roadmapView;
+
+
+            refreshRoadmap();
+
+          }
+        );
+
+      });
+
+
+    /*
+     * ==========================================
+     * STATS
+     * ==========================================
+     */
 
     function updateStats() {
 
-      document.getElementById("totalTimeAdded").textContent =
-        formatLongTime(totalAddedSeconds);
+      document.getElementById(
+        "totalTimeAdded"
+      ).textContent =
+        formatLongTime(
+          totalAddedSeconds
+        );
 
-      document.getElementById("totalEvents").textContent =
+
+      document.getElementById(
+        "totalEvents"
+      ).textContent =
         totalEvents;
 
-      document.getElementById("statTotalTime").textContent =
-        formatLongTime(totalAddedSeconds);
 
-      document.getElementById("statEvents").textContent =
+      document.getElementById(
+        "statTotalTime"
+      ).textContent =
+        formatLongTime(
+          totalAddedSeconds
+        );
+
+
+      document.getElementById(
+        "statEvents"
+      ).textContent =
         totalEvents;
 
     }
 
 
-    function formatLongTime(seconds) {
-
-      const h = Math.floor(seconds / 3600);
-
-      const m = Math.floor(
-        (seconds % 3600) / 60
-      );
-
-      const s = seconds % 60;
-
-      return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-
-    }
-
+    /*
+     * ==========================================
+     * TIMER LOOP
+     * ==========================================
+     */
 
     setInterval(() => {
 
@@ -1616,13 +3445,20 @@
 
     document
       .getElementById("subathonToggle")
-      .addEventListener("click", () => {
+      .addEventListener(
+        "click",
+        () => {
 
-        document
-          .getElementById("subathonCard")
-          .classList.toggle("expanded");
+          document
+            .getElementById(
+              "subathonCard"
+            )
+            .classList.toggle(
+              "expanded"
+            );
 
-      });
+        }
+      );
 
 
     /*
@@ -1632,36 +3468,56 @@
      */
 
     const activityTabs =
-      document.querySelectorAll(".activity-tab");
+      document.querySelectorAll(
+        ".activity-tab"
+      );
+
 
     activityTabs.forEach(tab => {
 
-      tab.addEventListener("click", () => {
+      tab.addEventListener(
+        "click",
+        () => {
 
-        activityTabs.forEach(item => {
-          item.classList.remove("active");
-        });
+          activityTabs.forEach(item => {
 
-        tab.classList.add("active");
+            item.classList.remove(
+              "active"
+            );
 
-        const target =
-          tab.dataset.feed;
+          });
 
-        document
-          .getElementById("activityFeed")
-          .classList.toggle(
-            "active",
-            target === "activity"
+
+          tab.classList.add(
+            "active"
           );
 
-        document
-          .getElementById("chatFeed")
-          .classList.toggle(
-            "active",
-            target === "chat"
-          );
 
-      });
+          const target =
+            tab.dataset.feed;
+
+
+          document
+            .getElementById(
+              "activityFeed"
+            )
+            .classList.toggle(
+              "active",
+              target === "activity"
+            );
+
+
+          document
+            .getElementById(
+              "chatFeed"
+            )
+            .classList.toggle(
+              "active",
+              target === "chat"
+            );
+
+        }
+      );
 
     });
 
@@ -1673,14 +3529,23 @@
      */
 
     document
-      .getElementById("activityCollapse")
-      .addEventListener("click", () => {
+      .getElementById(
+        "activityCollapse"
+      )
+      .addEventListener(
+        "click",
+        () => {
 
-        document
-          .querySelector(".activity")
-          .classList.toggle("collapsed");
+          document
+            .querySelector(
+              ".activity"
+            )
+            .classList.toggle(
+              "collapsed"
+            );
 
-      });
+        }
+      );
 
 
     /*
@@ -1690,20 +3555,34 @@
      */
 
     document
-      .querySelectorAll(".podium-type")
+      .querySelectorAll(
+        ".podium-type"
+      )
       .forEach(button => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener(
+          "click",
+          () => {
 
-          document
-            .querySelectorAll(".podium-type")
-            .forEach(item => {
-              item.classList.remove("active");
-            });
+            document
+              .querySelectorAll(
+                ".podium-type"
+              )
+              .forEach(item => {
 
-          button.classList.add("active");
+                item.classList.remove(
+                  "active"
+                );
 
-        });
+              });
+
+
+            button.classList.add(
+              "active"
+            );
+
+          }
+        );
 
       });
 
@@ -1714,29 +3593,50 @@
      * ==========================================
      */
 
-    function showTimerAdded(seconds) {
+    function showTimerAdded(
+      seconds
+    ) {
 
       const timerAdd =
-        document.getElementById("timerAdd");
+        document.getElementById(
+          "timerAdd"
+        );
+
 
       timerAdd.textContent =
         `+${formatLongTime(seconds)}`;
 
-      timerAdd.classList.remove("show");
+
+      timerAdd.classList.remove(
+        "show"
+      );
+
 
       void timerAdd.offsetWidth;
 
-      timerAdd.classList.add("show");
+
+      timerAdd.classList.add(
+        "show"
+      );
 
 
       const card =
-        document.getElementById("timerCard");
+        document.getElementById(
+          "timerCard"
+        );
 
-      card.classList.remove("time-bump");
+
+      card.classList.remove(
+        "time-bump"
+      );
+
 
       void card.offsetWidth;
 
-      card.classList.add("time-bump");
+
+      card.classList.add(
+        "time-bump"
+      );
 
     }
 
@@ -1748,46 +3648,45 @@
      */
 
     updateTimer();
+
     updateGoal();
+
     updateStats();
+
+    updateRoadmapStatus();
+
+    refreshRoadmap();
 
 
     /*
      * ==========================================
      * STREAM STATUS
-     *
-     * The page remains usable without an API.
-     * Replace this with your backend/API when
-     * you connect real Twitch data.
      * ==========================================
      */
 
     document.getElementById(
       "streamStatusText"
-    ).textContent = "LIVE ON TWITCH";
+    ).textContent =
+      "LIVE ON TWITCH";
 
 
     /*
      * ==========================================
      * TWITCH EMBED
-     *
-     * GitHub Pages:
-     *
-     * Change "localhost" below to your actual
-     * website hostname.
      * ==========================================
      */
 
     const twitchPlayer =
-      document.getElementById("twitchPlayer");
+      document.getElementById(
+        "twitchPlayer"
+      );
+
 
     const twitchChat =
-      document.querySelector("#chatFeed iframe");
+      document.querySelector(
+        "#chatFeed iframe"
+      );
 
-
-    /*
-     * GitHub Pages hostname support
-     */
 
     const host =
       window.location.hostname;
@@ -1802,6 +3701,7 @@
       twitchPlayer.src =
         `https://player.twitch.tv/?channel=oiiinkyt&parent=${encodeURIComponent(host)}`;
 
+
       twitchChat.src =
         `https://www.twitch.tv/embed/oiiinkyt/chat?parent=${encodeURIComponent(host)}`;
 
@@ -1810,20 +3710,21 @@
 
     /*
      * ==========================================
-     * PREVENT EMPTY SUPPORTER BAR
-     * ==========================================
-     *
-     * Top Supporters is intentionally present
-     * in the HTML itself. JavaScript does NOT
-     * hide or wait for it.
+     * TOP SUPPORTERS
      * ==========================================
      */
 
     const supporters =
-      document.querySelector(".top-supporters");
+      document.querySelector(
+        ".top-supporters"
+      );
+
 
     if (supporters) {
-      supporters.style.display = "block";
+
+      supporters.style.display =
+        "block";
+
     }
 
   </script>
