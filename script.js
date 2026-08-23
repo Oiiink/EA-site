@@ -13,8 +13,12 @@ let state = {
   timeRemaining: BASE_SECONDS,
   totalSubs: 0,
   totalBits: 0,
+  totalSubTimeAdded: 0,
+  totalBitTimeAdded: 0,
   activity: [],
   chat: [],
+  timeHistory: [],
+
   customLeaderboard: {
     2026: { subs: [], bits: [] },
     2025: { subs: [], bits: [] }
@@ -240,8 +244,23 @@ function simulate(type, amount, user) {
 
   state.timeRemaining += seconds;
 
-  if (type === "sub") state.totalSubs += amount;
-  else state.totalBits += amount;
+  if (type === "sub") {
+    state.totalSubs += amount;
+    state.totalSubTimeAdded += seconds;
+  } else {
+    state.totalBits += amount;
+    state.totalBitTimeAdded += seconds;
+  }
+
+  state.timeHistory.unshift({
+    id: Date.now() + Math.random(),
+    type,
+    user,
+    amount,
+    seconds,
+    timestamp: Date.now()
+  });
+  state.timeHistory = state.timeHistory.slice(0, 20);
 
   addActivity(type, user, amount, seconds);
   addToLeaderboard(type, user, amount);
@@ -303,12 +322,16 @@ function renderActivity() {
       ? item.amount === 1 ? "1 Sub" : `${item.amount} Gifted Subs`
       : `${formatNumber(item.amount)} Bits`;
 
+    const isBig = (item.type === "bits" && item.amount >= 1000) || (item.type === "sub" && item.amount >= 5);
+    const timeAddedText = formatAddedTime(item.seconds);
+
     return `
-      <div class="activity-item ${item.type}">
+      <div class="activity-item ${item.type}${isBig ? " big-donation" : ""}">
         <div class="activity-avatar">${avatar}</div>
         <div class="activity-content">
           <div class="activity-user">${escapeHtml(item.user)}</div>
           <span class="activity-text">${escapeHtml(item.text)} • <strong>${amountText}</strong></span>
+          <span class="donation-time">+ <strong>${timeAddedText}</strong> added to timer</span>
         </div>
         <div class="activity-time">${relativeTime(item.timestamp)}</div>
       </div>
@@ -386,6 +409,112 @@ function mergeLeaderboard(year, type) {
   return merged.sort((a, b) => b.amount - a.amount);
 }
 
+let podiumType = "subs";
+let podiumPage = 0;
+let podiumInterval = null;
+
+function formatAddedTime(seconds) {
+  const s = Math.max(0, Math.floor(seconds));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+
+  if (h > 0) return `${h}h ${pad(m)}m`;
+  if (m > 0) return `${m}m ${pad(sec)}s`;
+  return `${sec}s`;
+}
+
+function renderTimeAdded() {
+  const sub = state.totalSubTimeAdded || 0;
+  const bits = state.totalBitTimeAdded || 0;
+
+  $("#subTimeAdded").textContent = formatAddedTime(sub);
+  $("#bitTimeAdded").textContent = formatAddedTime(bits);
+  $("#totalTimeAdded").textContent = formatAddedTime(sub + bits);
+  $("#timeAddedCount").textContent = `${(state.timeHistory || []).length} events`;
+
+  const history = $("#timeHistory");
+  if (!state.timeHistory?.length) {
+    history.innerHTML = `<div class="time-history-empty">No support events yet. Use Simulation below to add some.</div>`;
+    return;
+  }
+
+  history.innerHTML = state.timeHistory.slice(0, 8).map(item => `
+    <div class="time-history-row">
+      <div class="time-history-icon">${item.type === "sub" ? "🎁" : "💜"}</div>
+      <div>
+        <div class="time-history-user">${escapeHtml(item.user)}</div>
+        <div class="time-history-detail">${item.type === "sub" ? `${item.amount} gifted sub${item.amount === 1 ? "" : "s"}` : `${formatNumber(item.amount)} Bits`}</div>
+      </div>
+      <div class="time-history-detail">${relativeTime(item.timestamp)}</div>
+      <div class="time-history-added ${item.type === "bits" ? "bits" : ""}">+${formatAddedTime(item.seconds)}</div>
+    </div>
+  `).join("");
+}
+
+function renderRoadmap() {
+  const roadmap = $("#roadmap");
+  roadmap.innerHTML = CONFIG.goals.map((goal, index) => {
+    const reached = state.totalSubs >= goal.amount;
+    const previous = index === 0 ? 0 : CONFIG.goals[index - 1].amount;
+    const current = state.totalSubs >= previous && state.totalSubs < goal.amount;
+    return `
+      <div class="roadmap-step ${reached ? "reached" : ""} ${current ? "current" : ""}">
+        <div class="roadmap-node">${reached ? "✓" : goal.icon}</div>
+        <div class="roadmap-amount">${goal.amount} GIFTED</div>
+        <div class="roadmap-name">${escapeHtml(goal.name)}</div>
+        <div class="roadmap-status">${reached ? "Unlocked" : current ? "Next Goal" : "Locked"}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderPodium() {
+  const data = mergeLeaderboard(2026, podiumType).slice(0, 3);
+  const ordered = [data[1], data[0], data[2]];
+  const classes = ["second", "first", "third"];
+
+  $("#podiumTitle").textContent = podiumType === "bits" ? "Bits" : "Gifted Subs";
+
+  $("#podium").innerHTML = [0, 1, 2].map((i) => {
+    const item = ordered[i];
+    if (!item) {
+      return `
+        <div class="podium-place ${classes[i]}">
+          <div class="podium-avatar">?</div>
+          <div class="podium-name">Waiting...</div>
+          <div class="podium-amount">0</div>
+          <div class="podium-block"><div class="podium-rank">#${i === 0 ? 2 : i === 1 ? 1 : 3}</div></div>
+        </div>`;
+    }
+
+    const rank = i === 0 ? 2 : i === 1 ? 1 : 3;
+    return `
+      <div class="podium-place ${classes[i]}">
+        ${rank === 1 ? '<div class="podium-crown">♛</div>' : ""}
+        <div class="podium-avatar">${escapeHtml(item.name.slice(0, 1).toUpperCase())}</div>
+        <div class="podium-name">${escapeHtml(item.name)}</div>
+        <div class="podium-amount">${formatNumber(item.amount)} ${podiumType === "bits" ? "Bits" : "Subs"}</div>
+        <div class="podium-block"><div class="podium-rank">#${rank}</div></div>
+      </div>`;
+  }).join("");
+
+  $("#podiumDots").innerHTML = `
+    <span class="podium-dot ${podiumType === "subs" ? "active" : ""}"></span>
+    <span class="podium-dot ${podiumType === "bits" ? "active" : ""}"></span>
+  `;
+}
+
+function updateStreamStatus() {
+  // GitHub Pages cannot safely query Twitch's authenticated Helix API directly.
+  // The UI is ready for a backend later. For now, the embedded player is the source of truth.
+  const online = true;
+  $("#streamStatusTitle").textContent = online ? "OiiinkYT" : "OiiinkYT";
+  $("#streamStatusText").textContent = online
+    ? "Twitch player ready • live status follows Twitch"
+    : "Currently offline";
+}
+
 function render() {
   updateTimer();
   updateGoal();
@@ -393,6 +522,9 @@ function render() {
   renderActivity();
   renderLeaderboard();
   renderSupporterTicker();
+  renderTimeAdded();
+  renderRoadmap();
+  renderPodium();
 }
 
 function relativeTime(timestamp) {
@@ -469,6 +601,15 @@ function addFakeChatMessage() {
 
 
 function setupEvents() {
+  $$(".podium-type").forEach(btn => {
+    btn.addEventListener("click", () => {
+      podiumType = btn.dataset.podium;
+      $$(".podium-type").forEach(x => x.classList.toggle("active", x === btn));
+      podiumPage = 0;
+      renderPodium();
+    });
+  });
+
   $$(".year-tab").forEach(btn => {
     btn.addEventListener("click", () => {
       selectedYear = Number(btn.dataset.year);
@@ -506,8 +647,12 @@ function setupEvents() {
       timeRemaining: BASE_SECONDS,
       totalSubs: 0,
       totalBits: 0,
+      totalSubTimeAdded: 0,
+      totalBitTimeAdded: 0,
       activity: [],
       chat: [],
+      timeHistory: [],
+
       customLeaderboard: {
         2026: { subs: [], bits: [] },
         2025: { subs: [], bits: [] }
@@ -530,6 +675,13 @@ function setupEvents() {
 loadState();
 setupEvents();
 render();
+updateStreamStatus();
+
+podiumInterval = setInterval(() => {
+  podiumType = podiumType === "subs" ? "bits" : "subs";
+  $$(".podium-type").forEach(x => x.classList.toggle("active", x.dataset.podium === podiumType));
+  renderPodium();
+}, 7000);
 
 setInterval(() => {
   if (state.timeRemaining > 0) {

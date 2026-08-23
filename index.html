@@ -100,27 +100,71 @@
         </div>
 
         <div class="activity-column">
-          <div class="top-supporters">
-            <div class="supporter-track" id="supporterTrack"></div>
+          <div class="stream-status-card">
+            <div class="stream-status-main">
+              <div class="stream-status-thumb">
+                <img src="https://static-cdn.jtvnw.net/previews-ttv/live_user_oiiinkyt-320x180.jpg" alt="Oiiink stream preview">
+                <span class="stream-status-live-dot"></span>
+              </div>
+              <div class="stream-status-info">
+                <div class="stream-status-label"><span></span> STREAM STATUS</div>
+                <strong id="streamStatusTitle">OiiinkYT</strong>
+                <span id="streamStatusText">Checking Twitch status...</span>
+              </div>
+              <a class="stream-status-watch" href="https://twitch.tv/oiiinkyt" target="_blank" rel="noopener">WATCH ↗</a>
+            </div>
           </div>
 
           <div class="subathon-card" id="subathonCard">
-            <div class="subathon-main">
-              <div class="subathon-left">
-                <div class="subathon-title">🎁 SUBATHON</div>
-                <div class="subathon-level" id="subathonLevel">LEVEL 1</div>
-              </div>
-              <div class="subathon-right">
-                <div class="subathon-timer" id="subathonTimer">0:00</div>
-                <div class="subathon-percent" id="subathonPercent">0%</div>
+            <div class="subathon-topline">
+              <div class="subathon-brand">
+                <span class="subathon-gift">🎁</span>
+                <div>
+                  <div class="subathon-title">SUBATHON</div>
+                  <div class="subathon-level" id="subathonLevel">LEVEL 1</div>
+                </div>
               </div>
               <button class="subathon-dropdown" id="subathonDropdown" aria-label="Toggle Subathon details">⌄</button>
             </div>
-            <div class="subathon-progress"><div class="subathon-progress-bar" id="subathonProgress"></div></div>
-            <div class="subathon-details" id="subathonDetails">
-              <span><strong id="subathonNeeded">10</strong> gifted subs until the next goal</span>
-              <span>Next: <strong id="subathonGoalName">Face Cam</strong></span>
+
+            <div class="subathon-goal-row">
+              <div>
+                <span class="subathon-next-label">NEXT GOAL</span>
+                <strong id="subathonGoalName">Face Cam</strong>
+              </div>
+              <div class="subathon-goal-number"><strong id="subathonNeeded">10</strong> <span>more</span></div>
             </div>
+
+            <div class="subathon-progress-wrap">
+              <div class="subathon-progress">
+                <div class="subathon-progress-bar" id="subathonProgress"></div>
+                <div class="subathon-progress-sheen"></div>
+              </div>
+              <div class="subathon-progress-meta">
+                <span id="subathonCount">0 / 10 gifted</span>
+                <strong id="subathonPercent">0%</strong>
+              </div>
+            </div>
+
+            <div class="subathon-details" id="subathonDetails">
+              <span>Next reward: <strong id="subathonReward">Face Cam</strong></span>
+              <span>Timer: <strong id="subathonTimer">0:00</strong></span>
+            </div>
+          </div>
+
+          <div class="podium-card">
+            <div class="podium-header">
+              <div>
+                <div class="eyebrow">TOP SUPPORTERS</div>
+                <h3 id="podiumTitle">Gifted Subs</h3>
+              </div>
+              <div class="podium-switch">
+                <button class="podium-type active" data-podium="subs">🎁 Subs</button>
+                <button class="podium-type" data-podium="bits">💜 Bits</button>
+              </div>
+            </div>
+            <div class="podium" id="podium"></div>
+            <div class="podium-dots" id="podiumDots"></div>
           </div>
 
           <div class="activity" id="activityPanel">
@@ -165,6 +209,45 @@
           <p>At 35 gifted subs, the IQ test begins.</p>
           <div class="perk-status" id="perkStatus35">Locked</div>
         </article>
+      </div>
+    </section>
+
+    <section class="section roadmap-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">WHAT'S NEXT</div><h2>Subathon Roadmap</h2></div>
+        <p>Every gifted sub moves us closer to the next unlock.</p>
+      </div>
+      <div class="roadmap-card" id="roadmap"></div>
+    </section>
+
+    <section class="section stats-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">THE GRIND</div><h2>Time Added</h2></div>
+        <p>How much longer the community has kept the stream alive.</p>
+      </div>
+      <div class="time-stats">
+        <div class="time-stat-card">
+          <span class="time-stat-icon">🎁</span>
+          <span class="time-stat-label">FROM SUBS</span>
+          <strong id="subTimeAdded">0:00</strong>
+        </div>
+        <div class="time-stat-card">
+          <span class="time-stat-icon">💜</span>
+          <span class="time-stat-label">FROM BITS</span>
+          <strong id="bitTimeAdded">0:00</strong>
+        </div>
+        <div class="time-stat-card featured">
+          <span class="time-stat-icon">⏱</span>
+          <span class="time-stat-label">TOTAL TIME ADDED</span>
+          <strong id="totalTimeAdded">0:00</strong>
+        </div>
+      </div>
+      <div class="time-history-card">
+        <div class="time-history-header">
+          <strong>Recent time added</strong>
+          <span id="timeAddedCount">0 events</span>
+        </div>
+        <div id="timeHistory"></div>
       </div>
     </section>
 
