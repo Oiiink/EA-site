@@ -1,253 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <title>Oiiink — Subathon</title>
+  <meta name="description" content="Oiiink's live Minecraft subathon.">
 
-  <title>Oiiink Subathon</title>
-
-  <meta
-    name="description"
-    content="Oiiink's Subathon tracker — live timer, goals, supporters, activity and Twitch chat."
-  />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet"
-  />
-
-  <link rel="stylesheet" href="style.css" />
-
-  <script src="config.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- =========================================================
-       BACKGROUND
-  ========================================================== -->
-
-  <div class="background-effects">
-    <div class="background-grid"></div>
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
-  </div>
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
 
   <div id="effects"></div>
 
-
-  <!-- =========================================================
-       NAVBAR
-  ========================================================== -->
-
+  <!-- HEADER -->
   <header class="site-header">
 
-    <div class="header-inner">
+    <a href="#" class="brand">
+      <span class="brand-mark">◆</span>
+      OIIINK<span>YT</span>
+    </a>
 
-      <a
-        href="#top"
-        class="brand"
-      >
-        <div class="brand-icon">
-          O
-        </div>
+    <nav class="nav-links">
+      <a href="#stream">Stream</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#activity">Activity</a>
+      <a href="#stats">Stats</a>
+    </nav>
 
-        <div class="brand-text">
-          <strong>OIIINK</strong>
-          <span>SUBATHON</span>
-        </div>
-      </a>
-
-
-      <nav class="main-nav">
-
-        <a
-          href="#live"
-          class="nav-link active"
-        >
-          Live
-        </a>
-
-        <a
-          href="#roadmap"
-          class="nav-link"
-        >
-          Roadmap
-        </a>
-
-        <a
-          href="#supporters"
-          class="nav-link"
-        >
-          Supporters
-        </a>
-
-        <a
-          href="#stats"
-          class="nav-link"
-        >
-          Stats
-        </a>
-
-      </nav>
-
-
-      <a
-        href="https://twitch.tv/oiiinkyt"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="twitch-button"
-      >
-        <span class="twitch-icon">◉</span>
-        Watch on Twitch
-      </a>
-
-    </div>
+    <a
+      class="twitch-button"
+      href="https://twitch.tv/oiiinkyt"
+      target="_blank"
+      rel="noopener"
+    >
+      <span class="live-dot"></span>
+      WATCH ON TWITCH
+    </a>
 
   </header>
 
 
-  <!-- =========================================================
-       MAIN
-  ========================================================== -->
+  <main>
 
-  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+
+      <div class="eyebrow">LIVE SUBATHON</div>
+
+      <h1>
+        HOW LONG<br>
+        <span>CAN WE GO?</span>
+      </h1>
+
+      <p>
+        Every sub, resub, gift and bit pushes the timer forward.
+        Follow the live progress and see what the community unlocks.
+      </p>
+
+      <div class="stream-status">
+        <span class="status-dot"></span>
+        <span id="streamStatusText">CHECKING STREAM STATUS...</span>
+      </div>
+
+    </section>
 
 
-    <!-- =======================================================
-         HERO / LIVE AREA
-    ======================================================== -->
+    <!-- STREAM -->
+    <section id="stream">
 
-    <section
-      id="live"
-      class="hero-section"
-    >
+      <div class="stream-layout">
 
-      <div class="container">
+        <!-- LEFT -->
+        <div class="stream-card">
 
-        <div class="hero-heading">
+          <div class="section-label">
+            <span>LIVE STREAM</span>
 
-          <div>
-            <div class="eyebrow">
-              <span class="live-dot"></span>
-              OIIINK SUBATHON
-            </div>
-
-            <h1>
-              Keep the timer
-              <span>alive.</span>
-            </h1>
-
-            <p>
-              Every sub and Bit pushes the timer forward.
-              Reach the milestones, keep the timer alive,
-              and see who's carrying the Subathon.
-            </p>
+            <a
+              href="https://twitch.tv/oiiinkyt"
+              target="_blank"
+              rel="noopener"
+            >
+              OPEN TWITCH ↗
+            </a>
           </div>
 
+          <div class="twitch-frame-wrap">
 
-          <div class="hero-status">
-
-            <span class="status-dot"></span>
-
-            <div>
-              <strong id="streamStatusTitle">
-                OiiinkYT
-              </strong>
-
-              <small id="streamStatusText">
-                Checking stream status...
-              </small>
-            </div>
+            <iframe
+              id="twitchPlayer"
+              src="https://player.twitch.tv/?channel=oiiinkyt&parent=localhost&parent=127.0.0.1"
+              allowfullscreen
+              scrolling="no"
+              frameborder="0">
+            </iframe>
 
           </div>
 
         </div>
 
 
-        <!-- ===================================================
-             MAIN LIVE GRID
-        ==================================================== -->
+        <!-- RIGHT -->
+        <div class="right-column">
 
-        <div class="live-grid">
+          <!-- STREAM STATUS -->
+          <div class="stream-status-card">
 
+            <div class="stream-status-main">
 
-          <!-- =================================================
-               STREAM
-          ================================================== -->
+              <div class="stream-status-thumb">
 
-          <div class="stream-card panel">
+                <img
+                  id="streamThumbnail"
+                  src="https://static-cdn.jtvnw.net/previews-ttv/live_user_oiiinkyt-320x180.jpg"
+                  alt="Oiiink stream thumbnail"
+                >
 
-            <div class="panel-header">
+                <span class="stream-status-live-dot"></span>
 
-              <div>
-                <span class="panel-eyebrow">
-                  LIVE STREAM
+              </div>
+
+              <div class="stream-status-info">
+
+                <div class="stream-status-label">
+                  <span></span>
+                  STREAM
+                </div>
+
+                <strong id="streamTitle">
+                  Oiiink
+                </strong>
+
+                <span id="streamGame">
+                  Minecraft
                 </span>
 
-                <h2>
-                  OiiinkYT
-                </h2>
               </div>
-
-              <div class="live-badge">
-                <span></span>
-                LIVE
-              </div>
-
-            </div>
-
-
-            <div class="stream-preview">
-
-              <iframe
-                src="https://player.twitch.tv/?channel=oiiinkyt&parent=oiiink.github.io"
-                frameborder="0"
-                allowfullscreen="true"
-                scrolling="no"
-                height="100%"
-                width="100%"
-                title="Oiiink Twitch Stream"
-              ></iframe>
-
-            </div>
-
-
-            <div class="stream-footer">
-
-              <div class="stream-channel">
-
-                <div class="channel-avatar">
-                  O
-                </div>
-
-                <div>
-                  <strong>
-                    OiiinkYT
-                  </strong>
-
-                  <span>
-                    Minecraft
-                  </span>
-                </div>
-
-              </div>
-
 
               <a
+                class="stream-status-watch"
                 href="https://twitch.tv/oiiinkyt"
                 target="_blank"
-                rel="noopener noreferrer"
-                class="watch-button"
+                rel="noopener"
               >
-                Watch Stream
+                WATCH
               </a>
 
             </div>
@@ -255,111 +156,86 @@
           </div>
 
 
-          <!-- =================================================
-               TIMER
-          ================================================== -->
+          <!-- SUBATHON -->
+          <div class="subathon-card" id="subathonCard">
 
-          <div
-            id="subathonCard"
-            class="timer-card panel"
-          >
+            <div class="subathon-topline">
 
-            <div class="timer-header">
+              <div class="subathon-brand">
 
-              <div>
+                <div class="subathon-gift">🎁</div>
 
-                <span class="panel-eyebrow">
-                  SUBATHON TIMER
-                </span>
+                <div>
+                  <div class="subathon-title">
+                    SUBATHON
+                  </div>
 
-                <h2>
-                  Time Remaining
-                </h2>
+                  <div class="subathon-level">
+                    LIVE TIMER
+                  </div>
+                </div>
 
               </div>
 
-
               <button
-                id="subathonDropdown"
-                class="dropdown-button"
-                type="button"
-                aria-label="Toggle Subathon information"
+                class="subathon-dropdown"
+                id="subathonToggle"
+                aria-label="Toggle subathon details"
               >
-                <span></span>
-                <span></span>
-                <span></span>
+                <span>⌄</span>
               </button>
 
             </div>
 
 
-            <div
-              id="timerDisplay"
-              class="timer-display"
-            >
-
-              <div class="timer-unit">
-                <strong id="days">00</strong>
-                <span>DAYS</span>
-              </div>
-
-              <div class="timer-separator">
-                :
-              </div>
-
-              <div class="timer-unit">
-                <strong id="hours">00</strong>
-                <span>HRS</span>
-              </div>
-
-              <div class="timer-separator">
-                :
-              </div>
-
-              <div class="timer-unit">
-                <strong id="minutes">00</strong>
-                <span>MIN</span>
-              </div>
-
-              <div class="timer-separator">
-                :
-              </div>
-
-              <div class="timer-unit seconds">
-                <strong id="seconds">00</strong>
-                <span>SEC</span>
-              </div>
-
-            </div>
-
-
-            <div
-              id="timerAdd"
-              class="timer-add"
-            >
-              +0:00
-            </div>
-
-
-            <!-- Timer alert -->
-
-            <div
-              id="subathonAlert"
-              class="subathon-alert"
-            >
-
-              <div class="alert-icon">
-                🔥
-              </div>
+            <div class="subathon-goal-row">
 
               <div>
+                <span class="subathon-next-label">
+                  NEXT MILESTONE
+                </span>
 
-                <strong id="alertTitle">
-                  Loading Subathon...
+                <strong id="subathonNextGoal">
+                  24 HOURS
                 </strong>
+              </div>
 
-                <span id="alertText">
-                  The community controls how long we go.
+              <div class="subathon-goal-number">
+                <strong id="subathonProgressCount">
+                  0
+                </strong>
+                /
+                <span id="subathonGoalCount">
+                  100
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="subathon-progress-wrap">
+
+              <div class="subathon-progress">
+
+                <div
+                  class="subathon-progress-bar"
+                  id="subathonProgressBar"
+                  style="width:0%"
+                ></div>
+
+                <div class="subathon-progress-sheen"></div>
+
+              </div>
+
+              <div class="subathon-progress-meta">
+
+                <span>
+                  <strong id="subathonPercent">0%</strong>
+                  complete
+                </span>
+
+                <span id="subathonRemaining">
+                  100 remaining
                 </span>
 
               </div>
@@ -367,29 +243,127 @@
             </div>
 
 
-            <!-- Current goal -->
+            <div class="subathon-details">
 
-            <div class="timer-goal">
+              <span>
+                Total added:
+                <strong id="totalTimeAdded">0:00:00</strong>
+              </span>
 
-              <div class="goal-heading">
+              <span>
+                Events:
+                <strong id="totalEvents">0</strong>
+              </span>
 
-                <div>
+            </div>
 
-                  <span class="goal-label">
-                    NEXT SUB GOAL
-                  </span>
+          </div>
 
-                  <strong id="goalName">
-                    Loading...
-                  </strong>
+
+          <!-- TIMER -->
+          <div class="timer-card" id="timerCard">
+
+            <div class="card-heading">
+
+              <div>
+
+                <div class="card-kicker">
+                  TIME REMAINING
+                </div>
+
+                <div class="timer-live">
+                  <span></span>
+                  SUBATHON TIMER
+                </div>
+
+              </div>
+
+              <div
+                class="timer-add"
+                id="timerAdd"
+              >
+                +0:00
+              </div>
+
+            </div>
+
+
+            <div class="timer">
+
+              <div class="time-box">
+                <div
+                  class="time-number"
+                  id="hours"
+                >
+                  12
+                </div>
+
+                <div class="time-label">
+                  Hours
+                </div>
+              </div>
+
+              <div class="time-divider">:</div>
+
+              <div class="time-box">
+                <div
+                  class="time-number"
+                  id="minutes"
+                >
+                  00
+                </div>
+
+                <div class="time-label">
+                  Minutes
+                </div>
+              </div>
+
+              <div class="time-divider">:</div>
+
+              <div class="time-box">
+                <div
+                  class="time-number"
+                  id="seconds"
+                >
+                  00
+                </div>
+
+                <div class="time-label">
+                  Seconds
+                </div>
+              </div>
+
+            </div>
+
+
+            <!-- GOAL -->
+            <div class="goal">
+
+              <div class="goal-top">
+
+                <div class="goal-title">
+
+                  <div class="gift-icon">
+                    🎁
+                  </div>
+
+                  <div>
+                    <strong>
+                      Subathon Goal
+                    </strong>
+
+                    <small>
+                      Next milestone
+                    </small>
+                  </div>
 
                 </div>
 
                 <div
-                  id="goalCount"
                   class="goal-count"
+                  id="goalCount"
                 >
-                  0 / 0
+                  0 / 100
                 </div>
 
               </div>
@@ -398,217 +372,29 @@
               <div class="goal-bar">
 
                 <div
+                  class="goal-progress"
                   id="goalProgress"
-                  class="goal-bar-fill"
-                  style="width: 0%"
+                  style="width:0%"
                 ></div>
 
               </div>
 
 
-              <div class="goal-footer">
+              <div class="goal-bottom">
 
                 <span>
-                  <span id="goalNeeded">0</span>
-                  more gifted subs
+                  <strong id="goalPercent">0%</strong>
+                  complete
                 </span>
 
                 <span>
-                  <span id="subathonPercent">0%</span>
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <!-- Expanded Subathon information -->
-
-            <div class="subathon-expanded">
-
-              <div class="expanded-goal">
-
-                <div class="expanded-icon">
-                  🎁
-                </div>
-
-                <div>
-
-                  <span>
-                    SUBATHON
-                  </span>
-
-                  <strong
-                    id="subathonGoalName"
-                  >
-                    Loading...
+                  <strong id="goalRemaining">
+                    100
                   </strong>
-
-                </div>
-
-              </div>
-
-
-              <div class="expanded-level">
-
-                <span
-                  id="subathonLevel"
-                >
-                  LEVEL 1
-                </span>
-
-                <strong
-                  id="subathonPercent"
-                >
-                  0%
-                </strong>
-
-              </div>
-
-
-              <div class="subathon-progress">
-
-                <div
-                  id="subathonProgress"
-                  style="width: 0%"
-                ></div>
-
-              </div>
-
-
-              <div class="expanded-bottom">
-
-                <span>
-                  <strong id="subathonNeeded">
-                    0
-                  </strong>
-                  more needed
-                </span>
-
-                <span id="subathonCount">
-                  0 / 0 gifted
+                  to go
                 </span>
 
               </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- =================================================
-               SUPPORTERS + ACTIVITY
-          ================================================== -->
-
-          <div
-            id="activityPanel"
-            class="activity-panel panel"
-          >
-
-            <div class="activity-header">
-
-              <div>
-
-                <span class="panel-eyebrow">
-                  COMMUNITY
-                </span>
-
-                <h2 id="activityTitle">
-                  Live Activity
-                </h2>
-
-              </div>
-
-
-              <div class="activity-header-right">
-
-                <div class="activity-live">
-                  <span></span>
-                  LIVE
-                </div>
-
-                <button
-                  id="activityDropdown"
-                  class="dropdown-button"
-                  type="button"
-                  aria-label="Toggle activity"
-                >
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </button>
-
-              </div>
-
-            </div>
-
-
-            <!-- Activity tabs -->
-
-            <div class="activity-tabs">
-
-              <button
-                class="activity-tab active"
-                data-feed="activity"
-                type="button"
-              >
-                Live Activity
-              </button>
-
-              <button
-                class="activity-tab"
-                data-feed="chat"
-                type="button"
-              >
-                Twitch Chat
-              </button>
-
-            </div>
-
-
-            <!-- Activity feed -->
-
-            <div
-              id="activityFeed"
-              class="activity-feed active"
-            >
-
-              <div class="activity-item">
-
-                <div class="activity-avatar">
-                  ♥
-                </div>
-
-                <div class="activity-content">
-
-                  <div class="activity-user">
-                    Waiting for activity...
-                  </div>
-
-                  <span class="activity-text">
-                    Subs and Bits will appear here.
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- Twitch chat -->
-
-            <div
-              id="twitchChatPanel"
-              class="twitch-chat-panel"
-            >
-
-              <iframe
-                src="https://www.twitch.tv/embed/oiiinkyt/chat?parent=oiiink.github.io&darkpopout"
-                frameborder="0"
-                scrolling="yes"
-                title="Oiiink Twitch Chat"
-              ></iframe>
 
             </div>
 
@@ -621,96 +407,164 @@
     </section>
 
 
-    <!-- =======================================================
-         TOP SUPPORTERS
-    ======================================================== -->
+    <!-- TOP SUPPORTERS -->
+    <section class="section" id="supporters">
 
-    <section
-      id="supporters"
-      class="section supporters-section"
-    >
+      <div class="section-heading">
 
-      <div class="container">
-
-
-        <div class="section-heading">
-
-          <div>
-
-            <span class="panel-eyebrow">
-              COMMUNITY
-            </span>
-
-            <h2>
-              Top Supporters
-            </h2>
-
-            <p>
-              The people keeping the Subathon alive.
-            </p>
-
+        <div>
+          <div class="eyebrow">
+            COMMUNITY
           </div>
 
+          <h2>
+            Top Supporters
+          </h2>
+        </div>
 
-          <div class="podium-controls">
+        <p>
+          The people keeping the timer alive.
+        </p>
 
-            <button
-              class="podium-type active"
-              data-podium="subs"
-              type="button"
-            >
-              Gifted Subs
-            </button>
+      </div>
 
-            <button
-              class="podium-type"
-              data-podium="bits"
-              type="button"
-            >
-              Bits
-            </button>
+
+      <!-- IMPORTANT:
+           This is intentionally rendered directly in HTML.
+           It does NOT wait for JavaScript/API data to appear.
+      -->
+
+      <div class="activity-column">
+
+        <div class="top-supporters">
+
+          <div class="supporter-track">
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#1</span>
+              <span class="supporter-name">Oiiink</span>
+              <span class="supporter-value">100 subs</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#2</span>
+              <span class="supporter-name">Community</span>
+              <span class="supporter-value">75 subs</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item bits">
+              <span class="supporter-rank">#3</span>
+              <span class="supporter-name">Supporter</span>
+              <span class="supporter-value">5,000 bits</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#4</span>
+              <span class="supporter-name">Supporter</span>
+              <span class="supporter-value">50 subs</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <!-- duplicated for seamless marquee -->
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#1</span>
+              <span class="supporter-name">Oiiink</span>
+              <span class="supporter-value">100 subs</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#2</span>
+              <span class="supporter-name">Community</span>
+              <span class="supporter-value">75 subs</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item bits">
+              <span class="supporter-rank">#3</span>
+              <span class="supporter-name">Supporter</span>
+              <span class="supporter-value">5,000 bits</span>
+            </div>
+
+            <span class="supporter-separator">•</span>
+
+            <div class="supporter-item">
+              <span class="supporter-rank">#4</span>
+              <span class="supporter-name">Supporter</span>
+              <span class="supporter-value">50 subs</span>
+            </div>
 
           </div>
 
         </div>
 
 
-        <!-- Podium -->
+        <div class="podium-card">
 
-        <div class="podium-wrapper">
+          <div class="podium-header">
 
-          <div
-            id="podiumTitle"
-            class="podium-title"
-          >
-            Gifted Subs
+            <div>
+
+              <div class="card-kicker">
+                LEADERBOARD
+              </div>
+
+              <h3>
+                Top Supporters
+              </h3>
+
+            </div>
+
+            <div class="podium-switch">
+
+              <button
+                class="podium-type active"
+                data-podium-type="subs"
+              >
+                SUBS
+              </button>
+
+              <button
+                class="podium-type"
+                data-podium-type="bits"
+              >
+                BITS
+              </button>
+
+            </div>
+
           </div>
 
 
-          <div
-            id="podium"
-            class="podium"
-          >
-
-            <!-- Filled by script.js -->
+          <div class="podium">
 
             <div class="podium-place second">
 
               <div class="podium-avatar">
-                —
+                C
               </div>
 
               <div class="podium-name">
-                Waiting...
+                Community
               </div>
 
               <div class="podium-amount">
-                0 Subs
+                75
               </div>
 
               <div class="podium-block">
                 <div class="podium-rank">
-                  #2
+                  2
                 </div>
               </div>
 
@@ -720,24 +574,24 @@
             <div class="podium-place first">
 
               <div class="podium-crown">
-                ♛
+                👑
               </div>
 
               <div class="podium-avatar">
-                —
+                O
               </div>
 
               <div class="podium-name">
-                Waiting...
+                Oiiink
               </div>
 
               <div class="podium-amount">
-                0 Subs
+                100
               </div>
 
               <div class="podium-block">
                 <div class="podium-rank">
-                  #1
+                  1
                 </div>
               </div>
 
@@ -747,20 +601,20 @@
             <div class="podium-place third">
 
               <div class="podium-avatar">
-                —
+                S
               </div>
 
               <div class="podium-name">
-                Waiting...
+                Supporter
               </div>
 
               <div class="podium-amount">
-                0 Subs
+                50
               </div>
 
               <div class="podium-block">
                 <div class="podium-rank">
-                  #3
+                  3
                 </div>
               </div>
 
@@ -769,141 +623,109 @@
           </div>
 
 
-          <div
-            id="podiumDots"
-            class="podium-dots"
-          >
+          <div class="podium-dots">
 
             <span class="podium-dot active"></span>
+            <span class="podium-dot"></span>
             <span class="podium-dot"></span>
 
           </div>
 
         </div>
 
-
-        <!-- Leaderboard -->
-
-        <div class="leaderboard panel">
-
-          <div class="leaderboard-header">
-
-            <div>
-
-              <span class="panel-eyebrow">
-                LEADERBOARD
-              </span>
-
-              <h3>
-                Top Supporters
-              </h3>
-
-            </div>
-
-
-            <div class="leaderboard-controls">
-
-              <div class="year-tabs">
-
-                <button
-                  class="year-tab"
-                  data-year="2025"
-                  type="button"
-                >
-                  2025
-                </button>
-
-                <button
-                  class="year-tab active"
-                  data-year="2026"
-                  type="button"
-                >
-                  2026
-                </button>
-
-              </div>
-
-
-              <div class="type-tabs">
-
-                <button
-                  class="type-tab active"
-                  data-type="subs"
-                  type="button"
-                >
-                  Gifted Subs
-                </button>
-
-                <button
-                  class="type-tab"
-                  data-type="bits"
-                  type="button"
-                >
-                  Bits
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="leaderboardRows"
-            class="leaderboard-rows"
-          >
-
-            <!-- Filled by script.js -->
-
-          </div>
-
-        </div>
-
       </div>
 
     </section>
 
 
-    <!-- =======================================================
-         ROADMAP
-    ======================================================== -->
-
+    <!-- ROADMAP -->
     <section
+      class="section"
       id="roadmap"
-      class="section roadmap-section"
     >
 
-      <div class="container">
+      <div class="section-heading">
 
-        <div class="section-heading">
+        <div>
 
-          <div>
+          <div class="eyebrow">
+            SUBATHON ROADMAP
+          </div>
 
-            <span class="panel-eyebrow">
-              SUBATHON
-            </span>
+          <h2>
+            What we're working toward
+          </h2>
 
-            <h2>
-              Roadmap
-            </h2>
+        </div>
 
-            <p>
-              Reach each milestone to unlock the next part
-              of the Subathon.
-            </p>
+        <p>
+          Every milestone brings us closer to the next one.
+        </p>
 
+      </div>
+
+
+      <div class="roadmap-card">
+
+        <div class="roadmap-step reached">
+
+          <div class="roadmap-node">
+            ✓
+          </div>
+
+          <div class="roadmap-amount">
+            25
+          </div>
+
+          <div class="roadmap-name">
+            First Milestone
+          </div>
+
+          <div class="roadmap-status">
+            Reached
           </div>
 
         </div>
 
 
-        <div
-          id="roadmap"
-          class="roadmap"
-        >
+        <div class="roadmap-step current">
 
-          <!-- Filled by script.js -->
+          <div class="roadmap-node">
+            ★
+          </div>
+
+          <div class="roadmap-amount">
+            50
+          </div>
+
+          <div class="roadmap-name">
+            Next Milestone
+          </div>
+
+          <div class="roadmap-status">
+            In Progress
+          </div>
+
+        </div>
+
+
+        <div class="roadmap-step">
+
+          <div class="roadmap-node">
+            3
+          </div>
+
+          <div class="roadmap-amount">
+            100
+          </div>
+
+          <div class="roadmap-name">
+            Major Milestone
+          </div>
+
+          <div class="roadmap-status">
+            Locked
+          </div>
 
         </div>
 
@@ -912,581 +734,1099 @@
     </section>
 
 
-    <!-- =======================================================
-         TIME ADDED
-    ======================================================== -->
-
+    <!-- ACTIVITY -->
     <section
-      id="time-added"
       class="section"
+      id="activity"
     >
 
-      <div class="container">
+      <div class="section-heading">
 
-        <div class="section-heading">
+        <div>
 
-          <div>
-
-            <span class="panel-eyebrow">
-              COMMUNITY TIME
-            </span>
-
-            <h2>
-              Time Added
-            </h2>
-
-            <p>
-              See exactly how much time the community has
-              added to the Subathon.
-            </p>
-
+          <div class="eyebrow">
+            LIVE FEED
           </div>
+
+          <h2>
+            Activity
+          </h2>
 
         </div>
 
-
-        <div class="time-stat-grid">
-
-
-          <div class="time-stat panel">
-
-            <div class="stat-icon">
-              🎁
-            </div>
-
-            <span>
-              SUBS
-            </span>
-
-            <strong id="subTimeAdded">
-              0s
-            </strong>
-
-          </div>
-
-
-          <div class="time-stat panel">
-
-            <div class="stat-icon bits">
-              💜
-            </div>
-
-            <span>
-              BITS
-            </span>
-
-            <strong id="bitTimeAdded">
-              0s
-            </strong>
-
-          </div>
-
-
-          <div class="time-stat total panel">
-
-            <div class="stat-icon">
-              ⏱
-            </div>
-
-            <span>
-              TOTAL TIME ADDED
-            </span>
-
-            <strong id="totalTimeAdded">
-              0s
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <div class="time-history panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-eyebrow">
-                HISTORY
-              </span>
-
-              <h3>
-                Recent Time Added
-              </h3>
-
-            </div>
-
-            <span
-              id="timeAddedCount"
-              class="small-stat"
-            >
-              0 events
-            </span>
-
-          </div>
-
-
-          <div
-            id="timeHistory"
-            class="time-history-list"
-          >
-
-            <div class="time-history-empty">
-              Support events will appear here.
-            </div>
-
-          </div>
-
-        </div>
+        <p>
+          Recent activity from the stream.
+        </p>
 
       </div>
 
-    </section>
 
+      <div class="activity">
 
-    <!-- =======================================================
-         STATS
-    ======================================================== -->
+        <div class="activity-header">
 
-    <section
-      id="stats"
-      class="section stats-section"
-    >
+          <div class="activity-title">
 
-      <div class="container">
-
-        <div class="section-heading">
-
-          <div>
-
-            <span class="panel-eyebrow">
-              SUBATHON STATS
-            </span>
-
-            <h2>
-              Community Stats
-            </h2>
-
-            <p>
-              A live look at the Subathon numbers.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="stats-grid">
-
-
-          <!-- Supporter of hour -->
-
-          <div class="stat-feature panel">
-
-            <div class="feature-icon">
-              👑
-            </div>
+            <span class="activity-title-dot"></span>
 
             <span>
-              SUPPORTER OF THE HOUR
+              Live Activity
             </span>
 
-            <strong id="hourSupporter">
-              Nobody yet
-            </strong>
-
-            <p id="hourSupporterValue">
-              Be the first to add time this hour.
-            </p>
-
           </div>
 
 
-          <!-- Cooking -->
-
-          <div class="stat-feature panel cooking">
-
-            <div class="feature-icon">
-              🔥
-            </div>
-
-            <span>
-              SUBATHON MOMENTUM
-            </span>
-
-            <strong id="cookingValue">
-              0s added
-            </strong>
-
-            <p id="cookingText">
-              No recent donation spike.
-            </p>
-
-          </div>
-
-
-          <!-- Community totals -->
-
-          <div class="stat-feature panel">
-
-            <div class="feature-icon">
-              🎁
-            </div>
-
-            <span>
-              COMMUNITY SUBS
-            </span>
-
-            <strong id="communitySubs">
-              0 Subs
-            </strong>
-
-            <p>
-              Gifted subs supporting the timer.
-            </p>
-
-          </div>
-
-
-          <div class="stat-feature panel bits-stat">
-
-            <div class="feature-icon">
-              💜
-            </div>
-
-            <span>
-              COMMUNITY BITS
-            </span>
-
-            <strong id="communityBits">
-              0 Bits
-            </strong>
-
-            <p>
-              Bits supporting the timer.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <!-- Donation chart -->
-
-        <div class="chart-panel panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-eyebrow">
-                ACTIVITY
-              </span>
-
-              <h3>
-                Recent Time Added
-              </h3>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="donationChart"
-            class="donation-chart"
-          >
-
-            <div class="chart-empty">
-              Support activity will appear here.
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         EVENT LOG
-    ======================================================== -->
-
-    <section
-      id="history"
-      class="section"
-    >
-
-      <div class="container">
-
-        <div class="section-heading">
-
-          <div>
-
-            <span class="panel-eyebrow">
-              HISTORY
-            </span>
-
-            <h2>
-              Event Log
-            </h2>
-
-            <p>
-              A timeline of everything that has happened
-              during the Subathon.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="event-log panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-eyebrow">
-                LIVE LOG
-              </span>
-
-              <h3>
-                Recent Events
-              </h3>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="eventLog"
-            class="event-log-list"
-          >
-
-            <div class="event-empty">
-              No events yet.
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =======================================================
-         SIMULATION
-    ======================================================== -->
-
-    <section
-      id="simulation"
-      class="section simulation-section"
-    >
-
-      <div class="container">
-
-        <div class="simulation panel">
-
-          <div class="simulation-header">
-
-            <div>
-
-              <span class="panel-eyebrow">
-                DEVELOPER TOOLS
-              </span>
-
-              <h2>
-                Simulation
-              </h2>
-
-              <p>
-                Test Subathon events without Twitch.
-                These are stored locally in your browser.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div class="simulation-groups">
-
-
-            <!-- Subs -->
-
-            <div class="simulation-group">
-
-              <span>
-                GIFTED SUBS
-              </span>
-
-              <div class="simulation-buttons">
-
-                <button
-                  data-sim="sub"
-                  type="button"
-                >
-                  +1
-                </button>
-
-                <button
-                  data-sim="gift5"
-                  type="button"
-                >
-                  +5
-                </button>
-
-                <button
-                  data-sim="gift10"
-                  type="button"
-                >
-                  +10
-                </button>
-
-              </div>
-
-            </div>
-
-
-            <!-- Bits -->
-
-            <div class="simulation-group">
-
-              <span>
-                BITS
-              </span>
-
-              <div class="simulation-buttons">
-
-                <button
-                  data-sim="bits100"
-                  type="button"
-                >
-                  +100
-                </button>
-
-                <button
-                  data-sim="bits1000"
-                  type="button"
-                >
-                  +1K
-                </button>
-
-                <button
-                  data-sim="bits5000"
-                  type="button"
-                >
-                  +5K
-                </button>
-
-                <button
-                  data-sim="bits10000"
-                  type="button"
-                >
-                  +10K
-                </button>
-
-              </div>
-
-            </div>
-
-
-            <!-- Goal -->
-
-            <div class="simulation-group">
-
-              <span>
-                SPECIAL
-              </span>
-
-              <div class="simulation-buttons">
-
-                <button
-                  data-sim="goal"
-                  type="button"
-                >
-                  Complete Goal
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="simulation-footer">
-
-            <div class="simulation-warning">
-              Simulation data is local to this browser.
-            </div>
+          <div class="activity-actions">
 
             <button
-              id="resetSimulation"
-              class="reset-button"
-              type="button"
+              class="activity-tab active"
+              data-feed="activity"
             >
-              Reset Simulation
+              ACTIVITY
+            </button>
+
+            <button
+              class="activity-tab"
+              data-feed="chat"
+            >
+              CHAT
+            </button>
+
+            <button
+              class="dropdown-button"
+              id="activityCollapse"
+              aria-label="Collapse activity"
+            >
+              ⌃
             </button>
 
           </div>
 
         </div>
 
+
+        <!-- ACTIVITY FEED -->
+        <div
+          class="activity-body feed-panel active"
+          id="activityFeed"
+        >
+
+          <div class="activity-item big-donation sub">
+
+            <div class="activity-avatar">
+              ★
+            </div>
+
+            <div class="activity-content">
+
+              <span class="activity-user">
+                Oiiink
+              </span>
+
+              <span class="activity-text">
+                Started the subathon.
+              </span>
+
+              <span class="donation-time">
+                <strong>+1:00:00</strong>
+              </span>
+
+            </div>
+
+            <span class="activity-time">
+              now
+            </span>
+
+          </div>
+
+
+          <div class="activity-item sub">
+
+            <div class="activity-avatar">
+              S
+            </div>
+
+            <div class="activity-content">
+
+              <span class="activity-user">
+                Supporter
+              </span>
+
+              <span class="activity-text">
+                Subscribed.
+              </span>
+
+              <span class="donation-time">
+                <strong>+10:00</strong>
+              </span>
+
+            </div>
+
+            <span class="activity-time">
+              2m
+            </span>
+
+          </div>
+
+
+          <div class="activity-item bits">
+
+            <div class="activity-avatar">
+              B
+            </div>
+
+            <div class="activity-content">
+
+              <span class="activity-user">
+                Supporter
+              </span>
+
+              <span class="activity-text">
+                Cheered 1,000 bits.
+              </span>
+
+              <span class="donation-time">
+                <strong>+5:00</strong>
+              </span>
+
+            </div>
+
+            <span class="activity-time">
+              5m
+            </span>
+
+          </div>
+
+
+          <div class="activity-item">
+
+            <div class="activity-avatar">
+              C
+            </div>
+
+            <div class="activity-content">
+
+              <span class="activity-user">
+                Community
+              </span>
+
+              <span class="activity-text">
+                Gifted 5 subscriptions.
+              </span>
+
+              <span class="donation-time">
+                <strong>+50:00</strong>
+              </span>
+
+            </div>
+
+            <span class="activity-time">
+              8m
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- TWITCH CHAT -->
+        <div
+          class="activity-body feed-panel twitch-chat-panel"
+          id="chatFeed"
+        >
+
+          <iframe
+            src="https://www.twitch.tv/embed/oiiinkyt/chat?parent=localhost&parent=127.0.0.1"
+            frameborder="0"
+            scrolling="no">
+          </iframe>
+
+        </div>
+
       </div>
 
     </section>
 
 
-  </main>
+    <!-- TIME ADDED -->
+    <section class="section">
 
+      <div class="section-heading">
 
-  <!-- =========================================================
-       FOOTER
-  ========================================================== -->
+        <div>
 
-  <footer class="site-footer">
+          <div class="eyebrow">
+            TIMER HISTORY
+          </div>
 
-    <div class="container footer-inner">
+          <h2>
+            Time Added
+          </h2>
 
-      <div>
+        </div>
 
-        <strong>
-          OIIINK SUBATHON
-        </strong>
-
-        <span>
-          Powered by the community.
-        </span>
+        <p>
+          How the community has extended the timer.
+        </p>
 
       </div>
 
 
-      <a
-        href="https://twitch.tv/oiiinkyt"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        twitch.tv/oiiinkyt
-      </a>
+      <div class="time-stats">
 
-    </div>
+        <div class="time-stat-card featured">
+
+          <div class="time-stat-icon">
+            ⏱
+          </div>
+
+          <span class="time-stat-label">
+            TOTAL TIME ADDED
+          </span>
+
+          <strong id="statTotalTime">
+            1:00:00
+          </strong>
+
+        </div>
+
+
+        <div class="time-stat-card">
+
+          <div class="time-stat-icon">
+            ✦
+          </div>
+
+          <span class="time-stat-label">
+            BIGGEST ADD
+          </span>
+
+          <strong id="statBiggestAdd">
+            +1:00:00
+          </strong>
+
+        </div>
+
+
+        <div class="time-stat-card">
+
+          <div class="time-stat-icon">
+            ♡
+          </div>
+
+          <span class="time-stat-label">
+            EVENTS
+          </span>
+
+          <strong id="statEvents">
+            4
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="time-history-card">
+
+        <div class="time-history-header">
+
+          <strong>
+            Recent additions
+          </strong>
+
+          <span>
+            TIME ADDED
+          </span>
+
+        </div>
+
+
+        <div class="time-history-row">
+
+          <div class="time-history-icon">
+            🎁
+          </div>
+
+          <div>
+
+            <div class="time-history-user">
+              Oiiink
+            </div>
+
+            <div class="time-history-detail">
+              Subathon started
+            </div>
+
+          </div>
+
+          <div></div>
+
+          <div class="time-history-added">
+            +1:00:00
+          </div>
+
+        </div>
+
+
+        <div class="time-history-row">
+
+          <div class="time-history-icon">
+            ⭐
+          </div>
+
+          <div>
+
+            <div class="time-history-user">
+              Supporter
+            </div>
+
+            <div class="time-history-detail">
+              Subscription
+            </div>
+
+          </div>
+
+          <div></div>
+
+          <div class="time-history-added">
+            +10:00
+          </div>
+
+        </div>
+
+
+        <div class="time-history-row">
+
+          <div class="time-history-icon">
+            💜
+          </div>
+
+          <div>
+
+            <div class="time-history-user">
+              Supporter
+            </div>
+
+            <div class="time-history-detail">
+              1,000 bits
+            </div>
+
+          </div>
+
+          <div></div>
+
+          <div class="time-history-added bits">
+            +5:00
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- COMMUNITY -->
+    <section
+      class="section"
+      id="stats"
+    >
+
+      <div class="section-heading">
+
+        <div>
+
+          <div class="eyebrow">
+            COMMUNITY
+          </div>
+
+          <h2>
+            Subathon Stats
+          </h2>
+
+        </div>
+
+        <p>
+          A quick look at the current run.
+        </p>
+
+      </div>
+
+
+      <div class="community-grid">
+
+        <div class="community-card">
+
+          <div class="card-kicker">
+            SUBS
+          </div>
+
+          <strong id="communitySubs">
+            100
+          </strong>
+
+          <span>
+            total subscriptions
+          </span>
+
+        </div>
+
+
+        <div class="community-card">
+
+          <div class="card-kicker">
+            BITS
+          </div>
+
+          <strong id="communityBits">
+            5,000
+          </strong>
+
+          <span>
+            total bits
+          </span>
+
+        </div>
+
+
+        <div class="community-card cooking-card">
+
+          <div class="card-kicker">
+            TIMER
+          </div>
+
+          <strong
+            class="hot"
+            id="communityTimer"
+          >
+            12:00:00
+          </strong>
+
+          <span>
+            current time remaining
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- DONATION CHART -->
+      <div class="donation-chart-card">
+
+        <div class="chart-header">
+
+          <span>
+            ACTIVITY OVER TIME
+          </span>
+
+          <strong>
+            CURRENT SUBATHON
+          </strong>
+
+        </div>
+
+
+        <div class="donation-chart">
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar subs"
+              style="height:25%"
+            ></div>
+            <span>1</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar subs"
+              style="height:45%"
+            ></div>
+            <span>2</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar bits"
+              style="height:30%"
+            ></div>
+            <span>3</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar subs"
+              style="height:65%"
+            ></div>
+            <span>4</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar subs"
+              style="height:50%"
+            ></div>
+            <span>5</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar bits"
+              style="height:75%"
+            ></div>
+            <span>6</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar subs"
+              style="height:90%"
+            ></div>
+            <span>7</span>
+          </div>
+
+          <div class="chart-bar-wrap">
+            <div
+              class="chart-bar bits"
+              style="height:60%"
+            ></div>
+            <span>8</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- EVENT LOG -->
+    <section class="section">
+
+      <div class="section-heading">
+
+        <div>
+
+          <div class="eyebrow">
+            EVENT LOG
+          </div>
+
+          <h2>
+            Recent Events
+          </h2>
+
+        </div>
+
+        <p>
+          Everything that has affected the timer.
+        </p>
+
+      </div>
+
+
+      <div class="event-log-card">
+
+        <div class="event-row goal-event">
+
+          <span>
+            🎁
+          </span>
+
+          <div>
+
+            <strong>
+              Subathon started
+            </strong>
+
+            <small>
+              Initial timer
+            </small>
+
+          </div>
+
+          <time>
+            Just now
+          </time>
+
+        </div>
+
+
+        <div class="event-row">
+
+          <span>
+            ⭐
+          </span>
+
+          <div>
+
+            <strong>
+              New subscription
+            </strong>
+
+            <small>
+              Supporter subscribed
+            </small>
+
+          </div>
+
+          <time>
+            2m
+          </time>
+
+        </div>
+
+
+        <div class="event-row">
+
+          <span>
+            💜
+          </span>
+
+          <div>
+
+            <strong>
+              Bits received
+            </strong>
+
+            <small>
+              1,000 bits
+            </small>
+
+          </div>
+
+          <time>
+            5m
+          </time>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MYSTERY -->
+    <section class="section">
+
+      <div class="mystery-card">
+
+        <div class="mystery-icon">
+          ?
+        </div>
+
+        <div>
+
+          <div class="card-kicker">
+            SECRET MILESTONE
+          </div>
+
+          <h2>
+            Something is waiting...
+          </h2>
+
+          <p>
+            Reach the next major milestone to reveal it.
+          </p>
+
+        </div>
+
+        <div class="mystery-status">
+          LOCKED
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <span>
+      © 2026 Oiiink
+    </span>
+
+    <span>
+      Built for the subathon.
+    </span>
 
   </footer>
 
 
-  <!-- =========================================================
-       SCRIPT
-  ========================================================== -->
+  <script>
 
-  <script src="script.js"></script>
+    /*
+     * ==========================================
+     * SUBATHON DATA
+     * ==========================================
+     */
+
+    let remainingSeconds = 12 * 60 * 60;
+
+    let totalAddedSeconds = 60 * 60;
+
+    let totalEvents = 4;
+
+    let goalCurrent = 0;
+
+    const goalTarget = 100;
+
+
+    /*
+     * ==========================================
+     * TIMER
+     * ==========================================
+     */
+
+    function formatTime(totalSeconds) {
+
+      totalSeconds = Math.max(
+        0,
+        Math.floor(totalSeconds)
+      );
+
+      const hours =
+        Math.floor(totalSeconds / 3600);
+
+      const minutes =
+        Math.floor((totalSeconds % 3600) / 60);
+
+      const seconds =
+        totalSeconds % 60;
+
+      return {
+        hours: String(hours).padStart(2, "0"),
+        minutes: String(minutes).padStart(2, "0"),
+        seconds: String(seconds).padStart(2, "0")
+      };
+
+    }
+
+
+    function updateTimer() {
+
+      const time = formatTime(
+        remainingSeconds
+      );
+
+      document.getElementById("hours").textContent =
+        time.hours;
+
+      document.getElementById("minutes").textContent =
+        time.minutes;
+
+      document.getElementById("seconds").textContent =
+        time.seconds;
+
+      document.getElementById("communityTimer").textContent =
+        `${time.hours}:${time.minutes}:${time.seconds}`;
+
+    }
+
+
+    function updateGoal() {
+
+      const percentage =
+        Math.min(
+          100,
+          (goalCurrent / goalTarget) * 100
+        );
+
+      document.getElementById("goalCount").textContent =
+        `${goalCurrent} / ${goalTarget}`;
+
+      document.getElementById("goalPercent").textContent =
+        `${Math.round(percentage)}%`;
+
+      document.getElementById("goalRemaining").textContent =
+        Math.max(0, goalTarget - goalCurrent);
+
+      document.getElementById("goalProgress").style.width =
+        `${percentage}%`;
+
+      document.getElementById("subathonProgressCount").textContent =
+        goalCurrent;
+
+      document.getElementById("subathonGoalCount").textContent =
+        goalTarget;
+
+      document.getElementById("subathonPercent").textContent =
+        `${Math.round(percentage)}%`;
+
+      document.getElementById("subathonRemaining").textContent =
+        `${Math.max(0, goalTarget - goalCurrent)} remaining`;
+
+      document.getElementById("subathonProgressBar").style.width =
+        `${percentage}%`;
+
+    }
+
+
+    function updateStats() {
+
+      document.getElementById("totalTimeAdded").textContent =
+        formatLongTime(totalAddedSeconds);
+
+      document.getElementById("totalEvents").textContent =
+        totalEvents;
+
+      document.getElementById("statTotalTime").textContent =
+        formatLongTime(totalAddedSeconds);
+
+      document.getElementById("statEvents").textContent =
+        totalEvents;
+
+    }
+
+
+    function formatLongTime(seconds) {
+
+      const h = Math.floor(seconds / 3600);
+
+      const m = Math.floor(
+        (seconds % 3600) / 60
+      );
+
+      const s = seconds % 60;
+
+      return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+
+    }
+
+
+    setInterval(() => {
+
+      if (remainingSeconds > 0) {
+        remainingSeconds--;
+      }
+
+      updateTimer();
+
+    }, 1000);
+
+
+    /*
+     * ==========================================
+     * SUBATHON DROPDOWN
+     * ==========================================
+     */
+
+    document
+      .getElementById("subathonToggle")
+      .addEventListener("click", () => {
+
+        document
+          .getElementById("subathonCard")
+          .classList.toggle("expanded");
+
+      });
+
+
+    /*
+     * ==========================================
+     * ACTIVITY TABS
+     * ==========================================
+     */
+
+    const activityTabs =
+      document.querySelectorAll(".activity-tab");
+
+    activityTabs.forEach(tab => {
+
+      tab.addEventListener("click", () => {
+
+        activityTabs.forEach(item => {
+          item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        const target =
+          tab.dataset.feed;
+
+        document
+          .getElementById("activityFeed")
+          .classList.toggle(
+            "active",
+            target === "activity"
+          );
+
+        document
+          .getElementById("chatFeed")
+          .classList.toggle(
+            "active",
+            target === "chat"
+          );
+
+      });
+
+    });
+
+
+    /*
+     * ==========================================
+     * ACTIVITY COLLAPSE
+     * ==========================================
+     */
+
+    document
+      .getElementById("activityCollapse")
+      .addEventListener("click", () => {
+
+        document
+          .querySelector(".activity")
+          .classList.toggle("collapsed");
+
+      });
+
+
+    /*
+     * ==========================================
+     * PODIUM TYPE
+     * ==========================================
+     */
+
+    document
+      .querySelectorAll(".podium-type")
+      .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+          document
+            .querySelectorAll(".podium-type")
+            .forEach(item => {
+              item.classList.remove("active");
+            });
+
+          button.classList.add("active");
+
+        });
+
+      });
+
+
+    /*
+     * ==========================================
+     * TIMER EFFECT
+     * ==========================================
+     */
+
+    function showTimerAdded(seconds) {
+
+      const timerAdd =
+        document.getElementById("timerAdd");
+
+      timerAdd.textContent =
+        `+${formatLongTime(seconds)}`;
+
+      timerAdd.classList.remove("show");
+
+      void timerAdd.offsetWidth;
+
+      timerAdd.classList.add("show");
+
+
+      const card =
+        document.getElementById("timerCard");
+
+      card.classList.remove("time-bump");
+
+      void card.offsetWidth;
+
+      card.classList.add("time-bump");
+
+    }
+
+
+    /*
+     * ==========================================
+     * INITIAL STATE
+     * ==========================================
+     */
+
+    updateTimer();
+    updateGoal();
+    updateStats();
+
+
+    /*
+     * ==========================================
+     * STREAM STATUS
+     *
+     * The page remains usable without an API.
+     * Replace this with your backend/API when
+     * you connect real Twitch data.
+     * ==========================================
+     */
+
+    document.getElementById(
+      "streamStatusText"
+    ).textContent = "LIVE ON TWITCH";
+
+
+    /*
+     * ==========================================
+     * TWITCH EMBED
+     *
+     * GitHub Pages:
+     *
+     * Change "localhost" below to your actual
+     * website hostname.
+     * ==========================================
+     */
+
+    const twitchPlayer =
+      document.getElementById("twitchPlayer");
+
+    const twitchChat =
+      document.querySelector("#chatFeed iframe");
+
+
+    /*
+     * GitHub Pages hostname support
+     */
+
+    const host =
+      window.location.hostname;
+
+
+    if (
+      host &&
+      host !== "localhost" &&
+      host !== "127.0.0.1"
+    ) {
+
+      twitchPlayer.src =
+        `https://player.twitch.tv/?channel=oiiinkyt&parent=${encodeURIComponent(host)}`;
+
+      twitchChat.src =
+        `https://www.twitch.tv/embed/oiiinkyt/chat?parent=${encodeURIComponent(host)}`;
+
+    }
+
+
+    /*
+     * ==========================================
+     * PREVENT EMPTY SUPPORTER BAR
+     * ==========================================
+     *
+     * Top Supporters is intentionally present
+     * in the HTML itself. JavaScript does NOT
+     * hide or wait for it.
+     * ==========================================
+     */
+
+    const supporters =
+      document.querySelector(".top-supporters");
+
+    if (supporters) {
+      supporters.style.display = "block";
+    }
+
+  </script>
 
 </body>
 </html>
