@@ -1,4 +1,4 @@
-const STORAGE_KEY = "oiiink-subathon-state-v2";
+const STORAGE_KEY = "oiiink-subathon-state-v3";
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -15,8 +15,8 @@ let state = {
   totalBits: 0,
   totalSubTimeAdded: 0,
   totalBitTimeAdded: 0,
+
   activity: [],
-  chat: [],
   timeHistory: [],
   hourlyEvents: [],
   eventLog: [],
@@ -29,552 +29,116 @@ let state = {
 
 let selectedYear = 2026;
 let selectedType = "subs";
-let lastGoalAmount = 0;
+
+let podiumType = "subs";
+let podiumInterval = null;
 
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
     if (!saved) return;
 
     state = {
       ...state,
       ...saved,
+
       customLeaderboard: {
         ...state.customLeaderboard,
         ...(saved.customLeaderboard || {}),
+
         2025: {
           ...state.customLeaderboard[2025],
           ...(saved.customLeaderboard?.[2025] || {})
         },
+
         2026: {
           ...state.customLeaderboard[2026],
           ...(saved.customLeaderboard?.[2026] || {})
         }
       }
     };
-  } catch (e) {
-    console.warn("Could not load Subathon state:", e);
+  } catch (error) {
+    console.warn("Could not load Subathon state:", error);
   }
+}
+
+function normalizeState() {
+  state.activity ||= [];
+  state.timeHistory ||= [];
+  state.hourlyEvents ||= [];
+  state.eventLog ||= [];
+
+  state.totalSubs ||= 0;
+  state.totalBits ||= 0;
+  state.totalSubTimeAdded ||= 0;
+  state.totalBitTimeAdded ||= 0;
+
+  state.customLeaderboard ||= {
+    2026: { subs: [], bits: [] },
+    2025: { subs: [], bits: [] }
+  };
+
+  state.customLeaderboard[2025] ||= { subs: [], bits: [] };
+  state.customLeaderboard[2026] ||= { subs: [], bits: [] };
 }
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function normalizeState() {
-  state.activity ||= [];
-  state.chat ||= [];
-  state.timeHistory ||= [];
-  state.hourlyEvents ||= [];
-  state.eventLog ||= [];
-  state.totalSubTimeAdded ||= 0;
-  state.totalBitTimeAdded ||= 0;
-}
-
-
+loadState();
 normalizeState();
 
-function pad(n) {
-  return String(Math.max(0, Math.floor(n))).padStart(2, "0");
+function pad(number) {
+  return String(Math.max(0, Math.floor(number))).padStart(2, "0");
 }
 
-function formatNumber(n) {
-  return Number(n || 0).toLocaleString();
+function formatNumber(number) {
+  return Number(number || 0).toLocaleString();
 }
 
 function formatClock(seconds) {
   seconds = Math.max(0, Math.floor(seconds));
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
 
-  if (h >= 24) {
-    const d = Math.floor(h / 24);
-    return `${d}d ${h % 24}h ${pad(m)}m`;
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (days > 0) {
+    return `${days}d ${pad(hours)}h ${pad(minutes)}m`;
   }
 
-  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 }
-
-function updateTimer() {
-  const total = Math.max(0, state.timeRemaining);
-  const d = Math.floor(total / 86400);
-  const h = Math.floor((total % 86400) / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-
-  $("#days").textContent = pad(d);
-  $("#hours").textContent = pad(h);
-  $("#minutes").textContent = pad(m);
-  $("#seconds").textContent = pad(s);
-  $("#subathonTimer").textContent = formatClock(total);
-}
-
-function goalInfo() {
-  const goal = CONFIG.goals.find(g => state.totalSubs < g.amount);
-
-  if (!goal) {
-    return {
-      goal: null,
-      previous: CONFIG.goals.at(-1)?.amount || 0,
-      percentage: 100,
-      needed: 0,
-      level: CONFIG.goals.length + 1
-    };
-  }
-
-  const index = CONFIG.goals.indexOf(goal);
-  const previous = index === 0 ? 0 : CONFIG.goals[index - 1].amount;
-  const range = goal.amount - previous;
-  const current = state.totalSubs - previous;
-
-  return {
-    goal,
-    previous,
-    percentage: Math.min(100, Math.max(0, Math.round(current / range * 100))),
-    needed: goal.amount - state.totalSubs,
-    level: index + 1
-  };
-}
-
-function updateGoal() {
-  const info = goalInfo();
-
-  if (!info.goal) {
-    $("#goalTitle").textContent = "All Sub Goals Complete";
-    $("#goalDescription").textContent = "Every perk unlocked";
-    $("#goalCount").textContent = `${state.totalSubs} / ${CONFIG.goals.at(-1).amount}`;
-    $("#goalProgress").style.width = "100%";
-    $("#goalNeeded").textContent = "0";
-    $("#goalName").textContent = "All perks unlocked";
-
-    $("#subathonLevel").textContent = "MAX LEVEL";
-    $("#subathonPercent").textContent = "100%";
-    $("#subathonProgress").style.width = "100%";
-    $("#subathonNeeded").textContent = "0";
-    $("#subathonGoalName").textContent = "All perks unlocked";
-    return;
-  }
-
-  $("#goalTitle").textContent = "Next Sub Goal";
-  $("#goalDescription").textContent = info.goal.description;
-  $("#goalCount").textContent = `${state.totalSubs} / ${info.goal.amount}`;
-  $("#goalProgress").style.width = `${info.percentage}%`;
-  $("#goalNeeded").textContent = info.needed;
-  $("#goalName").textContent = info.goal.name;
-
-  $("#subathonLevel").textContent = `LEVEL ${info.level}`;
-  $("#subathonPercent").textContent = `${info.percentage}%`;
-  $("#subathonProgress").style.width = `${info.percentage}%`;
-  $("#subathonNeeded").textContent = info.needed;
-  $("#subathonGoalName").textContent = info.goal.name;
-}
-
-function updatePerks() {
-  CONFIG.goals.forEach(goal => {
-    const card = $(`.perk-card[data-goal="${goal.amount}"]`);
-    const status = $(`#perkStatus${goal.amount}`);
-    if (!card || !status) return;
-
-    const unlocked = state.totalSubs >= goal.amount;
-    card.classList.toggle("unlocked", unlocked);
-    status.textContent = unlocked
-      ? "Unlocked"
-      : `${goal.amount - state.totalSubs} more gifted`;
-  });
-}
-
-function showTimerAdd(seconds) {
-  const el = $("#timerAdd");
-  const sign = seconds >= 0 ? "+" : "-";
-  const amount = Math.abs(seconds);
-
-  let text;
-  if (amount >= 3600) text = `${sign}${Math.floor(amount / 3600)}h`;
-  else if (amount >= 60) text = `${sign}${Math.floor(amount / 60)}m`;
-  else text = `${sign}${amount}s`;
-
-  el.textContent = text;
-  el.classList.remove("show");
-  void el.offsetWidth;
-  el.classList.add("show");
-
-  const timer = $("#timerDisplay");
-  timer.classList.remove("bump");
-  void timer.offsetWidth;
-  timer.classList.add("bump");
-
-  spawnParticles();
-}
-
-function spawnParticles() {
-  const effects = $("#effects");
-
-  for (let i = 0; i < 18; i++) {
-    const p = document.createElement("div");
-    p.className = "timer-particle";
-    p.style.left = `${45 + Math.random() * 10}%`;
-    p.style.top = `${35 + Math.random() * 25}%`;
-    p.style.setProperty("--x", `${(Math.random() - .5) * 280}px`);
-    p.style.setProperty("--y", `${-70 - Math.random() * 190}px`);
-    p.style.animationDelay = `${Math.random() * 120}ms`;
-    effects.appendChild(p);
-    setTimeout(() => p.remove(), 1100);
-  }
-}
-
-function addActivity(type, user, amount, secondsAdded) {
-  const text = type === "sub"
-    ? amount === 1
-      ? "subscribed"
-      : `gifted ${amount} subs`
-    : `cheered ${formatNumber(amount)} Bits`;
-
-  state.activity.unshift({
-    id: Date.now() + Math.random(),
-    type,
-    user,
-    amount,
-    text,
-    timestamp: Date.now()
-  });
-
-  state.activity = state.activity.slice(0, 40);
-}
-
-function addToLeaderboard(type, user, amount) {
-  const list = state.customLeaderboard[selectedYear][type];
-  const existing = list.find(x => x.name.toLowerCase() === user.toLowerCase());
-
-  if (existing) existing.amount += amount;
-  else list.push({ name: user, amount });
-
-  list.sort((a, b) => b.amount - a.amount);
-  state.customLeaderboard[selectedYear][type] = list.slice(0, 25);
-}
-
-function simulate(type, amount, user) {
-  const oldSubs = state.totalSubs;
-  const seconds = type === "sub"
-    ? CONFIG.secondsPerSub * amount
-    : CONFIG.secondsPerBit * amount;
-
-  state.timeRemaining += seconds;
-
-  if (type === "sub") {
-    state.totalSubs += amount;
-    state.totalSubTimeAdded += seconds;
-  } else {
-    state.totalBits += amount;
-    state.totalBitTimeAdded += seconds;
-  }
-
-  state.timeHistory.unshift({
-    id: Date.now() + Math.random(),
-    type,
-    user,
-    amount,
-    seconds,
-    timestamp: Date.now()
-  });
-  state.timeHistory = state.timeHistory.slice(0, 30);
-  state.hourlyEvents.unshift({ type, user, amount, seconds, timestamp: Date.now() });
-  state.hourlyEvents = state.hourlyEvents.filter(x => Date.now() - x.timestamp < 60 * 60 * 1000).slice(0, 50);
-  state.eventLog.unshift({ type, user, amount, seconds, timestamp: Date.now() });
-  state.eventLog = state.eventLog.slice(0, 100);
-
-  addActivity(type, user, amount, seconds);
-  addToLeaderboard(type, user, amount);
-
-  if (type === "sub") {
-    CONFIG.goals.forEach(goal => {
-      if (oldSubs < goal.amount && state.totalSubs >= goal.amount) {
-        state.eventLog.unshift({
-          type: "goal",
-          user: "SUBATHON",
-          amount: goal.amount,
-          goal: goal.name,
-          seconds: 0,
-          timestamp: Date.now()
-        });
-        state.eventLog = state.eventLog.slice(0, 100);
-        showGoalCelebration(goal);
-      }
-    });
-  }
-
-  saveState();
-  render();
-  showTimerAdd(seconds);
-}
-
-function renderActivity() {
-  const feed = $("#activityFeed");
-  const donationItems = state.activity.map(item => ({
-    ...item,
-    feedType: "donation"
-  }));
-
-  const chatItems = (state.chat || []).map(item => ({
-    ...item,
-    feedType: "chat"
-  }));
-
-  const combined = [...donationItems, ...chatItems]
-    .sort((a, b) => b.timestamp - a.timestamp)
-    .slice(0, 45);
-
-  if (!combined.length) {
-    feed.innerHTML = `
-      <div class="activity-item">
-        <div class="activity-avatar">♥</div>
-        <div class="activity-content">
-          <div class="activity-user">Waiting for activity…</div>
-          <span class="activity-text">Subs, Bits and chat messages will appear here.</span>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  feed.innerHTML = combined.map(item => {
-    if (item.feedType === "chat") {
-      return `
-        <div class="activity-item chat-message">
-          <div class="activity-avatar">💬</div>
-          <div class="activity-content">
-            <div class="activity-user">
-              ${escapeHtml(item.user)}
-              ${item.mod ? '<span class="chat-badge">MOD</span>' : ''}
-              ${item.vip ? '<span class="chat-badge">VIP</span>' : ''}
-            </div>
-            <span class="activity-text">${escapeHtml(item.message)}</span>
-          </div>
-          <div class="activity-time">${relativeTime(item.timestamp)}</div>
-        </div>
-      `;
-    }
-
-    const avatar = item.type === "sub" ? "🎁" : "◆";
-    const amountText = item.type === "sub"
-      ? item.amount === 1 ? "1 Sub" : `${item.amount} Gifted Subs`
-      : `${formatNumber(item.amount)} Bits`;
-
-    const isBig = (item.type === "bits" && item.amount >= 1000) || (item.type === "sub" && item.amount >= 5);
-    const timeAddedText = formatAddedTime(item.seconds);
-
-    return `
-      <div class="activity-item ${item.type}${isBig ? " big-donation" : ""}">
-        <div class="activity-avatar">${avatar}</div>
-        <div class="activity-content">
-          <div class="activity-user">${escapeHtml(item.user)}</div>
-          <span class="activity-text">${escapeHtml(item.text)} • <strong>${amountText}</strong></span>
-          <span class="donation-time">+ <strong>${timeAddedText}</strong> added to timer</span>
-        </div>
-        <div class="activity-time">${relativeTime(item.timestamp)}</div>
-      </div>
-    `;
-  }).join("");
-}
-
-
-function renderLeaderboard() {
-  const configured = CONFIG.leaderboard[selectedYear]?.[selectedType] || [];
-  const custom = state.customLeaderboard[selectedYear]?.[selectedType] || [];
-
-  const combined = [...configured.map(x => ({...x})), ...custom];
-
-  const merged = [];
-  for (const entry of combined) {
-    const existing = merged.find(x => x.name.toLowerCase() === entry.name.toLowerCase());
-    if (existing) existing.amount += Number(entry.amount);
-    else merged.push({ name: entry.name, amount: Number(entry.amount) });
-  }
-
-  merged.sort((a, b) => b.amount - a.amount);
-  const top = merged.slice(0, 10);
-
-  $("#leaderboardRows").innerHTML = top.length
-    ? top.map((entry, i) => `
-      <div class="leader-row">
-        <div class="leader-rank">${i + 1}</div>
-        <div class="leader-user">
-          <div class="leader-avatar">${escapeHtml(entry.name.slice(0, 1).toUpperCase())}</div>
-          <div class="leader-name">${escapeHtml(entry.name)}</div>
-        </div>
-        <div class="leader-amount ${selectedType === "bits" ? "bits" : ""}">
-          ${formatNumber(entry.amount)} ${selectedType === "bits" ? "Bits" : "Subs"}
-        </div>
-      </div>
-    `).join("")
-    : `<div class="leader-row"><div></div><div class="leader-name">No data yet</div><div></div></div>`;
-}
-
-function renderSupporterTicker() {
-  const subs = mergeLeaderboard(2026, "subs").slice(0, 3);
-  const bits = mergeLeaderboard(2026, "bits").slice(0, 3);
-
-  const items = [
-    ...subs.map((x, i) => ({...x, type: "subs", rank: i + 1})),
-    ...bits.map((x, i) => ({...x, type: "bits", rank: i + 1}))
-  ];
-
-  if (!items.length) return;
-
-  const html = [...items, ...items].map(x => `
-    <span class="supporter-item ${x.type === "bits" ? "bits" : ""}">
-      <span class="supporter-rank">#${x.rank}</span>
-      <span class="supporter-name">${escapeHtml(x.name)}</span>
-      <span class="supporter-value">${formatNumber(x.amount)} ${x.type === "bits" ? "Bits" : "Subs"}</span>
-      <span class="supporter-separator">◆</span>
-    </span>
-  `).join("");
-
-  $("#supporterTrack").innerHTML = html;
-}
-
-function mergeLeaderboard(year, type) {
-  const configured = CONFIG.leaderboard[year]?.[type] || [];
-  const custom = state.customLeaderboard[year]?.[type] || [];
-  const merged = [];
-
-  for (const item of [...configured, ...custom]) {
-    const found = merged.find(x => x.name.toLowerCase() === item.name.toLowerCase());
-    if (found) found.amount += Number(item.amount);
-    else merged.push({name: item.name, amount: Number(item.amount)});
-  }
-
-  return merged.sort((a, b) => b.amount - a.amount);
-}
-
-let podiumType = "subs";
-let podiumPage = 0;
-let podiumInterval = null;
 
 function formatAddedTime(seconds) {
-  const s = Math.max(0, Math.floor(seconds));
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
+  seconds = Math.max(0, Math.floor(seconds));
 
-  if (h > 0) return `${h}h ${pad(m)}m`;
-  if (m > 0) return `${m}m ${pad(sec)}s`;
-  return `${sec}s`;
-}
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
 
-function renderTimeAdded() {
-  const sub = state.totalSubTimeAdded || 0;
-  const bits = state.totalBitTimeAdded || 0;
-
-  $("#subTimeAdded").textContent = formatAddedTime(sub);
-  $("#bitTimeAdded").textContent = formatAddedTime(bits);
-  $("#totalTimeAdded").textContent = formatAddedTime(sub + bits);
-  $("#timeAddedCount").textContent = `${(state.timeHistory || []).length} events`;
-
-  const history = $("#timeHistory");
-  if (!state.timeHistory?.length) {
-    history.innerHTML = `<div class="time-history-empty">No support events yet. Use Simulation below to add some.</div>`;
-    return;
+  if (hours > 0) {
+    return `${hours}h ${pad(minutes)}m`;
   }
 
-  history.innerHTML = state.timeHistory.slice(0, 8).map(item => `
-    <div class="time-history-row">
-      <div class="time-history-icon">${item.type === "sub" ? "🎁" : "💜"}</div>
-      <div>
-        <div class="time-history-user">${escapeHtml(item.user)}</div>
-        <div class="time-history-detail">${item.type === "sub" ? `${item.amount} gifted sub${item.amount === 1 ? "" : "s"}` : `${formatNumber(item.amount)} Bits`}</div>
-      </div>
-      <div class="time-history-detail">${relativeTime(item.timestamp)}</div>
-      <div class="time-history-added ${item.type === "bits" ? "bits" : ""}">+${formatAddedTime(item.seconds)}</div>
-    </div>
-  `).join("");
-}
+  if (minutes > 0) {
+    return `${minutes}m ${pad(secs)}s`;
+  }
 
-function renderRoadmap() {
-  const roadmap = $("#roadmap");
-  roadmap.innerHTML = CONFIG.goals.map((goal, index) => {
-    const reached = state.totalSubs >= goal.amount;
-    const previous = index === 0 ? 0 : CONFIG.goals[index - 1].amount;
-    const current = state.totalSubs >= previous && state.totalSubs < goal.amount;
-    return `
-      <div class="roadmap-step ${reached ? "reached" : ""} ${current ? "current" : ""}">
-        <div class="roadmap-node">${reached ? "✓" : goal.icon}</div>
-        <div class="roadmap-amount">${goal.amount} GIFTED</div>
-        <div class="roadmap-name">${escapeHtml(goal.name)}</div>
-        <div class="roadmap-status">${reached ? "Unlocked" : current ? "Next Goal" : "Locked"}</div>
-      </div>
-    `;
-  }).join("");
-}
-
-function renderPodium() {
-  const data = mergeLeaderboard(2026, podiumType).slice(0, 3);
-  const ordered = [data[1], data[0], data[2]];
-  const classes = ["second", "first", "third"];
-
-  $("#podiumTitle").textContent = podiumType === "bits" ? "Bits" : "Gifted Subs";
-
-  $("#podium").innerHTML = [0, 1, 2].map((i) => {
-    const item = ordered[i];
-    if (!item) {
-      return `
-        <div class="podium-place ${classes[i]}">
-          <div class="podium-avatar">?</div>
-          <div class="podium-name">Waiting...</div>
-          <div class="podium-amount">0</div>
-          <div class="podium-block"><div class="podium-rank">#${i === 0 ? 2 : i === 1 ? 1 : 3}</div></div>
-        </div>`;
-    }
-
-    const rank = i === 0 ? 2 : i === 1 ? 1 : 3;
-    return `
-      <div class="podium-place ${classes[i]}">
-        ${rank === 1 ? '<div class="podium-crown">♛</div>' : ""}
-        <div class="podium-avatar">${escapeHtml(item.name.slice(0, 1).toUpperCase())}</div>
-        <div class="podium-name">${escapeHtml(item.name)}</div>
-        <div class="podium-amount">${formatNumber(item.amount)} ${podiumType === "bits" ? "Bits" : "Subs"}</div>
-        <div class="podium-block"><div class="podium-rank">#${rank}</div></div>
-      </div>`;
-  }).join("");
-
-  $("#podiumDots").innerHTML = `
-    <span class="podium-dot ${podiumType === "subs" ? "active" : ""}"></span>
-    <span class="podium-dot ${podiumType === "bits" ? "active" : ""}"></span>
-  `;
-}
-
-function updateStreamStatus() {
-  // GitHub Pages cannot safely query Twitch's authenticated Helix API directly.
-  // The UI is ready for a backend later. For now, the embedded player is the source of truth.
-  const online = true;
-  $("#streamStatusTitle").textContent = online ? "OiiinkYT" : "OiiinkYT";
-  $("#streamStatusText").textContent = online
-    ? "Twitch player ready • live status follows Twitch"
-    : "Currently offline";
-}
-
-function render() {
-  updateTimer();
-  updateGoal();
-  updatePerks();
-  renderActivity();
-  renderLeaderboard();
-  renderSupporterTicker();
-  renderTimeAdded();
-  renderRoadmap();
-  renderPodium();
-  renderExtraStats();
-  renderEventLog();
-  updateUrgency();
+  return `${secs}s`;
 }
 
 function relativeTime(timestamp) {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
+
   if (seconds < 10) return "now";
   if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
-  return `${Math.floor(minutes / 60)}h`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+
+  return `${Math.floor(seconds / 3600)}h`;
 }
 
 function escapeHtml(value) {
@@ -586,6 +150,1003 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+/* ---------------- TIMER ---------------- */
+
+function updateTimer() {
+  const total = Math.max(0, state.timeRemaining);
+
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+
+  if ($("#days")) $("#days").textContent = pad(days);
+  if ($("#hours")) $("#hours").textContent = pad(hours);
+  if ($("#minutes")) $("#minutes").textContent = pad(minutes);
+  if ($("#seconds")) $("#seconds").textContent = pad(seconds);
+
+  if ($("#subathonTimer")) {
+    $("#subathonTimer").textContent = formatClock(total);
+  }
+}
+
+/* ---------------- GOALS ---------------- */
+
+function goalInfo() {
+  const goal = CONFIG.goals.find(
+    goal => state.totalSubs < goal.amount
+  );
+
+  if (!goal) {
+    return {
+      goal: null,
+      previous: CONFIG.goals.at(-1)?.amount || 0,
+      percentage: 100,
+      needed: 0,
+      level: CONFIG.goals.length
+    };
+  }
+
+  const index = CONFIG.goals.indexOf(goal);
+
+  const previous =
+    index === 0
+      ? 0
+      : CONFIG.goals[index - 1].amount;
+
+  const range = goal.amount - previous;
+  const current = state.totalSubs - previous;
+
+  return {
+    goal,
+    previous,
+    percentage: Math.min(
+      100,
+      Math.max(
+        0,
+        Math.round((current / range) * 100)
+      )
+    ),
+    needed: goal.amount - state.totalSubs,
+    level: index + 1
+  };
+}
+
+function updateGoal() {
+  const info = goalInfo();
+
+  if (!info.goal) {
+    if ($("#goalTitle"))
+      $("#goalTitle").textContent = "All Sub Goals Complete";
+
+    if ($("#goalDescription"))
+      $("#goalDescription").textContent =
+        "Every milestone has been reached.";
+
+    if ($("#goalCount"))
+      $("#goalCount").textContent =
+        `${state.totalSubs} / ${CONFIG.goals.at(-1).amount}`;
+
+    if ($("#goalProgress"))
+      $("#goalProgress").style.width = "100%";
+
+    if ($("#goalNeeded"))
+      $("#goalNeeded").textContent = "0";
+
+    if ($("#goalName"))
+      $("#goalName").textContent = "All Goals Complete";
+
+    if ($("#subathonLevel"))
+      $("#subathonLevel").textContent = "MAX LEVEL";
+
+    if ($("#subathonPercent"))
+      $("#subathonPercent").textContent = "100%";
+
+    if ($("#subathonProgress"))
+      $("#subathonProgress").style.width = "100%";
+
+    if ($("#subathonNeeded"))
+      $("#subathonNeeded").textContent = "0";
+
+    if ($("#subathonGoalName"))
+      $("#subathonGoalName").textContent =
+        "All Goals Complete";
+
+    if ($("#subathonReward"))
+      $("#subathonReward").textContent =
+        "All Goals Complete";
+
+    return;
+  }
+
+  if ($("#goalTitle"))
+    $("#goalTitle").textContent = "Next Sub Goal";
+
+  if ($("#goalDescription"))
+    $("#goalDescription").textContent =
+      info.goal.description;
+
+  if ($("#goalCount"))
+    $("#goalCount").textContent =
+      `${state.totalSubs} / ${info.goal.amount}`;
+
+  if ($("#goalProgress"))
+    $("#goalProgress").style.width =
+      `${info.percentage}%`;
+
+  if ($("#goalNeeded"))
+    $("#goalNeeded").textContent =
+      info.needed;
+
+  if ($("#goalName"))
+    $("#goalName").textContent =
+      info.goal.name;
+
+  if ($("#subathonLevel"))
+    $("#subathonLevel").textContent =
+      `LEVEL ${info.level}`;
+
+  if ($("#subathonPercent"))
+    $("#subathonPercent").textContent =
+      `${info.percentage}%`;
+
+  if ($("#subathonProgress"))
+    $("#subathonProgress").style.width =
+      `${info.percentage}%`;
+
+  if ($("#subathonNeeded"))
+    $("#subathonNeeded").textContent =
+      info.needed;
+
+  if ($("#subathonGoalName"))
+    $("#subathonGoalName").textContent =
+      info.goal.name;
+
+  if ($("#subathonReward"))
+    $("#subathonReward").textContent =
+      info.goal.name;
+
+  if ($("#subathonCount"))
+    $("#subathonCount").textContent =
+      `${state.totalSubs} / ${info.goal.amount} gifted`;
+}
+
+/* ---------------- ROADMAP ---------------- */
+
+function renderRoadmap() {
+  const roadmap = $("#roadmap");
+
+  if (!roadmap) return;
+
+  roadmap.innerHTML = CONFIG.goals
+    .map((goal, index) => {
+      const reached =
+        state.totalSubs >= goal.amount;
+
+      const previous =
+        index === 0
+          ? 0
+          : CONFIG.goals[index - 1].amount;
+
+      const current =
+        state.totalSubs >= previous &&
+        state.totalSubs < goal.amount;
+
+      return `
+        <div class="roadmap-step
+          ${reached ? "reached" : ""}
+          ${current ? "current" : ""}
+        ">
+          <div class="roadmap-node">
+            ${reached ? "✓" : goal.icon}
+          </div>
+
+          <div class="roadmap-amount">
+            ${goal.amount} GIFTED
+          </div>
+
+          <div class="roadmap-name">
+            ${escapeHtml(goal.name)}
+          </div>
+
+          <div class="roadmap-status">
+            ${
+              reached
+                ? "Unlocked"
+                : current
+                  ? "Next Goal"
+                  : "Locked"
+            }
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+/* ---------------- ACTIVITY ---------------- */
+
+function renderActivity() {
+  const feed = $("#activityFeed");
+
+  if (!feed) return;
+
+  const items = [...state.activity]
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 45);
+
+  if (!items.length) {
+    feed.innerHTML = `
+      <div class="activity-item">
+        <div class="activity-avatar">♥</div>
+
+        <div class="activity-content">
+          <div class="activity-user">
+            Waiting for activity…
+          </div>
+
+          <span class="activity-text">
+            Subs and Bits will appear here.
+          </span>
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+  feed.innerHTML = items.map(item => {
+    const avatar =
+      item.type === "sub"
+        ? "🎁"
+        : "💜";
+
+    const amountText =
+      item.type === "sub"
+        ? item.amount === 1
+          ? "1 Sub"
+          : `${item.amount} Gifted Subs`
+        : `${formatNumber(item.amount)} Bits`;
+
+    const isBig =
+      (item.type === "bits" && item.amount >= 1000) ||
+      (item.type === "sub" && item.amount >= 5);
+
+    return `
+      <div class="activity-item
+        ${item.type}
+        ${isBig ? "big-donation" : ""}
+      ">
+
+        <div class="activity-avatar">
+          ${avatar}
+        </div>
+
+        <div class="activity-content">
+
+          <div class="activity-user">
+            ${escapeHtml(item.user)}
+          </div>
+
+          <span class="activity-text">
+            ${escapeHtml(item.text)}
+            •
+            <strong>${amountText}</strong>
+          </span>
+
+          <span class="donation-time">
+            +
+            <strong>
+              ${formatAddedTime(item.seconds)}
+            </strong>
+            added to timer
+          </span>
+
+        </div>
+
+        <div class="activity-time">
+          ${relativeTime(item.timestamp)}
+        </div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+/* ---------------- LEADERBOARD ---------------- */
+
+function mergeLeaderboard(year, type) {
+  const configured =
+    CONFIG.leaderboard?.[year]?.[type] || [];
+
+  const custom =
+    state.customLeaderboard?.[year]?.[type] || [];
+
+  const merged = [];
+
+  for (const item of [
+    ...configured,
+    ...custom
+  ]) {
+    const existing = merged.find(
+      x =>
+        x.name.toLowerCase() ===
+        item.name.toLowerCase()
+    );
+
+    if (existing) {
+      existing.amount += Number(item.amount);
+    } else {
+      merged.push({
+        name: item.name,
+        amount: Number(item.amount)
+      });
+    }
+  }
+
+  return merged.sort(
+    (a, b) => b.amount - a.amount
+  );
+}
+
+function renderLeaderboard() {
+  const rows = $("#leaderboardRows");
+
+  if (!rows) return;
+
+  const leaderboard =
+    mergeLeaderboard(
+      selectedYear,
+      selectedType
+    ).slice(0, 10);
+
+  if (!leaderboard.length) {
+    rows.innerHTML = `
+      <div class="leader-row">
+        <div></div>
+        <div class="leader-name">
+          No data yet
+        </div>
+        <div></div>
+      </div>
+    `;
+
+    return;
+  }
+
+  rows.innerHTML =
+    leaderboard
+      .map((entry, index) => `
+        <div class="leader-row">
+
+          <div class="leader-rank">
+            ${index + 1}
+          </div>
+
+          <div class="leader-user">
+
+            <div class="leader-avatar">
+              ${escapeHtml(
+                entry.name
+                  .slice(0, 1)
+                  .toUpperCase()
+              )}
+            </div>
+
+            <div class="leader-name">
+              ${escapeHtml(entry.name)}
+            </div>
+
+          </div>
+
+          <div class="leader-amount
+            ${selectedType === "bits" ? "bits" : ""}
+          ">
+            ${formatNumber(entry.amount)}
+            ${selectedType === "bits"
+              ? "Bits"
+              : "Subs"}
+          </div>
+
+        </div>
+      `)
+      .join("");
+}
+
+/* ---------------- PODIUM ---------------- */
+
+function renderPodium() {
+  const podium = $("#podium");
+  const title = $("#podiumTitle");
+  const dots = $("#podiumDots");
+
+  if (!podium || !title || !dots) return;
+
+  const leaderboard =
+    mergeLeaderboard(
+      2026,
+      podiumType
+    ).slice(0, 3);
+
+  title.textContent =
+    podiumType === "bits"
+      ? "Bits"
+      : "Gifted Subs";
+
+  /*
+    Important:
+    Always render the podium, even if there
+    is no custom leaderboard data yet.
+    This fixes the blank podium on first load.
+  */
+
+  const positions = [
+    {
+      rank: 2,
+      item: leaderboard[1],
+      className: "second"
+    },
+    {
+      rank: 1,
+      item: leaderboard[0],
+      className: "first"
+    },
+    {
+      rank: 3,
+      item: leaderboard[2],
+      className: "third"
+    }
+  ];
+
+  podium.innerHTML =
+    positions
+      .map(position => {
+        const item = position.item;
+
+        if (!item) {
+          return `
+            <div class="podium-place ${position.className}">
+
+              ${
+                position.rank === 1
+                  ? `<div class="podium-crown">♛</div>`
+                  : ""
+              }
+
+              <div class="podium-avatar">
+                —
+              </div>
+
+              <div class="podium-name">
+                Waiting...
+              </div>
+
+              <div class="podium-amount">
+                0
+                ${podiumType === "bits"
+                  ? "Bits"
+                  : "Subs"}
+              </div>
+
+              <div class="podium-block">
+                <div class="podium-rank">
+                  #${position.rank}
+                </div>
+              </div>
+
+            </div>
+          `;
+        }
+
+        return `
+          <div class="podium-place ${position.className}">
+
+            ${
+              position.rank === 1
+                ? `<div class="podium-crown">♛</div>`
+                : ""
+            }
+
+            <div class="podium-avatar">
+              ${escapeHtml(
+                item.name
+                  .slice(0, 1)
+                  .toUpperCase()
+              )}
+            </div>
+
+            <div class="podium-name">
+              ${escapeHtml(item.name)}
+            </div>
+
+            <div class="podium-amount">
+              ${formatNumber(item.amount)}
+              ${podiumType === "bits"
+                ? "Bits"
+                : "Subs"}
+            </div>
+
+            <div class="podium-block">
+              <div class="podium-rank">
+                #${position.rank}
+              </div>
+            </div>
+
+          </div>
+        `;
+      })
+      .join("");
+
+  dots.innerHTML = `
+    <span class="podium-dot
+      ${podiumType === "subs" ? "active" : ""}
+    "></span>
+
+    <span class="podium-dot
+      ${podiumType === "bits" ? "active" : ""}
+    "></span>
+  `;
+}
+
+/* ---------------- TIME ADDED ---------------- */
+
+function renderTimeAdded() {
+  const sub =
+    state.totalSubTimeAdded || 0;
+
+  const bits =
+    state.totalBitTimeAdded || 0;
+
+  if ($("#subTimeAdded"))
+    $("#subTimeAdded").textContent =
+      formatAddedTime(sub);
+
+  if ($("#bitTimeAdded"))
+    $("#bitTimeAdded").textContent =
+      formatAddedTime(bits);
+
+  if ($("#totalTimeAdded"))
+    $("#totalTimeAdded").textContent =
+      formatAddedTime(sub + bits);
+
+  if ($("#timeAddedCount"))
+    $("#timeAddedCount").textContent =
+      `${state.timeHistory.length} events`;
+
+  const history =
+    $("#timeHistory");
+
+  if (!history) return;
+
+  if (!state.timeHistory.length) {
+    history.innerHTML = `
+      <div class="time-history-empty">
+        No support events yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  history.innerHTML =
+    state.timeHistory
+      .slice(0, 8)
+      .map(item => `
+        <div class="time-history-row">
+
+          <div class="time-history-icon">
+            ${item.type === "sub"
+              ? "🎁"
+              : "💜"}
+          </div>
+
+          <div>
+            <div class="time-history-user">
+              ${escapeHtml(item.user)}
+            </div>
+
+            <div class="time-history-detail">
+              ${
+                item.type === "sub"
+                  ? `${item.amount} gifted sub${
+                      item.amount === 1
+                        ? ""
+                        : "s"
+                    }`
+                  : `${formatNumber(item.amount)} Bits`
+              }
+            </div>
+          </div>
+
+          <div class="time-history-detail">
+            ${relativeTime(item.timestamp)}
+          </div>
+
+          <div class="time-history-added
+            ${item.type === "bits"
+              ? "bits"
+              : ""}
+          ">
+            +${formatAddedTime(item.seconds)}
+          </div>
+
+        </div>
+      `)
+      .join("");
+}
+
+/* ---------------- STREAM STATUS ---------------- */
+
+function updateStreamStatus() {
+  if (!$("#streamStatusText")) return;
+
+  $("#streamStatusTitle").textContent =
+    "OiiinkYT";
+
+  $("#streamStatusText").textContent =
+    "Twitch player ready";
+}
+
+/* ---------------- STATS ---------------- */
+
+function renderExtraStats() {
+  const events =
+    state.hourlyEvents || [];
+
+  const currentHour =
+    new Date().getHours();
+
+  const recent =
+    events.filter(event => {
+      const age =
+        Date.now() - event.timestamp;
+
+      return (
+        age <= 3600000
+      );
+    });
+
+  const totalRecentTime =
+    recent.reduce(
+      (sum, event) =>
+        sum + Number(event.seconds || 0),
+      0
+    );
+
+  const grouped = {};
+
+  for (const event of recent) {
+    grouped[event.user] =
+      (grouped[event.user] || 0) +
+      Number(event.seconds || 0);
+  }
+
+  const supporter =
+    Object.entries(grouped)
+      .sort((a, b) => b[1] - a[1])[0];
+
+  if ($("#hourSupporter")) {
+    $("#hourSupporter").textContent =
+      supporter
+        ? supporter[0]
+        : "Nobody yet";
+  }
+
+  if ($("#hourSupporterValue")) {
+    $("#hourSupporterValue").textContent =
+      supporter
+        ? `+${formatAddedTime(supporter[1])} added this hour.`
+        : "Be the first to add time this hour.";
+  }
+
+  if ($("#cookingValue")) {
+    $("#cookingValue").textContent =
+      `${formatAddedTime(totalRecentTime)} added`;
+  }
+
+  if ($("#cookingText")) {
+    $("#cookingText").textContent =
+      recent.length >= 5
+        ? "🔥 Chat is cooking right now."
+        : "No recent donation spike.";
+  }
+
+  if ($("#communitySubs")) {
+    $("#communitySubs").textContent =
+      `${formatNumber(state.totalSubs)} Subs`;
+  }
+
+  if ($("#communityBits")) {
+    $("#communityBits").textContent =
+      `${formatNumber(state.totalBits)} Bits`;
+  }
+
+  renderDonationChart();
+}
+
+function renderDonationChart() {
+  const chart =
+    $("#donationChart");
+
+  if (!chart) return;
+
+  const events =
+    state.timeHistory
+      .slice(0, 16)
+      .reverse();
+
+  if (!events.length) {
+    chart.innerHTML =
+      `<div class="chart-empty">
+        Support activity will appear here.
+      </div>`;
+
+    return;
+  }
+
+  const max =
+    Math.max(
+      ...events.map(
+        e => Number(e.seconds || 0)
+      ),
+      1
+    );
+
+  chart.innerHTML =
+    events.map(event => {
+      const height =
+        Math.max(
+          8,
+          (event.seconds / max) * 100
+        );
+
+      return `
+        <div
+          class="chart-bar ${
+            event.type === "bits"
+              ? "bits"
+              : ""
+          }"
+          style="height:${height}%"
+          title="${escapeHtml(event.user)} +${formatAddedTime(event.seconds)}"
+        ></div>
+      `;
+    }).join("");
+}
+
+/* ---------------- EVENT LOG ---------------- */
+
+function renderEventLog() {
+  const log =
+    $("#eventLog");
+
+  if (!log) return;
+
+  const items =
+    state.eventLog.slice(0, 12);
+
+  if (!items.length) {
+    log.innerHTML =
+      `<div class="event-empty">
+        No events yet.
+      </div>`;
+
+    return;
+  }
+
+  log.innerHTML =
+    items.map(item => {
+      if (item.type === "goal") {
+        return `
+          <div class="event-row goal-event">
+            <span>🎯</span>
+
+            <div>
+              <strong>
+                ${escapeHtml(item.goal)}
+              </strong>
+
+              <small>
+                Goal unlocked at
+                ${item.amount}
+                gifted subs
+              </small>
+            </div>
+
+            <time>
+              ${relativeTime(item.timestamp)}
+            </time>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="event-row">
+
+          <span>
+            ${item.type === "sub"
+              ? "🎁"
+              : "💜"}
+          </span>
+
+          <div>
+            <strong>
+              ${escapeHtml(item.user)}
+            </strong>
+
+            <small>
+              ${item.type === "sub"
+                ? `${item.amount} gifted sub${
+                    item.amount === 1
+                      ? ""
+                      : "s"
+                  }`
+                : `${formatNumber(item.amount)} Bits`}
+              • +${formatAddedTime(item.seconds)}
+            </small>
+          </div>
+
+          <time>
+            ${relativeTime(item.timestamp)}
+          </time>
+
+        </div>
+      `;
+    }).join("");
+}
+
+/* ---------------- URGENCY ---------------- */
+
+function updateUrgency() {
+  const alert =
+    $("#subathonAlert");
+
+  if (!alert) return;
+
+  const title =
+    $("#alertTitle");
+
+  const text =
+    $("#alertText");
+
+  const time =
+    state.timeRemaining;
+
+  alert.classList.toggle(
+    "urgent",
+    time <= 600 &&
+    time > 60
+  );
+
+  alert.classList.toggle(
+    "critical",
+    time <= 60 &&
+    time > 0
+  );
+
+  if (time <= 60 && time > 0) {
+    title.textContent =
+      "⚠️ SAVE THE SUBATHON";
+
+    text.textContent =
+      `${formatClock(time)} remaining — every support event matters.`;
+
+    return;
+  }
+
+  if (time <= 600 && time > 0) {
+    title.textContent =
+      "⚠️ SUBATHON ENDING SOON";
+
+    text.textContent =
+      `${formatClock(time)} remaining — keep it alive!`;
+
+    return;
+  }
+
+  const info = goalInfo();
+
+  title.textContent =
+    info.goal
+      ? `🔥 ${info.needed} MORE TO ${info.goal.name.toUpperCase()}`
+      : "🎉 ALL GOALS COMPLETE";
+
+  text.textContent =
+    info.goal
+      ? "The community controls how long we go."
+      : "You reached every Subathon milestone.";
+}
+
+/* ---------------- TIMER EFFECT ---------------- */
+
+function showTimerAdd(seconds) {
+  const el =
+    $("#timerAdd");
+
+  if (!el) return;
+
+  const sign =
+    seconds >= 0
+      ? "+"
+      : "-";
+
+  const amount =
+    Math.abs(seconds);
+
+  let text;
+
+  if (amount >= 3600) {
+    text =
+      `${sign}${Math.floor(amount / 3600)}h`;
+  } else if (amount >= 60) {
+    text =
+      `${sign}${Math.floor(amount / 60)}m`;
+  } else {
+    text =
+      `${sign}${amount}s`;
+  }
+
+  el.textContent = text;
+
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+
+  const timer =
+    $("#timerDisplay");
+
+  if (timer) {
+    timer.classList.remove("bump");
+    void timer.offsetWidth;
+    timer.classList.add("bump");
+  }
+
+  spawnParticles();
+}
+
+function spawnParticles() {
+  const effects =
+    $("#effects");
+
+  if (!effects) return;
+
+  for (let i = 0; i < 18; i++) {
+    const particle =
+      document.createElement("div");
+
+    particle.className =
+      "timer-particle";
+
+    particle.style.left =
+      `${45 + Math.random() * 10}%`;
+
+    particle.style.top =
+      `${35 + Math.random() * 25}%`;
+
+    particle.style.setProperty(
+      "--x",
+      `${(Math.random() - 0.5) * 280}px`
+    );
+
+    particle.style.setProperty(
+      "--y",
+      `${-70 - Math.random() * 190}px`
+    );
+
+    particle.style.animationDelay =
+      `${Math.random() * 120}ms`;
+
+    effects.appendChild(particle);
+
+    setTimeout(
+      () => particle.remove(),
+      1200
+    );
+  }
+}
+
+/* ---------------- SIMULATION ---------------- */
+
 function randomName() {
   const names = [
     "OiiinkFan",
@@ -593,275 +1154,501 @@ function randomName() {
     "LeonePlayer",
     "MaceMain",
     "EventKing",
-    "RandomViewer",
     "MinecraftGuy"
   ];
-  return names[Math.floor(Math.random() * names.length)];
+
+  return names[
+    Math.floor(
+      Math.random() * names.length
+    )
+  ];
 }
 
-const FAKE_CHAT_MESSAGES = [
-  ["MaceMain", "W stream", false, false],
-  ["OiiinkFan", "BRO THE TIMER 💀", false, false],
-  ["LeonePlayer", "25 gifted incoming", false, true],
-  ["EventKing", "when is the event??", false, false],
-  ["RandomViewer", "WOOOOOO", false, false],
-  ["MinecraftGuy", "that was actually crazy", false, false],
-  ["SubEnjoyer", "KEEP THE TIMER GOING", false, false],
-  ["RedstonePro", "facecam soon 👀", false, false],
-  ["OiiinkFan", "LETS GOOOO", true, false],
-  ["MaceMain", "this subathon is cooked", false, false],
-  ["EventKing", "NO WAYYYYY", false, false],
-  ["LeonePlayer", "W stream W chat", false, false],
-  ["RandomViewer", "bro is never ending the stream", false, false],
-  ["SubEnjoyer", "1 more goal!!!", false, false],
-  ["MinecraftGuy", "LMAO", false, false]
-];
+function getSecondsForDonation(type, amount) {
+  if (type === "sub") {
+    return amount * 300;
+  }
 
-function addFakeChatMessage() {
-  if (!state.chat) state.chat = [];
+  return Math.floor(
+    (amount / 100) * 100
+  );
+}
 
-  const item = FAKE_CHAT_MESSAGES[Math.floor(Math.random() * FAKE_CHAT_MESSAGES.length)];
+function simulate(type, amount, user) {
+  const seconds =
+    getSecondsForDonation(
+      type,
+      amount
+    );
 
-  state.chat.unshift({
+  state.timeRemaining += seconds;
+
+  if (type === "sub") {
+    state.totalSubs += amount;
+    state.totalSubTimeAdded += seconds;
+  } else {
+    state.totalBits += amount;
+    state.totalBitTimeAdded += seconds;
+  }
+
+  const activity = {
     id: Date.now() + Math.random(),
-    user: item[0],
-    message: item[1],
-    mod: item[2],
-    vip: item[3],
+    type,
+    user,
+    amount,
+    seconds,
+    timestamp: Date.now(),
+    text:
+      type === "sub"
+        ? amount === 1
+          ? "gifted a sub"
+          : "gifted subs"
+        : "cheered"
+  };
+
+  state.activity.unshift(activity);
+  state.activity =
+    state.activity.slice(0, 50);
+
+  state.timeHistory.unshift({
+    ...activity
+  });
+
+  state.timeHistory =
+    state.timeHistory.slice(0, 20);
+
+  state.hourlyEvents.push({
+    user,
+    seconds,
     timestamp: Date.now()
   });
 
-  state.chat = state.chat.slice(0, 35);
+  state.hourlyEvents =
+    state.hourlyEvents.slice(-100);
+
+  const year = 2026;
+
+  const leaderboard =
+    state.customLeaderboard[year][type];
+
+  const existing =
+    leaderboard.find(
+      x =>
+        x.name.toLowerCase() ===
+        user.toLowerCase()
+    );
+
+  if (existing) {
+    existing.amount += amount;
+  } else {
+    leaderboard.push({
+      name: user,
+      amount
+    });
+  }
+
+  const previousGoal =
+    goalInfo();
+
   saveState();
-  renderActivity();
+  render();
 
-  // Keep the feed feeling like Twitch chat by scrolling to the newest message.
-  const feed = $("#activityFeed");
-  if (feed) feed.scrollTop = 0;
+  showTimerAdd(seconds);
+
+  const newGoal =
+    goalInfo();
+
+  if (
+    previousGoal.goal &&
+    newGoal.goal &&
+    previousGoal.goal.amount !==
+      newGoal.goal.amount
+  ) {
+    showGoalCelebration(
+      previousGoal.goal
+    );
+  }
 }
-
-
-
 
 function showGoalCelebration(goal) {
-  const card = $("#subathonCard");
-  card.classList.remove("goal-hit");
-  void card.offsetWidth;
-  card.classList.add("goal-hit");
+  const card =
+    $("#subathonCard");
 
-  const effects = $("#effects");
-  const node = document.createElement("div");
-  node.className = "goal-celebration";
-  node.innerHTML = `<span>🎉</span><strong>GOAL UNLOCKED</strong><b>${escapeHtml(goal.name)}</b>`;
+  if (card) {
+    card.classList.remove(
+      "goal-hit"
+    );
+
+    void card.offsetWidth;
+
+    card.classList.add(
+      "goal-hit"
+    );
+  }
+
+  const effects =
+    $("#effects");
+
+  if (!effects) return;
+
+  const node =
+    document.createElement("div");
+
+  node.className =
+    "goal-celebration";
+
+  node.innerHTML = `
+    <span>🎉</span>
+    <strong>GOAL UNLOCKED</strong>
+    <b>${escapeHtml(goal.name)}</b>
+  `;
+
   effects.appendChild(node);
-  setTimeout(() => node.remove(), 3500);
+
+  setTimeout(
+    () => node.remove(),
+    3500
+  );
 }
 
-function renderEventLog() {
-  const log = $("#eventLog");
-  const items = (state.eventLog || []).slice(0, 12);
-  if (!items.length) {
-    log.innerHTML = '<div class="event-empty">No events yet.</div>';
-    return;
-  }
-  log.innerHTML = items.map(item => {
-    if (item.type === "goal") {
-      return `<div class="event-row goal-event"><span>🎯</span><div><strong>${escapeHtml(item.goal)}</strong><small>Goal unlocked at ${item.amount} gifted subs</small></div><time>${relativeTime(item.timestamp)}</time></div>`;
-    }
-    const icon = item.type === "bits" ? "💜" : "🎁";
-    const detail = item.type === "bits" ? `${formatNumber(item.amount)} Bits` : `${item.amount} gifted sub${item.amount === 1 ? "" : "s"}`;
-    return `<div class="event-row"><span>${icon}</span><div><strong>${escapeHtml(item.user)}</strong><small>${detail} • +${formatAddedTime(item.seconds)}</small></div><time>${relativeTime(item.timestamp)}</time></div>`;
-  }).join("");
-}
-
-function setFeedMode(mode) {
-  $$(".activity-tab").forEach(btn => btn.classList.toggle("active", btn.dataset.feed === mode));
-  $("#activityFeed").classList.toggle("active", mode === "activity");
-  $("#twitchChatPanel").classList.toggle("active", mode === "chat");
-  $("#activityTitle").textContent = mode === "chat" ? "Twitch Chat" : "Live Activity";
-}
-
-function renderExtraStats() {
-  normalizeState();
-  const now = Date.now();
-  state.hourlyEvents = state.hourlyEvents.filter(x => now - x.timestamp < 3600000);
-  const hour = [...state.hourlyEvents].sort((a,b) => b.seconds - a.seconds);
-  const top = hour[0];
-
-  $("#hourSupporter").textContent = top ? top.user : "Nobody yet";
-  $("#hourSupporterValue").textContent = top
-    ? `+${formatAddedTime(top.seconds)} from ${top.type === "bits" ? formatNumber(top.amount) + " Bits" : top.amount + " gifted sub" + (top.amount === 1 ? "" : "s")}`
-    : "Be the first to add time this hour.";
-
-  const recentSeconds = state.hourlyEvents.reduce((n,x)=>n+x.seconds,0);
-  const recentMinutes = Math.floor(recentSeconds/60);
-  $("#cookingValue").textContent = `${recentMinutes}m added`;
-  $("#cookingText").textContent = recentSeconds >= 1800 ? "CHAT IS COOKING — huge support in the last hour." : "No recent donation spike.";
-  $("#cookingValue").classList.toggle("hot", recentSeconds >= 1800);
-
-  $("#communitySubs").textContent = `${formatNumber(state.totalSubs)} Subs`;
-  $("#communityBits").textContent = `${formatNumber(state.totalBits)} Bits`;
-
-  const events = state.timeHistory.slice(0, 14).reverse();
-  const chart = $("#donationChart");
-  if (!events.length) {
-    chart.innerHTML = '<div class="chart-empty">Support events will build this graph.</div>';
-  } else {
-    const max = Math.max(...events.map(x=>x.seconds), 1);
-    chart.innerHTML = events.map(x => `
-      <div class="chart-bar-wrap" title="${escapeHtml(x.user)} +${formatAddedTime(x.seconds)}">
-        <div class="chart-bar ${x.type === "bits" ? "bits" : "subs"}" style="height:${Math.max(8, Math.round(x.seconds/max*100))}%"></div>
-        <span>${x.type === "bits" ? "💜" : "🎁"}</span>
-      </div>`).join("");
-  }
-
-  const mystery = $("#mysteryCard");
-  const unlocked = state.totalSubs >= 50;
-  mystery.classList.toggle("unlocked", unlocked);
-  $("#mysteryStatus").textContent = unlocked ? "UNLOCKED" : `${Math.max(0,50-state.totalSubs)} TO GO`;
-  $("#mysteryText").textContent = unlocked ? "🎉 Mystery milestone unlocked!" : "Something happens at 50 gifted subs...";
-}
-
-function updateUrgency() {
-  const alert = $("#subathonAlert");
-  if (!alert) return;
-  const t = Math.max(0, state.timeRemaining);
-  const title = $("#alertTitle");
-  const text = $("#alertText");
-  alert.classList.toggle("urgent", t <= 600 && t > 60);
-  alert.classList.toggle("critical", t <= 60 && t > 0);
-
-  if (t <= 60 && t > 0) {
-    title.textContent = "⚠️ SAVE THE SUBATHON";
-    text.textContent = `${formatClock(t)} remaining — every support event matters.`;
-  } else if (t <= 600 && t > 0) {
-    title.textContent = "⚠️ SUBATHON ENDING SOON";
-    text.textContent = `${formatClock(t)} remaining — keep it alive!`;
-  } else {
-    const info = goalInfo();
-    title.textContent = info.goal ? `🔥 ${info.needed} MORE TO ${info.goal.name.toUpperCase()}` : "🎉 ALL GOALS COMPLETE";
-    text.textContent = info.goal ? "The community controls how long we go." : "You unlocked every listed perk.";
-  }
-}
+/* ---------------- EVENTS ---------------- */
 
 function setupEvents() {
-  $$(".activity-tab").forEach(btn => {
-    btn.addEventListener("click", () => setFeedMode(btn.dataset.feed));
-  });
 
-  $$(".podium-type").forEach(btn => {
-    btn.addEventListener("click", () => {
-      podiumType = btn.dataset.podium;
-      $$(".podium-type").forEach(x => x.classList.toggle("active", x === btn));
-      podiumPage = 0;
-      renderPodium();
-    });
-  });
-
-  $$(".year-tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedYear = Number(btn.dataset.year);
-      $$(".year-tab").forEach(x => x.classList.toggle("active", x === btn));
-      renderLeaderboard();
-      renderSupporterTicker();
-    });
-  });
-
-  $$(".type-tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedType = btn.dataset.type;
-      $$(".type-tab").forEach(x => x.classList.toggle("active", x === btn));
-      renderLeaderboard();
-    });
-  });
-
-  $$("[data-sim]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const kind = btn.dataset.sim;
-      const user = randomName();
-
-      if (kind === "sub") simulate("sub", 1, user);
-      if (kind === "gift5") simulate("sub", 5, user);
-      if (kind === "gift10") simulate("sub", 10, user);
-      if (kind === "bits100") simulate("bits", 100, user);
-      if (kind === "bits1000") simulate("bits", 1000, user);
-      if (kind === "bits5000") simulate("bits", 5000, user);
-      if (kind === "bits10000") simulate("bits", 10000, user);
-      if (kind === "chat") addFakeChatMessage();
-      if (kind === "goal") {
-        const info = goalInfo();
-        if (info.goal) simulate("sub", info.needed, user);
+  $$(".activity-tab").forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        setFeedMode(
+          button.dataset.feed
+        );
       }
-    });
+    );
   });
 
-  $("#resetSimulation").addEventListener("click", () => {
-    if (!confirm("Reset the simulated timer, activity and simulated leaderboard?")) return;
+  $$(".podium-type").forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        podiumType =
+          button.dataset.podium;
 
-    state = {
-      timeRemaining: BASE_SECONDS,
-      totalSubs: 0,
-      totalBits: 0,
-      totalSubTimeAdded: 0,
-      totalBitTimeAdded: 0,
-      activity: [],
-      chat: [],
-      timeHistory: [],
-      hourlyEvents: [],
-      eventLog: [],
+        $$(".podium-type").forEach(
+          other => {
+            other.classList.toggle(
+              "active",
+              other === button
+            );
+          }
+        );
 
-      customLeaderboard: {
-        2026: { subs: [], bits: [] },
-        2025: { subs: [], bits: [] }
+        renderPodium();
       }
-    };
-
-    saveState();
-    render();
+    );
   });
 
-  $("#subathonDropdown").addEventListener("click", () => {
-    $("#subathonCard").classList.toggle("expanded");
+  $$(".year-tab").forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        selectedYear =
+          Number(button.dataset.year);
+
+        $$(".year-tab").forEach(
+          other => {
+            other.classList.toggle(
+              "active",
+              other === button
+            );
+          }
+        );
+
+        renderLeaderboard();
+      }
+    );
   });
 
-  $("#activityDropdown").addEventListener("click", () => {
-    $("#activityPanel").classList.toggle("collapsed");
+  $$(".type-tab").forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        selectedType =
+          button.dataset.type;
+
+        $$(".type-tab").forEach(
+          other => {
+            other.classList.toggle(
+              "active",
+              other === button
+            );
+          }
+        );
+
+        renderLeaderboard();
+      }
+    );
   });
+
+  $$("[data-sim]").forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        const kind =
+          button.dataset.sim;
+
+        const user =
+          randomName();
+
+        if (kind === "sub")
+          simulate(
+            "sub",
+            1,
+            user
+          );
+
+        if (kind === "gift5")
+          simulate(
+            "sub",
+            5,
+            user
+          );
+
+        if (kind === "gift10")
+          simulate(
+            "sub",
+            10,
+            user
+          );
+
+        if (kind === "bits100")
+          simulate(
+            "bits",
+            100,
+            user
+          );
+
+        if (kind === "bits1000")
+          simulate(
+            "bits",
+            1000,
+            user
+          );
+
+        if (kind === "bits5000")
+          simulate(
+            "bits",
+            5000,
+            user
+          );
+
+        if (kind === "bits10000")
+          simulate(
+            "bits",
+            10000,
+            user
+          );
+
+        if (kind === "goal") {
+          const info =
+            goalInfo();
+
+          if (info.goal) {
+            simulate(
+              "sub",
+              info.needed,
+              user
+            );
+          }
+        }
+      }
+    );
+  });
+
+  const reset =
+    $("#resetSimulation");
+
+  if (reset) {
+    reset.addEventListener(
+      "click",
+      () => {
+        if (
+          !confirm(
+            "Reset the simulated Subathon?"
+          )
+        ) {
+          return;
+        }
+
+        state = {
+          timeRemaining:
+            BASE_SECONDS,
+
+          totalSubs: 0,
+          totalBits: 0,
+
+          totalSubTimeAdded: 0,
+          totalBitTimeAdded: 0,
+
+          activity: [],
+          timeHistory: [],
+          hourlyEvents: [],
+          eventLog: [],
+
+          customLeaderboard: {
+            2026: {
+              subs: [],
+              bits: []
+            },
+
+            2025: {
+              subs: [],
+              bits: []
+            }
+          }
+        };
+
+        saveState();
+        render();
+      }
+    );
+  }
+
+  const subathonDropdown =
+    $("#subathonDropdown");
+
+  if (subathonDropdown) {
+    subathonDropdown.addEventListener(
+      "click",
+      () => {
+        $("#subathonCard")
+          ?.classList.toggle(
+            "expanded"
+          );
+      }
+    );
+  }
+
+  const activityDropdown =
+    $("#activityDropdown");
+
+  if (activityDropdown) {
+    activityDropdown.addEventListener(
+      "click",
+      () => {
+        $("#activityPanel")
+          ?.classList.toggle(
+            "collapsed"
+          );
+      }
+    );
+  }
 }
 
-loadState();
-if (!state.chat.length) {
-  addFakeChatMessage();
-  addFakeChatMessage();
-  addFakeChatMessage();
+/* ---------------- FEED MODE ---------------- */
+
+function setFeedMode(mode) {
+  $$(".activity-tab").forEach(
+    button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.feed === mode
+      );
+    }
+  );
+
+  $("#activityFeed")
+    ?.classList.toggle(
+      "active",
+      mode === "activity"
+    );
+
+  $("#twitchChatPanel")
+    ?.classList.toggle(
+      "active",
+      mode === "chat"
+    );
+
+  if ($("#activityTitle")) {
+    $("#activityTitle").textContent =
+      mode === "chat"
+        ? "Twitch Chat"
+        : "Live Activity";
+  }
 }
+
+/* ---------------- MAIN RENDER ---------------- */
+
+function render() {
+  updateTimer();
+  updateGoal();
+
+  renderActivity();
+  renderLeaderboard();
+  renderTimeAdded();
+  renderRoadmap();
+  renderPodium();
+  renderExtraStats();
+  renderEventLog();
+  updateUrgency();
+}
+
+/* ---------------- INITIALIZE ---------------- */
+
 setupEvents();
 render();
 updateStreamStatus();
 
-podiumInterval = setInterval(() => {
-  podiumType = podiumType === "subs" ? "bits" : "subs";
-  $$(".podium-type").forEach(x => x.classList.toggle("active", x.dataset.podium === podiumType));
-  renderPodium();
-}, 5000);
+/*
+  Rotate Top Supporters every 5 seconds.
+  This starts AFTER the first render, so the
+  podium is guaranteed to exist on page load.
+*/
+
+podiumInterval =
+  setInterval(() => {
+    podiumType =
+      podiumType === "subs"
+        ? "bits"
+        : "subs";
+
+    $$(".podium-type").forEach(
+      button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.podium ===
+            podiumType
+        );
+      }
+    );
+
+    renderPodium();
+  }, 5000);
+
+/* Timer countdown */
 
 setInterval(() => {
   if (state.timeRemaining > 0) {
     state.timeRemaining--;
+
     updateTimer();
     updateGoal();
     updateUrgency();
   }
 }, 1000);
 
+/* Refresh relative timestamps */
+
 setInterval(() => {
   renderActivity();
+  renderTimeAdded();
   renderExtraStats();
+  renderEventLog();
   updateUrgency();
 }, 5000);
 
-// Simulated Twitch chat: new fake chat messages appear automatically.
-setTimeout(addFakeChatMessage, 700);
-setInterval(addFakeChatMessage, 4200);
+/* Save state */
 
-setInterval(saveState, 10000);
+setInterval(
+  saveState,
+  10000
+);
